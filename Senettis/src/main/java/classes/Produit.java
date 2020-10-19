@@ -1,4 +1,4 @@
-package senettis;
+package classes;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -6,6 +6,8 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
+
+import connexion.SQLDatabaseConnection;
 
 public class Produit {
 
@@ -26,6 +28,11 @@ public class Produit {
 		this.commentaires = commentaires;
 	}
 
+	public Produit(String nom, Double prix) {
+		this.nom = nom;
+		this.prix = prix;
+	}
+	
 	/**
 	 * @return the prix
 	 */
@@ -79,5 +86,16 @@ public class Produit {
 		
 		return statement.executeUpdate();
 	}
+	
+	/*
+	 * public int deleteDatabase(int id) throws SQLException { String reqSql =
+	 * "UPDATE Produit(nom,prix,commentaires) VALUES (?,?,?)";
+	 * 
+	 * Connection connection = DriverManager.getConnection(new
+	 * SQLDatabaseConnection().getConnectionUrl()); PreparedStatement statement =
+	 * connection.prepareStatement(reqSql); statement.setObject(1,id,Types.DECIMAL);
+	 * 
+	 * return statement.executeUpdate(); }
+	 */
 
 }
