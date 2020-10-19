@@ -36,8 +36,8 @@ public class Chantier {
 		return CA;
 	}
 
-	public void setCA(Double cA) {
-		CA = cA;
+	public void setCA(Double CA) {
+		this.CA = CA;
 	}
 
 	public Chantier(String nom, String adresse, Double CA) {

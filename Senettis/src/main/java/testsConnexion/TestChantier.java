@@ -1,4 +1,4 @@
-package tests;
+package testsConnexion;
 
 import java.sql.SQLException;
 

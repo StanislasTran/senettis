@@ -15,44 +15,30 @@ public class Affectation {
 	private Integer idChantier;
 	private Integer idEmploye;
 	private Double nombreHeures;
-
-
 	
 	public Integer getIdChantier() {
 		return idChantier;
 	}
 
-
-
 	public void setIdChantier(Integer idChantier) {
 		this.idChantier = idChantier;
 	}
-
-
 
 	public Integer getIdEmploye() {
 		return idEmploye;
 	}
 
-
-
 	public void setIdEmploye(Integer idEmploye) {
 		this.idEmploye = idEmploye;
 	}
-
-
 
 	public Double getNombreHeures() {
 		return nombreHeures;
 	}
 
-
-
 	public void setNombreHeures(Double nombreHeures) {
 		this.nombreHeures = nombreHeures;
 	}
-
-	
 
 	public Affectation(Integer idChantier, Integer idEmploye) {
 		super();
@@ -60,16 +46,12 @@ public class Affectation {
 		this.idEmploye = idEmploye;
 	}
 
-
-
 	public Affectation(Integer idChantier, Integer idEmploye, Double nombreHeures) {
 		super();
 		this.idChantier = idChantier;
 		this.idEmploye = idEmploye;
 		this.nombreHeures = nombreHeures;
 	}
-
-
 
 	public int insertDatabase() throws SQLException {
 		String reqSql = "INSERT INTO Affectation(chantier,employe,nombre_heures) VALUES (?,?,?)";
