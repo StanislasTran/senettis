@@ -14,6 +14,15 @@ public class Produit {
 	private String nom;
 	private Double prix;
 	private String commentaires;
+	private String status;
+	
+	public String getStatus() {
+		return status;
+	}
+
+	private  void setStatus(String status) {
+		this.status = status;
+	}
 
 	/**
 	 * Constructor for Produit
@@ -22,10 +31,11 @@ public class Produit {
 	 * @param nom
 	 * @param commentaire
 	 */
-	public Produit(String nom, Double prix, String commentaires) {
+	public Produit(String nom, Double prix, String commentaires,String status) {
 		this.nom = nom;
 		this.prix = prix;
 		this.commentaires = commentaires;
+		this.status=status;
 	}
 
 	public Produit(String nom, Double prix) {
@@ -76,13 +86,15 @@ public class Produit {
 	}
 
 	public int insertDatabase() throws SQLException {
-		String reqSql = "INSERT INTO Produit(nom,prix,commentaires) VALUES (?,?,?)";
+		String reqSql = "INSERT INTO Produit(Nom,Prix,Commentaires,Status) VALUES (?,?,?,?)";
 		
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
 		statement.setObject(1,this.nom,Types.VARCHAR);
 		statement.setObject(2,this.prix,Types.DECIMAL);
 		statement.setObject(3,this.commentaires,Types.VARCHAR);
+		statement.setObject(4,this.status,Types.VARCHAR);
+
 		
 		return statement.executeUpdate();
 	}
