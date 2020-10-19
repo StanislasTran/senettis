@@ -2,6 +2,8 @@ package classes;
 
 import java.sql.Connection;
 import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import connexion.SQLDatabaseConnection;
 
@@ -29,13 +31,21 @@ public class Employe {
 	private Double remboursementTelephone;
 	private Double salaire;
 	
-	public Titre getTitre() {
-		return titre;
+	public String getTitre() {
+		return titre.toString();
 	}
 
 
-	public void setTitre(Titre titre) {
-		this.titre = titre;
+	public void setTitre(String t) {
+		if ((t == "M") || (t == "M.")) {
+			this.titre = titre.M;
+		}
+		else if ((t == "Mme") ||  (t == "MME")||  (t == "Mme.")||  (t == "MME.")) {
+			this.titre = titre.Mme;
+		}		
+		else {
+			throw new Error("le titre est incorrect");
+		}
 	}
 
 
@@ -65,6 +75,12 @@ public class Employe {
 
 
 	public void setMail(String mail) {
+		String regex = "^(.+)@(.+)$";
+		Pattern pattern = Pattern.compile(regex);
+		Matcher matcher = pattern.matcher(mail);
+		if (!matcher.matches()) {
+			throw new Error("l adresse mail est incorrecte");
+		}
 		this.mail = mail;
 	}
 
@@ -75,6 +91,7 @@ public class Employe {
 
 
 	public void setTelephone(String telephone) {
+		telephone = telephone.replace(".", "");
 		this.telephone = telephone;
 	}
 
@@ -160,25 +177,50 @@ public class Employe {
 
 	
 	
-	public Employe(Titre titre, String nom, String prenom, String mail, String telephone, Integer numeroMatricule,
+	public Employe(String t, String nom, String prenom, String mail, String telephone, Integer numeroMatricule,
 			String pointure, String taille, String dateArrivee, Double nombreHeures, Double remboursementTransport,
 			Double remboursementTelephone, Double salaire) {
 		super();
-		this.titre = titre;
+		
+		//je verifie que l adresse mail est correcte 
+		String regex = "^(.+)@(.+)$";
+		Pattern pattern = Pattern.compile(regex);
+		Matcher matcher = pattern.matcher(mail);
+		if (!matcher.matches()) {
+			throw new Error("l adresse mail est incorrecte");
+		}
+
+		//je verifie le titre	
+		if ((t == "M") || (t == "M.")) {
+			this.titre = titre.M;
+		}
+		else if ((t == "Mme") ||  (t == "MME")||  (t == "Mme.")||  (t == "MME.")) {
+			this.titre = titre.Mme;
+		}
+		else {
+			throw new Error("le titre est incorrect");
+		}
 		this.nom = nom;
 		this.prenom = prenom;
 		this.mail = mail;
+		telephone = telephone.replace(".", "");
 		this.telephone = telephone;
 		this.numeroMatricule = numeroMatricule;
 		this.pointure = pointure;
 		this.taille = taille;
 		
+		//on transforme la date qui est en string vers un type date
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
 	    Date dateFinale = null;
 		try {
 			dateFinale = simpleDateFormat.parse(dateArrivee);
 		} catch (ParseException e) {
-			e.printStackTrace();
+			simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
+			try {
+				dateFinale = simpleDateFormat.parse(dateArrivee);
+			} catch (ParseException e2) {
+				e2.printStackTrace();
+			}
 		}
 		this.dateArrivee = dateFinale;
 		
@@ -188,16 +230,53 @@ public class Employe {
 		this.salaire = salaire;
 	}
 
-
+	public Employe(String t, String nom, String prenom,Integer numeroMatricule, String dateArrivee) {
+		super();
+		
+		//je verifie le titre
+		if ((t == "M") || (t == "M.")) {
+			this.titre = titre.M;
+		}
+		else if ((t == "Mme") ||  (t == "MME")||  (t == "Mme.")||  (t == "MME.")) {
+			this.titre = titre.Mme;
+		}
+		else {
+			throw new Error("le titre est incorrect");
+		}
+		this.nom = nom;
+		this.prenom = prenom;
+		this.numeroMatricule = numeroMatricule;
+		
+		//on transforme la date qui est en string vers un type date
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
+	    Date dateFinale = null;
+		try {
+			dateFinale = simpleDateFormat.parse(dateArrivee);
+		} catch (ParseException e) {
+			simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
+			try {
+				dateFinale = simpleDateFormat.parse(dateArrivee);
+			} catch (ParseException e2) {
+				e2.printStackTrace();
+			}
+		}
+		this.dateArrivee = dateFinale;
+	}
 
 	public Employe(String t, String nom, String prenom, Integer numeroMatricule) {
 		super();
-		if (t == "M") {
+		
+		//je verifie le titre
+		if ((t == "M") || (t == "M.")) {
 			this.titre = titre.M;
 		}
-		if (t == "Mme") {
+		else if ((t == "Mme") ||  (t == "MME")||  (t == "Mme.")||  (t == "MME.")) {
 			this.titre = titre.Mme;
 		}		
+		else {
+			throw new Error("le titre est incorrect");
+		}
+		
 		this.nom = nom;
 		this.prenom = prenom;
 		this.numeroMatricule = numeroMatricule;

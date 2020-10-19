@@ -1,4 +1,4 @@
-package senettis;
+package connexion;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -11,8 +11,8 @@ import java.util.List;
 public class SQLDatabaseConnection {
 	
 	
-	private String connectionUrl = "jdbc:sqlserver://localhost:1433;" + "database=senettis;" + "user=senettis;"
-			+ "password=pswd;" + "encrypt=false;" + "trustServerCertificate=false;" + "loginTimeout=30;";
+	private String connectionUrl = "jdbc:sqlserver://localhost:1433;" + "database=SenettisDB;" + "user=laetitia;"
+			+ "password=laeti;" + "encrypt=false;" + "trustServerCertificate=false;" + "loginTimeout=30;";
 	
 	
 	/**
