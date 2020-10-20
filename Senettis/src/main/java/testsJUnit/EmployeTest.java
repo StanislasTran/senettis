@@ -21,8 +21,8 @@ public class EmployeTest
     public void setUp() 
     {
         laetitia = new Employe("Mme","C","Laetitia",1);
-        alyssa = new Employe("MME","C","Alyssa",2);
-        stan = new Employe("M.","T","Stan",3);
+        alyssa = new Employe("MME","C","Alyssa",2,"20-10-2020");
+        stan = new Employe("M.","T","Stan",3,"20/10/2020");
     }
     
     @Test
@@ -66,19 +66,9 @@ public class EmployeTest
     public void test() 
     {
         assertEquals(laetitia.getTitre(),alyssa.getTitre());
-        
+        assertEquals(stan.getDateArrivee(),alyssa.getDateArrivee());
     }
     
-
-	/*
-	 * @Test public void testAttaqueGeneraleRomaine() { cesar.setForce(200);
-	 * cesar.setVitesse(50); cesar.setEnnemi(asterix);
-	 * 
-	 * asterix.setForce(100); asterix.setVitesse(50);
-	 * 
-	 * assertTrue(cesar.attaqueGeneraleReussie()); asterix.addAmi(gaulois);
-	 * assertFalse(cesar.attaqueGeneraleReussie()); }
-	 */
     
 }
 
