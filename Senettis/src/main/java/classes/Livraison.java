@@ -19,11 +19,12 @@ public class Livraison {
 	private Integer idProduit;
 	private Double prixTotal;
 	private Date date;
+	private Object status;
 
 
 	
 	public int insertDatabase() throws SQLException {
-		String reqSql = "INSERT INTO Livraison(chantier,produit,date,prixTotal) VALUES (?,?,?,?)";
+		String reqSql = "INSERT INTO Livraison(chantier,produit,date,prixTotal,status) VALUES (?,?,?,?,?)";
 		
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
@@ -31,16 +32,18 @@ public class Livraison {
 		statement.setObject(2,this.idProduit,Types.INTEGER);
 		statement.setObject(3,this.date,Types.DATE);
 		statement.setObject(4,this.prixTotal,Types.DECIMAL);
+		statement.setObject(5,this.status,Types.VARCHAR);
 		
 		return statement.executeUpdate();
 	}
 
 
 
-	public Livraison(Integer idChantier, Integer idProduit, String date) {
+	public Livraison(Integer idChantier, Integer idProduit, String date,String status) {
 		super();
 		this.idChantier = idChantier;
 		this.idProduit = idProduit;
+		this.status=status;
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
 	    Date dateFinale = null;
 		try {

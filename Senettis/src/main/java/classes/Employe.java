@@ -30,7 +30,23 @@ public class Employe {
 	private Double remboursementTransport;
 	private Double remboursementTelephone;
 	private Double salaire;
+	private String status;
 	
+	public String getStatus() {
+		return status;
+	}
+
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+
+	public void setTitre(Titre titre) {
+		this.titre = titre;
+	}
+
+
 	public String getTitre() {
 		return titre.toString();
 	}
@@ -179,8 +195,8 @@ public class Employe {
 	
 	public Employe(String t, String nom, String prenom, String mail, String telephone, Integer numeroMatricule,
 			String pointure, String taille, String dateArrivee, Double nombreHeures, Double remboursementTransport,
-			Double remboursementTelephone, Double salaire) {
-		super();
+			Double remboursementTelephone, Double salaire,String status) {
+		this(t,nom,prenom,numeroMatricule,dateArrivee,status);
 		
 		//je verifie que l adresse mail est correcte 
 		String regex = "^(.+)@(.+)$";
@@ -189,39 +205,19 @@ public class Employe {
 		if (!matcher.matches()) {
 			throw new Error("l adresse mail est incorrecte");
 		}
-
-		//je verifie le titre	
-		if ((t == "M") || (t == "M.")) {
-			this.titre = titre.M;
-		}
-		else if ((t == "Mme") ||  (t == "MME")||  (t == "Mme.")||  (t == "MME.")) {
-			this.titre = titre.Mme;
-		}
-		else {
-			throw new Error("le titre est incorrect");
-		}
-		this.nom = nom;
-		this.prenom = prenom;
+		
+	
 		this.mail = mail;
 		telephone = telephone.replace(".", "");
 		this.telephone = telephone;
-		this.numeroMatricule = numeroMatricule;
 		this.pointure = pointure;
 		this.taille = taille;
+	
 		
 		//on transforme la date qui est en string vers un type date
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
 	    Date dateFinale = null;
-		try {
-			dateFinale = simpleDateFormat.parse(dateArrivee);
-		} catch (ParseException e) {
-			simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
-			try {
-				dateFinale = simpleDateFormat.parse(dateArrivee);
-			} catch (ParseException e2) {
-				e2.printStackTrace();
-			}
-		}
+		
 		this.dateArrivee = dateFinale;
 		
 		this.nombreHeures = nombreHeures;
@@ -230,22 +226,10 @@ public class Employe {
 		this.salaire = salaire;
 	}
 
-	public Employe(String t, String nom, String prenom,Integer numeroMatricule, String dateArrivee) {
-		super();
-		
-		//je verifie le titre
-		if ((t == "M") || (t == "M.")) {
-			this.titre = titre.M;
-		}
-		else if ((t == "Mme") ||  (t == "MME")||  (t == "Mme.")||  (t == "MME.")) {
-			this.titre = titre.Mme;
-		}
-		else {
-			throw new Error("le titre est incorrect");
-		}
-		this.nom = nom;
-		this.prenom = prenom;
-		this.numeroMatricule = numeroMatricule;
+	public Employe(String t, String nom, String prenom,Integer numeroMatricule, String dateArrivee,String status) {
+		this(t,nom,prenom,numeroMatricule);
+		this.status=status;
+
 		
 		//on transforme la date qui est en string vers un type date
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
@@ -284,7 +268,7 @@ public class Employe {
 
 
 	public int smallInsertDatabase() throws SQLException {
-		String reqSql = "INSERT INTO Employe(titre,nom,prenom,numero_matricule) VALUES (?,?,?,?)";
+		String reqSql = "INSERT INTO Employe(titre,nom,prenom,numero_matricule,status) VALUES (?,?,?,?,?)";
 		
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
@@ -297,7 +281,7 @@ public class Employe {
 	}
 	
 	public int insertDatabase() throws SQLException {
-		String reqSql = "INSERT INTO Employe(titre,nom,prenom,mail,telephone,numero_matricule,pointure,taille,date_arrivee,nombre_heures,remboursement_transport,remboursement_telephone,salaire) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)";
+		String reqSql = "INSERT INTO Employe(titre,nom,prenom,mail,telephone,numero_matricule,pointure,taille,date_arrivee,nombre_heures,remboursement_transport,remboursement_telephone,salaire,status) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 		
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
@@ -314,7 +298,8 @@ public class Employe {
 		statement.setObject(11,this.remboursementTransport,Types.VARCHAR);
 		statement.setObject(12,this.remboursementTelephone,Types.VARCHAR);
 		statement.setObject(13,this.salaire,Types.DECIMAL);
-		
+		statement.setObject(14,this.status,Types.VARCHAR);
+
 		return statement.executeUpdate();
 	}
 

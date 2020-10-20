@@ -19,8 +19,8 @@ public class ChantierTest
     @Before
     public void setUp() 
     {
-        puteaux = new Chantier("Puteaux","à Puteaux",100.0);
-        boulogne = new Chantier("Boulogne");
+        puteaux = new Chantier("Puteaux","à Puteaux",100.0,"Publié");
+        boulogne = new Chantier("Boulogne","Publié");
         boulogne.setAdresse("à Boulogne");
         boulogne.setCA(200.0);
     }

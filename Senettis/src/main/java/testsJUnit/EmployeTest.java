@@ -21,8 +21,8 @@ public class EmployeTest
     public void setUp() 
     {
         laetitia = new Employe("Mme","C","Laetitia",1);
-        alyssa = new Employe("MME","C","Alyssa",2,"20-10-2020");
-        stan = new Employe("M.","T","Stan",3,"20/10/2020");
+        alyssa = new Employe("MME","C","Alyssa",2,"20-10-2020","Publié");
+        stan = new Employe("M.","T","Stan",3,"20/10/2020","Publié");
     }
     
     @Test

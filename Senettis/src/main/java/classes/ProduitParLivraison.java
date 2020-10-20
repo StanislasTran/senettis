@@ -18,18 +18,19 @@ public class ProduitParLivraison {
 	private Integer idLivraison;
 	private Integer idProduit;
 	private int quantite;
+	private String status;
 
 
 	
 	public int insertDatabase() throws SQLException {
-		String reqSql = "INSERT INTO ProduitParLivraison(livraison,produit,quantite) VALUES (?,?,?)";
+		String reqSql = "INSERT INTO ProduitParLivraison(livraison,produit,quantite,status) VALUES (?,?,?,?)";
 		
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
 		statement.setObject(1,this.idLivraison,Types.INTEGER);
 		statement.setObject(2,this.idProduit,Types.INTEGER);
 		statement.setObject(3,this.quantite,Types.DECIMAL);
-		
+		statement.setObject(4,this.status,Types.VARCHAR);
 		return statement.executeUpdate();
 	}
 
@@ -71,19 +72,19 @@ public class ProduitParLivraison {
 
 
 
-	public ProduitParLivraison(Integer idLivraison, Integer idProduit, Integer quantite) {
-		super();
-		this.idLivraison = idLivraison;
-		this.idProduit = idProduit;
+	public ProduitParLivraison(Integer idLivraison, Integer idProduit, Integer quantite,String status) {
+	
 		this.quantite = quantite;
+		
 	}
 
 
 
-	public ProduitParLivraison(Integer idLivraison, Integer idProduit) {
+	public ProduitParLivraison(Integer idLivraison, Integer idProduit,String status) {
 		super();
 		this.idLivraison = idLivraison;
 		this.idProduit = idProduit;
+		this.status=status;
 		this.quantite = 1;
 	}
 
