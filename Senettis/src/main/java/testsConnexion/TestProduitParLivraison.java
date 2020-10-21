@@ -7,7 +7,9 @@ import classes.ProduitParLivraison;
 
 public class TestProduitParLivraison {
 	public static void main (String[]args) throws SQLException {
-		ProduitParLivraison pl=new ProduitParLivraison(2,2,"Publié");
+		ProduitParLivraison pl=new ProduitParLivraison(2,1,"Publié");
 		pl.insertDatabase();
+		
+		ProduitParLivraison.printAllProduitParLivraison();
 	}
 }

@@ -122,6 +122,22 @@ public class Produit {
 			System.out.println(produit);
 	}
 	
+	
+	public int updateDatabase() throws SQLException {
+		String reqSql = "UPDATE Produit SET nom=?, prix=?, commentaires=?, status=? WHERE ProduitId=?;";
+		
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		PreparedStatement statement = connection.prepareStatement(reqSql);
+		statement.setObject(1,this.nom.toString(),Types.VARCHAR);
+		statement.setObject(2,this.prix,Types.VARCHAR);
+		statement.setObject(3,this.commentaires,Types.DECIMAL);
+		statement.setObject(4,this.status,Types.VARCHAR);
+		statement.setObject(5,this.produitId,Types.INTEGER);
+		
+		return statement.executeUpdate();
+	}	
+	
+	
 	/***
 	 * 
 	 * Getter and setter
