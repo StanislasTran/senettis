@@ -1,6 +1,7 @@
 package GUI;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 import org.eclipse.swt.*;
 import org.eclipse.swt.events.ControlAdapter;
@@ -11,12 +12,13 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
-import classes.Produit;
+import classes.Employe;
 
 public class Home {
 
 	private Display display;
 	private Shell shell;
+	Rectangle rect;
 	
 	private Color blanc;
 	private Color bleuClair;
@@ -26,6 +28,7 @@ public class Home {
 	RowLayout rowLayoutH;
 	RowLayout rowLayoutV;
 	FillLayout fillLayoutV;
+	GridLayout gridLayout;
 	
 	Composite colonneGauche;
 	Composite espaceLogo;
@@ -56,22 +59,75 @@ public class Home {
 		compositeColonneGauche();
 		compositeColonneDroite();
 		
-		compositeMain.setSize(800, 500);
+		compositeMain.setSize(rect.width, rect.height);
 	}
 	
 	public void compositeColonneDroite() {
-		colonneDroite = new Composite(compositeMain, SWT.NONE);
+		colonneDroite = new Composite(compositeMain, SWT.CENTER);
 		//colonneDroite.setSize(700,700); //marche pas
 		//colonneDroite.setBackground(blanc);
 		colonneDroite.setLayout(rowLayoutV);
-		Composite selection = new Composite(colonneDroite, SWT.NONE);
-		//selection.setSize(200, 500); //marche pas
-		//selection.setBounds(10, 100, 50, 200); //marche pas 
-		Composite vue = new Composite(colonneDroite, SWT.NONE);
+		colonneDroite.setSize(500,500);
+		
+		compositeSelection();
+		compositeVue();
+		
+	}
+	
+	
+	public void compositeSelection() {
+		Composite selection = new Composite(colonneDroite, SWT.CENTER);
 		selection.setLayout(rowLayoutH);
 		selection.setBackground(bleuFonce);
+		//selection.setSize(200, 500); //marche pas
+		//selection.setBounds(10, 100, 50, 200); //marche pas 
+		
+		Button boutonCreer = new Button(selection, SWT.CENTER);
+		boutonCreer.setText("Créer");
+		boutonCreer.setBackground(bleuFonce);
+		//boutonCreer.setBounds(10, 60, 100, 20);
+		//boutonCreer.addSelectionListener(new SelectionAdapter() {});
+		
+		Button boutonRechercher = new Button(selection, SWT.CENTER);
+		boutonRechercher.setText("Rechercher");
+		boutonRechercher.setBackground(bleuFonce);
+		//boutonRechercher.setBounds(10, 60, 100, 20);
+		//boutonRechercher.addSelectionListener(new SelectionAdapter() {});
+	}
+	
+	
+	public void compositeVue() {
+
+		Composite vue = new Composite(colonneDroite, SWT.NONE);
 		vue.setLayout(rowLayoutV);
 		vue.setBackground(bleuClair);
+		
+		final List list = new List(vue, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL);
+
+		list.add("Id|Titre|Nom|Prenom|Mail|Telephone|numeroMatricule|Pointure|Taille|DateArrivée|NombreHeures|RemboursementTransport|RemboursementTelephone|Salaire|Status");
+		
+		try {
+			for (Employe e : Employe.getAllEmploye())  {
+			  list.add(e.toString());
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		/*
+		 * list.addSelectionListener(new SelectionListener() {
+		 * 
+		 * public void widgetSelected(SelectionEvent event) { int[] selections =
+		 * list.getSelectionIndices(); String outText = ""; for (int loopIndex = 0;
+		 * loopIndex < selections.length; loopIndex++) outText += selections[loopIndex]
+		 * + " "; System.out.println("You selected: " + outText); }
+		 * 
+		 * public void widgetDefaultSelected(SelectionEvent event) { int[] selections =
+		 * list.getSelectionIndices(); String outText = ""; for (int loopIndex = 0;
+		 * loopIndex < selections.length; loopIndex++) outText += selections[loopIndex]
+		 * + " "; System.out.println("You selected: " + outText); } });
+		 */
+		
 		
 	}
 	
@@ -80,15 +136,14 @@ public class Home {
 		colonneGauche.setSize(500, 500);
 		colonneGauche.setLayout(fillLayoutV);
 		
-		colonneGauche.addControlListener(new ControlAdapter() {
-			@Override
-			public void controlResized(ControlEvent e) {
-			//Composite composite = (Composite) e.widget;
-			//int width = composite.getBounds().width;
-			((GridData) espaceLogo.getLayoutData()).widthHint = (int) (0.66 * 100);
-			((GridData) menu.getLayoutData()).widthHint = (int) (0.33 * 100);
-			}
-		});
+		/*
+		 * colonneGauche.addControlListener(new ControlAdapter() {
+		 * 
+		 * @Override public void controlResized(ControlEvent e) { //Composite composite
+		 * = (Composite) e.widget; //int width = composite.getBounds().width;
+		 * ((GridData) espaceLogo.getLayoutData()).widthHint = (int) (0.66 * 10000);
+		 * ((GridData) menu.getLayoutData()).widthHint = (int) (0.33 * 100); } });
+		 */
 		
 		compositeLogo();
 		compositeMenu();
@@ -97,11 +152,12 @@ public class Home {
 	
 	public void compositeLogo() {
 		espaceLogo = new Composite(colonneGauche, SWT.NONE);
-		espaceLogo.setLayout(rowLayoutV);
-		//espaceLogo.setBackground(blanc);
+		espaceLogo.setLayout(fillLayoutV);
+		//fillLayoutV.spacing = 5;
+		//espaceLogo.setBackground(bleuClair);
 
 		Label logo = new Label (espaceLogo, SWT.NONE);
-		Image image = new Image(display, "C:\\Users\\lcour\\git\\senettis\\Senettis\\images\\petitLogo.jpeg");
+		Image image = new Image(display, "images\\petitLogo.jpeg");
 		logo.setImage(image);
 		//logo.setBackground(blanc);
 		//logo.setSize(300, 25);
@@ -111,15 +167,19 @@ public class Home {
 	
 	public void compositeMenu() {
 		
-		Composite espace = new Composite(colonneGauche, SWT.NONE);
-		espace.setLayout(rowLayoutV);
-		espace.setBounds(25,0,1, 1);
-		espace.setBackground(bleuClair);
+		
 		
 		//on ajoute les elements à la colonne menu 
 		menu = new Composite(colonneGauche, SWT.NONE);
 		menu.setLayout(fillLayoutV);
 		//menu.setBackground(bleuClair);
+		
+		
+		//Composite espace = new Composite(menu, SWT.NONE);
+		//espace.setLayout(rowLayoutV); 
+		//espace.setBounds(25,0,1, 1);
+		//espace.setBackground(bleuClair);
+		 
 		
 		Button boutonEmploye = new Button(menu, SWT.NONE);
 		boutonEmploye.setText("Employés");
@@ -171,6 +231,15 @@ public class Home {
 	    
 	    fillLayoutV = new FillLayout();
 		fillLayoutV.type = SWT.VERTICAL;
+		
+		gridLayout = new GridLayout();
+		
+		Monitor monitor = display.getPrimaryMonitor();
+		if (monitor != null) {
+			rect = monitor.getClientArea();
+		} else {
+			rect = display.getBounds();
+		}
 		
 		menuBar();
 		compositeMain();
