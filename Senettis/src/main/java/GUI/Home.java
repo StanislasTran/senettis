@@ -13,6 +13,7 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
 import classes.Employe;
+import classes.Produit;
 
 public class Home {
 
@@ -98,35 +99,7 @@ public class Home {
 	
 	public void compositeVue() {
 
-		Composite vue = new Composite(colonneDroite, SWT.NONE);
-		vue.setLayout(rowLayoutV);
-		vue.setBackground(bleuClair);
-		
-		final List list = new List(vue, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL);
-
-		list.add("Id|Titre|Nom|Prenom|Mail|Telephone|numeroMatricule|Pointure|Taille|DateArrivée|NombreHeures|RemboursementTransport|RemboursementTelephone|Salaire|Status");
-		
-		try {
-			for (Employe e : Employe.getAllEmploye())  {
-			  list.add(e.toString());
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-
-		/*
-		 * list.addSelectionListener(new SelectionListener() {
-		 * 
-		 * public void widgetSelected(SelectionEvent event) { int[] selections =
-		 * list.getSelectionIndices(); String outText = ""; for (int loopIndex = 0;
-		 * loopIndex < selections.length; loopIndex++) outText += selections[loopIndex]
-		 * + " "; System.out.println("You selected: " + outText); }
-		 * 
-		 * public void widgetDefaultSelected(SelectionEvent event) { int[] selections =
-		 * list.getSelectionIndices(); String outText = ""; for (int loopIndex = 0;
-		 * loopIndex < selections.length; loopIndex++) outText += selections[loopIndex]
-		 * + " "; System.out.println("You selected: " + outText); } });
-		 */
+		VueEmploye.vueEmployeAfficher(colonneDroite);
 		
 		
 	}
@@ -186,7 +159,16 @@ public class Home {
 		//boutonEmploye.setBounds(10, 60, 100, 20);
 		boutonEmploye.setBackground(bleuClair);
 		//	boutonEmploye.
-		//boutonEmploye.addSelectionListener(new SelectionAdapter() {});
+		boutonEmploye.addSelectionListener(new SelectionAdapter() {
+			
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+
+				VueEmploye.vueEmployeAfficher(colonneDroite);
+
+			}
+			
+		});
 		
 		Button boutonChantier = new Button(menu, SWT.NONE);
 		boutonChantier.setText("Chantiers");
