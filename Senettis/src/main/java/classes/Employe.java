@@ -311,6 +311,9 @@ public class Employe {
 
 
 	public String getTitre() {
+		if (titre == null) {
+			return "";
+		}
 		return titre.toString();
 	}
 
@@ -337,6 +340,9 @@ public class Employe {
 
 
 	public String getNom() {
+		if (nom == null) {
+			return "";
+		}
 		return nom;
 	}
 
@@ -350,6 +356,9 @@ public class Employe {
 
 
 	public String getPrenom() {
+		if (prenom == null) {
+			return "";
+		}
 		return prenom;
 	}
 
@@ -363,6 +372,9 @@ public class Employe {
 
 
 	public String getMail() {
+		if (mail == null) {
+			return "";
+		}
 		return mail;
 	}
 
@@ -382,6 +394,9 @@ public class Employe {
 
 
 	public String getTelephone() {
+		if (telephone == null) {
+			return "";
+		}
 		return telephone;
 	}
 
@@ -396,6 +411,9 @@ public class Employe {
 
 
 	public Integer getNumeroMatricule() {
+		if (numeroMatricule == null) {
+			return 0;
+		}
 		return numeroMatricule;
 	}
 
@@ -409,6 +427,9 @@ public class Employe {
 
 
 	public String getPointure() {
+		if (pointure == null) {
+			return "";
+		}
 		return pointure;
 	}
 
@@ -422,6 +443,9 @@ public class Employe {
 
 
 	public String getTaille() {
+		if (taille == null) {
+			return "";
+		}
 		return taille;
 	}
 
@@ -435,6 +459,16 @@ public class Employe {
 
 
 	public Date getDateArrivee() {
+		if (dateArrivee == null) {
+			SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
+		    Date date = null;
+			try {
+				date = simpleDateFormat.parse("00/00/0000");
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+			return date;
+		}
 		return dateArrivee;
 	}
 
@@ -448,6 +482,9 @@ public class Employe {
 
 
 	public Double getNombreHeures() {
+		if (nombreHeures == null) {
+			return 0.0;
+		}
 		return nombreHeures;
 	}
 
@@ -461,6 +498,9 @@ public class Employe {
 
 
 	public Double getRemboursementTransport() {
+		if (remboursementTransport == null) {
+			return 0.0;
+		}
 		return remboursementTransport;
 	}
 
@@ -474,6 +514,9 @@ public class Employe {
 
 
 	public Double getRemboursementTelephone() {
+		if (remboursementTelephone == null) {
+			return 0.0;
+		}
 		return remboursementTelephone;
 	}
 
@@ -487,6 +530,9 @@ public class Employe {
 
 
 	public Double getSalaire() {
+		if (salaire == null) {
+			return 0.0;
+		}
 		return salaire;
 	}
 
@@ -496,6 +542,17 @@ public class Employe {
 			throw new Error("setSalaire : le salaire indique est vide");
 		}
 		this.salaire = salaire;
+	}
+
+	public int getEmployeId() {
+		return employeId;
+	}
+
+	public void setEmployeId(Integer employeId) {
+		if (employeId == null) {
+			throw new Error("setEmployeId : le employeId indique est vide");
+		}
+		this.employeId = employeId;
 	}
 
 	
