@@ -128,7 +128,7 @@ public class Home {
 	
 	public void compositeVue() {
 
-		VueEmploye.vueEmployeAfficher(colonneDroite);
+		//VueEmploye.vueEmployeAfficher(colonneDroite);
 		
 		
 	}
@@ -193,7 +193,7 @@ public class Home {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 
-				VueEmploye.vueEmployeAfficher(colonneDroite);
+				//VueEmploye.vueEmployeAfficher(colonneDroite);
 
 			}
 			
