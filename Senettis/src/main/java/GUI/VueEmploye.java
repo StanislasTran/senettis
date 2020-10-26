@@ -16,59 +16,149 @@ import classes.Produit;
 
 public class VueEmploye {
 
-	private static Display display;;
+	private static Display display;
 	private Shell shell;
-	private Label label;
 	
-	static Color bleuClair = new Color(display, 31, 177, 253);
-	Color blanc = new Color(display, 254, 254, 254);
+	private static Composite vueEmploye;
+	private static Composite selection;
+	private static Composite vue;
+	
+	static Color bleuClair = new Color(display,213, 234, 253);
+	static Color lightCyan = new Color(display,204,255,255);
 	static Color bleuFonce = new Color(display, 1, 88, 144);
+	static Color gris = new Color(display,240, 240, 240);
 
-	public VueEmploye() {
+	public VueEmploye (Composite composite, Shell shell) {
+		vueEmploye=new Composite(composite,SWT.NONE);
+
+		RowLayout rowLayout = new RowLayout();
+		rowLayout.type = SWT.VERTICAL;
+		vueEmploye.setLayout(rowLayout);
 		
-		
-		
-		
+		compositeSelection(vueEmploye);
+		vueEmployeAfficher(vueEmploye, shell);
 	}
 	
-	
 	public static void compositeSelection(Composite composite) {
-		Composite selection = new Composite(composite, SWT.CENTER);
-		RowLayout rowLayoutH = new RowLayout();
-		rowLayoutH.type = SWT.HORIZONTAL;
-		rowLayoutH.marginWidth = 537;
-		selection.setLayout(rowLayoutH);
-		selection.setBackground(bleuFonce);
-		
+		selection = new Composite(composite, SWT.NONE);
+		RowLayout rowLayout = new RowLayout();
+		rowLayout.marginWidth = 20;
+		selection.setLayout(rowLayout);
+		selection.setBackground(gris);
+		selection.pack();
 		
 		Button boutonCreer = new Button(selection, SWT.CENTER);
 		boutonCreer.setText("Créer");
-		boutonCreer.setBackground(bleuFonce);
-		//boutonCreer.setBounds(10, 60, 100, 20);
-		//boutonCreer.addSelectionListener(new SelectionAdapter() {});
-		
-		//Button boutonRechercher = new Button(selection, SWT.CENTER);
-		//boutonRechercher.setText("Rechercher");
-		//boutonRechercher.setBackground(bleuFonce);
-		//boutonRechercher.setBounds(10, 60, 100, 20);
-		//boutonRechercher.addSelectionListener(new SelectionAdapter() {});
-	}
-	
-	
-	public static void compositeVue(Composite composite, Shell shell) {
+		boutonCreer.addSelectionListener(new SelectionAdapter() {	
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				System.out.println("bouton creer employe");
+				vueEmployeCreer();
+				
+				RowLayout rowLayout = new RowLayout();
+				rowLayout.type = SWT.VERTICAL;
+				rowLayout.marginWidth = 441;
+				vueEmploye.setLayout(rowLayout);
 
-		vueEmployeAfficher(composite, shell);
+			}
+		});
 	}
 	
+	
+	public static void vueEmployeCreer() {
+		vue.dispose();
+		selection.dispose();
+		selection = new Composite(vueEmploye, SWT.NONE);
+		
+		FillLayout fillLayoutH = new FillLayout();
+		fillLayoutH.type = SWT.HORIZONTAL;
+		//rowLayoutH.marginWidth = 441;
+		selection.setLayout(fillLayoutH);
+		
+		RowLayout rowLayoutV = new RowLayout();
+		rowLayoutV.type = SWT.VERTICAL;
+
+		//Titre
+		Composite compositeTitre = new Composite(selection, SWT.NONE);
+		compositeTitre.setBackground(bleuClair);
+		compositeTitre.setLayout(rowLayoutV);
+
+		Label labelTitre = new Label(compositeTitre, SWT.NONE);
+		labelTitre.setBackground(bleuClair);
+		labelTitre.setText("Titre : ");
+		labelTitre.setBounds(10, 10, 100, 25);
+
+		final Text textTitre = new Text(compositeTitre, SWT.BORDER);
+		textTitre.setText("");
+		//textNom.setBounds(10, 30, 100, 25);
+		
+		//Nom
+		Composite compositeNom = new Composite(selection, SWT.NONE);
+		compositeNom.setBackground(bleuClair);
+		compositeNom.setLayout(rowLayoutV);
+
+		Label labelNom = new Label(compositeNom, SWT.NONE);
+		labelNom.setBackground(bleuClair);
+		labelNom.setText("Nom : ");
+		labelNom.setBounds(10, 10, 100, 25);
+
+		final Text textNom = new Text(compositeNom, SWT.BORDER);
+		textNom.setText("");
+		//textNom.setBounds(10, 30, 100, 25);
+		
+		//Prenom
+		Composite compositePrenom = new Composite(selection, SWT.NONE);
+		compositePrenom.setBackground(bleuClair);
+		compositePrenom.setLayout(rowLayoutV);
+
+		Label labelPrenom = new Label(compositePrenom, SWT.NONE);
+		labelPrenom.setBackground(bleuClair);
+		labelPrenom.setText("Prenom : ");
+		labelPrenom.setBounds(10, 10, 100, 25);
+
+		final Text textPrenom = new Text(compositePrenom, SWT.BORDER);
+		textPrenom.setText("");
+		//textNom.setBounds(10, 30, 100, 25);
+
+		Composite compositeValidation = new Composite(selection, SWT.CENTER);
+		compositeValidation.setBackground(bleuClair);
+		Button button = new Button(compositeValidation, SWT.BACKGROUND);
+		button.setText("Valider");
+		button.setBounds(10, 60, 100, 25);
+		/*
+		 * button.addSelectionListener(new SelectionAdapter() {
+		 * 
+		 * @Override public void widgetSelected(SelectionEvent arg0) {
+		 * 
+		 * Produit produit = new Produit(textNom.getText(),
+		 * Double.parseDouble(textPrix.getText()), textCommentaire.getText(), "Publié");
+		 * 
+		 * try { produit.insertDatabase(); } catch (SQLException e) { // TODO
+		 * Auto-generated catch block e.printStackTrace(); } System.out.println("done");
+		 * 
+		 * }
+		 * 
+		 * });
+		 */
+		//selection.layout();
+		//selection.layout(true);
+		//selection.redraw();
+		
+		//vueEmploye.layout();
+		vueEmploye.layout(true);
+		vueEmploye.pack();
+		//vueEmploye.redraw();
+		
+	}
 	
 	public static void vueEmployeAfficher(Composite composite, Shell shell) {
-	
+		
 		RowLayout rowLayoutV = new RowLayout();
 	    rowLayoutV.type = SWT.VERTICAL;
 		
-	    Composite vue = new Composite(composite, SWT.NONE);
+	    vue = new Composite(composite, SWT.NONE);
 		vue.setLayout(rowLayoutV);
-		vue.setBackground(bleuClair);
+		vue.setBackground(gris);
 		
 	    final Table table = new Table (vue, SWT.BORDER | SWT.MULTI);
 	    table.setLinesVisible (true);
@@ -243,6 +333,10 @@ public class VueEmploye {
 
 		display.dispose();
 		labelNom.dispose();
+	}
+	
+	public Composite getComposite() {
+		return this.vueEmploye;
 	}
 	
 }
