@@ -34,6 +34,7 @@ public class Home {
 	Composite colonneGauche;
 	Composite espaceLogo;
 	Composite menu;
+	Composite contenuColonneDroite;
 	
 	Composite colonneDroite;
 
@@ -52,50 +53,78 @@ public class Home {
 	    shell.setMenuBar(menuBar);
 	}
 	
-	public void compositeMain() {
+	public void compositeMain() throws SQLException {
 		compositeMain = new Composite(shell, SWT.NONE);
 		compositeMain.setBackground(bleuClair);
 		compositeMain.setLayout(rowLayoutH);
 		
 		compositeColonneGauche();
+		
 		compositeColonneDroite();
 		
-		compositeMain.setSize(rect.width, rect.height);
+		
+		
+		compositeMain.pack();
+
+		
 	}
 	
-	public void compositeColonneDroite() {
+	
+	
+	/************************
+	 * 
+	 * Gestion colonne Droite
+	 * 
+	 ************************/
+	
+	
+	
+	public void compositeColonneDroite() throws SQLException {
 		colonneDroite = new Composite(compositeMain, SWT.CENTER);
-		//colonneDroite.setSize(700,700); //marche pas
-		//colonneDroite.setBackground(blanc);
-		colonneDroite.setLayout(rowLayoutV);
-		colonneDroite.setSize(500,500);
 		
-		compositeSelection();
-		compositeVue();
+		this.contenuColonneDroite=new Composite(colonneDroite,SWT.CENTER);
+		contenuColonneDroite.setLayout(rowLayoutV);
+		
+		Color lightCyan=new Color( display,204,255,255);
+		rowLayoutV.marginWidth=150;
+		
+		contenuColonneDroite.setBackground(lightCyan);
+		//compositeSelection();
+		//compositeVue();
+		Label HeadLabel =new Label(contenuColonneDroite,SWT.TITLE);
+		HeadLabel.setText("Bienvenu sur l'application Senettis \n \n");
+		HeadLabel.setFont( new Font(HeadLabel.getDisplay(), "Arial", 12, SWT.BOLD) );
+		HeadLabel.setBackground(lightCyan);
+		Label nbEmployeLabel = new Label(contenuColonneDroite, SWT.BACKGROUND);
+		nbEmployeLabel.setText("Nombre d'mployé dans la base : "+ Employe.getCountEmploye());
+		nbEmployeLabel.setBackground(lightCyan);
+		
+		contenuColonneDroite.pack();
+		colonneDroite.pack();
+		
+		
 		
 	}
 	
+	/*
+	 * CEtte partie doit être mise dans les différentes Vues car les actions sur les bouttons dépendent des vues
 	
 	public void compositeSelection() {
 		Composite selection = new Composite(colonneDroite, SWT.CENTER);
 		selection.setLayout(rowLayoutH);
 		selection.setBackground(bleuFonce);
-		//selection.setSize(200, 500); //marche pas
-		//selection.setBounds(10, 100, 50, 200); //marche pas 
+		
 		
 		Button boutonCreer = new Button(selection, SWT.CENTER);
 		boutonCreer.setText("Créer");
 		boutonCreer.setBackground(bleuFonce);
-		//boutonCreer.setBounds(10, 60, 100, 20);
-		//boutonCreer.addSelectionListener(new SelectionAdapter() {});
 		
 		Button boutonRechercher = new Button(selection, SWT.CENTER);
 		boutonRechercher.setText("Rechercher");
 		boutonRechercher.setBackground(bleuFonce);
-		//boutonRechercher.setBounds(10, 60, 100, 20);
-		//boutonRechercher.addSelectionListener(new SelectionAdapter() {});
+		
 	}
-	
+	*/
 	
 	public void compositeVue() {
 
@@ -185,6 +214,27 @@ public class Home {
 		Button boutonProduit = new Button(menu, SWT.NONE);
 		boutonProduit.setText("Produits");
 		boutonProduit.setBackground(bleuClair);
+		
+		
+		boutonProduit.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				contenuColonneDroite.dispose();
+				contenuColonneDroite=new VueProduit(getColonneDroite()).getComposite();
+				
+			
+				contenuColonneDroite.pack();
+				colonneDroite.pack();
+				System.out.println("done");
+
+			}
+
+			
+
+		});
+		
+		
 		//boutonProduit.setBounds(10, 60, 100, 20);
 		//boutonProduit.addSelectionListener(new SelectionAdapter() {});
 		
@@ -195,8 +245,11 @@ public class Home {
 		//boutonLivraison.addSelectionListener(new SelectionAdapter() {});
 		
 	}
-	
-	public Home() {
+	private Composite getColonneDroite() {
+		
+		return this.colonneDroite;
+	}
+	public Home() throws SQLException {
 		this.display = new Display();
 		this.shell = new Shell(display);
 		this.shell.setText("Senettis DB - Gestion de la base de données");
@@ -206,6 +259,7 @@ public class Home {
 		bleuFonce = new Color(display, 1, 88, 144);
 		
 		rowLayoutH = new RowLayout();
+		
 		rowLayoutH.type = SWT.HORIZONTAL;
 		
 	    rowLayoutV = new RowLayout();
@@ -226,7 +280,7 @@ public class Home {
 		menuBar();
 		compositeMain();
 		
-		this.shell.pack();
+		this.shell.setSize(1000,1000);
 		this.shell.open();
 
 		while (!shell.isDisposed()) {

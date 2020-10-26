@@ -4,6 +4,6 @@ import GUI.VueProduit;
 
 public class TestVueProduit {
 	public static void main(String[] args) {
-		VueProduit vp=new VueProduit();
+	
 	}
 }

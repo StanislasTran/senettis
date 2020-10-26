@@ -12,25 +12,17 @@ import org.eclipse.swt.widgets.*;
 import classes.Produit;
 
 public class VueProduit {
-
-	private Display display;;
-	private Shell shell;
-	private Label label;
-
-	public VueProduit() {
-		this.display = new Display();
-		this.shell = new Shell(display);
-		this.shell.setText("Senettis App");
-
-		Composite compositeMain = new Composite(shell, SWT.BACKGROUND);
-		Color couleur = new Color(display, 131, 133, 131);
-		compositeMain.setBackground(couleur);
+	private Composite vueProduit;
+	public VueProduit(Composite composite) {
+		this.vueProduit=new Composite(composite,SWT.NONE);
+		Color couleur = new Color(composite.getDisplay(), 131, 133, 131);
+		vueProduit.setBackground(couleur);
 
 		FillLayout fillLayout = new FillLayout();
 		fillLayout.type = SWT.VERTICAL;
-		compositeMain.setLayout(fillLayout);
+		vueProduit.setLayout(fillLayout);
 
-		Composite compositeNom = new Composite(compositeMain, SWT.NONE);
+		Composite compositeNom = new Composite(vueProduit, SWT.NONE);
 		compositeNom.setBackground(couleur);
 
 		Label labelNom = new Label(compositeNom, SWT.NONE);
@@ -42,7 +34,7 @@ public class VueProduit {
 		textNom.setText("");
 		textNom.setBounds(10, 30, 100, 25);
 
-		Composite compositePrix = new Composite(compositeMain, SWT.BACKGROUND);
+		Composite compositePrix = new Composite(vueProduit, SWT.BACKGROUND);
 		compositePrix.setBackground(couleur);
 
 		Label labelPrix = new Label(compositePrix, SWT.NONE);
@@ -54,7 +46,7 @@ public class VueProduit {
 		textPrix.setText("");
 		textPrix.setBounds(10, 30, 30, 25);
 
-		Composite compositeCommentaire = new Composite(compositeMain, SWT.BACKGROUND);
+		Composite compositeCommentaire = new Composite(vueProduit, SWT.BACKGROUND);
 		compositeCommentaire.setBackground(couleur);
 
 		Label labelCommentaire = new Label(compositeCommentaire, SWT.NONE);
@@ -67,7 +59,7 @@ public class VueProduit {
 		textCommentaire.setText("");
 		textCommentaire.setBounds(10, 30, 100, 25);
 
-		Composite compositeValidation = new Composite(compositeMain, SWT.CENTER);
+		Composite compositeValidation = new Composite(vueProduit, SWT.CENTER);
 		compositeValidation.setBackground(couleur);
 		Button button = new Button(compositeValidation, SWT.BACKGROUND);
 		button.setText("Valider");
@@ -92,20 +84,17 @@ public class VueProduit {
 
 		});
 
-		compositeMain.setSize(500, 500);
+		vueProduit.setSize(500, 500);
 		labelNom.pack();
 		labelPrix.pack();
 		labelCommentaire.pack();
 
-		this.shell.pack();
-		this.shell.open();
+		
 
-		while (!shell.isDisposed()) {
-			if (!display.readAndDispatch())
-				display.sleep();
-		}
-
-		display.dispose();
-		labelNom.dispose();
+	
+	}
+	
+	public Composite getComposite() {
+		return this.vueProduit;
 	}
 }

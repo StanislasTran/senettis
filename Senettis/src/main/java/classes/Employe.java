@@ -217,6 +217,28 @@ public class Employe {
 		return statement;
 	}
 	
+	
+	/**
+	 * Retourne le nombre d'employé dansl a base de données
+	 * @return
+	 * @throws SQLException
+	 */
+	public static int getCountEmploye() throws SQLException {
+		String reqSql = "SELECT count(*) as count FROM Employe";
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		Statement statement = connection.createStatement();
+		statement.executeQuery(reqSql);
+		ResultSet result =statement.getResultSet();
+		if(result.next()) {
+			if(result.getInt("count")>0) {
+				return result.getInt("count");
+			}
+				
+		}
+		
+		return 0;
+	}
+	
 	public static List<Employe> getAllEmploye() throws SQLException {
 
 		ResultSet result=selectAllEmploye().getResultSet();
