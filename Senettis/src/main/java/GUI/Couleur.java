@@ -11,7 +11,7 @@ public class Couleur {
 	public final static Color bleuFonce = new Color(displ, 1, 88, 144);
 	public final static Color gris = new Color(displ, 240, 240, 240);
 	
-	public static void setDsiplay(Display display) {
+	public static void setDisplay(Display display) {
 		displ=display;
 	}
 
