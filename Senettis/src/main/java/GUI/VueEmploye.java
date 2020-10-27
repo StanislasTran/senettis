@@ -18,19 +18,17 @@ public class VueEmploye {
 
 	private static Display display;
 	private Shell shell;
-	
 	private static Composite vueEmploye;
 	private static Composite selection;
 	private static Composite vue;
+
 	
-	static Color bleuClair = new Color(display,213, 234, 253);
-	static Color lightCyan = new Color(display,204,255,255);
-	static Color bleuFonce = new Color(display, 1, 88, 144);
-	static Color gris = new Color(display,240, 240, 240);
 
-	public VueEmploye (Composite composite, Shell shell) {
+	public VueEmploye (Composite composite, Shell shell,Display display) {
 		vueEmploye=new Composite(composite,SWT.NONE);
-
+		this.display=display;
+		Couleur.setDsiplay(display); // pour utiliser les couleurs du fichier couleur
+		
 		RowLayout rowLayout = new RowLayout();
 		rowLayout.type = SWT.VERTICAL;
 		vueEmploye.setLayout(rowLayout);
@@ -44,7 +42,7 @@ public class VueEmploye {
 		RowLayout rowLayout = new RowLayout();
 		rowLayout.marginWidth = 20;
 		selection.setLayout(rowLayout);
-		selection.setBackground(gris);
+		selection.setBackground(Couleur.gris);
 		selection.pack();
 		
 		Button boutonCreer = new Button(selection, SWT.CENTER);
@@ -80,11 +78,11 @@ public class VueEmploye {
 
 		//Titre
 		Composite compositeTitre = new Composite(selection, SWT.NONE);
-		compositeTitre.setBackground(bleuClair);
+		compositeTitre.setBackground(Couleur.bleuClair);
 		compositeTitre.setLayout(rowLayoutV);
 
 		Label labelTitre = new Label(compositeTitre, SWT.NONE);
-		labelTitre.setBackground(bleuClair);
+		labelTitre.setBackground(Couleur.bleuClair);
 		labelTitre.setText("Titre : ");
 		labelTitre.setBounds(10, 10, 100, 25);
 
@@ -94,11 +92,11 @@ public class VueEmploye {
 		
 		//Nom
 		Composite compositeNom = new Composite(selection, SWT.NONE);
-		compositeNom.setBackground(bleuClair);
+		compositeNom.setBackground(Couleur.bleuClair);
 		compositeNom.setLayout(rowLayoutV);
 
 		Label labelNom = new Label(compositeNom, SWT.NONE);
-		labelNom.setBackground(bleuClair);
+		labelNom.setBackground(Couleur.bleuClair);
 		labelNom.setText("Nom : ");
 		labelNom.setBounds(10, 10, 100, 25);
 
@@ -108,11 +106,11 @@ public class VueEmploye {
 		
 		//Prenom
 		Composite compositePrenom = new Composite(selection, SWT.NONE);
-		compositePrenom.setBackground(bleuClair);
+		compositePrenom.setBackground(Couleur.bleuClair);
 		compositePrenom.setLayout(rowLayoutV);
 
 		Label labelPrenom = new Label(compositePrenom, SWT.NONE);
-		labelPrenom.setBackground(bleuClair);
+		labelPrenom.setBackground(Couleur.bleuClair);
 		labelPrenom.setText("Prenom : ");
 		labelPrenom.setBounds(10, 10, 100, 25);
 
@@ -121,7 +119,7 @@ public class VueEmploye {
 		//textNom.setBounds(10, 30, 100, 25);
 
 		Composite compositeValidation = new Composite(selection, SWT.CENTER);
-		compositeValidation.setBackground(bleuClair);
+		compositeValidation.setBackground(Couleur.bleuClair);
 		Button button = new Button(compositeValidation, SWT.BACKGROUND);
 		button.setText("Valider");
 		button.setBounds(10, 60, 100, 25);
@@ -158,7 +156,7 @@ public class VueEmploye {
 		
 	    vue = new Composite(composite, SWT.NONE);
 		vue.setLayout(rowLayoutV);
-		vue.setBackground(gris);
+		vue.setBackground(Couleur.gris);
 		
 	    final Table table = new Table (vue, SWT.BORDER | SWT.MULTI);
 	    table.setLinesVisible (true);
