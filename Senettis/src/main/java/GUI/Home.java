@@ -21,6 +21,8 @@ public class Home {
 	private Shell shell;
 	Rectangle rect;
 	
+	
+	
 	private Color blanc;
 	private Color bleuClair;
 	private Color bleuFonce;
@@ -132,7 +134,7 @@ public class Home {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				contenuColonneDroite.dispose();
-				contenuColonneDroite = new VueEmploye(colonneDroite, shell).getComposite();
+				contenuColonneDroite = new VueEmploye(colonneDroite, shell,display).getComposite();
 				contenuColonneDroite.pack();
 				colonneDroite.pack();
 			}
