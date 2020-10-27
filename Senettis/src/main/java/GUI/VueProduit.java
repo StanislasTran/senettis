@@ -1,13 +1,9 @@
 package GUI;
 
 import java.sql.SQLException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-
 import org.eclipse.swt.*;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
@@ -32,7 +28,7 @@ public class VueProduit {
 		vueProduitAfficher(vueProduit);
 
 		vueProduit.pack();
-	
+		vueProduit.getParent().pack();
 
 	}
 
@@ -176,6 +172,20 @@ public class VueProduit {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+				
+				
+				
+				RowLayout rowLayoutV = new RowLayout(SWT.VERTICAL);
+				vueProduit.setLayout(rowLayoutV);
+				compositeSelection(vueProduit);
+				vueProduitAfficher(vueProduit);
+				compositeNom.dispose();
+				compositePrix.dispose();
+				compositeCommentaire.dispose();
+				compositeValidation.dispose();
+				composite.pack();
+				composite.getParent().pack();
+				
 				System.out.println("done");
 
 			}
@@ -189,6 +199,10 @@ public class VueProduit {
 		composite.pack();
 		composite.getParent().pack();
 
+	}
+	
+	public void setVueProduit(Composite composite) {
+		this.vueProduit=composite;
 	}
 
 }
