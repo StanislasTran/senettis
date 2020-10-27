@@ -39,9 +39,14 @@ public class Employe {
 	public Employe(int EmployeId, String t, String nom, String prenom, String mail, String telephone, Integer numeroMatricule,
 			String pointure, String taille, String dateArrivee, Double nombreHeures, Double remboursementTransport,
 			Double remboursementTelephone, Double salaire,String status) {
-		this(t,nom,prenom,numeroMatricule,dateArrivee,status);
-		
+		this(t,nom,prenom,mail,telephone,numeroMatricule,pointure,taille,dateArrivee,nombreHeures,remboursementTransport,remboursementTelephone,salaire,status);
 		this.employeId = employeId;
+	}
+	
+	public Employe(String t, String nom, String prenom, String mail, String telephone, Integer numeroMatricule,
+			String pointure, String taille, String dateArrivee, Double nombreHeures, Double remboursementTransport,
+			Double remboursementTelephone, Double salaire,String status) {
+		this(t,nom,prenom,numeroMatricule,dateArrivee,status);
 		
 		//je verifie que l adresse mail est correcte 
 		String regex = "^(.+)@(.+)$";
