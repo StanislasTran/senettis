@@ -27,7 +27,7 @@ public class VueEmploye {
 	public VueEmploye (Composite composite, Shell shell,Display display) {
 		vueEmploye=new Composite(composite,SWT.NONE);
 		this.display=display;
-		Couleur.setDsiplay(display); // pour utiliser les couleurs du fichier couleur
+		Couleur.setDisplay(display); // pour utiliser les couleurs du fichier couleur
 		
 		RowLayout rowLayout = new RowLayout();
 		rowLayout.type = SWT.VERTICAL;
