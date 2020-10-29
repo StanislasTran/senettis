@@ -16,18 +16,18 @@ import classes.Produit;
 
 public class VueEmploye {
 
-	private static Display display;
+	private Display display;
 	private Shell shell;
-	private static Composite vueEmploye;
-	private static Composite selection;
-	private static Composite vue;
+	private Composite vueEmploye;
+	private Composite selection;
+	private Composite vue;
 
 	
 
 	public VueEmploye (Composite composite, Shell shell,Display display) {
 		vueEmploye=new Composite(composite,SWT.NONE);
 		this.display=display;
-		Couleur.setDsiplay(display); // pour utiliser les couleurs du fichier couleur
+		Couleur.setDisplay(display); // pour utiliser les couleurs du fichier couleur
 		
 		RowLayout rowLayout = new RowLayout();
 		rowLayout.type = SWT.VERTICAL;
@@ -37,7 +37,7 @@ public class VueEmploye {
 		vueEmployeAfficher(vueEmploye, shell);
 	}
 	
-	public static void compositeSelection(Composite composite) {
+	public void compositeSelection(Composite composite) {
 		selection = new Composite(composite, SWT.NONE);
 		RowLayout rowLayout = new RowLayout();
 		rowLayout.marginWidth = 20;
@@ -63,7 +63,7 @@ public class VueEmploye {
 	}
 	
 	
-	public static void vueEmployeCreer() {
+	public void vueEmployeCreer() {
 		vue.dispose();
 		selection.dispose();
 		
@@ -321,6 +321,23 @@ public class VueEmploye {
 				 e.printStackTrace(); 
 			  } 
 		  
+			  RowLayout rowLayout = new RowLayout();
+			  rowLayout.type = SWT.VERTICAL;
+			  vueEmploye.setLayout(rowLayout);
+			
+			  for (Control c : selection.getChildren()) {
+				  c.dispose();
+			  }
+			  for (Control c : vue.getChildren()) {
+				  c.dispose();
+			  }
+			  compositeSelection(vueEmploye);
+			  vueEmployeAfficher(vueEmploye, shell);
+			  vue.pack();
+			  selection.pack();
+			  vue.getParent().pack();
+			  selection.getParent().pack();
+		  
 		  }
 		  
 		});
@@ -336,7 +353,7 @@ public class VueEmploye {
 		
 	}
 	
-	public static void vueEmployeAfficher(Composite composite, Shell shell) {
+	public void vueEmployeAfficher(Composite composite, Shell shell) {
 		
 		RowLayout rowLayoutV = new RowLayout();
 	    rowLayoutV.type = SWT.VERTICAL;
