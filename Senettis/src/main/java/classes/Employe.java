@@ -29,14 +29,14 @@ public class Employe {
 	private Integer numeroMatricule;
 	private String pointure;
 	private String taille;
-	private Date dateArrivee;
+	private String dateArrivee;
 	private Double nombreHeures;
 	private Double remboursementTransport;
 	private Double remboursementTelephone;
 	private Double salaire;
 	private String status;
 	
-	public Employe(int EmployeId, String t, String nom, String prenom, String mail, String telephone, Integer numeroMatricule,
+	public Employe(int employeId, String t, String nom, String prenom, String mail, String telephone, Integer numeroMatricule,
 			String pointure, String taille, String dateArrivee, Double nombreHeures, Double remboursementTransport,
 			Double remboursementTelephone, Double salaire,String status) {
 		this(t,nom,prenom,mail,telephone,numeroMatricule,pointure,taille,dateArrivee,nombreHeures,remboursementTransport,remboursementTelephone,salaire,status);
@@ -49,27 +49,22 @@ public class Employe {
 		this(t,nom,prenom,numeroMatricule,dateArrivee,status);
 		
 		//je verifie que l adresse mail est correcte 
-		String regex = "^(.+)@(.+)$";
-		Pattern pattern = Pattern.compile(regex);
-		Matcher matcher = pattern.matcher(mail);
-		if (!matcher.matches()) {
-			throw new Error("l adresse mail est incorrecte");
+		if (mail != null) {
+			String regex = "^(.+)@(.+)$";
+			Pattern pattern = Pattern.compile(regex);
+			Matcher matcher = pattern.matcher(mail);
+			if (!matcher.matches()) {
+				throw new Error("l adresse mail est incorrecte");
+			}
 		}
-		
-	
 		this.mail = mail;
-		telephone = telephone.replace(".", "");
+		
+		if (telephone != null) {
+			telephone = telephone.replace(".", "");
+		}
 		this.telephone = telephone;
 		this.pointure = pointure;
 		this.taille = taille;
-	
-		
-		//on transforme la date qui est en string vers un type date
-		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
-	    Date dateFinale = null;
-		
-		this.dateArrivee = dateFinale;
-		
 		this.nombreHeures = nombreHeures;
 		this.remboursementTransport = remboursementTransport;
 		this.remboursementTelephone = remboursementTelephone;
@@ -79,22 +74,9 @@ public class Employe {
 	public Employe(String t, String nom, String prenom,Integer numeroMatricule, String dateArrivee,String status) {
 		this(t,nom,prenom,numeroMatricule);
 		this.status=status;
-
+		//tester la date ??
+		this.dateArrivee = dateArrivee;
 		
-		//on transforme la date qui est en string vers un type date
-		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
-	    Date dateFinale = null;
-		try {
-			dateFinale = simpleDateFormat.parse(dateArrivee);
-		} catch (ParseException e) {
-			simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
-			try {
-				dateFinale = simpleDateFormat.parse(dateArrivee);
-			} catch (ParseException e2) {
-				e2.printStackTrace();
-			}
-		}
-		this.dateArrivee = dateFinale;
 	}
 
 	public Employe(String t, String nom, String prenom, Integer numeroMatricule) {
@@ -121,47 +103,7 @@ public class Employe {
 		this.numeroMatricule = numeroMatricule;
 	}
 
-	
-	public Employe(int EmployeId, String t, String nom, String prenom, String mail, String telephone, Integer numeroMatricule,
-			String pointure, String taille, Date dateArrivee, Double nombreHeures, Double remboursementTransport,
-			Double remboursementTelephone, Double salaire,String status) {
-		this(t,nom,prenom,numeroMatricule);
-		
-		this.status = status;
-		this.dateArrivee = dateArrivee;
-		this.employeId = employeId;
-		
-		//je verifie que l adresse mail est correcte 
-		if (mail != null) {
-			String regex = "^(.+)@(.+)$";
-			Pattern pattern = Pattern.compile(regex);
-			Matcher matcher = pattern.matcher(mail);
-			if (!matcher.matches()) {
-				throw new Error("l adresse mail est incorrecte");
-			}
-		}
-	
-		this.mail = mail;
-		
-		if (telephone != null) {
-			telephone = telephone.replace(".", "");
-		}
-		this.telephone = telephone;
-		this.pointure = pointure;
-		this.taille = taille;
-	
-		
-		//on transforme la date qui est en string vers un type date
-		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
-	    Date dateFinale = null;
-		
-		this.dateArrivee = dateFinale;
-		
-		this.nombreHeures = nombreHeures;
-		this.remboursementTransport = remboursementTransport;
-		this.remboursementTelephone = remboursementTelephone;
-		this.salaire = salaire;
-	}
+
 
 	public int insertDatabase() throws SQLException {
 		String reqSql = "INSERT INTO Employe(titre,nom,prenom,mail,telephone,numero_matricule,pointure,taille,date_arrivee,nombre_heures,remboursement_transport,remboursement_telephone,salaire,status) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
@@ -224,7 +166,7 @@ public class Employe {
 	
 	
 	/**
-	 * Retourne le nombre d'employé dansl a base de données
+	 * Retourne le nombre d'employé dans la base de données
 	 * @return
 	 * @throws SQLException
 	 */
@@ -240,7 +182,6 @@ public class Employe {
 			}
 				
 		}
-		
 		return 0;
 	}
 	
@@ -259,7 +200,20 @@ public class Employe {
 			int numeroMatricule=result.getInt("Numero_matricule");
 			String pointure=result.getString("Pointure");
 			String taille=result.getString("Taille");
-			Date dateArrivee=result.getDate("Date_arrivee");
+			
+			String dateArrivee;
+			if (result.getString("Date_arrivee") == null) {
+				//System.out.println("date null");
+				dateArrivee = null;
+			}
+			else {
+				//System.out.println("pas null");
+				String usDate = result.getString("Date_arrivee");
+				//System.out.println("us : "+usDate);
+				dateArrivee = usDate.substring(8,10) + "/" + usDate.substring(5,7) + "/" + usDate.substring(0,4);
+				//System.out.println("date obtenue : "+dateArrivee);
+			}
+			
 			Double nombreHeures=result.getDouble("Nombre_heures");
 			Double remboursementTransport=result.getDouble("Remboursement_transport");
 			Double remboursementTelephone=result.getDouble("Remboursement_telephone");
@@ -463,22 +417,13 @@ public class Employe {
 	}
 
 
-	public Date getDateArrivee() {
-		if (dateArrivee == null) {
-			SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
-		    Date date = null;
-			try {
-				date = simpleDateFormat.parse("00/00/0000");
-			} catch (ParseException e) {
-				e.printStackTrace();
-			}
-			return date;
-		}
+	public String getDateArrivee() {
+
 		return dateArrivee;
 	}
 
 
-	public void setDateArrivee(Date dateArrivee) {
+	public void setDateArrivee(String dateArrivee) {
 		if (dateArrivee == null) {
 			throw new Error("setDateArrivee : le dateArrivee indique est vide");
 		}
