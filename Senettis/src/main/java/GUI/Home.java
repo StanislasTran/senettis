@@ -134,7 +134,7 @@ public class Home {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				contenuColonneDroite.dispose();
-				contenuColonneDroite = new VueEmploye(colonneDroite, shell,display).getComposite();
+				contenuColonneDroite = new VueEmploye(colonneDroite,display).getComposite();
 				contenuColonneDroite.pack();
 				colonneDroite.pack();
 			}
