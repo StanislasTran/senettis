@@ -16,11 +16,11 @@ import classes.Produit;
 
 public class VueEmploye {
 
-	private Display display;
+	private static Display display;
 	private Shell shell;
-	private Composite vueEmploye;
-	private Composite selection;
-	private Composite vue;
+	private static Composite vueEmploye;
+	private static Composite selection;
+	private static Composite vue;
 
 	
 
@@ -37,7 +37,7 @@ public class VueEmploye {
 		vueEmployeAfficher(vueEmploye, shell);
 	}
 	
-	public void compositeSelection(Composite composite) {
+	public static void compositeSelection(Composite composite) {
 		selection = new Composite(composite, SWT.NONE);
 		RowLayout rowLayout = new RowLayout();
 		rowLayout.marginWidth = 20;
@@ -63,7 +63,7 @@ public class VueEmploye {
 	}
 	
 	
-	public void vueEmployeCreer() {
+	public static void vueEmployeCreer() {
 		vue.dispose();
 		selection.dispose();
 		
@@ -321,23 +321,6 @@ public class VueEmploye {
 				 e.printStackTrace(); 
 			  } 
 		  
-			  RowLayout rowLayout = new RowLayout();
-			  rowLayout.type = SWT.VERTICAL;
-			  vueEmploye.setLayout(rowLayout);
-			
-			  for (Control c : selection.getChildren()) {
-				  c.dispose();
-			  }
-			  for (Control c : vue.getChildren()) {
-				  c.dispose();
-			  }
-			  compositeSelection(vueEmploye);
-			  vueEmployeAfficher(vueEmploye, shell);
-			  vue.pack();
-			  selection.pack();
-			  vue.getParent().pack();
-			  selection.getParent().pack();
-		  
 		  }
 		  
 		});
@@ -353,7 +336,7 @@ public class VueEmploye {
 		
 	}
 	
-	public void vueEmployeAfficher(Composite composite, Shell shell) {
+	public static void vueEmployeAfficher(Composite composite, Shell shell) {
 		
 		RowLayout rowLayoutV = new RowLayout();
 	    rowLayoutV.type = SWT.VERTICAL;

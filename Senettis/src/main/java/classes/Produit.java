@@ -121,12 +121,38 @@ public class Produit {
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
 		statement.setObject(1, this.nom.toString(), Types.VARCHAR);
-		statement.setObject(2, this.prix, Types.VARCHAR);
-		statement.setObject(3, this.commentaires, Types.DECIMAL);
+		statement.setObject(2, this.prix, Types.DECIMAL);
+		statement.setObject(3, this.commentaires, Types.VARCHAR);
 		statement.setObject(4, this.status, Types.VARCHAR);
 		statement.setObject(5, this.produitId, Types.INTEGER);
-
+		System.out.println(this.produitId);
+		System.out.println("MAJ");
 		return statement.executeUpdate();
+
+	}
+
+	public static Produit getProductById(int productId) throws SQLException {
+		String reqSql = "SELECT ProduitId,Nom,Prix,Commentaires,Status FROM Produit WHERE ProduitId=?;";
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		PreparedStatement statement = connection.prepareStatement(reqSql);
+		statement.setObject(1, productId, Types.INTEGER);
+		statement.executeQuery();
+		
+		ResultSet result=statement.getResultSet();
+		
+		if (result.next()) {
+			int produitId = result.getInt("ProduitId");
+			String nom = result.getString("Nom");
+			Double prix = result.getDouble("Prix");
+			String commentaires = result.getString("Commentaires");
+			String status = result.getString("Status");
+			return new Produit(produitId, nom, prix, commentaires, status);
+
+		}else {
+			throw new SQLException("Data not found");
+		}
+
+		
 	}
 
 	/***

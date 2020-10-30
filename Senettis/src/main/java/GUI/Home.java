@@ -157,7 +157,12 @@ public class Home {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				contenuColonneDroite.dispose();
-				contenuColonneDroite=new VueProduit(getColonneDroite()).getVueProduit();
+				try {
+					contenuColonneDroite=new VueProduit(getColonneDroite()).getVueProduit();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				
 				contenuColonneDroite.pack();
 				colonneDroite.pack();
