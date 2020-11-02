@@ -213,10 +213,13 @@ public class Employe {
 			else {
 				throw new Error("La date d'arrivée indiquée est incorrecte, une date doit être indiqué selon un des formats suivant : 31-01-2000, 31/01/2000, 2000-01-31 ou 2000/01/31.");
 			}
+			
+			/*
 			String usDate = result.getString("Date_arrivee");
 			//on transforme en date au format francais
 			dateArrivee = usDate.substring(8,10) + "/" + usDate.substring(5,7) + "/" + usDate.substring(0,4);
 			this.dateArrivee = dateArrivee;
+			*/
 			//tester 
 		}
 		else {
@@ -645,6 +648,7 @@ public class Employe {
 	}
 
 	public void setDateArrivee(String dateArrivee) {
+		/*
 		if (dateArrivee != null){
 			if (dateArrivee.substring(0,4).isNumber() && dateArrivee.substring(8,10).isNumber() && dateArrivee.substring(5,7).isNumber()) {
 				//date anglaise
@@ -663,11 +667,13 @@ public class Employe {
 			//on transforme en date au format francais
 			dateArrivee = usDate.substring(8,10) + "/" + usDate.substring(5,7) + "/" + usDate.substring(0,4);
 			this.dateArrivee = dateArrivee;
+			
 			//tester 
 		}
 		else {
 			throw new Error("La date d'arrivée indiquée est vide.");
 		}
+		*/
 	}
 
 	public Double getNombreHeures() {
