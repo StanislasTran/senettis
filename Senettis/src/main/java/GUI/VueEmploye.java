@@ -31,7 +31,7 @@ public class VueEmploye {
 	public VueEmploye (Composite composite,Display display) {
 		this.parent = composite;
 		this.display=display;
-		Couleur.setDisplay(display); // pour utiliser les couleurs du fichier couleur
+	 	Couleur.setDisplay(display); // pour utiliser les couleurs du fichier couleur
 		
 		newVueEmploye(parent);
 	}
