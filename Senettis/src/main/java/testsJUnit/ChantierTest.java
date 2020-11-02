@@ -11,8 +11,10 @@ import org.junit.Test;
 
 import classes.Chantier;
 
+
 public class ChantierTest
 {
+	
     private Chantier puteaux;
     private Chantier boulogne;
 

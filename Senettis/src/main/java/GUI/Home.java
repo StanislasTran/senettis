@@ -1,5 +1,7 @@
 package GUI;
 
+import java.io.File;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
@@ -58,7 +60,15 @@ public class Home {
 	
 	public void compositeMain() throws SQLException {
 		compositeMain = new Composite(shell, SWT.NONE);
-		compositeMain.setBackground(bleuClair);
+		//compositeMain.setBackground(bleuClair);
+		
+		
+		String file_name = "mainWallPaper.jpg";
+		String backgroundLocation=this.getClass().getClassLoader().getResource("test4.png").getPath();
+		
+		
+		Image background=new Image(display,backgroundLocation);
+		compositeMain.setBackgroundImage(background);
 		compositeMain.setLayout(rowLayoutH);
 		
 		compositeColonneGauche();
@@ -83,7 +93,7 @@ public class Home {
 		
 		rowLayoutV.marginWidth = 441;
 		
-		contenuColonneDroite.setBackground(lightCyan);
+		//contenuColonneDroite.setBackground(lightCyan);
 		Label HeadLabel =new Label(contenuColonneDroite,SWT.TITLE);
 		HeadLabel.setText("Bienvenu sur l'application Senettis \n \n");
 		HeadLabel.setFont( new Font(HeadLabel.getDisplay(), "Arial", 12, SWT.BOLD) );
@@ -148,7 +158,8 @@ public class Home {
 		Button boutonAffectation = new Button(menu, SWT.NONE);
 		boutonAffectation.setText("Affectations");
 		boutonAffectation.setBackground(bleuClair);
-		//boutonAffectation.addSelectionListener(new SelectionAdapter() {});
+		
+
 		
 		Button boutonProduit = new Button(menu, SWT.NONE);
 		boutonProduit.setText("Produits");
@@ -181,7 +192,7 @@ public class Home {
 		return this.colonneDroite;
 	}
 	
-	public Home() throws SQLException {
+	public Home() throws SQLException, IOException {
 		this.display = new Display();
 		this.shell = new Shell(display);
 		this.shell.setText("Senettis DB - Gestion de la base de données");

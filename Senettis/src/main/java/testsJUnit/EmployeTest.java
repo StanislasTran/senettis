@@ -11,8 +11,12 @@ import org.junit.Test;
 
 import classes.Employe;
 
+
+
+
 public class EmployeTest
 {
+	
     private Employe laetitia;
     private Employe stan;
     private Employe alyssa;
@@ -32,7 +36,7 @@ public class EmployeTest
      laetitia.setMail("l@l.fr"); //ok
      
     }
-    
+    /*
     @Test
     public void testGet() 
     {
@@ -69,6 +73,6 @@ public class EmployeTest
         assertEquals(stan.getDateArrivee(),alyssa.getDateArrivee());
     }
     
-    
+    */
 }
 
