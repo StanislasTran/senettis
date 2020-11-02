@@ -65,7 +65,7 @@ public class Home {
 		
 		String file_name = "mainWallPaper.jpg";
 		String backgroundLocation=this.getClass().getClassLoader().getResource("test4.png").getPath();
-		
+		 
 		
 		Image background=new Image(display,backgroundLocation);
 		compositeMain.setBackgroundImage(background);
