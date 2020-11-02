@@ -90,8 +90,8 @@ public class Home {
 		HeadLabel.setBackground(lightCyan);
 		
 		Label nbEmployeLabel = new Label(contenuColonneDroite, SWT.BACKGROUND);
-		nbEmployeLabel.setText("Nombre d'mployé dans la base : "+ Employe.getCountEmploye());
-		nbEmployeLabel.setBackground(lightCyan);
+		//nbEmployeLabel.setText("Nombre d'mployé dans la base : "+ Employe.getCountEmploye());
+		//nbEmployeLabel.setBackground(lightCyan);
 		
 		contenuColonneDroite.pack();
 		colonneDroite.pack();

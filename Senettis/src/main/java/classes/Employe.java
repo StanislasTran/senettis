@@ -1,14 +1,17 @@
+
 package classes;
 
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.microsoft.sqlserver.jdbc.StringUtils;
+
 import connexion.SQLDatabaseConnection;
 
+import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -36,13 +39,59 @@ public class Employe {
 	private Double salaire;
 	private String status;
 	
+	//Constructeurs-----------------------------------------------
+	/***
+	 * 
+	 * cree un employe a partir des champs employeId, titre, nom, prenom, numeroMatricule, status, dateArrivee, mail, telephone, pointure, taille, nombreHeures, renboursementTransport, remboursementTelephone, salaire
+	 * 
+	 * @param employeId : int
+	 * @param t : verification faite
+	 * @param nom
+	 * @param prenom
+	 * @param mail : verification faite
+	 * @param telephone
+	 * @param numeroMatricule : int
+	 * @param pointure
+	 * @param taille
+	 * @param dateArrivee : string, verification faite
+	 * @param nombreHeures : double
+	 * @param remboursementTransport :double
+	 * @param remboursementTelephone : double
+	 * @param salaire :double
+	 * @param status : verification faite
+	 */
 	public Employe(int employeId, String t, String nom, String prenom, String mail, String telephone, Integer numeroMatricule,
 			String pointure, String taille, String dateArrivee, Double nombreHeures, Double remboursementTransport,
 			Double remboursementTelephone, Double salaire,String status) {
 		this(t,nom,prenom,mail,telephone,numeroMatricule,pointure,taille,dateArrivee,nombreHeures,remboursementTransport,remboursementTelephone,salaire,status);
-		this.employeId = employeId;
+		
+		//id
+		if ((Integer)employeId != null){
+			this.employeId = employeId;
+		}
+		else {
+			throw new Error("L'employéId indiqué est vide.");
+		}
 	}
 	
+	/***
+	 * cree un employe a partir des champs titre, nom, prenom, numeroMatricule, status, dateArrivee, mail, telephone, pointure, taille, nombreHeures, renboursementTransport, remboursementTelephone, salaire
+	 * 
+	 * @param t : verification faite
+	 * @param nom
+	 * @param prenom
+	 * @param mail : verification faite
+	 * @param telephone
+	 * @param numeroMatricule : int
+	 * @param pointure
+	 * @param taille
+	 * @param dateArrivee : string, verification faite
+	 * @param nombreHeures : double
+	 * @param remboursementTransport :double
+	 * @param remboursementTelephone : double
+	 * @param salaire :double
+	 * @param status : verification faite
+	 */
 	public Employe(String t, String nom, String prenom, String mail, String telephone, Integer numeroMatricule,
 			String pointure, String taille, String dateArrivee, Double nombreHeures, Double remboursementTransport,
 			Double remboursementTelephone, Double salaire,String status) {
@@ -54,31 +103,135 @@ public class Employe {
 			Pattern pattern = Pattern.compile(regex);
 			Matcher matcher = pattern.matcher(mail);
 			if (!matcher.matches()) {
-				throw new Error("l adresse mail est incorrecte");
+				throw new Error("L'adresse mail est incorrecte.");
 			}
 		}
 		this.mail = mail;
 		
-		if (telephone != null) {
+		//telephone
+		if (telephone != null){
 			telephone = telephone.replace(".", "");
+			this.telephone = telephone;
 		}
-		this.telephone = telephone;
-		this.pointure = pointure;
-		this.taille = taille;
-		this.nombreHeures = nombreHeures;
-		this.remboursementTransport = remboursementTransport;
-		this.remboursementTelephone = remboursementTelephone;
-		this.salaire = salaire;
-	}
+		else {
+			throw new Error("Le telephone indiqué est vide.");
+		}
+		
+		//pointure
+		if (pointure != null){
+			this.pointure = pointure;
+		}
+		else {
+			throw new Error("La pointure indiquée est vide.");
+		}
+		
+		//taille
+		if (taille != null){
+			this.taille = taille;
+		}
+		else {
+			throw new Error("La taille indiquée est vide.");
+		}
 
-	public Employe(String t, String nom, String prenom,Integer numeroMatricule, String dateArrivee,String status) {
-		this(t,nom,prenom,numeroMatricule);
-		this.status=status;
-		//tester la date ??
-		this.dateArrivee = dateArrivee;
+		//nombreHeures
+		if (nombreHeures != null){
+			this.nombreHeures = nombreHeures;
+		}
+		else {
+			throw new Error("Le nombre d'heures indiqué est vide.");
+		}
+		
+		//remboursement transport
+		if (remboursementTransport != null){
+			this.remboursementTransport = remboursementTransport;
+		}
+		else {
+			throw new Error("Le remboursement transport indiqué est vide.");
+		}
+		
+		//remboursement telephone
+		if (remboursementTelephone != null){
+			this.remboursementTelephone = remboursementTelephone;
+		}
+		else {
+			throw new Error("Le remboursement telephone indiqué est vide.");
+		}
+		
+		//salaire
+		if (salaire != null){
+			this.salaire = salaire;
+		}
+		else {
+			throw new Error("Le salaire indiqué est vide.");
+		}
 		
 	}
 
+	/***
+	 * cree un employe a partir des champs titre, nom, prenom, numeroMatricule, status et dateArrivee
+	 * @param t : verification faite
+	 * @param nom
+	 * @param prenom
+	 * @param numeroMatricule : int
+	 * @param dateArrivee : string, verification faite
+	 * @param status : verification faite
+	 */
+	public Employe(String t, String nom, String prenom,Integer numeroMatricule, String dateArrivee,String status) {
+		this(t,nom,prenom,numeroMatricule);
+		
+		//status
+		if (status != null){
+			if (status == "Publié" || status == "publié") {
+				this.status = "Publié";
+			}
+			else if (status == "Archivé" || status == "archivé") {
+				this.status = "Archivé";
+			}
+			else if (status == "Draft" || status == "draft") {
+				this.status = "Draft";
+			}
+			else {
+				throw new Error("Le status indiqué est incorrect, le status doit être publié, archivé ou draft.");
+			}
+		}
+		else {
+			throw new Error("Le status indiqué est vide.");
+		}
+		
+		//date arrivee
+		if (dateArrivee != null){
+			if (StringUtils.isNumeric(dateArrivee.substring(0,4)) && StringUtils.isNumeric(dateArrivee.substring(8,10)) && StringUtils.isNumeric(dateArrivee.substring(5,7))) {
+				//date anglaise
+				//on reecrit en format francais
+				dateArrivee = dateArrivee.substring(8,10) + "/" + dateArrivee.substring(5,7) + "/" + dateArrivee.substring(0,4);
+			}
+			else if (StringUtils.isNumeric(dateArrivee.substring(6,10)) && StringUtils.isNumeric(dateArrivee.substring(3,5)) && StringUtils.isNumeric(dateArrivee.substring(0,2))) {
+				//date francaise
+				//on reecrit en format francais juste pour s'assurer que toutes les dates seront ecrites avec le meme format jj/mm/aaaa
+				dateArrivee = dateArrivee.substring(0,2) + "/" + dateArrivee.substring(3,5) + "/" + dateArrivee.substring(6,10);				
+			}
+			else {
+				throw new Error("La date d'arrivée indiquée est incorrecte, une date doit être indiqué selon un des formats suivant : 31-01-2000, 31/01/2000, 2000-01-31 ou 2000/01/31.");
+			}
+			String usDate = result.getString("Date_arrivee");
+			//on transforme en date au format francais
+			dateArrivee = usDate.substring(8,10) + "/" + usDate.substring(5,7) + "/" + usDate.substring(0,4);
+			this.dateArrivee = dateArrivee;
+			//tester 
+		}
+		else {
+			throw new Error("La date d'arrivée indiquée est vide.");
+		}
+		
+	}
+
+	/***
+	 * cree un employe a partir des champs titre, nom, prenom et numeroMatricule
+	 * @param t : verification faite
+	 * @param nom
+	 * @param prenom
+	 * @param numeroMatricule : int
+	 */
 	public Employe(String t, String nom, String prenom, Integer numeroMatricule) {
 		super();
 		
@@ -97,14 +250,41 @@ public class Employe {
 				this.titre = titre.M;
 			}
 		}
+		else {
+			throw new Error("Le titre indiqué est vide.");
+		}
 		
-		this.nom = nom;
-		this.prenom = prenom;
-		this.numeroMatricule = numeroMatricule;
+		//nom
+		if (nom != null){
+			this.nom = nom;
+		}
+		else {
+			throw new Error("Le nom indiqué est vide.");
+		}
+		
+		//prenom
+		if (prenom != null){
+			this.prenom = prenom;
+		}
+		else {
+			throw new Error("Le prénom indiqué est vide.");
+		}
+		
+		//numero matricule
+		if (numeroMatricule != null){
+			this.numeroMatricule = numeroMatricule;
+		}
+		else {
+			throw new Error("Le numéro de matricule indiqué est vide.");
+		}
 	}
 
-
-
+	//Liens avec la BDD-----------------------------------------------
+/***
+ 	* permet d'ajouter un employe dans la base de données 
+ * @return
+ * @throws SQLException
+ */
 	public int insertDatabase() throws SQLException {
 		String reqSql = "INSERT INTO Employe(titre,nom,prenom,mail,telephone,numero_matricule,pointure,taille,date_arrivee,nombre_heures,remboursement_transport,remboursement_telephone,salaire,status) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 		
@@ -128,8 +308,14 @@ public class Employe {
 		return statement.executeUpdate();
 	}
 	
-	
-	
+	/***
+	 * Permet de modifier un employe dans la base de données, pour que la requete fonctionne 
+	 * il faut que l'employe ai son champs employeId completé car l'update se fait a partir de l'id
+	 * la requete modifiera tous les champs de l'employe en les remplacant par la valeur actuelle associee 
+	 * a cet employe pour chaque champs
+	 * @return
+	 * @throws SQLException
+	 */
 	public int updateDatabase() throws SQLException {
 		String reqSql = "UPDATE Employe SET titre=?, nom=?, prenom=?, mail=?, telephone=?, numero_matricule=?, pointure=?, taille=?, date_arrivee=?, nombre_heures=?, remboursement_transport=?, remboursement_telephone=?, salaire=?, status=? WHERE EmployeId=?;";
 		
@@ -154,7 +340,11 @@ public class Employe {
 		return statement.executeUpdate();
 	}
 	
-	
+	/***
+	 * requete la base de données afin de recuperer tous les elements de la table employe
+	 * @return
+	 * @throws SQLException
+	 */
 	private static Statement selectAllEmploye() throws SQLException {
 		String reqSql = "SELECT * FROM Employe";
 		
@@ -163,7 +353,6 @@ public class Employe {
 		statement.executeQuery(reqSql);
 		return statement;
 	}
-	
 	
 	/**
 	 * Retourne le nombre d'employé dans la base de données
@@ -185,13 +374,59 @@ public class Employe {
 		return 0;
 	}
 	
+	/***
+	 * 
+	 * @param employeId
+	 * @return l'employe correspondant à l'id indique en argument
+	 * @throws SQLException
+	 */
+	public static Employe getEmployeById(int employeId) throws SQLException {
+		String reqSql = "SELECT EmployeId,titre,nom,prenom,mail,telephone,numero_matricule,pointure,taille,date_arrivee,nombre_heures,remboursement_transport,remboursement_telephone,Salaire,Status FROM Employe WHERE EmployeId=?;";
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		PreparedStatement statement = connection.prepareStatement(reqSql);
+		statement.setObject(1, employeId, Types.INTEGER);
+		statement.executeQuery();
+		
+		ResultSet result=statement.getResultSet();
+		
+		if (result.next()) {
+			employeId = result.getInt("EmployeId");
+			String titre = result.getString("Titre");
+			String nom = result.getString("Nom");
+			String prenom = result.getString("Prenom");
+			String mail = result.getString("mail");
+			String telephone = result.getString("Telephone");
+			Integer numeroMatricule = Integer.parseInt(result.getString("Numero_matricule"));
+			String pointure = result.getString("Pointure");
+			String taille = result.getString("Taille");
+			String dateArrivee = result.getString("Date_arrivee");
+			Double nombreHeures = Double.parseDouble(result.getString("Nombre_heures"));
+			Double remboursementTransport = Double.parseDouble(result.getString("remboursement_transport"));
+			Double remboursementTelephone = Double.parseDouble(result.getString("remboursement_telephone"));
+			Double salaire = Double.parseDouble(result.getString("salaire"));
+			String status = result.getString("status");
+
+			return new Employe(employeId, titre, nom, prenom, mail, telephone, numeroMatricule, pointure, taille, dateArrivee, nombreHeures, remboursementTransport, remboursementTelephone, salaire, status);
+
+		}else {
+			throw new SQLException("Data not found");
+		}
+
+		
+	}
+	
+	//-----------------------------------------------
+	/***
+	 * 
+	 * @return une liste contenant tous les employes renvoyes par selectAllEmploye()
+	 * @throws SQLException
+	 */
 	public static List<Employe> getAllEmploye() throws SQLException {
 
 		ResultSet result=selectAllEmploye().getResultSet();
 		List<Employe> allEmploye=new ArrayList<Employe>();
-		System.out.println("Id|Titre|Nom|Prenom|Mail|Telephone|numeroMatricule|Pointure|Taille|DateArrivée|NombreHeures|RemboursementTransport|RemboursementTelephone|Salaire|Status");
 		while(result.next()) {
-			int produitId=result.getInt("EmployeId");
+			int employeId=result.getInt("EmployeId");
 			String titre=result.getString("Titre");
 			String nom=result.getString("Nom");
 			String prenom=result.getString("Prenom");
@@ -203,15 +438,12 @@ public class Employe {
 			
 			String dateArrivee;
 			if (result.getString("Date_arrivee") == null) {
-				//System.out.println("date null");
 				dateArrivee = null;
 			}
 			else {
-				//System.out.println("pas null");
 				String usDate = result.getString("Date_arrivee");
-				//System.out.println("us : "+usDate);
+				//on transforme en date au format francais
 				dateArrivee = usDate.substring(8,10) + "/" + usDate.substring(5,7) + "/" + usDate.substring(0,4);
-				//System.out.println("date obtenue : "+dateArrivee);
 			}
 			
 			Double nombreHeures=result.getDouble("Nombre_heures");
@@ -219,7 +451,8 @@ public class Employe {
 			Double remboursementTelephone=result.getDouble("Remboursement_telephone");
 			Double salaire=result.getDouble("Salaire");
 		    String status=result.getString("Status");
-		   allEmploye.add(new Employe(produitId, titre, nom, prenom, mail, telephone, numeroMatricule, pointure, taille, dateArrivee, nombreHeures, remboursementTransport, remboursementTelephone, salaire, status));
+		    
+		   allEmploye.add(new Employe(employeId, titre, nom, prenom, mail, telephone, numeroMatricule, pointure, taille, dateArrivee, nombreHeures, remboursementTransport, remboursementTelephone, salaire, status));
 		  
 			
 		}
@@ -242,24 +475,30 @@ public class Employe {
 	}
 
 	
-	/**
-	 * 
-	 * getter and setter
-	 */
-	
-	
+	//Getter and setter-----------------------------------------------
 	public String getStatus() {
 		return status;
 	}
 
-
 	public void setStatus(String status) {
-		if (status == null) {
-			throw new Error("setStatus : le status indique est vide");
+		if (status != null){
+			if (status == "Publié" || status == "publié") {
+				this.status = "Publié";
+			}
+			else if (status == "Archivé" || status == "archivé") {
+				this.status = "Archivé";
+			}
+			else if (status == "Draft" || status == "draft") {
+				this.status = "Draft";
+			}
+			else {
+				throw new Error("Le status indiqué est incorrect, le status doit être publié, archivé ou draft.");
+			}
 		}
-		this.status = status;
+		else {
+			throw new Error("Le status indiqué est vide.");
+		}
 	}
-
 
 	public void setTitre(Titre titre) {
 		if (titre == null) {
@@ -268,14 +507,12 @@ public class Employe {
 		this.titre = titre;
 	}
 
-
 	public String getTitre() {
 		if (titre == null) {
 			return "";
 		}
 		return titre.toString();
 	}
-
 
 	public void setTitre(String t) {
 		if (titre == null) {
@@ -297,14 +534,12 @@ public class Employe {
 		}
 	}
 
-
 	public String getNom() {
 		if (nom == null) {
 			return "";
 		}
 		return nom;
 	}
-
 
 	public void setNom(String nom) {
 		if (nom == null) {
@@ -313,14 +548,12 @@ public class Employe {
 		this.nom = nom;
 	}
 
-
 	public String getPrenom() {
 		if (prenom == null) {
 			return "";
 		}
 		return prenom;
 	}
-
 
 	public void setPrenom(String prenom) {
 		if (prenom == null) {
@@ -329,14 +562,12 @@ public class Employe {
 		this.prenom = prenom;
 	}
 
-
 	public String getMail() {
 		if (mail == null) {
 			return "";
 		}
 		return mail;
 	}
-
 
 	public void setMail(String mail) {
 		if (mail == null) {
@@ -346,11 +577,10 @@ public class Employe {
 		Pattern pattern = Pattern.compile(regex);
 		Matcher matcher = pattern.matcher(mail);
 		if (!matcher.matches()) {
-			throw new Error("l adresse mail est incorrecte");
+			throw new Error("L'adresse mail est incorrecte.");
 		}
 		this.mail = mail;
 	}
-
 
 	public String getTelephone() {
 		if (telephone == null) {
@@ -358,7 +588,6 @@ public class Employe {
 		}
 		return telephone;
 	}
-
 
 	public void setTelephone(String telephone) {
 		if (telephone == null) {
@@ -368,14 +597,12 @@ public class Employe {
 		this.telephone = telephone;
 	}
 
-
 	public Integer getNumeroMatricule() {
 		if (numeroMatricule == null) {
 			return 0;
 		}
 		return numeroMatricule;
 	}
-
 
 	public void setNumeroMatricule(Integer numeroMatricule) {
 		if (numeroMatricule == null) {
@@ -384,14 +611,12 @@ public class Employe {
 		this.numeroMatricule = numeroMatricule;
 	}
 
-
 	public String getPointure() {
 		if (pointure == null) {
 			return "";
 		}
 		return pointure;
 	}
-
 
 	public void setPointure(String pointure) {
 		if (pointure == null) {
@@ -400,14 +625,12 @@ public class Employe {
 		this.pointure = pointure;
 	}
 
-
 	public String getTaille() {
 		if (taille == null) {
 			return "";
 		}
 		return taille;
 	}
-
 
 	public void setTaille(String taille) {
 		if (taille == null) {
@@ -416,20 +639,36 @@ public class Employe {
 		this.taille = taille;
 	}
 
-
 	public String getDateArrivee() {
 
 		return dateArrivee;
 	}
 
-
 	public void setDateArrivee(String dateArrivee) {
-		if (dateArrivee == null) {
-			throw new Error("setDateArrivee : le dateArrivee indique est vide");
+		if (dateArrivee != null){
+			if (dateArrivee.substring(0,4).isNumber() && dateArrivee.substring(8,10).isNumber() && dateArrivee.substring(5,7).isNumber()) {
+				//date anglaise
+				//on reecrit en format francais
+				dateArrivee = dateArrivee.substring(8,10) + "/" + dateArrivee.substring(5,7) + "/" + dateArrivee.substring(0,4);
+			}
+			else if (dateArrivee.substring(6,10).isNumber() && dateArrivee.substring(3,5).isNumber() && dateArrivee.substring(0,2).isNumber()) {
+				//date francaise
+				//on reecrit en format francais juste pour s'assurer que toutes les dates seront ecrites avec le meme format jj/mm/aaaa
+				dateArrivee = dateArrivee.substring(0,2) + "/" + dateArrivee.substring(3,5) + "/" + dateArrivee.substring(6,10);				
+			}
+			else {
+				throw new Error("La date d'arrivée indiquée est incorrecte, une date doit être indiqué selon un des formats suivant : 31-01-2000, 31/01/2000, 2000-01-31 ou 2000/01/31.");
+			}
+			String usDate = result.getString("Date_arrivee");
+			//on transforme en date au format francais
+			dateArrivee = usDate.substring(8,10) + "/" + usDate.substring(5,7) + "/" + usDate.substring(0,4);
+			this.dateArrivee = dateArrivee;
+			//tester 
 		}
-		this.dateArrivee = dateArrivee;
+		else {
+			throw new Error("La date d'arrivée indiquée est vide.");
+		}
 	}
-
 
 	public Double getNombreHeures() {
 		if (nombreHeures == null) {
@@ -438,14 +677,12 @@ public class Employe {
 		return nombreHeures;
 	}
 
-
 	public void setNombreHeures(Double nombreHeures) {
 		if (nombreHeures == null) {
 			throw new Error("setNombreHeures : le nombreHeures indique est vide");
 		}
 		this.nombreHeures = nombreHeures;
 	}
-
 
 	public Double getRemboursementTransport() {
 		if (remboursementTransport == null) {
@@ -454,14 +691,12 @@ public class Employe {
 		return remboursementTransport;
 	}
 
-
 	public void setRemboursementTransport(Double remboursementTransport) {
 		if (remboursementTransport == null) {
 			throw new Error("setRemboursementTransport : le remboursementTransport indique est vide");
 		}
 		this.remboursementTransport = remboursementTransport;
 	}
-
 
 	public Double getRemboursementTelephone() {
 		if (remboursementTelephone == null) {
@@ -470,7 +705,6 @@ public class Employe {
 		return remboursementTelephone;
 	}
 
-
 	public void setRemboursementTelephone(Double remboursementTelephone) {
 		if (remboursementTelephone == null) {
 			throw new Error("setRemboursementTelephone : le remboursementTelephone indique est vide");
@@ -478,14 +712,12 @@ public class Employe {
 		this.remboursementTelephone = remboursementTelephone;
 	}
 
-
 	public Double getSalaire() {
 		if (salaire == null) {
 			return 0.0;
 		}
 		return salaire;
 	}
-
 
 	public void setSalaire(Double salaire) {
 		if (salaire == null) {
@@ -505,5 +737,4 @@ public class Employe {
 		this.employeId = employeId;
 	}
 
-	
 }
