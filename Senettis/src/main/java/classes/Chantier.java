@@ -69,8 +69,20 @@ public class Chantier {
 		while(result.next()) {
 			int chantierId=result.getInt("ChantierId");
 			String nom=result.getString("Nom");
-			String adresse=result.getString("Adresse");
-			Double CA=result.getDouble("CA");
+			
+			String adresse;
+			if (result.getString("Adresse") != null) {
+				adresse = result.getString("Adresse");
+			}
+			else {
+				adresse = "";
+			}
+			
+			Double CA = 0.0;
+			if (result.getString("CA") != null) {
+				CA = Double.parseDouble(result.getString("CA"));
+			}
+			
 		    String status=result.getString("Status");
 		   allChantier.add(new Chantier(chantierId, nom, adresse, CA, status));
 		}
@@ -105,6 +117,49 @@ public class Chantier {
 		
 		return statement.executeUpdate();
 	}
+	
+	/***
+	 * @param chantierId
+	 * @return le chantier correspondant à l'id indique en argument
+	 * @throws SQLException
+	 */
+	public static Chantier getChantierById(int chantierId) throws SQLException {
+		String reqSql = "SELECT ChantierId,nom,adresse,CA,Status FROM Chantier WHERE ChantierId=?;";
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		PreparedStatement statement = connection.prepareStatement(reqSql);
+		statement.setObject(1, chantierId, Types.INTEGER);
+		statement.executeQuery();
+
+		ResultSet result = statement.getResultSet();
+
+		if (result.next()) {
+			chantierId = result.getInt("ChantierId");
+			String nom = result.getString("Nom");
+			
+			String adresse;
+			if (result.getString("Adresse") != null) {
+				adresse = result.getString("Adresse");
+			}
+			else {
+				adresse = "";
+			}
+			
+			Double CA = 0.0;
+			if (result.getString("CA") != null) {
+				CA = Double.parseDouble(result.getString("CA"));
+			}
+
+			String status = result.getString("status");
+
+			return new Chantier(chantierId, nom, adresse, CA, status);
+
+		} else {
+			throw new SQLException("Data not found");
+		}
+	}
+
+	
+	
 	
 	/**
 	 * getter and setter
@@ -154,5 +209,13 @@ public class Chantier {
 			throw new Error("setCA : le CA indique est vide");
 		}
 		this.CA = CA;
+	}
+	
+	public int getChantierId() {
+		return chantierId;
+	}
+
+	public void setChantierId(int chantierId) {
+		this.chantierId = chantierId;
 	}
 }
