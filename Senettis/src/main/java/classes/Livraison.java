@@ -31,7 +31,21 @@ public class Livraison {
 	//Constructeurs ---------------------------------------------------
 	public Livraison(Integer idChantier, Integer idProduit, Double prixTotal, String date, String status) {
 		this(idChantier, idProduit, prixTotal, date);
-		this.status=status;
+		if (status != null) {
+			if (!status.isEmpty()) {
+				if (status.equals("Publié") || status.equals("publié")) {
+					this.status = "Publié";
+				} else if (status.equals("Archivé") || status.equals("archivé"))  {
+					this.status = "Archivé";
+				} else if (status.equals("Draft") || status.equals("draft")) {
+					this.status = "Draft";
+				} else {
+					throw new Error("Le status indiqué est incorrect, le status doit être publié, archivé ou draft.");
+				}
+			} else {
+				this.status = null;
+			}
+		}
 	}
 
 	public Livraison(Integer livraisonId, Integer idChantier, Integer idProduit, Double prixTotal, String date, String status) {
@@ -51,26 +65,26 @@ public class Livraison {
 		
 		if (date != null) {
 			if (!(date.isEmpty())) {
-				if ( date.charAt(2) =='/' || date.charAt(2) == '-' || date.charAt(2) == '_') {
-					//System.out.println("fr");
-					// date francaise
-					// on reecrit en format francais juste pour s'assurer que toutes les dates
-					// seront ecrites avec le meme format jj/mm/aaaa
-					date = date.substring(0, 2) + "/" + date.substring(3, 5) + "/"
-							+ date.substring(6, 10);
+				//FR
+				try {
+					if ( date.charAt(2) =='/' || date.charAt(2) == '-' || date.charAt(2) == '_') {
+						date = date.substring(0, 2) + "/" + date.substring(3, 5) + "/"+ date.substring(6, 10);
+					}
+				} catch (Throwable e) { 
+					e.printStackTrace(); 
+					throw new Error("La date indiquée est incorrecte, une date doit être indiqué selon un des formats suivant : 31-01-2000, 31/01/2000, 2000-01-31 ou 2000/01/31.");
 				}
-				else if ( date.charAt(7) =='/' || date.charAt(7) == '-' || date.charAt(7) == '_') {
-					//System.out.println("en");
-					// date anglaise
-					date = date.substring(8, 10) + "/" + date.substring(5, 7) + "/"
-							+ date.substring(0, 4);
-				} else {
-					throw new Error(
-							"La date indiquée est incorrecte, une date doit être indiqué selon un des formats suivant : 31-01-2000, 31/01/2000, 2000-01-31 ou 2000/01/31.");
+				//EN
+				try {
+					if ( date.charAt(7) =='/' || date.charAt(7) == '-' || date.charAt(7) == '_') {
+						date = date.substring(8, 10) + "/" + date.substring(5, 7) + "/"+ date.substring(0, 4);
+					}
+				} catch (Throwable e) { 
+					e.printStackTrace(); 
+					throw new Error("La date indiquée est incorrecte, une date doit être indiqué selon un des formats suivant : 31-01-2000, 31/01/2000, 2000-01-31 ou 2000/01/31.");
 				}
-			}
-			else {
-				date = null;
+			} else {
+				throw new Error("La date indiquée est incorrecte, une date doit être indiqué selon un des formats suivant : 31-01-2000, 31/01/2000, 2000-01-31 ou 2000/01/31.");
 			}
 		}
 		this.date = date;		
@@ -96,7 +110,7 @@ public class Livraison {
 
 
 	public int updateDatabase() throws SQLException {
-		String reqSql = "UPDATE Livraison SET Produit=?, Chantier=?, prix_total=?, date=?, status=? WHERE LivraisonId=?;";
+		String reqSql = "UPDATE Livraison SET Produit=?, Chantier=?, prixTotal=?, date=?, status=? WHERE LivraisonId=?;";
 		
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
@@ -124,7 +138,7 @@ public class Livraison {
 
 		ResultSet result=selectAllLivraison().getResultSet();
 		List<Livraison> allLivraison=new ArrayList<Livraison>();
-		System.out.println("Id|ProduitId|ChantierId|PrixTotal|Date|Status");
+		//System.out.println("Id|ProduitId|ChantierId|PrixTotal|Date|Status");
 		while(result.next()) {
 			int livraisonId=result.getInt("LivraisonId");
 			int produitId=result.getInt("Produit");
@@ -157,7 +171,7 @@ public class Livraison {
 	
 	
 	public static Livraison getLivraisonById(int livraisonId) throws SQLException {
-		String reqSql = "SELECT LivraisonId,ChantierId,ProduitId,date,prix_total,Status FROM Livraison WHERE LivraisonId=?;";
+		String reqSql = "SELECT LivraisonId,Chantier,Produit,date,prixTotal,Status FROM Livraison WHERE LivraisonId=?;";
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
 		statement.setObject(1, livraisonId, Types.INTEGER);
@@ -166,11 +180,11 @@ public class Livraison {
 		ResultSet result = statement.getResultSet();
 
 		if (result.next()) {
-			livraisonId = result.getInt("EmployeId");
-			int chantierId = result.getInt("chantierId");
-			int produtiId = result.getInt("ProduitId");
+			livraisonId = result.getInt("LivraisonId");
+			int chantierId = result.getInt("chantier");
+			int produtiId = result.getInt("Produit");
 			String date = result.getString("date");
-			double prix = result.getDouble("prix_total");
+			double prix = result.getDouble("prixTotal");
 	
 			//Double remboursementTransport = 0.0;
 			//if (result.getString("remboursement_transport") != null) {
@@ -272,7 +286,19 @@ public class Livraison {
 
 
 	public void setStatus(String status) {
-		this.status = status;
+		if (status != null) {
+			if (status == "Publié" || status == "publié") {
+				this.status = "Publié";
+			} else if (status == "Archivé" || status == "archivé") {
+				this.status = "Archivé";
+			} else if (status == "Draft" || status == "draft") {
+				this.status = "Draft";
+			} else {
+				throw new Error("Le status indiqué est incorrect, le status doit être publié, archivé ou draft.");
+			}
+		} else {
+			throw new Error("Le status indiqué est vide.");
+		}
 	}
 
 
@@ -282,6 +308,9 @@ public class Livraison {
 
 
 	public void setLivraisonId(int livraisonId) {
+		if ((Integer)livraisonId == null) {
+			throw new Error("setLivraisonId : le livraisonId indique est vide");
+		}
 		this.livraisonId = livraisonId;
 	}
 	

@@ -235,8 +235,12 @@ public class VueLivraison {
 		try {
 			chantier.setText(Chantier.getChantierById(selectedLivraison.getIdChantier()).getNom()+"; id :"+selectedLivraison.getIdProduit().toString());
 		} catch (SQLException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			e1.printStackTrace(); 
+	    	System.out.println("erreur pour recuperer les chantiers");
+	    	MessageBox dialog = new MessageBox(parent.getShell(), SWT.ICON_ERROR | SWT.OK);
+	    	dialog.setText("Erreur");
+	    	dialog.setMessage("Une erreur est survenue. "+'\n'+e1.getMessage());
+	    	dialog.open();
 		}
 		try {
 			for (Chantier c : Chantier.getAllChantier()) {
@@ -245,8 +249,12 @@ public class VueLivraison {
 				}
 			}
 		} catch (SQLException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			e1.printStackTrace(); 
+	    	System.out.println("erreur pour recuperer les chantiers");
+	    	MessageBox dialog = new MessageBox(parent.getShell(), SWT.ICON_ERROR | SWT.OK);
+	    	dialog.setText("Erreur");
+	    	dialog.setMessage("Une erreur est survenue. "+'\n'+e1.getMessage());
+	    	dialog.open();
 		}
 
 		//Produit
@@ -262,8 +270,12 @@ public class VueLivraison {
 		try {
 			produit.setText(Produit.getProductById(selectedLivraison.getIdProduit()).getNom()+"; id :"+selectedLivraison.getIdProduit().toString());
 		} catch (SQLException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			e1.printStackTrace(); 
+	    	System.out.println("erreur pour recuperer les produits");
+	    	MessageBox dialog = new MessageBox(parent.getShell(), SWT.ICON_ERROR | SWT.OK);
+	    	dialog.setText("Erreur");
+	    	dialog.setMessage("Une erreur est survenue. "+'\n'+e1.getMessage());
+	    	dialog.open();
 		}
 		try {
 			for (Produit p : Produit.getAllProduct()) {
@@ -272,8 +284,12 @@ public class VueLivraison {
 				}
 			}
 		} catch (SQLException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			e1.printStackTrace(); 
+	    	System.out.println("erreur pour recuperer les produits");
+	    	MessageBox dialog = new MessageBox(parent.getShell(), SWT.ICON_ERROR | SWT.OK);
+	    	dialog.setText("Erreur");
+	    	dialog.setMessage("Une erreur est survenue. "+'\n'+e1.getMessage());
+	    	dialog.open();
 		}
 		
 		//Date
@@ -321,6 +337,7 @@ public class VueLivraison {
 				   
 				   String c = chantier.getText().split(";")[1].replace(" ","");
 				   Integer idChantier = Integer.parseInt(c.substring(3,c.length()));
+				   System.out.println(idChantier);
 				   System.out.println("Voici l'id du chantier : "+idChantier.toString());
 				   
 				   String p = produit.getText().split(";")[1].replace(" ","");
@@ -450,8 +467,12 @@ public class VueLivraison {
 				chantier.add(c.getNom()+"; id :"+((Integer)c.getChantierId()).toString());
 			}
 		} catch (SQLException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			e1.printStackTrace(); 
+	    	System.out.println("erreur pour recuperer les chantiers");
+	    	MessageBox dialog = new MessageBox(parent.getShell(), SWT.ICON_ERROR | SWT.OK);
+	    	dialog.setText("Erreur");
+	    	dialog.setMessage("Une erreur est survenue. "+'\n'+e1.getMessage());
+	    	dialog.open();
 		}
 
 		//Produit
@@ -470,8 +491,12 @@ public class VueLivraison {
 				produit.add(p.getNom()+"; id :"+((Integer)p.getProduitId()).toString());
 			}
 		} catch (SQLException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			e1.printStackTrace(); 
+	    	System.out.println("erreur pour recuperer les produits");
+	    	MessageBox dialog = new MessageBox(parent.getShell(), SWT.ICON_ERROR | SWT.OK);
+	    	dialog.setText("Erreur");
+	    	dialog.setMessage("Une erreur est survenue. "+'\n'+e1.getMessage());
+	    	dialog.open();
 		}
 		
 		//Date
@@ -513,24 +538,43 @@ public class VueLivraison {
 		buttonValidation.addSelectionListener(new SelectionAdapter() {
 		  
 		  @Override public void widgetSelected(SelectionEvent arg0) {
-
+			  Integer idChantier = null, idProduit = null ;
 			  try { 
 				   String c = chantier.getText().split(";")[1].replace(" ","");
-				   Integer idChantier = Integer.parseInt(c.substring(3,c.length()));
+				   idChantier = Integer.parseInt(c.substring(3,c.length()));
 				   System.out.println("Voici l'id du chantier : "+idChantier.toString());
-				   
-				   String p = produit.getText().split(";")[1].replace(" ","");
-				   Integer idProduit = Integer.parseInt(p.substring(3,p.length()));
-				  
-				  validerCreation(idChantier, idProduit, prix.getText(), date.getText());   
-			  } catch (Throwable e) { 
-			    	e.printStackTrace(); 
+				   try { 
+						  String p = produit.getText().split(";")[1].replace(" ","");
+						  idProduit = Integer.parseInt(p.substring(3,p.length()));
+						  try {
+							  validerCreation(idChantier, idProduit, prix.getText(), date.getText()); 
+						  } catch (Throwable e1) { 
+						    	e1.printStackTrace(); 
+						    	System.out.println("erreur dans la creation");
+						    	MessageBox dialog = new MessageBox(parent.getShell(), SWT.ICON_ERROR | SWT.OK);
+						    	dialog.setText("Erreur Création");
+						    	dialog.setMessage("Une erreur est survenue. "+e1.getMessage());
+						    	dialog.open();
+						  }
+					  } catch (Throwable e2) { 
+					    	e2.printStackTrace(); 
+					    	System.out.println("erreur dans la creation");
+					    	MessageBox dialog = new MessageBox(parent.getShell(), SWT.ICON_ERROR | SWT.OK);
+					    	dialog.setText("Erreur Création");
+					    	dialog.setMessage("Le produit est incorrect. ");
+					    	dialog.open();
+					  } 
+			  } catch (Throwable e3) { 
+			    	e3.printStackTrace(); 
 			    	System.out.println("erreur dans la creation");
 			    	MessageBox dialog = new MessageBox(parent.getShell(), SWT.ICON_ERROR | SWT.OK);
 			    	dialog.setText("Erreur Création");
-			    	dialog.setMessage("Une erreur est survenue lors de la création d'un livraison. "+'\n'+e.getMessage());
+			    	dialog.setMessage("Le chantier est incorrect. ");
 			    	dialog.open();
 			    } 
+			  
+			  
+			  
 		  }
 		});
 	}
@@ -618,8 +662,8 @@ public class VueLivraison {
 				//on verifie le status
 				if (l.getStatus().contentEquals("Publié")) {
 					TableItem item = new TableItem (table, SWT.NONE);
-					item.setText(0,l.getIdChantier().toString());
-					item.setText(1,l.getIdProduit().toString());
+					item.setText(0,Chantier.getChantierById(l.getIdChantier()).getNom());
+					item.setText(1,Produit.getProductById(l.getIdProduit()).getNom());
 					item.setText(2,l.getDate());
 					item.setText(3,l.getPrixTotal().toString());
 					item.setText(4,Integer.toString(l.getLivraisonId()));
@@ -645,7 +689,8 @@ public class VueLivraison {
 					
 					selection.dispose();
 					try {
-						selectedLivraison = Livraison.getLivraisonById(Integer.parseInt(table.getSelection()[0].getText(3)));
+						System.out.println(Integer.parseInt(table.getSelection()[0].getText(4)));
+						selectedLivraison = Livraison.getLivraisonById(Integer.parseInt(table.getSelection()[0].getText(4)));
 					} catch (NumberFormatException | SQLException e1) {
 						System.out.println("erreur pour recuperer la livraison selectionnée");
 				    	MessageBox dialog = new MessageBox(parent.getShell(), SWT.ICON_ERROR | SWT.OK);
