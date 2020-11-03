@@ -23,7 +23,7 @@ import java.text.SimpleDateFormat;
 
 public class Employe {
 
-	private int employeId;
+	private Integer employeId;
 	private Titre titre;
 	private String nom;
 	private String prenom;
@@ -72,7 +72,7 @@ public class Employe {
 		if ((Integer) employeId != null) {
 			this.employeId = employeId;
 		} else {
-			throw new Error("L'employéId indiqué est vide.");
+			throw new Error("L'employeId est vide, merci de spécifier un id ou d'utiliser un autre constructeur.");
 		}
 	}
 
@@ -102,12 +102,17 @@ public class Employe {
 		this(t, nom, prenom, numeroMatricule, dateArrivee, status);
 
 		// je verifie que l adresse mail est correcte
-		if (mail != null) {
-			String regex = "^(.+)@(.+)$";
-			Pattern pattern = Pattern.compile(regex);
-			Matcher matcher = pattern.matcher(mail);
-			if (!matcher.matches()) {
-				throw new Error("L'adresse mail est incorrecte.");
+		if (mail != null ) {
+			if (mail.isEmpty()) {
+				mail = null;
+			}
+			else {
+				String regex = "^(.+)@(.+)$";
+				Pattern pattern = Pattern.compile(regex);
+				Matcher matcher = pattern.matcher(mail);
+				if (!matcher.matches()) {
+					throw new Error("L'adresse mail est incorrecte.");
+				}
 			}
 		}
 		this.mail = mail;
@@ -115,53 +120,26 @@ public class Employe {
 		// telephone
 		if (telephone != null) {
 			telephone = telephone.replace(".", "");
-			this.telephone = telephone;
-		} else {
-			throw new Error("Le telephone indiqué est vide.");
-		}
-
+		} 
+		this.telephone = telephone;
+		
 		// pointure
-		if (pointure != null) {
-			this.pointure = pointure;
-		} else {
-			throw new Error("La pointure indiquée est vide.");
-		}
-
+		this.pointure = pointure;
+		
 		// taille
-		if (taille != null) {
-			this.taille = taille;
-		} else {
-			throw new Error("La taille indiquée est vide.");
-		}
-
+		this.taille = taille;
+		
 		// nombreHeures
-		if (nombreHeures != null) {
-			this.nombreHeures = nombreHeures;
-		} else {
-			throw new Error("Le nombre d'heures indiqué est vide.");
-		}
-
+		this.nombreHeures = nombreHeures;
+		
 		// remboursement transport
-		if (remboursementTransport != null) {
-			this.remboursementTransport = remboursementTransport;
-		} else {
-			throw new Error("Le remboursement transport indiqué est vide.");
-		}
-
+		this.remboursementTransport = remboursementTransport;
+		
 		// remboursement telephone
-		if (remboursementTelephone != null) {
-			this.remboursementTelephone = remboursementTelephone;
-		} else {
-			throw new Error("Le remboursement telephone indiqué est vide.");
-		}
-
+		this.remboursementTelephone = remboursementTelephone;
+		
 		// salaire
-		if (salaire != null) {
-			this.salaire = salaire;
-		} else {
-			throw new Error("Le salaire indiqué est vide.");
-		}
-
+		this.salaire = salaire;
 	}
 
 	/***
@@ -180,54 +158,47 @@ public class Employe {
 
 		// status
 		if (status != null) {
-			if (status == "Publié" || status == "publié") {
-				this.status = "Publié";
-			} else if (status == "Archivé" || status == "archivé") {
-				this.status = "Archivé";
-			} else if (status == "Draft" || status == "draft") {
-				this.status = "Draft";
+			if (!status.isEmpty()) {
+				if (status.equals("Publié") || status.equals("publié")) {
+					this.status = "Publié";
+				} else if (status.equals("Archivé") || status.equals("archivé"))  {
+					this.status = "Archivé";
+				} else if (status.equals("Draft") || status.equals("draft")) {
+					this.status = "Draft";
+				} else {
+					throw new Error("Le status indiqué est incorrect, le status doit être publié, archivé ou draft.");
+				}
 			} else {
-				throw new Error("Le status indiqué est incorrect, le status doit être publié, archivé ou draft.");
+				this.status = null;
 			}
-		} else {
-			throw new Error("Le status indiqué est vide.");
 		}
-
+		
 		// date arrivee
 		if (dateArrivee != null) {
-			if (StringUtils.isNumeric(dateArrivee.substring(0, 4))
-					&& StringUtils.isNumeric(dateArrivee.substring(8, 10))
-					&& StringUtils.isNumeric(dateArrivee.substring(5, 7))) {
-				// date anglaise
-				// on reecrit en format francais
-				dateArrivee = dateArrivee.substring(8, 10) + "/" + dateArrivee.substring(5, 7) + "/"
-						+ dateArrivee.substring(0, 4);
-			} else if (StringUtils.isNumeric(dateArrivee.substring(6, 10))
-					&& StringUtils.isNumeric(dateArrivee.substring(3, 5))
-					&& StringUtils.isNumeric(dateArrivee.substring(0, 2))) {
-				// date francaise
-				// on reecrit en format francais juste pour s'assurer que toutes les dates
-				// seront ecrites avec le meme format jj/mm/aaaa
-				dateArrivee = dateArrivee.substring(0, 2) + "/" + dateArrivee.substring(3, 5) + "/"
-						+ dateArrivee.substring(6, 10);
-			} else {
-				throw new Error(
-						"La date d'arrivée indiquée est incorrecte, une date doit être indiqué selon un des formats suivant : 31-01-2000, 31/01/2000, 2000-01-31 ou 2000/01/31.");
+			if (!(dateArrivee.isEmpty())) {
+				if ( dateArrivee.charAt(2) =='/' || dateArrivee.charAt(2) == '-' || dateArrivee.charAt(2) == '_') {
+					//System.out.println("fr");
+					// date francaise
+					// on reecrit en format francais juste pour s'assurer que toutes les dates
+					// seront ecrites avec le meme format jj/mm/aaaa
+					dateArrivee = dateArrivee.substring(0, 2) + "/" + dateArrivee.substring(3, 5) + "/"
+							+ dateArrivee.substring(6, 10);
+				}
+				else if ( dateArrivee.charAt(7) =='/' || dateArrivee.charAt(7) == '-' || dateArrivee.charAt(7) == '_') {
+					//System.out.println("en");
+					// date anglaise
+					dateArrivee = dateArrivee.substring(8, 10) + "/" + dateArrivee.substring(5, 7) + "/"
+							+ dateArrivee.substring(0, 4);
+				} else {
+					throw new Error(
+							"La date d'arrivée indiquée est incorrecte, une date doit être indiqué selon un des formats suivant : 31-01-2000, 31/01/2000, 2000-01-31 ou 2000/01/31.");
+				}
 			}
-
-			/*
-			String usDate = result.getString("Date_arrivee");
-
-			//on transforme en date au format francais
-			dateArrivee = usDate.substring(8,10) + "/" + usDate.substring(5,7) + "/" + usDate.substring(0,4);
-			this.dateArrivee = dateArrivee;
-			*/
-			//tester 
-
-		} else {
-			throw new Error("La date d'arrivée indiquée est vide.");
+			else {
+				dateArrivee = null;
+			}
 		}
-
+		this.dateArrivee = dateArrivee;		
 	}
 
 	/***
@@ -253,7 +224,7 @@ public class Employe {
 				this.titre = titre.M;
 			}
 		} else {
-			throw new Error("Le titre indiqué est vide.");
+			this.titre = titre.M;
 		}
 
 		// nom
@@ -374,7 +345,6 @@ public class Employe {
 			if (result.getInt("count") > 0) {
 				return result.getInt("count");
 			}
-
 		}
 		return 0;
 	}
@@ -405,10 +375,27 @@ public class Employe {
 			String pointure = result.getString("Pointure");
 			String taille = result.getString("Taille");
 			String dateArrivee = result.getString("Date_arrivee");
-			Double nombreHeures = Double.parseDouble(result.getString("Nombre_heures"));
-			Double remboursementTransport = Double.parseDouble(result.getString("remboursement_transport"));
-			Double remboursementTelephone = Double.parseDouble(result.getString("remboursement_telephone"));
-			Double salaire = Double.parseDouble(result.getString("salaire"));
+			
+			Double nombreHeures = 0.0;
+			if (result.getString("Nombre_heures") != null) {
+				nombreHeures = Double.parseDouble(result.getString("Nombre_heures"));
+			}
+			
+			Double remboursementTransport = 0.0;
+			if (result.getString("remboursement_transport") != null) {
+				remboursementTransport = Double.parseDouble(result.getString("remboursement_transport"));
+			}
+			
+			Double remboursementTelephone = 0.0;
+			if (result.getString("remboursement_telephone") != null) {
+				remboursementTelephone = Double.parseDouble(result.getString("remboursement_telephone"));
+			}
+			
+			Double salaire = 0.0;
+			if (result.getString("salaire") != null) {
+				salaire = Double.parseDouble(result.getString("salaire"));
+			}
+
 			String status = result.getString("status");
 
 			return new Employe(employeId, titre, nom, prenom, mail, telephone, numeroMatricule, pointure, taille,
@@ -417,7 +404,6 @@ public class Employe {
 		} else {
 			throw new SQLException("Data not found");
 		}
-
 	}
 
 	// -----------------------------------------------
@@ -645,31 +631,18 @@ public class Employe {
 	}
 
 	public void setDateArrivee(String dateArrivee) {
-		/*
-<<<<<<< HEAD
-		if (dateArrivee != null){
-			if (dateArrivee.substring(0,4).isNumber() && dateArrivee.substring(8,10).isNumber() && dateArrivee.substring(5,7).isNumber()) {
-				//date anglaise
-				//on reecrit en format francais
-				dateArrivee = dateArrivee.substring(8,10) + "/" + dateArrivee.substring(5,7) + "/" + dateArrivee.substring(0,4);
-			}
-			else if (dateArrivee.substring(6,10).isNumber() && dateArrivee.substring(3,5).isNumber() && dateArrivee.substring(0,2).isNumber()) {
-				//date francaise
-				//on reecrit en format francais juste pour s'assurer que toutes les dates seront ecrites avec le meme format jj/mm/aaaa
-				dateArrivee = dateArrivee.substring(0,2) + "/" + dateArrivee.substring(3,5) + "/" + dateArrivee.substring(6,10);				
-			}
-			else {
-				throw new Error("La date d'arrivée indiquée est incorrecte, une date doit être indiqué selon un des formats suivant : 31-01-2000, 31/01/2000, 2000-01-31 ou 2000/01/31.");
-=======
+		// date arrivee
 		if (dateArrivee != null) {
-			if (dateArrivee.substring(0, 4).isNumber() && dateArrivee.substring(8, 10).isNumber()
-					&& dateArrivee.substring(5, 7).isNumber()) {
+			if (StringUtils.isNumeric(dateArrivee.substring(0, 4))
+					&& StringUtils.isNumeric(dateArrivee.substring(8, 10))
+					&& StringUtils.isNumeric(dateArrivee.substring(5, 7))) {
 				// date anglaise
 				// on reecrit en format francais
 				dateArrivee = dateArrivee.substring(8, 10) + "/" + dateArrivee.substring(5, 7) + "/"
 						+ dateArrivee.substring(0, 4);
-			} else if (dateArrivee.substring(6, 10).isNumber() && dateArrivee.substring(3, 5).isNumber()
-					&& dateArrivee.substring(0, 2).isNumber()) {
+			} else if (StringUtils.isNumeric(dateArrivee.substring(6, 10))
+					&& StringUtils.isNumeric(dateArrivee.substring(3, 5))
+					&& StringUtils.isNumeric(dateArrivee.substring(0, 2))) {
 				// date francaise
 				// on reecrit en format francais juste pour s'assurer que toutes les dates
 				// seront ecrites avec le meme format jj/mm/aaaa
@@ -678,25 +651,11 @@ public class Employe {
 			} else {
 				throw new Error(
 						"La date d'arrivée indiquée est incorrecte, une date doit être indiqué selon un des formats suivant : 31-01-2000, 31/01/2000, 2000-01-31 ou 2000/01/31.");
->>>>>>> refs/remotes/origin/master
 			}
-			String usDate = result.getString("Date_arrivee");
-			// on transforme en date au format francais
-			dateArrivee = usDate.substring(8, 10) + "/" + usDate.substring(5, 7) + "/" + usDate.substring(0, 4);
-			this.dateArrivee = dateArrivee;
-<<<<<<< HEAD
-			
-			//tester 
-		}
-		else {
-=======
-			// tester
 		} else {
->>>>>>> refs/remotes/origin/master
 			throw new Error("La date d'arrivée indiquée est vide.");
-<<<<<<< HEAD
 		}
-		*/
+		this.dateArrivee = dateArrivee;
 
 	}
 
