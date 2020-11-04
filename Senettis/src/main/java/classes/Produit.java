@@ -115,6 +115,8 @@ public class Produit {
 			System.out.println(produit);
 	}
 
+
+
 	public int updateDatabase() throws SQLException {
 		String reqSql = "UPDATE Produit SET nom=?, prix=?, commentaires=?, status=? WHERE ProduitId=?;";
 
