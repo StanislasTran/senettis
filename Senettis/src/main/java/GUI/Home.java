@@ -203,7 +203,16 @@ public class Home {
 		Button boutonLivraison = new Button(menu, SWT.NONE);
 		boutonLivraison.setText("Livraisons");
 		boutonLivraison.setBackground(bleuClair);
-		// boutonLivraison.addSelectionListener(new SelectionAdapter() {});
+
+		boutonLivraison.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				contenuColonneDroite.dispose();
+				contenuColonneDroite = new VueLivraison(colonneDroite,display).getComposite();
+				contenuColonneDroite.pack();
+				colonneDroite.pack();
+			}
+		});
 
 	}
 

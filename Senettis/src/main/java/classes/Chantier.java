@@ -65,7 +65,7 @@ public class Chantier {
 
 		ResultSet result=selectAllChantier().getResultSet();
 		List<Chantier> allChantier=new ArrayList<Chantier>();
-		System.out.println("Id|Nom|Adresse|CA|Status");
+		//System.out.println("Id|Nom|Adresse|CA|Status");
 		while(result.next()) {
 			int chantierId=result.getInt("ChantierId");
 			String nom=result.getString("Nom");

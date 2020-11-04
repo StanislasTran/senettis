@@ -141,7 +141,7 @@ public class VueChantier {
 					System.out.println("erreur dans la supression");
 			    	MessageBox dialog = new MessageBox(parent.getShell(), SWT.ICON_ERROR | SWT.OK);
 			    	dialog.setText("Erreur Supression");
-			    	dialog.setMessage("Une erreur est survenue lors de la supression de l'employé. "+'\n'+e.getMessage());
+			    	dialog.setMessage("Une erreur est survenue lors de la supression du chantier. "+'\n'+e.getMessage());
 			    	dialog.open();
 					
 				}
