@@ -21,6 +21,7 @@ public class VueEmploye {
 	private Composite selection;
 	private Composite vue;
 	private Employe selectedEmploye;
+	private Menu menu ;
 
 	//Creation VueEmploye --------------------------------------------------
 	/***
@@ -84,7 +85,6 @@ public class VueEmploye {
 	/***
 	 * Creation de la partie Selection (la partie superieure droite) avec les boutons Creer, Modifier et Supprimer
 	 * @param composite : composite parent
-	 * @param item : liste de tous les attributs de l'employe 
 	 */
 	public void compositeSelectionModifier(Composite composite) {
 		selection = new Composite(composite, SWT.NONE);
@@ -134,7 +134,7 @@ public class VueEmploye {
 							e.setStatus("Archivé");
 							e.updateDatabase();
 							newVueEmploye(parent);
-			            
+							selectedEmploye = null;
 			        }
 
 				} catch (NumberFormatException | SQLException e) {
@@ -156,7 +156,6 @@ public class VueEmploye {
 	 * Regroupe les fonctions a appeler pour faire une modification
 	 * La fonction va dispose pour vue et selection (les deux composantes de droite) 
 	 * et va appeler les fonctions titreModification et formulaireModification
-	 * @param item : liste des caracteristiques de l'employe selectionne
 	 */
 	public void vueEmployeModifier() {
 		vue.dispose();
@@ -335,7 +334,9 @@ public class VueEmploye {
 		labelDateArrivee.setText("Date d'arrivée : ");
 
 		final Text textDateArrivee = new Text(compositeDateArrivee, SWT.BORDER);
-		textDateArrivee.setText(selectedEmploye.getDateArrivee());
+		if (selectedEmploye.getDateArrivee() != null) {
+			textDateArrivee.setText(selectedEmploye.getDateArrivee());
+		}
 		
 		// on ne prends pas item.get(9) car c'est l'anciennete 
 		
@@ -409,6 +410,11 @@ public class VueEmploye {
 		  @Override public void widgetSelected(SelectionEvent arg0) {
 
 			   try { 
+				   int id = selectedEmploye.getEmployeId();
+				   selectedEmploye = new Employe(id, titre.getText(), textNom.getText(), textPrenom.getText(), textMail.getText(), textTelephone.getText(), Integer.parseInt(textNumeroMatricule.getText()), 
+						   textPointure.getText(), textTaille.getText(), textDateArrivee.getText(), Double.parseDouble(textNombreHeures.getText()),
+						   Double.parseDouble(textRemboursementTransport.getText()), Double.parseDouble(textRemboursementTelephone.getText()), 
+						   Double.parseDouble(textSalaire.getText()), "Publié");
 				   validerModification();
 			    } catch (Throwable e) { 
 			    	e.printStackTrace(); 
@@ -440,6 +446,7 @@ public class VueEmploye {
 	    	dialog.setText("Modification réussie");
 	    	dialog.setMessage("L'employé a bien été modifié dans la base de données.");
 	    	dialog.open();
+	    	selectedEmploye = null;
 	    } catch (SQLException e) { 
 	    	e.printStackTrace(); 
 	    	System.out.println("erreur dans la modif");
@@ -530,9 +537,8 @@ public class VueEmploye {
 		labelTitre.setText("Titre : ");
 		
 		Combo titre = new Combo(compositeTitre, SWT.BORDER);
-		titre.setText("Selectionner ...");
+		titre.setText("Mme");
 		titre.add("M");
-		titre.add("Mme");
 		
 		//Nom
 		Composite compositeNom = new Composite(colonne1, SWT.NONE);
@@ -679,7 +685,7 @@ public class VueEmploye {
 		textSalaire.setText("");
 
 		//ne s'affiche pas 
-		//utiliser pour avoir le meme nombre de composite sur chaque colonne et qu'il prennent donc la meme taille
+		//utiliser pour avoir le meme nombre de composite sur chaque colonne et qu'ils prennent donc la meme taille
 		Composite test = new Composite(colonne3, SWT.NONE);
 		test.setBackground(Couleur.bleuClair);
 		
@@ -700,7 +706,8 @@ public class VueEmploye {
 		  @Override public void widgetSelected(SelectionEvent arg0) {
 
 			  try { 
-				  validerCreation(titre, textNom, textPrenom, textNumeroMatricule, textMail, textTelephone, textPointure, textTaille, textDateArrivee, textNombreHeures, textRemboursementTransport, textRemboursementTelephone, textSalaire);   
+				  System.out.println("avant de lancer fonction : "+textDateArrivee.getText());
+				  validerCreation(titre.getText(), textNom.getText(), textPrenom.getText(), textNumeroMatricule.getText(), textMail.getText(), textTelephone.getText(), textPointure.getText(), textTaille.getText(), textDateArrivee.getText(), textNombreHeures.getText(), textRemboursementTransport.getText(), textRemboursementTelephone.getText(), textSalaire.getText());   
 			  } catch (Throwable e) { 
 			    	e.printStackTrace(); 
 			    	System.out.println("erreur dans la creation");
@@ -729,67 +736,69 @@ public class VueEmploye {
 	 * @param textRemboursementTelephone
 	 * @param textSalaire
 	 */
-	public void validerCreation(Combo titre,Text textNom,Text textPrenom,Text textNumeroMatricule,Text textMail,Text textTelephone,Text textPointure,Text textTaille,Text textDateArrivee,Text textNombreHeures,Text textRemboursementTransport,Text textRemboursementTelephone,Text textSalaire) {
+	public void validerCreation(String titre,String textNom,String textPrenom,String textNumeroMatricule,String textMail,String textTelephone,String textPointure,String textTaille,String textDateArrivee,String textNombreHeures,String textRemboursementTransport,String textRemboursementTelephone,String textSalaire) {
+		
+		if (textNom.isEmpty() || textPrenom.isEmpty() || textNumeroMatricule.isEmpty()) {
+			throw new Error("Merci d'indiquer au moins le nom, le prénom et le numéro de matricule de l'employé.");
+		}
 		
 		//champs obligatoires
-		String t = titre.getText();
-		String n = textNom.getText();
-		String p = textPrenom.getText();
-		Integer nM = Integer.parseInt(textNumeroMatricule.getText());
-		Employe employe = new Employe(t,n,p,nM);
+		Employe employe = new Employe(titre,textNom,textPrenom,Integer.parseInt(textNumeroMatricule));
 		employe.setStatus("Publié");
 		  
 		//champs optionels
-		if (textMail.getText() != "") {
-			employe.setMail(textMail.getText());
+		if (!(textMail.isEmpty())) {
+			employe.setMail(textMail);
 		}
-		if (textTelephone.getText() != "") {
-			employe.setTelephone(textTelephone.getText());
+		if (!(textTelephone.isEmpty())) {
+			employe.setTelephone(textTelephone);
 		}
-		if (textPointure.getText() != "") {
-			employe.setPointure(textPointure.getText());
+		if (!(textPointure.isEmpty())) {
+			employe.setPointure(textPointure);
 		}
-		if (textTaille.getText() != "") {
-			employe.setTaille(textTaille.getText());
+		if (!(textTaille.isEmpty())) {
+			employe.setTaille(textTaille);
 		}
 
 		//date
-	    if (textDateArrivee.getText() != "") {
-			employe.setDateArrivee(textDateArrivee.getText());
+	    if (!(textDateArrivee.isEmpty())){
+			employe.setDateArrivee(textDateArrivee);
 	    }
 
 		//nombre heures
-	    if (textNombreHeures.getText() != "" && textNombreHeures.getText().contains(".")) {
-	    	employe.setNombreHeures(Double.parseDouble(textNombreHeures.getText()));
+	    if (textNombreHeures != "" && textNombreHeures.contains(".")) {
+	    	employe.setNombreHeures(Double.parseDouble(textNombreHeures));
 	    }
-	    else if (textNombreHeures.getText() != "" && textNombreHeures.getText().matches(".*\\d.*")) {
-	    	employe.setNombreHeures(Double.parseDouble(textNombreHeures.getText()+".0"));
+	    else if (textNombreHeures != "" && textNombreHeures.matches(".*\\d.*")) {
+	    	employe.setNombreHeures(Double.parseDouble(textNombreHeures+".0"));
 	    }
 
 	    //remboursement transport
-	    if (textRemboursementTransport.getText() != "" && textRemboursementTransport.getText().contains(".")) {
-	    	employe.setRemboursementTransport(Double.parseDouble(textRemboursementTransport.getText()));
+	    if (textRemboursementTransport != "" && textRemboursementTransport.contains(".")) {
+	    	employe.setRemboursementTransport(Double.parseDouble(textRemboursementTransport));
 	    }
-	    else if (textRemboursementTransport.getText() != "" && textRemboursementTransport.getText().matches(".*\\d.*")) {
-	    	employe.setRemboursementTransport(Double.parseDouble(textRemboursementTransport.getText()+".0"));
+	    else if (textRemboursementTransport != "" && textRemboursementTransport.matches(".*\\d.*")) {
+	    	employe.setRemboursementTransport(Double.parseDouble(textRemboursementTransport+".0"));
 	    }
 
 	    //remboursement telephone
-	    if (textRemboursementTelephone.getText() != "" && textRemboursementTelephone.getText().contains(".")) {
-	    	employe.setRemboursementTelephone(Double.parseDouble(textRemboursementTelephone.getText()));
+	    if (textRemboursementTelephone != "" && textRemboursementTelephone.contains(".")) {
+	    	employe.setRemboursementTelephone(Double.parseDouble(textRemboursementTelephone));
 	    }
-	    else if (textRemboursementTelephone.getText() != "" && textRemboursementTelephone.getText().matches(".*\\d.*")) {
-	    	employe.setRemboursementTelephone(Double.parseDouble(textRemboursementTelephone.getText()+".0"));
+	    else if (textRemboursementTelephone != "" && textRemboursementTelephone.matches(".*\\d.*")) {
+	    	employe.setRemboursementTelephone(Double.parseDouble(textRemboursementTelephone+".0"));
 	    }
 	  
 	    //salaire
-	    if (textSalaire.getText() != "" && textSalaire.getText().contains(".")) {
-	    	employe.setSalaire(Double.parseDouble(textSalaire.getText()));
+	    if (textSalaire != "" && textSalaire.contains(".")) {
+	    	employe.setSalaire(Double.parseDouble(textSalaire));
 	    }
-	    else if (textSalaire.getText() != "" && textSalaire.getText().matches(".*\\d.*")) {
-	    	employe.setSalaire(Double.parseDouble(textSalaire.getText()+".0"));
+	    else if (textSalaire != "" && textSalaire.matches(".*\\d.*")) {
+	    	employe.setSalaire(Double.parseDouble(textSalaire+".0"));
 	    }
 	  
+	    System.out.println("avant d'inserer employe : "+employe.getDateArrivee());
+	    
 	    //on insert dans la base de données
 	    try { 
 	    	employe.insertDatabase(); 
@@ -824,7 +833,7 @@ public class VueEmploye {
 		
 		//creation de la table
 	    final Table table = new Table (vue, SWT.BORDER | SWT.MULTI| SWT.V_SCROLL | SWT.FULL_SELECTION);
-	    table.setLayoutData(new RowData(1061, 400));
+	    table.setLayoutData(new RowData(1118, 400));
 	    table.setLinesVisible (true);
 		table.setHeaderVisible (true);
 		
@@ -837,7 +846,7 @@ public class VueEmploye {
 		
 		//je voulais cacher cette colonne mais ca ne fonctionne pas
 		TableColumn column = new TableColumn (table, SWT.NONE);
-		column.setText ("Identifiant Base de données");
+		column.setText ("Id Base de données");
 		column.setWidth(0);
 		column.setResizable(false);
 		
@@ -870,7 +879,8 @@ public class VueEmploye {
 					    int m2 = currentdate.getMonthValue();
 					    int a2 = currentdate.getYear();
 				
-						if (a2-a1 <= 0) {item.setText(9,"moins d'un an");}
+					    if (a2-a1 < 0) {item.setText(9,"euuuh ... ");}
+					    else if (a2-a1 == 0) {item.setText(9,"moins d'un an");}
 						else {
 							if ((m1>m2) || (m1==m2 && j1>j2)) {
 								if (a2-a1-1 == 0) {item.setText(9,"");}
@@ -909,10 +919,10 @@ public class VueEmploye {
 		
 		//on ajoute un listener pour modifier l'interface si l'utilisateur clique sur une ligne
 		table.addSelectionListener(new SelectionAdapter() {
-
 			public void widgetSelected(SelectionEvent e) {
-				
 				if (table.getSelectionIndex() != -1) {
+					System.out.println("not -1");
+					
 					selection.dispose();
 					try {
 						selectedEmploye = Employe.getEmployeById(Integer.parseInt(table.getSelection()[0].getText(14)));
@@ -924,13 +934,29 @@ public class VueEmploye {
 				    	dialog.open();
 					}
 					compositeSelectionModifier(vueEmploye);
+					
+					//on ajoute un menu lorsque l'on fait clique droit sur une ligne
+					doMenu(table);
+				}
+				else { // si plus rien n'est selectionner on passe selectedEmploye a null et on enleve le menu du clic droit et on enleve les boutons pour modifier et supprimer
+					System.out.println("-1");
+					
+					selectedEmploye = null;
+					
+					menu.dispose();
+					menu = new Menu (composite.getShell(), SWT.POP_UP);
+					table.setMenu (menu);
+					
+					selection.dispose();
+					compositeSelectionCreer(vueEmploye);
 				}
 			}
-
 		});
 		
-		//on ajoute un menu lorsque l'on fait clique droit sur une ligne
-		Menu menu = new Menu (composite.getShell(), SWT.POP_UP);
+	}
+	
+	public void doMenu(Table table) {
+		menu = new Menu (parent.getShell(), SWT.POP_UP);
 		table.setMenu (menu);
 		
 		//pour supprimer
@@ -950,6 +976,7 @@ public class VueEmploye {
 							e.setStatus("Archivé");
 							e.updateDatabase();
 							newVueEmploye(parent);
+							selectedEmploye = null;
 			        }
 
 				} catch (NumberFormatException | SQLException e) {

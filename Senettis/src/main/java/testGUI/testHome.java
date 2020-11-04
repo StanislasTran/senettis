@@ -11,8 +11,6 @@ public class testHome {
 	
 	public static void main(String[] args) throws SQLException, IOException {
 		Home home=new Home();
-		System.out.println("ok");
-		
 
 	}
 	

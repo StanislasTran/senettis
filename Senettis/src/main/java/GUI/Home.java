@@ -58,12 +58,14 @@ public class Home {
 
 	public void compositeMain() throws SQLException {
 		compositeMain = new Composite(shell, SWT.NONE);
-		// compositeMain.setBackground(bleuClair);
 
-		String file_name = "mainWallPaper.jpg";
-		String backgroundLocation = this.getClass().getClassLoader().getResource("test4.png").getPath();
+		
 
-		Image background = new Image(display, backgroundLocation);
+		
+		String backgroundLocation=this.getClass().getClassLoader().getResource("test4.png").getPath();
+		 
+		Image background=new Image(display,backgroundLocation);
+
 		compositeMain.setBackgroundImage(background);
 		compositeMain.setLayout(rowLayoutH);
 
@@ -146,9 +148,17 @@ public class Home {
 
 		Button boutonChantier = new Button(menu, SWT.NONE);
 		boutonChantier.setText("Chantiers");
-		boutonChantier.setBackground(bleuClair);
-		// boutonChantier.addSelectionListener(new SelectionAdapter() {});
 
+		boutonChantier.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				contenuColonneDroite.dispose();
+				contenuColonneDroite = new VueChantier(colonneDroite,display).getComposite();
+				contenuColonneDroite.pack();
+				colonneDroite.pack();
+			}
+		});
+		
 		Button boutonAffectation = new Button(menu, SWT.NONE);
 		boutonAffectation.setText("Affectations");
 		boutonAffectation.setBackground(bleuClair);
