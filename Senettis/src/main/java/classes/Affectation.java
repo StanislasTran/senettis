@@ -173,4 +173,48 @@ public class Affectation {
 		this.affectationId = affectationId;
 	}
 
+	
+	public static ResultSet getEmployeStats() throws SQLException {
+		String selection ="Affectation.Employe AS 'EmployeId',emplData.Nom,EmplData.prenom,count(DISTINCT Affectation.chantier) as 'nb_chantier',SUM(Affectation.Nombre_heures) as 'nb_heure'";
+		String source="Affectation INNER JOIN (Select distinct EmployeId,Nom,Prenom FROM Employe) AS emplData ON emplData.EmployeId=Affectation.Employe";
+		String group="Affectation.Employe,emplData.Nom,EmplData.prenom";
+
+		String reqSql = "SELECT "+ selection +" FROM "+source +" GROUP BY "+group;
+		System.out.println(reqSql);
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		Statement statement=connection.createStatement();
+		statement.execute(reqSql);
+		
+		return statement.getResultSet();
+		
+	}
+	
+	public static ResultSet getChantierStats() throws SQLException {
+		String selection ="Affectation.Chantier AS 'ChantierId',ChantData.Nom,ChantData.CA,count(DISTINCT Affectation.Employe) as 'nb_Employe',SUM(Affectation.Nombre_heures) as 'nb_heure' ";
+		String source="Affectation INNER JOIN (Select DISTINCT ChantierId,Nom,CA FROM Chantier) AS chantData ON chantData.ChantierId=Affectation.Chantier";
+		String group="Affectation.Chantier,chantData.Nom,chantData.CA";
+
+		String reqSql = "SELECT "+ selection +" FROM "+source +" GROUP BY "+group;
+		System.out.println(reqSql);
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		Statement statement=connection.createStatement();
+		statement.execute(reqSql);
+		
+		return statement.getResultSet();
+		
+	}
+
+	public static ResultSet getEmployeAffectation(int employeId) throws SQLException {
+		String selection ="ChantierId,nom,adresse,Nombre_heures";
+		String source="chantier INNER JOIN Affectation ON Chantier.ChantierId=Affectation.Chantier ";
+		String condition="Affectation.Employe=?";
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		String reqSql = "SELECT "+ selection +" FROM "+source +" WHERE "+condition;
+		
+		PreparedStatement statement = connection.prepareStatement(reqSql);
+		statement.setObject(1, employeId,Types.INTEGER);
+		statement.execute();
+		return statement.getResultSet();
+	}
+	
 }
