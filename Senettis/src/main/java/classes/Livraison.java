@@ -1,3 +1,4 @@
+
 package classes;
 
 import java.sql.Connection;
@@ -21,7 +22,6 @@ import java.text.SimpleDateFormat;
 public class Livraison {
 
 	private Integer idChantier;
-	private Integer idProduit;
 	private Double prixTotal;
 	private String date;
 	private String status;
@@ -29,8 +29,8 @@ public class Livraison {
 
 	
 	//Constructeurs ---------------------------------------------------
-	public Livraison(Integer idChantier, Integer idProduit, Double prixTotal, String date, String status) {
-		this(idChantier, idProduit, prixTotal, date);
+	public Livraison(Integer idChantier, Double prixTotal, String date, String status) {
+		this(idChantier, prixTotal, date);
 		if (status != null) {
 			if (!status.isEmpty()) {
 				if (status.equals("Publié") || status.equals("publié")) {
@@ -48,20 +48,19 @@ public class Livraison {
 		}
 	}
 
-	public Livraison(Integer livraisonId, Integer idChantier, Integer idProduit, Double prixTotal, String date, String status) {
-		this(idChantier, idProduit, prixTotal, date, status);
+	public Livraison(Integer livraisonId, Integer idChantier, Double prixTotal, String date, String status) {
+		this(idChantier, prixTotal, date, status);
 		this.livraisonId = livraisonId;
 	}
 
-	public Livraison(Integer idChantier, Integer idProduit, Double prixTotal, String date) {
-		this(idChantier, idProduit, date);
+	public Livraison(Integer idChantier, Double prixTotal, String date) {
+		this(idChantier, date);
 		this.prixTotal = prixTotal;
 	}
 	
-	public Livraison(Integer idChantier, Integer idProduit, String date) {
+	public Livraison(Integer idChantier, String date) {
 		super();
 		this.idChantier = idChantier;
-		this.idProduit = idProduit;
 		
 		if (date != null) {
 			if (!(date.isEmpty())) {
@@ -95,31 +94,35 @@ public class Livraison {
 
 	//lien base de données ---------------------------------------------------------------
 	public int insertDatabase() throws SQLException {
-		String reqSql = "INSERT INTO Livraison(chantier,produit,date,prixTotal,status) VALUES (?,?,?,?,?)";
+		String reqSql = "INSERT INTO Livraison(chantier,date,prixTotal,status) VALUES (?,?,?,?)";
 		
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
 		statement.setObject(1,this.idChantier,Types.INTEGER);
-		statement.setObject(2,this.idProduit,Types.INTEGER);
-		statement.setObject(3,this.date,Types.DATE);
-		statement.setObject(4,this.prixTotal,Types.DECIMAL);
-		statement.setObject(5,this.status,Types.VARCHAR);
+		statement.setObject(2,this.date,Types.DATE);
+		statement.setObject(3,this.prixTotal,Types.DECIMAL);
+		statement.setObject(4,this.status,Types.VARCHAR);
 		
-		return statement.executeUpdate();
+		statement.executeUpdate();
+		
+		//on recuperer l'id
+		reqSql = "SELECT LAST_INSERT_ID();";
+		Statement statement2 = connection.createprStatement();
+		statement2.executeQuery(reqSql);
+		return statement2;
 	}
 
 
 	public int updateDatabase() throws SQLException {
-		String reqSql = "UPDATE Livraison SET Produit=?, Chantier=?, prixTotal=?, date=?, status=? WHERE LivraisonId=?;";
+		String reqSql = "UPDATE Livraison SET Chantier=?, prixTotal=?, date=?, status=? WHERE LivraisonId=?;";
 		
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
-		statement.setObject(1,this.idProduit.toString(),Types.INTEGER);
-		statement.setObject(2,this.idChantier,Types.INTEGER);
-		statement.setObject(3,this.prixTotal,Types.DECIMAL);
-		statement.setObject(4,this.date,Types.DATE);
-		statement.setObject(5,this.status,Types.VARCHAR);
-		statement.setObject(6,this.livraisonId,Types.INTEGER);
+		statement.setObject(1,this.idChantier,Types.INTEGER);
+		statement.setObject(2,this.prixTotal,Types.DECIMAL);
+		statement.setObject(3,this.date,Types.DATE);
+		statement.setObject(4,this.status,Types.VARCHAR);
+		statement.setObject(5,this.livraisonId,Types.INTEGER);
 		
 		return statement.executeUpdate();
 	}
@@ -138,10 +141,8 @@ public class Livraison {
 
 		ResultSet result=selectAllLivraison().getResultSet();
 		List<Livraison> allLivraison=new ArrayList<Livraison>();
-		//System.out.println("Id|ProduitId|ChantierId|PrixTotal|Date|Status");
 		while(result.next()) {
 			int livraisonId=result.getInt("LivraisonId");
-			int produitId=result.getInt("Produit");
 			int chantierId=result.getInt("Chantier");
 			Double prixTotal=result.getDouble("PrixTotal");
 			String date;
@@ -153,7 +154,7 @@ public class Livraison {
 				date = usDate.substring(8, 10) + "/" + usDate.substring(5, 7) + "/" + usDate.substring(0, 4);
 			}
 		    String status=result.getString("Status");
-		   allLivraison.add(new Livraison(livraisonId, chantierId, produitId, prixTotal, date, status));
+		   allLivraison.add(new Livraison(livraisonId, chantierId, prixTotal, date, status));
 		  
 			
 		}
@@ -171,7 +172,7 @@ public class Livraison {
 	
 	
 	public static Livraison getLivraisonById(int livraisonId) throws SQLException {
-		String reqSql = "SELECT LivraisonId,Chantier,Produit,date,prixTotal,Status FROM Livraison WHERE LivraisonId=?;";
+		String reqSql = "SELECT LivraisonId,Chantier,date,prixTotal,Status FROM Livraison WHERE LivraisonId=?;";
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
 		statement.setObject(1, livraisonId, Types.INTEGER);
@@ -182,7 +183,6 @@ public class Livraison {
 		if (result.next()) {
 			livraisonId = result.getInt("LivraisonId");
 			int chantierId = result.getInt("chantier");
-			int produtiId = result.getInt("Produit");
 			String date = result.getString("date");
 			double prix = result.getDouble("prixTotal");
 	
@@ -193,7 +193,7 @@ public class Livraison {
 			
 			String status = result.getString("status");
 
-			return new Livraison(livraisonId, chantierId, produtiId, prix, date, status);
+			return new Livraison(livraisonId, chantierId, prix, date, status);
 
 		} else {
 			throw new SQLException("Data not found");
@@ -201,13 +201,38 @@ public class Livraison {
 	}
 
 	
-	
+	public static List<ProduitParLivraison> getProductByLivraisonById(int livraisonId) throws SQLException {
+		String reqSql = "SELECT ProduitParLivraisonId,Livraison,Produit,quantite,Status FROM ProduitParLivraison WHERE Livraison=?;";
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		PreparedStatement statement = connection.prepareStatement(reqSql);
+		statement.setObject(1, livraisonId, Types.INTEGER);
+		statement.executeQuery();
+		System.out.println("19631");
+		ResultSet result = statement.getResultSet();
+		List<ProduitParLivraison> results = new ArrayList<>();
+
+		while (result.next()) {
+			int produitParLivraisonId = result.getInt("produitParLivraisonId");
+			livraisonId = result.getInt("Livraison");
+			int produitId = result.getInt("Produit");
+			int quantite = result.getInt("quantite");
+			String status = result.getString("status");
+			
+			results.add(new ProduitParLivraison(produitParLivraisonId, livraisonId, produitId, quantite, status));
+
+		} 
+		
+		if (results.isEmpty()){
+			throw new SQLException("Data not found");
+		}
+		return results;
+	}
 	
 	
 	@Override
 	public String toString() {
 		
-		return ""+this.livraisonId+"|"+this.idProduit+"|"+this.idChantier+"|"+this.prixTotal+"|"+this.date+"|"+this.status;
+		return ""+this.livraisonId+"|"+this.idChantier+"|"+this.prixTotal+"|"+this.date+"|"+this.status;
 	}
 
 	
@@ -222,17 +247,6 @@ public class Livraison {
 			throw new Error("setIdChantier : le idChantier indique est vide");
 		}
 		this.idChantier = idChantier;
-	}
-
-	public Integer getIdProduit() {
-		return idProduit;
-	}
-
-	public void setIdProduit(Integer idProduit) {
-		if (idProduit == null) {
-			throw new Error("setIdProduit : le idProduit indique est vide");
-		}
-		this.idProduit = idProduit;
 	}
 
 	public Double getPrixTotal() {
