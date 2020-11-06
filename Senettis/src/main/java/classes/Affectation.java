@@ -82,7 +82,7 @@ public class Affectation {
 
 		ResultSet result=selectAllAffectation().getResultSet();
 		List<Affectation> allAffectation=new ArrayList<Affectation>();
-		System.out.println("Id|EmployeId|ChantierId|NombreHeures|Status");
+		//System.out.println("Id|EmployeId|ChantierId|NombreHeures|Status");
 		while(result.next()) {
 			int affectationId=result.getInt("AffectationId");
 			int employeId=result.getInt("Employe");
@@ -180,7 +180,7 @@ public class Affectation {
 		String group="Affectation.Employe,emplData.Nom,EmplData.prenom";
 
 		String reqSql = "SELECT "+ selection +" FROM "+source +" GROUP BY "+group;
-		System.out.println(reqSql);
+		//System.out.println(reqSql);
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		Statement statement=connection.createStatement();
 		statement.execute(reqSql);
@@ -195,7 +195,7 @@ public class Affectation {
 		String group="Affectation.Chantier,chantData.Nom,chantData.CA";
 
 		String reqSql = "SELECT "+ selection +" FROM "+source +" GROUP BY "+group;
-		System.out.println(reqSql);
+		//System.out.println(reqSql);
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		Statement statement=connection.createStatement();
 		statement.execute(reqSql);

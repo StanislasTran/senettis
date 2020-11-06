@@ -176,10 +176,15 @@ public class VueChantier {
 		selection = new Composite(vueChantier, SWT.CENTER);
 		
 		FillLayout fillLayout = new FillLayout();
-		fillLayout.type = SWT.HORIZONTAL;
+		fillLayout.type = SWT.VERTICAL;
 		fillLayout.marginWidth = 7;
 		selection.setLayout(fillLayout);
-		
+
+		//juste pour creer un espace 
+		Label l1 = new Label(selection, SWT.NONE);
+		l1.setText("");
+		l1.setBackground(Couleur.bleuFonce);
+
 		selection.setBackground(Couleur.bleuFonce);
 		Label HeadLabel =new Label(selection,SWT.TITLE);
 		HeadLabel.setText("Modification d'un Chantier");
@@ -187,7 +192,12 @@ public class VueChantier {
 		HeadLabel.setForeground(Couleur.bleuClair);
 		HeadLabel.setFont(fontTitle);
 		HeadLabel.setBackground(Couleur.bleuFonce);
-		
+
+		//juste pour creer un espace 
+		Label l2 = new Label(selection, SWT.NONE);
+		l2.setText("");
+		l2.setBackground(Couleur.bleuFonce);
+
 		selection.pack();
 	}
 
@@ -210,14 +220,8 @@ public class VueChantier {
 		fillLayoutV.type = SWT.VERTICAL;
 		fillLayoutV.marginWidth = 10;
 		Composite colonne1 = new Composite(vue, SWT.BORDER);
-		//Composite colonne2 = new Composite(vue, SWT.BORDER);
-		//Composite colonne3 = new Composite(vue, SWT.BORDER);
 		colonne1.setBackground(Couleur.bleuClair);
-		//colonne2.setBackground(Couleur.bleuClair);
-		//colonne3.setBackground(Couleur.bleuClair);
 		colonne1.setLayout(fillLayoutV);
-		//colonne2.setLayout(fillLayoutV);
-		//colonne3.setLayout(fillLayoutV);
 		
 		//utiliser pour tous les composites des attributs du formulaire
 		FillLayout fillLayoutH5 = new FillLayout();
@@ -352,10 +356,15 @@ public class VueChantier {
 		selection = new Composite(vueChantier, SWT.CENTER);
 		
 		FillLayout fillLayout = new FillLayout();
-		fillLayout.type = SWT.HORIZONTAL;
+		fillLayout.type = SWT.VERTICAL;
 		fillLayout.marginWidth = 20;
 		selection.setLayout(fillLayout);
-		
+
+		//juste pour creer un espace 
+		Label l1 = new Label(selection, SWT.NONE);
+		l1.setText("");
+		l1.setBackground(Couleur.bleuFonce);
+
 		selection.setBackground(Couleur.bleuFonce);
 		Label HeadLabel =new Label(selection,SWT.TITLE);
 		HeadLabel.setText("Creation d'un Chantier");
@@ -363,6 +372,11 @@ public class VueChantier {
 		HeadLabel.setForeground(Couleur.bleuClair);
 		HeadLabel.setFont(fontTitle);
 		HeadLabel.setBackground(Couleur.bleuFonce);
+
+		//juste pour creer un espace 
+		Label l2 = new Label(selection, SWT.NONE);
+		l2.setText("");
+		l2.setBackground(Couleur.bleuFonce);
 		
 		selection.pack();
 	}
@@ -534,7 +548,7 @@ public class VueChantier {
 		
 		//je voulais cacher cette colonne mais ca ne fonctionne pas
 		TableColumn column = new TableColumn (table, SWT.NONE);
-		column.setText ("Id Base de données");
+		column.setText ("Id DB");
 		column.setWidth(0);
 		column.setResizable(false);
 		
@@ -567,7 +581,6 @@ public class VueChantier {
 		table.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (table.getSelectionIndex() != -1) {
-					System.out.println("not -1");
 					
 					selection.dispose();
 					try {
@@ -605,6 +618,18 @@ public class VueChantier {
 		menu = new Menu (parent.getShell(), SWT.POP_UP);
 		table.setMenu (menu);
 		
+		//pour modifier
+		MenuItem update = new MenuItem (menu, SWT.PUSH);
+		update.setText ("Modifier l'element");
+		update.addSelectionListener(new SelectionAdapter() {	
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				if (table.getSelection().length != 0) {
+					vueChantierModifier();
+				}
+			}
+		});
+		
 		//pour supprimer
 		MenuItem delete = new MenuItem (menu, SWT.PUSH);
 		delete.setText ("Supprimer l'element");
@@ -635,17 +660,6 @@ public class VueChantier {
 			}
 		});
 		
-		//pour modifier
-		MenuItem update = new MenuItem (menu, SWT.PUSH);
-		update.setText ("Modifier l'element");
-		update.addSelectionListener(new SelectionAdapter() {	
-			@Override
-			public void widgetSelected(SelectionEvent arg0) {
-				if (table.getSelection().length != 0) {
-					vueChantierModifier();
-				}
-			}
-		});
 	}
 	
 	public Composite getComposite() {

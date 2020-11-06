@@ -219,7 +219,7 @@ public class VueLivraison {
 		
 		FillLayout fillLayout = new FillLayout();
 		fillLayout.type = SWT.VERTICAL;
-		fillLayout.marginWidth = 236;
+		fillLayout.marginWidth = 315;
 		selection.setLayout(fillLayout);
 		
 		//juste pour creer un espace 
@@ -654,7 +654,7 @@ public class VueLivraison {
 		
 		FillLayout fillLayout = new FillLayout();
 		fillLayout.type = SWT.VERTICAL;
-		fillLayout.marginWidth = 250;
+		fillLayout.marginWidth = 328;
 		selection.setLayout(fillLayout);
 		
 		//juste pour creer un espace 
@@ -1035,7 +1035,7 @@ public class VueLivraison {
 		
 		//je voulais cacher cette colonne mais ca ne fonctionne pas
 		TableColumn column = new TableColumn (table, SWT.NONE);
-		column.setText ("Id Base de données");
+		column.setText ("Id DB");
 		column.setWidth(0);
 		column.setResizable(false);
 		

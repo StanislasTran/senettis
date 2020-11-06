@@ -118,7 +118,7 @@ public class Livraison {
 
 		ResultSet result = statement2.getResultSet();
 		if(result.next()) {
-			System.out.println("ok");
+			//System.out.println("ok");
 			return result.getInt("LastID") ;
 		}
 		else {

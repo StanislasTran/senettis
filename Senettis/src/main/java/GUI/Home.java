@@ -11,8 +11,12 @@ import javax.swing.JFileChooser;
 import org.eclipse.swt.*;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.TouchEvent;
+import org.eclipse.swt.events.TouchListener;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
@@ -39,6 +43,8 @@ public class Home {
 
 	Composite colonneDroite;
 	Composite contenuColonneDroite;
+	Composite currentSelection; 
+	Composite currentVue;
 
 	/***
 	 * Affiche le menu situe en haut a gauche permettant d'obtenir la documentation
@@ -75,7 +81,7 @@ public class Home {
 
 	
 	/***
-	 * Affiche le compositeMain, c'est le composite principal il regroupe la colonne gauche et la colonne droite
+	 * Affiche le compositeMain à l'ouverture de l'app, c'est le composite principal il regroupe la colonne gauche et la colonne droite
 	 * @throws SQLException
 	 */
 	public void compositeMain() throws SQLException {
@@ -96,6 +102,7 @@ public class Home {
 		// compositeMain.pack();
 		compositeMain.setSize(rect.width, rect.height);// permet au compositeMain d'avoir la taille de l'ecran
 	}
+	
 
 	/************************
 	 * 
@@ -183,9 +190,30 @@ public class Home {
 	}
 
 	public void compositeLogo() {
+
 		Label logo = new Label(colonneGauche, SWT.NONE);
 		Image image = new Image(display, "images\\moyenLogo.jpg");
 		logo.setImage(image);
+
+		logo.addMouseListener(new MouseListener() {
+
+			@Override
+			public void mouseDoubleClick(MouseEvent e) {}
+
+			@Override
+			public void mouseDown(MouseEvent e) {}
+
+			@Override
+			public void mouseUp(MouseEvent e) {
+				try {
+					compositeMain.dispose();
+					compositeMain();
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
+			}
+		});
+
 	}
 
 	public void compositeMenu() {				
@@ -202,9 +230,27 @@ public class Home {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				contenuColonneDroite.dispose();
+				colonneDroite.dispose();
+				compositeMain.dispose();
+				
+				compositeMain = new Composite(shell, SWT.NONE);
+
+				String backgroundLocation=this.getClass().getClassLoader().getResource("test4.png").getPath();
+				Image background=new Image(display,backgroundLocation);
+				compositeMain.setBackgroundImage(background);
+				
+				RowLayout rl = new RowLayout();
+				rl.spacing = 15; //mets un espace entre le menu et le titre 
+				compositeMain.setLayout(rl);
+
+				compositeColonneGauche();
+				
+				colonneDroite = new Composite(compositeMain, SWT.CENTER);
 				contenuColonneDroite = new VueEmploye(colonneDroite, display).getComposite();
-				contenuColonneDroite.pack();
-				colonneDroite.pack();
+	
+				contenuColonneDroite.pack();colonneDroite.pack();
+				compositeMain.setSize(rect.width, rect.height);
+
 			}
 		});
 
@@ -214,7 +260,12 @@ public class Home {
 		boutonChantier.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				contenuColonneDroite.dispose();
+				if (!contenuColonneDroite.isDisposed()) {
+					for (Control c :contenuColonneDroite.getChildren()) {
+						if(!c.isDisposed()) { c.dispose(); }
+					}
+					contenuColonneDroite.dispose();
+				}
 				contenuColonneDroite = new VueChantier(colonneDroite,display).getComposite();
 				contenuColonneDroite.pack();
 				colonneDroite.pack();
@@ -227,7 +278,12 @@ public class Home {
 		boutonAffectation.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				contenuColonneDroite.dispose();
+				if (!contenuColonneDroite.isDisposed()) {
+					for (Control c :contenuColonneDroite.getChildren()) {
+						if(!c.isDisposed()) { c.dispose(); }
+					}
+					contenuColonneDroite.dispose();
+				}
 				try {
 					contenuColonneDroite = new VueAffectation(getColonneDroite()).getVueAffectation();
 				} catch (SQLException e) {
@@ -237,7 +293,7 @@ public class Home {
 
 				contenuColonneDroite.pack();
 				colonneDroite.pack();
-				System.out.println("done");
+				//System.out.println("done");
 			}
 
 		});
@@ -248,7 +304,12 @@ public class Home {
 		boutonProduit.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				contenuColonneDroite.dispose();
+				if (!contenuColonneDroite.isDisposed()) {
+					for (Control c :contenuColonneDroite.getChildren()) {
+						if(!c.isDisposed()) { c.dispose(); }
+					}
+					contenuColonneDroite.dispose();
+				}
 				try {
 					contenuColonneDroite = new VueProduit(getColonneDroite()).getVueProduit();
 				} catch (SQLException e) {
@@ -258,7 +319,7 @@ public class Home {
 
 				contenuColonneDroite.pack();
 				colonneDroite.pack();
-				System.out.println("done");
+				//System.out.println("done");
 			}
 		});
 
@@ -269,7 +330,12 @@ public class Home {
 		boutonLivraison.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				contenuColonneDroite.dispose();
+				if (!contenuColonneDroite.isDisposed()) {
+					for (Control c :contenuColonneDroite.getChildren()) {
+						if(!c.isDisposed()) { c.dispose(); }
+					}
+					contenuColonneDroite.dispose();
+				}
 				contenuColonneDroite = new VueLivraison(colonneDroite,display).getComposite();
 				contenuColonneDroite.pack();
 				colonneDroite.pack();

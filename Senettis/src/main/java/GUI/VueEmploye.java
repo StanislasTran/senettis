@@ -37,6 +37,14 @@ public class VueEmploye {
 		newVueEmploye(parent);
 	}
 	
+	public Composite getSelection() {
+		return selection;
+	}
+	
+	public Composite getVue() {
+		return vue;
+	}
+	
 	/***
 	 * Pour créer une vueEmploye : dispose si une vueEmploye existe deja, creer le composite et lui affecte le layout RowLayout Vertical
 	 * Appelle ensuite les fonctions compositeSelectionCreer et vueEmployeAfficher
@@ -176,10 +184,15 @@ public class VueEmploye {
 		selection = new Composite(vueEmploye, SWT.CENTER);
 		
 		FillLayout fillLayout = new FillLayout();
-		fillLayout.type = SWT.HORIZONTAL;
+		fillLayout.type = SWT.VERTICAL;
 		fillLayout.marginWidth = 402;
 		selection.setLayout(fillLayout);
-		
+
+		//juste pour creer un espace 
+		Label l1 = new Label(selection, SWT.NONE);
+		l1.setText("");
+		l1.setBackground(Couleur.bleuFonce);
+
 		selection.setBackground(Couleur.bleuFonce);
 		Label HeadLabel =new Label(selection,SWT.TITLE);
 		HeadLabel.setText("Modification d'un Employe");
@@ -187,7 +200,12 @@ public class VueEmploye {
 		HeadLabel.setForeground(Couleur.bleuClair);
 		HeadLabel.setFont(fontTitle);
 		HeadLabel.setBackground(Couleur.bleuFonce);
-		
+
+		//juste pour creer un espace 
+		Label l2 = new Label(selection, SWT.NONE);
+		l2.setText("");
+		l2.setBackground(Couleur.bleuFonce);
+
 		selection.pack();
 	}
 
@@ -487,10 +505,15 @@ public class VueEmploye {
 		selection = new Composite(vueEmploye, SWT.CENTER);
 		
 		FillLayout fillLayout = new FillLayout();
-		fillLayout.type = SWT.HORIZONTAL;
+		fillLayout.type = SWT.VERTICAL;
 		fillLayout.marginWidth = 416;
 		selection.setLayout(fillLayout);
-		
+
+		//juste pour creer un espace 
+		Label l1 = new Label(selection, SWT.NONE);
+		l1.setText("");
+		l1.setBackground(Couleur.bleuFonce);
+
 		selection.setBackground(Couleur.bleuFonce);
 		Label HeadLabel =new Label(selection,SWT.TITLE);
 		HeadLabel.setText("Creation d'un Employe");
@@ -498,7 +521,12 @@ public class VueEmploye {
 		HeadLabel.setForeground(Couleur.bleuClair);
 		HeadLabel.setFont(fontTitle);
 		HeadLabel.setBackground(Couleur.bleuFonce);
-		
+
+		//juste pour creer un espace 
+		Label l2 = new Label(selection, SWT.NONE);
+		l2.setText("");
+		l2.setBackground(Couleur.bleuFonce);
+
 		selection.pack();
 	}
 
@@ -966,7 +994,20 @@ public class VueEmploye {
 	public void doMenu(Table table) {
 		menu = new Menu (parent.getShell(), SWT.POP_UP);
 		table.setMenu (menu);
-		
+
+		//pour modifier
+		MenuItem update = new MenuItem (menu, SWT.PUSH);
+		update.setText ("Modifier l'element");
+		update.addSelectionListener(new SelectionAdapter() {	
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				if (table.getSelection().length != 0) {
+					vueEmployeModifier();
+				}
+			}
+		});
+
+
 		//pour supprimer
 		MenuItem delete = new MenuItem (menu, SWT.PUSH);
 		delete.setText ("Supprimer l'element");
@@ -997,21 +1038,11 @@ public class VueEmploye {
 			}
 		});
 		
-		//pour modifier
-		MenuItem update = new MenuItem (menu, SWT.PUSH);
-		update.setText ("Modifier l'element");
-		update.addSelectionListener(new SelectionAdapter() {	
-			@Override
-			public void widgetSelected(SelectionEvent arg0) {
-				if (table.getSelection().length != 0) {
-					vueEmployeModifier();
-				}
-			}
-		});
 	}
 	
 	public Composite getComposite() {
 		return this.vueEmploye;
+		
 	}
 	
 }

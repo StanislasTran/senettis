@@ -63,7 +63,7 @@ public class ProduitParLivraison {
 
 		ResultSet result=selectAllProduitParLivraison().getResultSet();
 		List<ProduitParLivraison> allProduitParLivraison=new ArrayList<ProduitParLivraison>();
-		System.out.println("Id|ProduitId|LivraisonId|Quantite|Status");
+		//System.out.println("Id|ProduitId|LivraisonId|Quantite|Status");
 		while(result.next()) {
 			int produitParLivraisonId=result.getInt("ProduitParLivraisonId");
 			int produitId=result.getInt("Produit");
@@ -84,7 +84,6 @@ public class ProduitParLivraison {
 		PreparedStatement statement = connection.prepareStatement(reqSql);
 		statement.setObject(1, livraisonId, Types.INTEGER);
 		statement.executeQuery();
-		System.out.println("19631");
 		ResultSet result = statement.getResultSet();
 		List<ProduitParLivraison> results = new ArrayList<>();
 
@@ -115,7 +114,6 @@ public class ProduitParLivraison {
 		statement.setObject(1, livraisonId, Types.INTEGER);
 		statement.setObject(1, livraisonId, Types.INTEGER);
 		statement.executeQuery();
-		System.out.println("19631");
 		ResultSet result = statement.getResultSet();
 
 		if (result.next()) {
