@@ -89,6 +89,10 @@ public class Livraison {
 		this.date = date;		
 	}
 
+	public Livraison(Integer idChantier) {
+		super();
+		this.idChantier = idChantier;	
+	}
 
 
 
@@ -105,11 +109,21 @@ public class Livraison {
 		
 		statement.executeUpdate();
 		
+		//si il y a une erreur on devrait supprimer la livraison creee ??????
+		
 		//on recuperer l'id
-		reqSql = "SELECT LAST_INSERT_ID();";
-		Statement statement2 = connection.createprStatement();
+		reqSql = "SELECT LivraisonId AS LastID FROM Livraison WHERE LivraisonId = @@Identity;";
+		Statement statement2 = connection.createStatement();
 		statement2.executeQuery(reqSql);
-		return statement2;
+
+		ResultSet result = statement2.getResultSet();
+		if(result.next()) {
+			System.out.println("ok");
+			return result.getInt("LastID") ;
+		}
+		else {
+			throw new SQLException("Data not found");
+		}
 	}
 
 
@@ -199,35 +213,6 @@ public class Livraison {
 			throw new SQLException("Data not found");
 		}
 	}
-
-	
-	public static List<ProduitParLivraison> getProductByLivraisonById(int livraisonId) throws SQLException {
-		String reqSql = "SELECT ProduitParLivraisonId,Livraison,Produit,quantite,Status FROM ProduitParLivraison WHERE Livraison=?;";
-		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
-		PreparedStatement statement = connection.prepareStatement(reqSql);
-		statement.setObject(1, livraisonId, Types.INTEGER);
-		statement.executeQuery();
-		System.out.println("19631");
-		ResultSet result = statement.getResultSet();
-		List<ProduitParLivraison> results = new ArrayList<>();
-
-		while (result.next()) {
-			int produitParLivraisonId = result.getInt("produitParLivraisonId");
-			livraisonId = result.getInt("Livraison");
-			int produitId = result.getInt("Produit");
-			int quantite = result.getInt("quantite");
-			String status = result.getString("status");
-			
-			results.add(new ProduitParLivraison(produitParLivraisonId, livraisonId, produitId, quantite, status));
-
-		} 
-		
-		if (results.isEmpty()){
-			throw new SQLException("Data not found");
-		}
-		return results;
-	}
-	
 	
 	@Override
 	public String toString() {
@@ -267,22 +252,30 @@ public class Livraison {
 	public void setDate(String date) {
 		// date
 		if (date != null) {
-			if (StringUtils.isNumeric(date.substring(0, 4))
-					&& StringUtils.isNumeric(date.substring(8, 10))
-					&& StringUtils.isNumeric(date.substring(5, 7))) {
-				// date anglaise
-				// on reecrit en format francais
-				date = date.substring(8, 10) + "/" + date.substring(5, 7) + "/"
-						+ date.substring(0, 4);
-			} else if (StringUtils.isNumeric(date.substring(6, 10))
-					&& StringUtils.isNumeric(date.substring(3, 5))
-					&& StringUtils.isNumeric(date.substring(0, 2))) {
-				// date francaise
-				// on reecrit en format francais juste pour s'assurer que toutes les dates
-				// seront ecrites avec le meme format jj/mm/aaaa
-				date = date.substring(0, 2) + "/" + date.substring(3, 5) + "/"
-						+ date.substring(6, 10);
-			} else {
+			try {
+				if (StringUtils.isNumeric(date.substring(0, 4))
+						&& StringUtils.isNumeric(date.substring(8, 10))
+						&& StringUtils.isNumeric(date.substring(5, 7))) {
+					// date anglaise
+					// on reecrit en format francais
+					date = date.substring(8, 10) + "/" + date.substring(5, 7) + "/"
+							+ date.substring(0, 4);
+				} else if (StringUtils.isNumeric(date.substring(6, 10))
+						&& StringUtils.isNumeric(date.substring(3, 5))
+						&& StringUtils.isNumeric(date.substring(0, 2))) {
+					// date francaise
+					// on reecrit en format francais juste pour s'assurer que toutes les dates
+					// seront ecrites avec le meme format jj/mm/aaaa
+					date = date.substring(0, 2) + "/" + date.substring(3, 5) + "/"
+							+ date.substring(6, 10);
+
+
+				} else {
+					throw new Error(
+							"La date indiquée est incorrecte, une date doit être indiqué selon un des formats suivant : 31-01-2000, 31/01/2000, 2000-01-31 ou 2000/01/31.");
+				}
+
+			}catch (Exception e) {
 				throw new Error(
 						"La date indiquée est incorrecte, une date doit être indiqué selon un des formats suivant : 31-01-2000, 31/01/2000, 2000-01-31 ou 2000/01/31.");
 			}

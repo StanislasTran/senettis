@@ -90,10 +90,8 @@ SET Date_de_modification = GETDATE()
 Create table Livraison (
     LivraisonId INT PRIMARY KEY IDENTITY (1, 1),
     Chantier int NOT NULL,
-    Produit int NOT NULL,
-    Date DATE NOT NULL, 
+    Date DATE , 
     FOREIGN KEY (Chantier) REFERENCES Chantier(ChantierId), 
-    FOREIGN KEY (Produit) REFERENCES Produit(ProduitId),
     PrixTotal decimal,
 	"Status" VARCHAR (50) NOT NULL,
 	"Date_de_creation" DateTime  NOT NUll Default (GETDATE()), 

@@ -260,22 +260,26 @@ public class VueChantier {
 
 		final Text textCA = new Text(compositeCA, SWT.BORDER);
 		textCA.setText(selectedChantier.getCA().toString());
-		
-		//Bouton Valider
-		Composite compositeValidation = new Composite(colonne1, SWT.CENTER);
-		compositeValidation.setBackground(Couleur.bleuClair);
-		compositeValidation.setLayout(fillLayoutH5);
-		
-		Label labelValidation = new Label(compositeValidation, SWT.NONE);
-		labelValidation.setBackground(Couleur.bleuClair);
-		labelValidation.setText("");
-		
-		Button buttonValidation = new Button(compositeValidation, SWT.BACKGROUND);
+
+		//Boutons
+		Composite compositeBoutons = new Composite(colonne1, SWT.CENTER);
+		compositeBoutons.setBackground(Couleur.bleuClair);
+		compositeBoutons.setLayout(fillLayoutH5);
+
+		Button buttonAnnulation = new Button(compositeBoutons, SWT.BACKGROUND);
+		buttonAnnulation.setText("Annuler");
+		buttonAnnulation.addSelectionListener(new SelectionAdapter() {
+
+			@Override public void widgetSelected(SelectionEvent arg0) {
+				newVueChantier(parent);
+			}
+		});
+
+		Button buttonValidation = new Button(compositeBoutons, SWT.BACKGROUND);
 		buttonValidation.setText("Valider");
-		buttonValidation.setBounds(10, 60, 100, 25);
 		buttonValidation.addSelectionListener(new SelectionAdapter() {
-		  
-		  @Override public void widgetSelected(SelectionEvent arg0) {
+
+			@Override public void widgetSelected(SelectionEvent arg0) {
 
 			   try { 
 				   int id = selectedChantier.getChantierId();
@@ -422,26 +426,30 @@ public class VueChantier {
 
 		final Text textCA = new Text(compositeCA, SWT.BORDER);
 		textCA.setText("");
-		
-		//Bouton Valider
-		Composite compositeValidation = new Composite(colonne1, SWT.CENTER);
-		compositeValidation.setBackground(Couleur.bleuClair);
-		compositeValidation.setLayout(fillLayoutH5);
-		
-		Label labelValidation = new Label(compositeValidation, SWT.NONE);
-		labelValidation.setBackground(Couleur.bleuClair);
-		labelValidation.setText("");
-		
-		Button buttonValidation = new Button(compositeValidation, SWT.BACKGROUND);
-		buttonValidation.setText("Valider");
-		buttonValidation.setBounds(10, 60, 100, 25);
-		buttonValidation.addSelectionListener(new SelectionAdapter() {
-		  
-		  @Override public void widgetSelected(SelectionEvent arg0) {
 
-			  try { 
-				  validerCreation(textNom.getText(), textAdresse.getText(), textCA.getText());   
-			  } catch (Throwable e) { 
+		//Boutons
+		Composite compositeBoutons = new Composite(colonne1, SWT.CENTER);
+		compositeBoutons.setBackground(Couleur.bleuClair);
+		compositeBoutons.setLayout(fillLayoutH5);
+
+		Button buttonAnnulation = new Button(compositeBoutons, SWT.BACKGROUND);
+		buttonAnnulation.setText("Annuler");
+		buttonAnnulation.addSelectionListener(new SelectionAdapter() {
+
+			@Override public void widgetSelected(SelectionEvent arg0) {
+				newVueChantier(parent);
+			}
+		});
+
+		Button buttonValidation = new Button(compositeBoutons, SWT.BACKGROUND);
+		buttonValidation.setText("Valider");
+		buttonValidation.addSelectionListener(new SelectionAdapter() {
+
+			@Override public void widgetSelected(SelectionEvent arg0) {
+
+				try { 
+					validerCreation(textNom.getText(), textAdresse.getText(), textCA.getText());   
+				} catch (Throwable e) { 
 			    	e.printStackTrace(); 
 			    	System.out.println("erreur dans la creation");
 			    	MessageBox dialog = new MessageBox(parent.getShell(), SWT.ICON_ERROR | SWT.OK);
