@@ -177,7 +177,24 @@ public class VueChantier {
 		
 		FillLayout fillLayout = new FillLayout();
 		fillLayout.type = SWT.VERTICAL;
-		fillLayout.marginWidth = 7;
+		
+		//pour agrandir le titre si les champs sont trop longs
+		int addSize = 0;
+		if (selectedChantier != null) {
+			if(selectedChantier.getAdresse().length()>40) {
+				addSize = selectedChantier.getAdresse().length() - 40;
+			}
+			if(selectedChantier.getNom().length()>40 && addSize < selectedChantier.getNom().length()-14) {
+				addSize = selectedChantier.getNom().length() - 40;
+			}
+		}
+		if (addSize != 0) {
+			fillLayout.marginWidth = 130 + addSize*6-3;
+		}
+		else {
+			fillLayout.marginWidth = 130;
+		}
+		
 		selection.setLayout(fillLayout);
 
 		//juste pour creer un espace 
@@ -236,7 +253,7 @@ public class VueChantier {
 
 		Label labelNom = new Label(compositeNom, SWT.NONE);
 		labelNom.setBackground(Couleur.bleuClair);
-		labelNom.setText("Nom* : ");
+		labelNom.setText("Nom* :                                                           ");//espaces pour agrandir le champs texte 
 
 		final Text textNom = new Text(compositeNom, SWT.BORDER);
 		textNom.setText(selectedChantier.getNom());
@@ -357,7 +374,7 @@ public class VueChantier {
 		
 		FillLayout fillLayout = new FillLayout();
 		fillLayout.type = SWT.VERTICAL;
-		fillLayout.marginWidth = 20;
+		fillLayout.marginWidth = 163;
 		selection.setLayout(fillLayout);
 
 		//juste pour creer un espace 
@@ -402,6 +419,7 @@ public class VueChantier {
 		//utiliser pour tous les composites des attributs du formulaire
 		FillLayout fillLayoutH5 = new FillLayout();
 		fillLayoutH5.marginHeight = 30;
+		fillLayoutH5.marginWidth = 20;
 		fillLayoutH5.spacing = 5;
 		fillLayoutH5.type = SWT.HORIZONTAL;
 		
@@ -412,7 +430,7 @@ public class VueChantier {
 
 		Label labelNom = new Label(compositeNom, SWT.NONE);
 		labelNom.setBackground(Couleur.bleuClair);
-		labelNom.setText("Nom* : ");
+		labelNom.setText("Nom* :                                                           "); // j'ai mis des espaces pour agrandir la barre de texte 
 
 		final Text textNom = new Text(compositeNom, SWT.BORDER);
 		textNom.setText("");

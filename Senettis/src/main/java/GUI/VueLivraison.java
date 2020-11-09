@@ -219,7 +219,7 @@ public class VueLivraison {
 		
 		FillLayout fillLayout = new FillLayout();
 		fillLayout.type = SWT.VERTICAL;
-		fillLayout.marginWidth = 315;
+		fillLayout.marginWidth = 357;
 		selection.setLayout(fillLayout);
 		
 		//juste pour creer un espace 
@@ -261,6 +261,8 @@ public class VueLivraison {
 		FillLayout fillLayoutV = new FillLayout();
 		fillLayoutV.type = SWT.VERTICAL;
 		fillLayoutV.marginWidth = 10;
+		fillLayoutV.marginHeight = 15;
+		fillLayoutV.spacing = 20;
 		
 		Composite colonne1 = new Composite(vue, SWT.BORDER);
 		colonne1.setBackground(Couleur.bleuClair);
@@ -287,30 +289,49 @@ public class VueLivraison {
 		
 		Label labelChantier = new Label(compositeChantier, SWT.NONE);
 		labelChantier.setBackground(Couleur.bleuClair);
-		labelChantier.setText("Chantier* : ");
+		labelChantier.setText("Chantier* :                                                  ");//espaces pour que la barre de texte soit plus grande
 		
 		//on affiche le chantier selectionne
 		Combo chantier = new Combo(compositeChantier, SWT.BORDER);
 		try {
-			chantier.setText(Chantier.getChantierById(selectedLivraison.getIdChantier()).getNom()+"; id :"+selectedLivraison.getIdChantier().toString());
+			if (Chantier.getChantierById(selectedLivraison.getIdChantier()).getStatus().equals("Publié")) {
+				String stringChantier = Chantier.getChantierById(selectedLivraison.getIdChantier()).getNom()+"; id :"+selectedLivraison.getIdChantier().toString();
+				if (stringChantier.length() > 30) {
+					chantier.setText(stringChantier.substring(0, 30)+"...");
+					labelChantier.setText("Chantier* :");//pour pas que ca fasse un trop grand espace et que ca decale le titre
+				}
+				else {
+					chantier.setText(stringChantier);
+				}
+			}
+			else {
+				chantier.setText("Selectionner ...");
+			}
 		} catch (SQLException e1) {
 			e1.printStackTrace(); 
-	    	System.out.println("erreur pour recuperer les chantiers");
-	    	MessageBox dialog = new MessageBox(parent.getShell(), SWT.ICON_ERROR | SWT.OK);
-	    	dialog.setText("Erreur");
-	    	dialog.setMessage("Une erreur est survenue. "+'\n'+e1.getMessage());
-	    	dialog.open();
+			System.out.println("erreur pour recuperer les chantiers");
+			MessageBox dialog = new MessageBox(parent.getShell(), SWT.ICON_ERROR | SWT.OK);
+			dialog.setText("Erreur");
+			dialog.setMessage("Une erreur est survenue. "+'\n'+e1.getMessage());
+			dialog.open();
 		}
 		//on recupere les autres chantiers pour les afficher aussi et pouvoir modifier le chantier actuel
 		try {
 			for (Chantier c : Chantier.getAllChantier()) {
-				if (c.getNom() != Chantier.getChantierById(selectedLivraison.getIdChantier()).getNom()) {
-					chantier.add(c.getNom()+"; id :"+((Integer)c.getChantierId()).toString());
+				if (c.getNom() != Chantier.getChantierById(selectedLivraison.getIdChantier()).getNom() && c.getStatus().equals("Publié")) {
+					String stringChantier =  c.getNom()+"; id :"+((Integer)c.getChantierId()).toString();
+					if (stringChantier.length() > 30) {
+						chantier.add(stringChantier.substring(0, 30)+"...");
+						labelChantier.setText("Chantier* :");
+					}
+					else {
+						chantier.add(stringChantier);
+					}
 				}
 			}
 		} catch (SQLException e1) {
 			e1.printStackTrace(); 
-	    	System.out.println("erreur pour recuperer les chantiers");
+			System.out.println("erreur pour recuperer les chantiers");
 	    	MessageBox dialog = new MessageBox(parent.getShell(), SWT.ICON_ERROR | SWT.OK);
 	    	dialog.setText("Erreur");
 	    	dialog.setMessage("Une erreur est survenue. "+'\n'+e1.getMessage());
@@ -329,6 +350,18 @@ public class VueLivraison {
 		final Text date = new Text(compositeDate, SWT.BORDER);
 		if (selectedLivraison.getDate() == null) { date.setText(""); }
 		else { date.setText(selectedLivraison.getDate()); }
+		
+		//pour ajouter les barres / automatiquement
+		date.addModifyListener(new ModifyListener() { 
+			public void modifyText(ModifyEvent me) { 
+				if (!(date.getText().isEmpty())) {//pour ne pas tester quand l'utilisateur est en train de modifier
+					if (date.getText().length() == 2) {date.append("/");}
+					if (date.getText().length() == 5) {date.append("/");}
+				}
+			}
+		});
+		
+		
 		
 		//Prix
 		Composite compositePrix = new Composite(colonne1, SWT.NONE);
@@ -374,7 +407,7 @@ public class VueLivraison {
 	    
 		//creation de la table des produits
 	    final Table tableProduit = new Table (table, SWT.BORDER | SWT.MULTI| SWT.V_SCROLL | SWT.FULL_SELECTION);
-	    tableProduit.setLayoutData(new RowData(345, 141));
+	    tableProduit.setLayoutData(new RowData(400,230));
 	    tableProduit.setLinesVisible (true);
 	    tableProduit.setHeaderVisible (true);
 	    
@@ -654,7 +687,7 @@ public class VueLivraison {
 		
 		FillLayout fillLayout = new FillLayout();
 		fillLayout.type = SWT.VERTICAL;
-		fillLayout.marginWidth = 328;
+		fillLayout.marginWidth = 367;
 		selection.setLayout(fillLayout);
 		
 		//juste pour creer un espace 
@@ -691,6 +724,8 @@ public class VueLivraison {
 		FillLayout fillLayoutV = new FillLayout();
 		fillLayoutV.type = SWT.VERTICAL;
 		fillLayoutV.marginWidth = 10;
+		fillLayoutV.marginHeight = 15;
+		fillLayoutV.spacing = 20;
 		
 		RowLayout rowLayoutV = new RowLayout();
 		rowLayoutV.type = SWT.VERTICAL;
@@ -717,13 +752,22 @@ public class VueLivraison {
 		
 		Label labelChantier = new Label(compositeChantier, SWT.NONE);
 		labelChantier.setBackground(Couleur.bleuClair);
-		labelChantier.setText("Chantier* : ");
+		labelChantier.setText("Chantier* :                                                  ");
 		
 		Combo chantier = new Combo(compositeChantier, SWT.BORDER);
 		chantier.setText("Selectionner ...");
 		try {
 			for (Chantier c : Chantier.getAllChantier()) {
-				chantier.add(c.getNom()+"; id :"+((Integer)c.getChantierId()).toString());
+				if (c.getStatus().equals("Publié")) {
+					String stringChantier =  c.getNom()+"; id :"+((Integer)c.getChantierId()).toString();
+					if (stringChantier.length() > 30) {
+						chantier.add(stringChantier.substring(0, 30)+"...");
+						labelChantier.setText("Chantier* :");
+					}
+					else {
+						chantier.add(stringChantier);
+					}
+				}
 			}
 		} catch (SQLException e1) {
 			e1.printStackTrace(); 
@@ -745,7 +789,16 @@ public class VueLivraison {
 
 		final Text date = new Text(compositeDate, SWT.BORDER);
 		date.setText("");
-		
+		//pour ajouter les barres / automatiquement
+		date.addModifyListener(new ModifyListener() { 
+			public void modifyText(ModifyEvent me) { 
+				if (!(date.getText().isEmpty())) {//pour ne pas tester quand l'utilisateur est en train de modifier
+					if (date.getText().length() == 2) {date.append("/");}
+					if (date.getText().length() == 5) {date.append("/");}
+				}
+			}
+		});
+
 		//Prix
 		Composite compositePrix = new Composite(colonne1, SWT.NONE);
 		compositePrix.setBackground(Couleur.bleuClair);
@@ -790,7 +843,7 @@ public class VueLivraison {
 	    
 		//creation de la table
 	    final Table tableProduit = new Table (table, SWT.BORDER | SWT.MULTI| SWT.V_SCROLL | SWT.FULL_SELECTION);
-	    tableProduit.setLayoutData(new RowData(345, 141));
+	    tableProduit.setLayoutData(new RowData(400, 230));
 	    tableProduit.setLinesVisible (true);
 	    tableProduit.setHeaderVisible (true);
 	    

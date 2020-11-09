@@ -5,6 +5,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 
 import org.eclipse.swt.*;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.*;
@@ -355,7 +357,16 @@ public class VueEmploye {
 		if (selectedEmploye.getDateArrivee() != null) {
 			textDateArrivee.setText(selectedEmploye.getDateArrivee());
 		}
-		
+		//pour ajouter les barres / automatiquement
+		textDateArrivee.addModifyListener(new ModifyListener() { 
+			public void modifyText(ModifyEvent me) { 
+				if (!(textDateArrivee.getText().isEmpty())) {//pour ne pas tester quand l'utilisateur est en train de modifier
+					if (textDateArrivee.getText().length() == 2) {textDateArrivee.append("/");}
+					if (textDateArrivee.getText().length() == 5) {textDateArrivee.append("/");}
+				}
+			}
+		});
+
 		// on ne prends pas item.get(9) car c'est l'anciennete 
 		
 		//NombreHeures
@@ -433,7 +444,7 @@ public class VueEmploye {
 
 				try { 
 					int id = selectedEmploye.getEmployeId();
-					selectedEmploye = new Employe(id, titre.getText(), textNom.getText(), textPrenom.getText(), textMail.getText(), textTelephone.getText(), Integer.parseInt(textNumeroMatricule.getText()), 
+					selectedEmploye = new Employe(id, titre.getText(), textNom.getText(), textPrenom.getText(), textMail.getText(), textTelephone.getText(), textNumeroMatricule.getText(), 
 							textPointure.getText(), textTaille.getText(), textDateArrivee.getText(), Double.parseDouble(textNombreHeures.getText()),
 						   Double.parseDouble(textRemboursementTransport.getText()), Double.parseDouble(textRemboursementTelephone.getText()), 
 						   Double.parseDouble(textSalaire.getText()), "Publié");
@@ -667,7 +678,16 @@ public class VueEmploye {
 
 		final Text textDateArrivee = new Text(compositeDateArrivee, SWT.BORDER);
 		textDateArrivee.setText("");
-		
+		//pour ajouter les barres / automatiquement
+		textDateArrivee.addModifyListener(new ModifyListener() { 
+			public void modifyText(ModifyEvent me) { 
+				if (!(textDateArrivee.getText().isEmpty())) {//pour ne pas tester quand l'utilisateur est en train de modifier
+					if (textDateArrivee.getText().length() == 2) {textDateArrivee.append("/");}
+					if (textDateArrivee.getText().length() == 5) {textDateArrivee.append("/");}
+				}
+			}
+		});
+
 		//NombreHeures
 		Composite compositeNombreHeures = new Composite(colonne2, SWT.NONE);
 		compositeNombreHeures.setBackground(Couleur.bleuClair);
@@ -779,7 +799,7 @@ public class VueEmploye {
 		}
 		
 		//champs obligatoires
-		Employe employe = new Employe(titre,textNom,textPrenom,Integer.parseInt(textNumeroMatricule));
+		Employe employe = new Employe(titre,textNom,textPrenom,textNumeroMatricule);
 		employe.setStatus("Publié");
 		  
 		//champs optionels
@@ -898,7 +918,7 @@ public class VueEmploye {
 					item.setText(2,e.getPrenom());
 					item.setText(3,e.getMail());
 					item.setText(4,e.getTelephone());
-					item.setText(5,Integer.toString(e.getNumeroMatricule()));
+					item.setText(5,e.getNumeroMatricule());
 					item.setText(6,e.getPointure());
 					item.setText(7,e.getTaille());
 					

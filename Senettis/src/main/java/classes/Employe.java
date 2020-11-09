@@ -29,7 +29,7 @@ public class Employe {
 	private String prenom;
 	private String mail;
 	private String telephone;
-	private Integer numeroMatricule;
+	private String numeroMatricule;
 	private String pointure;
 	private String taille;
 	private String dateArrivee;
@@ -63,7 +63,7 @@ public class Employe {
 	 * @param status                 : verification faite
 	 */
 	public Employe(int employeId, String t, String nom, String prenom, String mail, String telephone,
-			Integer numeroMatricule, String pointure, String taille, String dateArrivee, Double nombreHeures,
+			String numeroMatricule, String pointure, String taille, String dateArrivee, Double nombreHeures,
 			Double remboursementTransport, Double remboursementTelephone, Double salaire, String status) {
 		this(t, nom, prenom, mail, telephone, numeroMatricule, pointure, taille, dateArrivee, nombreHeures,
 				remboursementTransport, remboursementTelephone, salaire, status);
@@ -96,7 +96,7 @@ public class Employe {
 	 * @param salaire                :double
 	 * @param status                 : verification faite
 	 */
-	public Employe(String t, String nom, String prenom, String mail, String telephone, Integer numeroMatricule,
+	public Employe(String t, String nom, String prenom, String mail, String telephone, String numeroMatricule,
 			String pointure, String taille, String dateArrivee, Double nombreHeures, Double remboursementTransport,
 			Double remboursementTelephone, Double salaire, String status) {
 		this(t, nom, prenom, numeroMatricule, dateArrivee, status);
@@ -153,7 +153,7 @@ public class Employe {
 	 * @param dateArrivee     : string, verification faite
 	 * @param status          : verification faite
 	 */
-	public Employe(String t, String nom, String prenom, Integer numeroMatricule, String dateArrivee, String status) {
+	public Employe(String t, String nom, String prenom, String numeroMatricule, String dateArrivee, String status) {
 		this(t, nom, prenom, numeroMatricule);
 
 		// status
@@ -209,7 +209,7 @@ public class Employe {
 	 * @param prenom
 	 * @param numeroMatricule : int
 	 */
-	public Employe(String t, String nom, String prenom, Integer numeroMatricule) {
+	public Employe(String t, String nom, String prenom, String numeroMatricule) {
 		super();
 
 		// je verifie le titre
@@ -371,7 +371,7 @@ public class Employe {
 			String prenom = result.getString("Prenom");
 			String mail = result.getString("mail");
 			String telephone = result.getString("Telephone");
-			Integer numeroMatricule = Integer.parseInt(result.getString("Numero_matricule"));
+			String numeroMatricule = result.getString("Numero_matricule");
 			String pointure = result.getString("Pointure");
 			String taille = result.getString("Taille");
 			String dateArrivee = result.getString("Date_arrivee");
@@ -423,7 +423,7 @@ public class Employe {
 			String prenom = result.getString("Prenom");
 			String mail = result.getString("Mail");
 			String telephone = result.getString("Telephone");
-			int numeroMatricule = result.getInt("Numero_matricule");
+			String numeroMatricule = result.getString("Numero_matricule");
 			String pointure = result.getString("Pointure");
 			String taille = result.getString("Taille");
 
@@ -583,14 +583,14 @@ public class Employe {
 		this.telephone = telephone;
 	}
 
-	public Integer getNumeroMatricule() {
+	public String getNumeroMatricule() {
 		if (numeroMatricule == null) {
-			return 0;
+			return "";
 		}
 		return numeroMatricule;
 	}
 
-	public void setNumeroMatricule(Integer numeroMatricule) {
+	public void setNumeroMatricule(String numeroMatricule) {
 		if (numeroMatricule == null) {
 			throw new Error("setNumeroMatricule : le numeroMatricule indique est vide");
 		}

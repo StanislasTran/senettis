@@ -57,7 +57,7 @@ Create table Employe (
     Prenom VARCHAR (100) NOT NULL,
     Mail VARCHAR(50),
     Telephone VARCHAR(15),
-    Numero_matricule int NOT NULL,
+    Numero_matricule VARCHAR(40) NOT NULL,
     Pointure VARCHAR(10),
     Taille VARCHAR(10),
     Date_arrivee DATE,
