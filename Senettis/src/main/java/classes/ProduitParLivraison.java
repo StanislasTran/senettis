@@ -63,7 +63,7 @@ public class ProduitParLivraison {
 
 		ResultSet result=selectAllProduitParLivraison().getResultSet();
 		List<ProduitParLivraison> allProduitParLivraison=new ArrayList<ProduitParLivraison>();
-		System.out.println("Id|ProduitId|LivraisonId|Quantite|Status");
+		//System.out.println("Id|ProduitId|LivraisonId|Quantite|Status");
 		while(result.next()) {
 			int produitParLivraisonId=result.getInt("ProduitParLivraisonId");
 			int produitId=result.getInt("Produit");
@@ -77,6 +77,61 @@ public class ProduitParLivraison {
 		
 		return allProduitParLivraison;
 	}
+	
+	public static List<ProduitParLivraison> getProductByLivraisonByLivraisonId(int livraisonId) throws SQLException {
+		String reqSql = "SELECT ProduitParLivraisonId,Livraison,Produit,quantite,Status FROM ProduitParLivraison WHERE Livraison=?;";
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		PreparedStatement statement = connection.prepareStatement(reqSql);
+		statement.setObject(1, livraisonId, Types.INTEGER);
+		statement.executeQuery();
+		ResultSet result = statement.getResultSet();
+		List<ProduitParLivraison> results = new ArrayList<>();
+
+		while (result.next()) {
+			int produitParLivraisonId = result.getInt("produitParLivraisonId");
+			livraisonId = result.getInt("Livraison");
+			int produitId = result.getInt("Produit");
+			int quantite = result.getInt("quantite");
+			String status = result.getString("status");
+			
+			results.add(new ProduitParLivraison(produitParLivraisonId, livraisonId, produitId, quantite, status));
+
+		} 
+		
+		if (results.isEmpty()){
+			throw new SQLException("Data not found");
+		}
+		return results;
+		
+		
+	}
+	
+	
+	public static ProduitParLivraison getProductByLivraisonByLivraisonIdAndProductId(int livraisonId, int produitId) throws SQLException {
+		String reqSql = "SELECT ProduitParLivraisonId,Livraison,Produit,quantite,Status FROM ProduitParLivraison WHERE Livraison=? and Produit=?;";
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		PreparedStatement statement = connection.prepareStatement(reqSql);
+		statement.setObject(1, livraisonId, Types.INTEGER);
+		statement.setObject(1, livraisonId, Types.INTEGER);
+		statement.executeQuery();
+		ResultSet result = statement.getResultSet();
+
+		if (result.next()) {
+			int produitParLivraisonId = result.getInt("produitParLivraisonId");
+			livraisonId = result.getInt("Livraison");
+			produitId = result.getInt("Produit");
+			int quantite = result.getInt("quantite");
+			String status = result.getString("status");
+			
+			return (new ProduitParLivraison(produitParLivraisonId, livraisonId, produitId, quantite, status));
+
+		} 
+		else {
+			throw new SQLException("Data not found");
+		}		
+		
+	}
+	
 	
 	public static void printAllProduitParLivraison() throws SQLException {
 		

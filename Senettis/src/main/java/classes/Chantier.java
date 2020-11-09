@@ -118,6 +118,27 @@ public class Chantier {
 		return statement.executeUpdate();
 	}
 	
+	/**
+	 * Retourne le nombre de chantier dans la base de données
+	 * 
+	 * @return
+	 * @throws SQLException
+	 */
+	public static int getCountChantier() throws SQLException {
+		String reqSql = "SELECT count(*) as count FROM Chantier";
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		Statement statement = connection.createStatement();
+		statement.executeQuery(reqSql);
+		ResultSet result = statement.getResultSet();
+		if (result.next()) {
+			if (result.getInt("count") > 0) {
+				return result.getInt("count");
+			}
+		}
+		return 0;
+	}
+	
+	
 	/***
 	 * @param chantierId
 	 * @return le chantier correspondant à l'id indique en argument

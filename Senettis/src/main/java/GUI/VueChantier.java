@@ -176,10 +176,15 @@ public class VueChantier {
 		selection = new Composite(vueChantier, SWT.CENTER);
 		
 		FillLayout fillLayout = new FillLayout();
-		fillLayout.type = SWT.HORIZONTAL;
+		fillLayout.type = SWT.VERTICAL;
 		fillLayout.marginWidth = 7;
 		selection.setLayout(fillLayout);
-		
+
+		//juste pour creer un espace 
+		Label l1 = new Label(selection, SWT.NONE);
+		l1.setText("");
+		l1.setBackground(Couleur.bleuFonce);
+
 		selection.setBackground(Couleur.bleuFonce);
 		Label HeadLabel =new Label(selection,SWT.TITLE);
 		HeadLabel.setText("Modification d'un Chantier");
@@ -187,7 +192,12 @@ public class VueChantier {
 		HeadLabel.setForeground(Couleur.bleuClair);
 		HeadLabel.setFont(fontTitle);
 		HeadLabel.setBackground(Couleur.bleuFonce);
-		
+
+		//juste pour creer un espace 
+		Label l2 = new Label(selection, SWT.NONE);
+		l2.setText("");
+		l2.setBackground(Couleur.bleuFonce);
+
 		selection.pack();
 	}
 
@@ -210,14 +220,8 @@ public class VueChantier {
 		fillLayoutV.type = SWT.VERTICAL;
 		fillLayoutV.marginWidth = 10;
 		Composite colonne1 = new Composite(vue, SWT.BORDER);
-		//Composite colonne2 = new Composite(vue, SWT.BORDER);
-		//Composite colonne3 = new Composite(vue, SWT.BORDER);
 		colonne1.setBackground(Couleur.bleuClair);
-		//colonne2.setBackground(Couleur.bleuClair);
-		//colonne3.setBackground(Couleur.bleuClair);
 		colonne1.setLayout(fillLayoutV);
-		//colonne2.setLayout(fillLayoutV);
-		//colonne3.setLayout(fillLayoutV);
 		
 		//utiliser pour tous les composites des attributs du formulaire
 		FillLayout fillLayoutH5 = new FillLayout();
@@ -260,22 +264,26 @@ public class VueChantier {
 
 		final Text textCA = new Text(compositeCA, SWT.BORDER);
 		textCA.setText(selectedChantier.getCA().toString());
-		
-		//Bouton Valider
-		Composite compositeValidation = new Composite(colonne1, SWT.CENTER);
-		compositeValidation.setBackground(Couleur.bleuClair);
-		compositeValidation.setLayout(fillLayoutH5);
-		
-		Label labelValidation = new Label(compositeValidation, SWT.NONE);
-		labelValidation.setBackground(Couleur.bleuClair);
-		labelValidation.setText("");
-		
-		Button buttonValidation = new Button(compositeValidation, SWT.BACKGROUND);
+
+		//Boutons
+		Composite compositeBoutons = new Composite(colonne1, SWT.CENTER);
+		compositeBoutons.setBackground(Couleur.bleuClair);
+		compositeBoutons.setLayout(fillLayoutH5);
+
+		Button buttonAnnulation = new Button(compositeBoutons, SWT.BACKGROUND);
+		buttonAnnulation.setText("Annuler");
+		buttonAnnulation.addSelectionListener(new SelectionAdapter() {
+
+			@Override public void widgetSelected(SelectionEvent arg0) {
+				newVueChantier(parent);
+			}
+		});
+
+		Button buttonValidation = new Button(compositeBoutons, SWT.BACKGROUND);
 		buttonValidation.setText("Valider");
-		buttonValidation.setBounds(10, 60, 100, 25);
 		buttonValidation.addSelectionListener(new SelectionAdapter() {
-		  
-		  @Override public void widgetSelected(SelectionEvent arg0) {
+
+			@Override public void widgetSelected(SelectionEvent arg0) {
 
 			   try { 
 				   int id = selectedChantier.getChantierId();
@@ -348,10 +356,15 @@ public class VueChantier {
 		selection = new Composite(vueChantier, SWT.CENTER);
 		
 		FillLayout fillLayout = new FillLayout();
-		fillLayout.type = SWT.HORIZONTAL;
+		fillLayout.type = SWT.VERTICAL;
 		fillLayout.marginWidth = 20;
 		selection.setLayout(fillLayout);
-		
+
+		//juste pour creer un espace 
+		Label l1 = new Label(selection, SWT.NONE);
+		l1.setText("");
+		l1.setBackground(Couleur.bleuFonce);
+
 		selection.setBackground(Couleur.bleuFonce);
 		Label HeadLabel =new Label(selection,SWT.TITLE);
 		HeadLabel.setText("Creation d'un Chantier");
@@ -359,6 +372,11 @@ public class VueChantier {
 		HeadLabel.setForeground(Couleur.bleuClair);
 		HeadLabel.setFont(fontTitle);
 		HeadLabel.setBackground(Couleur.bleuFonce);
+
+		//juste pour creer un espace 
+		Label l2 = new Label(selection, SWT.NONE);
+		l2.setText("");
+		l2.setBackground(Couleur.bleuFonce);
 		
 		selection.pack();
 	}
@@ -422,26 +440,30 @@ public class VueChantier {
 
 		final Text textCA = new Text(compositeCA, SWT.BORDER);
 		textCA.setText("");
-		
-		//Bouton Valider
-		Composite compositeValidation = new Composite(colonne1, SWT.CENTER);
-		compositeValidation.setBackground(Couleur.bleuClair);
-		compositeValidation.setLayout(fillLayoutH5);
-		
-		Label labelValidation = new Label(compositeValidation, SWT.NONE);
-		labelValidation.setBackground(Couleur.bleuClair);
-		labelValidation.setText("");
-		
-		Button buttonValidation = new Button(compositeValidation, SWT.BACKGROUND);
-		buttonValidation.setText("Valider");
-		buttonValidation.setBounds(10, 60, 100, 25);
-		buttonValidation.addSelectionListener(new SelectionAdapter() {
-		  
-		  @Override public void widgetSelected(SelectionEvent arg0) {
 
-			  try { 
-				  validerCreation(textNom.getText(), textAdresse.getText(), textCA.getText());   
-			  } catch (Throwable e) { 
+		//Boutons
+		Composite compositeBoutons = new Composite(colonne1, SWT.CENTER);
+		compositeBoutons.setBackground(Couleur.bleuClair);
+		compositeBoutons.setLayout(fillLayoutH5);
+
+		Button buttonAnnulation = new Button(compositeBoutons, SWT.BACKGROUND);
+		buttonAnnulation.setText("Annuler");
+		buttonAnnulation.addSelectionListener(new SelectionAdapter() {
+
+			@Override public void widgetSelected(SelectionEvent arg0) {
+				newVueChantier(parent);
+			}
+		});
+
+		Button buttonValidation = new Button(compositeBoutons, SWT.BACKGROUND);
+		buttonValidation.setText("Valider");
+		buttonValidation.addSelectionListener(new SelectionAdapter() {
+
+			@Override public void widgetSelected(SelectionEvent arg0) {
+
+				try { 
+					validerCreation(textNom.getText(), textAdresse.getText(), textCA.getText());   
+				} catch (Throwable e) { 
 			    	e.printStackTrace(); 
 			    	System.out.println("erreur dans la creation");
 			    	MessageBox dialog = new MessageBox(parent.getShell(), SWT.ICON_ERROR | SWT.OK);
@@ -511,13 +533,14 @@ public class VueChantier {
 		vue.setLayout(rowLayoutV);
 		vue.setBackground(Couleur.gris);
 		
+
 		Table table= getTableAllChantier(this.vue);
+
 		
 		//on ajoute un listener pour modifier l'interface si l'utilisateur clique sur une ligne
 		table.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (table.getSelectionIndex() != -1) {
-					System.out.println("not -1");
 					
 					selection.dispose();
 					try {
@@ -602,6 +625,18 @@ public class VueChantier {
 		menu = new Menu (parent.getShell(), SWT.POP_UP);
 		table.setMenu (menu);
 		
+		//pour modifier
+		MenuItem update = new MenuItem (menu, SWT.PUSH);
+		update.setText ("Modifier l'element");
+		update.addSelectionListener(new SelectionAdapter() {	
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				if (table.getSelection().length != 0) {
+					vueChantierModifier();
+				}
+			}
+		});
+		
 		//pour supprimer
 		MenuItem delete = new MenuItem (menu, SWT.PUSH);
 		delete.setText ("Supprimer l'element");
@@ -632,17 +667,6 @@ public class VueChantier {
 			}
 		});
 		
-		//pour modifier
-		MenuItem update = new MenuItem (menu, SWT.PUSH);
-		update.setText ("Modifier l'element");
-		update.addSelectionListener(new SelectionAdapter() {	
-			@Override
-			public void widgetSelected(SelectionEvent arg0) {
-				if (table.getSelection().length != 0) {
-					vueChantierModifier();
-				}
-			}
-		});
 	}
 	
 	public Composite getComposite() {

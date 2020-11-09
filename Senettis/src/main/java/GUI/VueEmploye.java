@@ -37,6 +37,14 @@ public class VueEmploye {
 		newVueEmploye(parent);
 	}
 	
+	public Composite getSelection() {
+		return selection;
+	}
+	
+	public Composite getVue() {
+		return vue;
+	}
+	
 	/***
 	 * Pour créer une vueEmploye : dispose si une vueEmploye existe deja, creer le composite et lui affecte le layout RowLayout Vertical
 	 * Appelle ensuite les fonctions compositeSelectionCreer et vueEmployeAfficher
@@ -176,10 +184,15 @@ public class VueEmploye {
 		selection = new Composite(vueEmploye, SWT.CENTER);
 		
 		FillLayout fillLayout = new FillLayout();
-		fillLayout.type = SWT.HORIZONTAL;
+		fillLayout.type = SWT.VERTICAL;
 		fillLayout.marginWidth = 402;
 		selection.setLayout(fillLayout);
-		
+
+		//juste pour creer un espace 
+		Label l1 = new Label(selection, SWT.NONE);
+		l1.setText("");
+		l1.setBackground(Couleur.bleuFonce);
+
 		selection.setBackground(Couleur.bleuFonce);
 		Label HeadLabel =new Label(selection,SWT.TITLE);
 		HeadLabel.setText("Modification d'un Employe");
@@ -187,7 +200,12 @@ public class VueEmploye {
 		HeadLabel.setForeground(Couleur.bleuClair);
 		HeadLabel.setFont(fontTitle);
 		HeadLabel.setBackground(Couleur.bleuFonce);
-		
+
+		//juste pour creer un espace 
+		Label l2 = new Label(selection, SWT.NONE);
+		l2.setText("");
+		l2.setBackground(Couleur.bleuFonce);
+
 		selection.pack();
 	}
 
@@ -392,27 +410,31 @@ public class VueEmploye {
 		//ne s'affiche pas 
 		Composite test = new Composite(colonne3, SWT.NONE);
 		test.setBackground(Couleur.bleuClair);
-		
-		//Bouton Valider
-		Composite compositeValidation = new Composite(colonne3, SWT.CENTER);
-		compositeValidation.setBackground(Couleur.bleuClair);
-		compositeValidation.setLayout(fillLayoutH5);
-		
-		Label labelValidation = new Label(compositeValidation, SWT.NONE);
-		labelValidation.setBackground(Couleur.bleuClair);
-		labelValidation.setText("");
-		
-		Button buttonValidation = new Button(compositeValidation, SWT.BACKGROUND);
-		buttonValidation.setText("Valider");
-		buttonValidation.setBounds(10, 60, 100, 25);
-		buttonValidation.addSelectionListener(new SelectionAdapter() {
-		  
-		  @Override public void widgetSelected(SelectionEvent arg0) {
 
-			   try { 
-				   int id = selectedEmploye.getEmployeId();
-				   selectedEmploye = new Employe(id, titre.getText(), textNom.getText(), textPrenom.getText(), textMail.getText(), textTelephone.getText(), Integer.parseInt(textNumeroMatricule.getText()), 
-						   textPointure.getText(), textTaille.getText(), textDateArrivee.getText(), Double.parseDouble(textNombreHeures.getText()),
+		//Boutons
+		Composite compositeBoutons = new Composite(colonne3, SWT.CENTER);
+		compositeBoutons.setBackground(Couleur.bleuClair);
+		compositeBoutons.setLayout(fillLayoutH5);
+
+		Button buttonAnnulation = new Button(compositeBoutons, SWT.BACKGROUND);
+		buttonAnnulation.setText("Annuler");
+		buttonAnnulation.addSelectionListener(new SelectionAdapter() {
+
+			@Override public void widgetSelected(SelectionEvent arg0) {
+				newVueEmploye(parent);
+			}
+		});
+
+		Button buttonValidation = new Button(compositeBoutons, SWT.BACKGROUND);
+		buttonValidation.setText("Valider");
+		buttonValidation.addSelectionListener(new SelectionAdapter() {
+
+			@Override public void widgetSelected(SelectionEvent arg0) {
+
+				try { 
+					int id = selectedEmploye.getEmployeId();
+					selectedEmploye = new Employe(id, titre.getText(), textNom.getText(), textPrenom.getText(), textMail.getText(), textTelephone.getText(), Integer.parseInt(textNumeroMatricule.getText()), 
+							textPointure.getText(), textTaille.getText(), textDateArrivee.getText(), Double.parseDouble(textNombreHeures.getText()),
 						   Double.parseDouble(textRemboursementTransport.getText()), Double.parseDouble(textRemboursementTelephone.getText()), 
 						   Double.parseDouble(textSalaire.getText()), "Publié");
 				   validerModification();
@@ -483,10 +505,15 @@ public class VueEmploye {
 		selection = new Composite(vueEmploye, SWT.CENTER);
 		
 		FillLayout fillLayout = new FillLayout();
-		fillLayout.type = SWT.HORIZONTAL;
+		fillLayout.type = SWT.VERTICAL;
 		fillLayout.marginWidth = 416;
 		selection.setLayout(fillLayout);
-		
+
+		//juste pour creer un espace 
+		Label l1 = new Label(selection, SWT.NONE);
+		l1.setText("");
+		l1.setBackground(Couleur.bleuFonce);
+
 		selection.setBackground(Couleur.bleuFonce);
 		Label HeadLabel =new Label(selection,SWT.TITLE);
 		HeadLabel.setText("Creation d'un Employe");
@@ -494,7 +521,12 @@ public class VueEmploye {
 		HeadLabel.setForeground(Couleur.bleuClair);
 		HeadLabel.setFont(fontTitle);
 		HeadLabel.setBackground(Couleur.bleuFonce);
-		
+
+		//juste pour creer un espace 
+		Label l2 = new Label(selection, SWT.NONE);
+		l2.setText("");
+		l2.setBackground(Couleur.bleuFonce);
+
 		selection.pack();
 	}
 
@@ -688,22 +720,26 @@ public class VueEmploye {
 		//utiliser pour avoir le meme nombre de composite sur chaque colonne et qu'ils prennent donc la meme taille
 		Composite test = new Composite(colonne3, SWT.NONE);
 		test.setBackground(Couleur.bleuClair);
-		
-		//bouton valider
-		Composite compositeValidation = new Composite(colonne3, SWT.CENTER);
-		compositeValidation.setBackground(Couleur.bleuClair);
-		compositeValidation.setLayout(fillLayoutH5);
-		
-		Label labelValidation = new Label(compositeValidation, SWT.NONE);
-		labelValidation.setBackground(Couleur.bleuClair);
-		labelValidation.setText("");
-		
-		Button buttonValidation = new Button(compositeValidation, SWT.BACKGROUND);
+
+		//Boutons
+		Composite compositeBoutons = new Composite(colonne3, SWT.CENTER);
+		compositeBoutons.setBackground(Couleur.bleuClair);
+		compositeBoutons.setLayout(fillLayoutH5);
+
+		Button buttonAnnulation = new Button(compositeBoutons, SWT.BACKGROUND);
+		buttonAnnulation.setText("Annuler");
+		buttonAnnulation.addSelectionListener(new SelectionAdapter() {
+
+			@Override public void widgetSelected(SelectionEvent arg0) {
+				newVueEmploye(parent);
+			}
+		});
+
+		Button buttonValidation = new Button(compositeBoutons, SWT.BACKGROUND);
 		buttonValidation.setText("Valider");
-		buttonValidation.setBounds(10, 60, 100, 25);
 		buttonValidation.addSelectionListener(new SelectionAdapter() {
-		  
-		  @Override public void widgetSelected(SelectionEvent arg0) {
+
+			@Override public void widgetSelected(SelectionEvent arg0) {
 
 			  try { 
 				  System.out.println("avant de lancer fonction : "+textDateArrivee.getText());
@@ -833,12 +869,12 @@ public class VueEmploye {
 		
 		//creation de la table
 	    final Table table = new Table (vue, SWT.BORDER | SWT.MULTI| SWT.V_SCROLL | SWT.FULL_SELECTION);
-	    table.setLayoutData(new RowData(1118, 400));
+	    table.setLayoutData(new RowData(1047, 450));
 	    table.setLinesVisible (true);
 		table.setHeaderVisible (true);
 		
 		//on met les noms des colonnes
-		String[] titles = {"Titre","Nom","Prenom","Email","Téléphone","Numéro de matricule","Pointure","Taille","Date d'arrivée","Ancienneté","Nb d'heures","Remb. Transport","Remb. Telephone","Salaire"};
+		String[] titles = {"Titre","Nom","Prenom","Email","Téléphone","N° de matricule","Pointure","Taille","Date d'arrivée","Ancienneté","Nb d'heures","Remb. Transport","Remb. Telephone","Salaire"};
 		for (String title : titles) {
 			TableColumn column = new TableColumn (table, SWT.NONE);
 			column.setText (title);
@@ -846,7 +882,7 @@ public class VueEmploye {
 		
 		//je voulais cacher cette colonne mais ca ne fonctionne pas
 		TableColumn column = new TableColumn (table, SWT.NONE);
-		column.setText ("Id Base de données");
+		column.setText ("Id DB");
 		column.setWidth(0);
 		column.setResizable(false);
 		
@@ -958,7 +994,20 @@ public class VueEmploye {
 	public void doMenu(Table table) {
 		menu = new Menu (parent.getShell(), SWT.POP_UP);
 		table.setMenu (menu);
-		
+
+		//pour modifier
+		MenuItem update = new MenuItem (menu, SWT.PUSH);
+		update.setText ("Modifier l'element");
+		update.addSelectionListener(new SelectionAdapter() {	
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				if (table.getSelection().length != 0) {
+					vueEmployeModifier();
+				}
+			}
+		});
+
+
 		//pour supprimer
 		MenuItem delete = new MenuItem (menu, SWT.PUSH);
 		delete.setText ("Supprimer l'element");
@@ -989,21 +1038,11 @@ public class VueEmploye {
 			}
 		});
 		
-		//pour modifier
-		MenuItem update = new MenuItem (menu, SWT.PUSH);
-		update.setText ("Modifier l'element");
-		update.addSelectionListener(new SelectionAdapter() {	
-			@Override
-			public void widgetSelected(SelectionEvent arg0) {
-				if (table.getSelection().length != 0) {
-					vueEmployeModifier();
-				}
-			}
-		});
 	}
 	
 	public Composite getComposite() {
 		return this.vueEmploye;
+		
 	}
 	
 }

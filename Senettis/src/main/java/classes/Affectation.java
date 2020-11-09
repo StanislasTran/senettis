@@ -79,9 +79,10 @@ public class Affectation {
 
 	public static List<Affectation> getAllAffectation() throws SQLException {
 
+
 		ResultSet result = selectAllAffectation().getResultSet();
 		List<Affectation> allAffectation = new ArrayList<Affectation>();
-		System.out.println("Id|EmployeId|ChantierId|NombreHeures|Status");
+		
 		while (result.next()) {
 			int affectationId = result.getInt("AffectationId");
 			int employeId = result.getInt("Employe");
@@ -89,6 +90,7 @@ public class Affectation {
 			Double nombreHeures = result.getDouble("Nombre_heures");
 			String status = result.getString("Status");
 			allAffectation.add(new Affectation(affectationId, employeId, chantierId, nombreHeures, status));
+
 
 		}
 
@@ -174,8 +176,10 @@ public class Affectation {
 		String source = "Affectation RIGHT JOIN (Select distinct EmployeId,Nom,Prenom FROM Employe) AS emplData ON emplData.EmployeId=Affectation.Employe";
 		String group = "emplData.EmployeId,emplData.Nom,EmplData.prenom";
 
+
 		String reqSql = "SELECT " + selection + " FROM " + source + " GROUP BY " + group;
 		System.out.println(reqSql);
+
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		Statement statement = connection.createStatement();
 		statement.execute(reqSql);
@@ -184,6 +188,7 @@ public class Affectation {
 
 	}
 
+
 	public static ResultSet getChantierStats() throws SQLException {
 		String selection = "chantData.ChantierId AS 'ChantierId',ChantData.Nom,ChantData.CA,count(DISTINCT Affectation.Employe) as 'nb_Employe',SUM(Affectation.Nombre_heures) as 'nb_heure' ";
 		String source = "Affectation RIGHT JOIN (Select DISTINCT ChantierId,Nom,CA FROM Chantier) AS chantData ON chantData.ChantierId=Affectation.Chantier";
@@ -191,6 +196,7 @@ public class Affectation {
 
 		String reqSql = "SELECT " + selection + " FROM " + source + " GROUP BY " + group;
 		System.out.println(reqSql);
+
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		Statement statement = connection.createStatement();
 		statement.execute(reqSql);

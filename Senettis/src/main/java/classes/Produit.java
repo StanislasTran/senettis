@@ -93,7 +93,7 @@ public class Produit {
 
 		ResultSet result = selectAllProduct().getResultSet();
 		List<Produit> allProduct = new ArrayList<Produit>();
-		System.out.println("Id|Nom|prix|Commentaires|Status");
+		//System.out.println("Id|Nom|prix|Commentaires|Status");
 		while (result.next()) {
 			int produitId = result.getInt("ProduitId");
 			String nom = result.getString("Nom");
@@ -127,8 +127,8 @@ public class Produit {
 		statement.setObject(3, this.commentaires, Types.VARCHAR);
 		statement.setObject(4, this.status, Types.VARCHAR);
 		statement.setObject(5, this.produitId, Types.INTEGER);
-		System.out.println(this.produitId);
-		System.out.println("MAJ");
+		//System.out.println(this.produitId);
+		//System.out.println("MAJ");
 		return statement.executeUpdate();
 
 	}
