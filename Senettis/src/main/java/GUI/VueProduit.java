@@ -22,6 +22,12 @@ public class VueProduit {
 	private Composite selection;
 	private Composite vueProduit;
 
+	/**
+	 * Constructeur de la VueProduit
+	 * 
+	 * @param composite <type>Composite</type>
+	 * @throws SQLException
+	 */
 	public VueProduit(Composite composite) throws SQLException {
 		this.vueProduit = new Composite(composite, SWT.NONE);
 		Couleur.setDisplay(composite.getDisplay());
@@ -33,15 +39,24 @@ public class VueProduit {
 		compositeSelection(vueProduit);
 		vueProduitAfficher(vueProduit);
 
-		// vueProduit.pack();
-		// vueProduit.getParent().pack();
-
 	}
 
+	/**
+	 * getter for vueProduit
+	 * 
+	 * @return <type> Composite</type> vueProduit
+	 */
 	public Composite getVueProduit() {
 		return this.vueProduit;
 	}
 
+	/**
+	 * Ajoute une table contenant tous les produits de la base de données dans le
+	 * composite entre en parametre
+	 * 
+	 * @param <type>Composite </type>
+	 * @throws SQLException
+	 */
 	public void vueProduitAfficher(Composite composite) throws SQLException {
 
 		List<Produit> allProduct = Produit.getAllProduct();
@@ -66,7 +81,7 @@ public class VueProduit {
 
 				if (table.getSelectionIndex() != -1) {
 					int produitId = Integer.parseInt(table.getSelection()[0].getText());
-				compositeSelectionModif(composite, produitId);
+					compositeSelectionModif(composite, produitId);
 				} else {
 					System.out.println("erreur");
 				}
@@ -95,14 +110,19 @@ public class VueProduit {
 
 		for (TableColumn col : columns)
 			col.pack();
-		table.setSelection(2);
-
-		vueProduit.setSize(500, 500);
-		vueProduit.getParent().setSize(500, 500);
-		// listeProduit.pack();
 
 	}
 
+	
+	
+	
+	
+	/**
+	 * Permet de creer la zone de selection contenant les boutons pour Créer et
+	 * modifier les produits
+	 * 
+	 * @param composite
+	 */
 	public void compositeSelection(Composite composite) {
 		selection = new Composite(composite, SWT.NONE);
 		RowLayout rowLayout = new RowLayout();
@@ -126,13 +146,18 @@ public class VueProduit {
 			}
 		});
 
-	
 		boutonCreer.pack();
 		selection.pack();
 	}
-	
 
-	public void compositeSelectionModif(Composite composite,int produitId) {
+	
+	
+	/**
+	 * 
+	 * @param <type> Composite >composite 
+	 * @param <type>int</type> produitId, identifiant du produit à modifier
+	 */
+	public void compositeSelectionModif(Composite composite, int produitId) {
 		selection.dispose();
 		selection = new Composite(composite, SWT.NONE);
 		RowLayout rowLayout = new RowLayout();
@@ -155,7 +180,7 @@ public class VueProduit {
 
 			}
 		});
-		
+
 		Button modifBouton = new Button(selection, SWT.PUSH);
 		modifBouton.setText("Modifier");
 
@@ -178,7 +203,7 @@ public class VueProduit {
 			}
 		});
 		modifBouton.pack();
-	
+
 		boutonCreer.pack();
 		selection.pack();
 	}

@@ -159,6 +159,7 @@ public class Home {
 			}
 		});
 		
+		
 		Button boutonAffectation = new Button(menu, SWT.NONE);
 		boutonAffectation.setText("Affectations");
 		boutonAffectation.setBackground(bleuClair);

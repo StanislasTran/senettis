@@ -511,49 +511,7 @@ public class VueChantier {
 		vue.setLayout(rowLayoutV);
 		vue.setBackground(Couleur.gris);
 		
-		//creation de la table
-	    final Table table = new Table (vue, SWT.BORDER | SWT.MULTI| SWT.V_SCROLL | SWT.FULL_SELECTION);
-	    table.setLayoutData(new RowData(400, 400));
-	    table.setLinesVisible (true);
-		table.setHeaderVisible (true);
-		
-		//on met les noms des colonnes
-		String[] titles = {"Nom","Adresse","Chiffre d'affaire"};
-		for (String title : titles) {
-			TableColumn column = new TableColumn (table, SWT.NONE);
-			column.setText (title);
-		}
-		
-		//je voulais cacher cette colonne mais ca ne fonctionne pas
-		TableColumn column = new TableColumn (table, SWT.NONE);
-		column.setText ("Id Base de données");
-		column.setWidth(0);
-		column.setResizable(false);
-		
-		//on remplit la table
-		final TableColumn [] columns = table.getColumns ();
-		try {
-			for (Chantier c : Chantier.getAllChantier()) {
-				//on verifie le status
-				if (c.getStatus().contentEquals("Publié")) {
-					TableItem item = new TableItem (table, SWT.NONE);
-					item.setText(0,c.getNom());
-					item.setText(1,c.getAdresse());
-					item.setText(2,c.getCA().toString());
-					item.setText(3,Integer.toString(c.getChantierId()));
-				}
-			}
-		} catch (SQLException e) {
-	    	System.out.println("erreur dans la table des chantier");
-	    	MessageBox dialog = new MessageBox(parent.getShell(), SWT.ICON_ERROR | SWT.OK);
-	    	dialog.setText("Erreur");
-	    	dialog.setMessage("Une erreur est survenue. "+'\n'+e.getMessage());
-	    	dialog.open();
-		}
-		
-		//on pack les colonnes
-		for (TableColumn col : columns)
-			col.pack ();
+		Table table= getTableAllChantier(this.vue);
 		
 		//on ajoute un listener pour modifier l'interface si l'utilisateur clique sur une ligne
 		table.addSelectionListener(new SelectionAdapter() {
@@ -593,6 +551,53 @@ public class VueChantier {
 		
 	}
 	
+	public static Table getTableAllChantier(Composite composite) {
+		//creation de la table
+	    final Table table = new Table (composite, SWT.BORDER | SWT.MULTI| SWT.V_SCROLL | SWT.FULL_SELECTION);
+	    table.setLayoutData(new RowData(400, 400));
+	    table.setLinesVisible (true);
+		table.setHeaderVisible (true);
+		
+		//on met les noms des colonnes
+		String[] titles = {"Nom","Adresse","Chiffre d'affaire"};
+		for (String title : titles) {
+			TableColumn column = new TableColumn (table, SWT.NONE);
+			column.setText (title);
+		}
+		
+		//je voulais cacher cette colonne mais ca ne fonctionne pas
+		TableColumn column = new TableColumn (table, SWT.NONE);
+		column.setText ("Id Base de données");
+		column.setWidth(0);
+		column.setResizable(false);
+		
+		//on remplit la table
+		final TableColumn [] columns = table.getColumns ();
+		try {
+			for (Chantier c : Chantier.getAllChantier()) {
+				//on verifie le status
+				if (c.getStatus().contentEquals("Publié")) {
+					TableItem item = new TableItem (table, SWT.NONE);
+					item.setText(0,c.getNom());
+					item.setText(1,c.getAdresse());
+					item.setText(2,c.getCA().toString());
+					item.setText(3,Integer.toString(c.getChantierId()));
+				}
+			}
+		} catch (SQLException e) {
+	    	System.out.println("erreur dans la table des chantier");
+	    	MessageBox dialog = new MessageBox(composite.getShell(), SWT.ICON_ERROR | SWT.OK);
+	    	dialog.setText("Erreur");
+	    	dialog.setMessage("Une erreur est survenue. "+'\n'+e.getMessage());
+	    	dialog.open();
+		}
+		
+		//on pack les colonnes
+		for (TableColumn col : columns)
+			col.pack ();
+		return table;
+	}
+
 	public void doMenu(Table table) {
 		menu = new Menu (parent.getShell(), SWT.POP_UP);
 		table.setMenu (menu);
