@@ -435,7 +435,7 @@ public class VueLivraison {
 					item.setText(0,((Integer)p.getProduitId()).toString());
 					item.setText(1,p.getNom());
 					item.setText(2,p.getPrix().toString());
-					item.setText(3,p.getCommentaires());
+					item.setText(3,p.getComment());
 					item.setText(4,"0");
 				}
 			}
@@ -866,7 +866,7 @@ public class VueLivraison {
 					item.setText(0,((Integer)p.getProduitId()).toString());
 					item.setText(1,p.getNom());
 					item.setText(2,p.getPrix().toString());
-					item.setText(3,p.getCommentaires());
+					item.setText(3,p.getComment());
 					item.setText(4,"0");
 				}
 			}

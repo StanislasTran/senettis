@@ -17,33 +17,40 @@ public class Produit {
 	private int produitId;
 	private String nom;
 	private Double prix;
-	private String commentaires;
+	private String comment;
 	private String status;
 
 	/**
 	 * Constructor for Produit
 	 * 
-	 * @param prix
-	 * @param nom
-	 * @param commentaire
-	 * @param status
+	 * @param <type>Double</type> price
+	 * @param <type> String </type> name
+	 * @param <type>String</type> comment
+	 * @param <type>String</type> status
 	 */
-	public Produit(String nom, Double prix, String commentaires, String status) {
-		this(nom, prix, status);
-		this.commentaires = commentaires;
+	public Produit(String name, Double price, String comment, String status) {
+		this(name, price, status);
+		this.comment = comment;
 
 	}
 
+	
+	/*****************************************
+	 * 
+	 *            Constructors
+	 * 
+	 ****************************************/
+	
 	/***
 	 * Constructor
 	 * 
-	 * @param nom
-	 * @param prix
+	 * @param <type> String </type> name </String>
+	 * @param <type> int /<type> price 
 	 * @param status
 	 */
-	public Produit(String nom, Double prix, String status) {
-		this.nom = nom;
-		this.prix = prix;
+	public Produit(String name, Double price, String status) {
+		this.nom = name;
+		this.prix = price;
 		this.status = status;
 	}
 
@@ -61,9 +68,9 @@ public class Produit {
 	}
 
 	/**
-	 * Insert le produit dans la base de donnée
+	 * Insert the product into the database
 	 * 
-	 * @return 0 si la requête renvoie rien
+	 * @return 0 if the request return no result
 	 * 
 	 * @throws SQLException
 	 */
@@ -74,12 +81,17 @@ public class Produit {
 		PreparedStatement statement = connection.prepareStatement(reqSql);
 		statement.setObject(1, this.nom, Types.VARCHAR);
 		statement.setObject(2, this.prix, Types.DECIMAL);
-		statement.setObject(3, this.commentaires, Types.VARCHAR);
+		statement.setObject(3, this.comment, Types.VARCHAR);
 		statement.setObject(4, this.status, Types.VARCHAR);
 
 		return statement.executeUpdate();
 	}
 
+	/**
+	 * 
+	 * @return
+	 * @throws SQLException
+	 */
 	private static Statement selectAllProduct() throws SQLException {
 		String reqSql = "SELECT * FROM Produit";
 
@@ -88,25 +100,34 @@ public class Produit {
 		statement.executeQuery(reqSql);
 		return statement;
 	}
+	
+	/**
+	 * return the list of all product stored in the database
+	 * @return <type> List<product> </type>
+	 * @throws SQLException
+	 */
 
 	public static List<Produit> getAllProduct() throws SQLException {
 
 		ResultSet result = selectAllProduct().getResultSet();
 		List<Produit> allProduct = new ArrayList<Produit>();
-		//System.out.println("Id|Nom|prix|Commentaires|Status");
 		while (result.next()) {
 			int produitId = result.getInt("ProduitId");
-			String nom = result.getString("Nom");
-			Double prix = result.getDouble("Prix");
-			String commentaires = result.getString("Commentaires");
+			String name = result.getString("Nom");
+			Double price = result.getDouble("Prix");
+			String comment = result.getString("Commentaires");
 			String status = result.getString("Status");
-			allProduct.add(new Produit(produitId, nom, prix, commentaires, status));
+			allProduct.add(new Produit(produitId, name, price, comment, status));
 
 		}
 
 		return allProduct;
 	}
 
+	/**
+	 * print all product in the consol
+	 * @throws SQLException
+	 */
 	public static void printAllProduct() throws SQLException {
 
 		List<Produit> allProduct = getAllProduct();
@@ -115,8 +136,12 @@ public class Produit {
 			System.out.println(produit);
 	}
 
-
-
+	/**
+	 * Met à jour le produit dans la base de données en utlisant sont Identifiant
+	 * 
+	 * @return <type>int</type>
+	 * @throws SQLException
+	 */
 	public int updateDatabase() throws SQLException {
 		String reqSql = "UPDATE Produit SET nom=?, prix=?, commentaires=?, status=? WHERE ProduitId=?;";
 
@@ -124,37 +149,44 @@ public class Produit {
 		PreparedStatement statement = connection.prepareStatement(reqSql);
 		statement.setObject(1, this.nom.toString(), Types.VARCHAR);
 		statement.setObject(2, this.prix, Types.DECIMAL);
-		statement.setObject(3, this.commentaires, Types.VARCHAR);
+		statement.setObject(3, this.comment, Types.VARCHAR);
 		statement.setObject(4, this.status, Types.VARCHAR);
 		statement.setObject(5, this.produitId, Types.INTEGER);
-		//System.out.println(this.produitId);
-		//System.out.println("MAJ");
+		// System.out.println(this.produitId);
+		// System.out.println("MAJ");
 		return statement.executeUpdate();
 
 	}
 
+	/**
+	 * return a product object from a product store ine the database by using
+	 * productId
+	 * 
+	 * @param productId
+	 * @return
+	 * @throws SQLException
+	 */
 	public static Produit getProductById(int productId) throws SQLException {
 		String reqSql = "SELECT ProduitId,Nom,Prix,Commentaires,Status FROM Produit WHERE ProduitId=?;";
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
 		statement.setObject(1, productId, Types.INTEGER);
 		statement.executeQuery();
-		
-		ResultSet result=statement.getResultSet();
-		
+
+		ResultSet result = statement.getResultSet();
+
 		if (result.next()) {
 			int produitId = result.getInt("ProduitId");
-			String nom = result.getString("Nom");
-			Double prix = result.getDouble("Prix");
-			String commentaires = result.getString("Commentaires");
+			String name = result.getString("Nom");
+			Double price = result.getDouble("Prix");
+			String comment = result.getString("Commentaires");
 			String status = result.getString("Status");
-			return new Produit(produitId, nom, prix, commentaires, status);
+			return new Produit(produitId, name, price, comment, status);
 
-		}else {
+		} else {
 			throw new SQLException("Data not found");
 		}
 
-		
 	}
 
 	/***
@@ -210,21 +242,21 @@ public class Produit {
 	/**
 	 * @return the commentaire
 	 */
-	public String getCommentaires() {
-		return commentaires;
+	public String getComment() {
+		return comment;
 	}
 
 	/**
 	 * @param commentaire the commentaire to set
 	 */
-	private void setCommentaires(String commentaire) {
-		this.commentaires = commentaires;
+	private void setComment(String comment) {
+		this.comment = comment;
 	}
 
 	@Override
 	public String toString() {
 
-		return "" + this.produitId + "|" + this.nom + "|" + this.prix + "|" + this.commentaires + "|" + this.status;
+		return "" + this.produitId + "|" + this.nom + "|" + this.prix + "|" + this.comment + "|" + this.status;
 	}
 
 }
