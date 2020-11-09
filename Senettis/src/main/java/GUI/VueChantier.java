@@ -11,7 +11,7 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
-import classes.Chantier;
+import classes.Site;
 
 public class VueChantier {
 
@@ -20,7 +20,7 @@ public class VueChantier {
 	private Composite vueChantier;
 	private Composite selection;
 	private Composite vue;
-	private Chantier selectedChantier;
+	private Site selectedChantier;
 	private Menu menu;
 
 	// Creation VueChantier --------------------------------------------------
@@ -134,7 +134,7 @@ public class VueChantier {
 					if (selectedChantier == null) {
 						throw new Error("selectedChantier est vide");
 					}
-					Chantier c = Chantier.getChantierById(selectedChantier.getChantierId());
+					Site c = Site.getChantierById(selectedChantier.getChantierId());
 					MessageBox dialog = new MessageBox(parent.getShell(), SWT.ICON_QUESTION | SWT.YES | SWT.NO);
 					dialog.setText("Suppression Chantier");
 					dialog.setMessage("Voulez vous supprimer le chantier " + c.getNom() + " ?");
@@ -319,7 +319,7 @@ public class VueChantier {
 
 				try {
 					int id = selectedChantier.getChantierId();
-					selectedChantier = new Chantier(id, textNom.getText(), textAdresse.getText(),
+					selectedChantier = new Site(id, textNom.getText(), textAdresse.getText(),
 							Double.parseDouble(textCA.getText()), "Publié");
 					validerModification();
 				} catch (Throwable e) {
@@ -524,7 +524,7 @@ public class VueChantier {
 		}
 
 		// champs obligatoires
-		Chantier chantier = new Chantier(textNom, "Publié");
+		Site chantier = new Site(textNom, "Publié");
 
 		// champs optionels
 		if (!(textAdresse.isEmpty())) {
@@ -584,7 +584,7 @@ public class VueChantier {
 
 					selection.dispose();
 					try {
-						selectedChantier = Chantier
+						selectedChantier = Site
 								.getChantierById(Integer.parseInt(table.getSelection()[0].getText(3)));
 					} catch (NumberFormatException | SQLException e1) {
 						System.out.println("erreur pour recuperer le chantier selectionne");
@@ -645,7 +645,7 @@ public class VueChantier {
 		// on remplit la table
 		final TableColumn[] columns = table.getColumns();
 		try {
-			for (Chantier c : Chantier.getAllChantier()) {
+			for (Site c : Site.getAllChantier()) {
 				// on verifie le status
 				if (c.getStatus().contentEquals("Publié")) {
 					TableItem item = new TableItem(table, SWT.NONE);
@@ -692,7 +692,7 @@ public class VueChantier {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				try {
-					Chantier c = Chantier.getChantierById(selectedChantier.getChantierId());
+					Site c = Site.getChantierById(selectedChantier.getChantierId());
 					MessageBox dialog = new MessageBox(parent.getShell(), SWT.ICON_QUESTION | SWT.YES | SWT.NO);
 					dialog.setText("Suppression Chantier");
 					dialog.setMessage("Voulez-vous supprimer le chantier " + c.getNom() + " ?");

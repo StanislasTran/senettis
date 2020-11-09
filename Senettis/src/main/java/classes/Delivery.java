@@ -19,7 +19,7 @@ import java.sql.Types;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
-public class Livraison {
+public class Delivery {
 
 	private Integer idChantier;
 	private Double prixTotal;
@@ -29,7 +29,7 @@ public class Livraison {
 
 	
 	//Constructeurs ---------------------------------------------------
-	public Livraison(Integer idChantier, Double prixTotal, String date, String status) {
+	public Delivery(Integer idChantier, Double prixTotal, String date, String status) {
 		this(idChantier, prixTotal, date);
 		if (status != null) {
 			if (!status.isEmpty()) {
@@ -48,17 +48,17 @@ public class Livraison {
 		}
 	}
 
-	public Livraison(Integer livraisonId, Integer idChantier, Double prixTotal, String date, String status) {
+	public Delivery(Integer livraisonId, Integer idChantier, Double prixTotal, String date, String status) {
 		this(idChantier, prixTotal, date, status);
 		this.livraisonId = livraisonId;
 	}
 
-	public Livraison(Integer idChantier, Double prixTotal, String date) {
+	public Delivery(Integer idChantier, Double prixTotal, String date) {
 		this(idChantier, date);
 		this.prixTotal = prixTotal;
 	}
 	
-	public Livraison(Integer idChantier, String date) {
+	public Delivery(Integer idChantier, String date) {
 		super();
 		this.idChantier = idChantier;
 		
@@ -89,7 +89,7 @@ public class Livraison {
 		this.date = date;		
 	}
 
-	public Livraison(Integer idChantier) {
+	public Delivery(Integer idChantier) {
 		super();
 		this.idChantier = idChantier;	
 	}
@@ -151,10 +151,10 @@ public class Livraison {
 		return statement;
 	}
 	
-	public static List<Livraison> getAllLivraison() throws SQLException {
+	public static List<Delivery> getAllLivraison() throws SQLException {
 
 		ResultSet result=selectAllLivraison().getResultSet();
-		List<Livraison> allLivraison=new ArrayList<Livraison>();
+		List<Delivery> allLivraison=new ArrayList<Delivery>();
 		while(result.next()) {
 			int livraisonId=result.getInt("LivraisonId");
 			int chantierId=result.getInt("Chantier");
@@ -168,7 +168,7 @@ public class Livraison {
 				date = usDate.substring(8, 10) + "/" + usDate.substring(5, 7) + "/" + usDate.substring(0, 4);
 			}
 		    String status=result.getString("Status");
-		   allLivraison.add(new Livraison(livraisonId, chantierId, prixTotal, date, status));
+		   allLivraison.add(new Delivery(livraisonId, chantierId, prixTotal, date, status));
 		  
 			
 		}
@@ -178,14 +178,14 @@ public class Livraison {
 	
 	public static void printAllLivraison() throws SQLException {
 		
-		List<Livraison> allLivraison=getAllLivraison();
+		List<Delivery> allLivraison=getAllLivraison();
 	
-		for (Livraison livraison : allLivraison)	
+		for (Delivery livraison : allLivraison)	
 			System.out.println(livraison);
 	}
 	
 	
-	public static Livraison getLivraisonById(int livraisonId) throws SQLException {
+	public static Delivery getLivraisonById(int livraisonId) throws SQLException {
 		String reqSql = "SELECT LivraisonId,Chantier,date,prixTotal,Status FROM Livraison WHERE LivraisonId=?;";
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
@@ -207,7 +207,7 @@ public class Livraison {
 			
 			String status = result.getString("status");
 
-			return new Livraison(livraisonId, chantierId, prix, date, status);
+			return new Delivery(livraisonId, chantierId, prix, date, status);
 
 		} else {
 			throw new SQLException("Data not found");

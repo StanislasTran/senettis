@@ -13,7 +13,7 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
-import classes.Employe;
+import classes.Employee;
 
 public class VueEmploye {
 
@@ -22,7 +22,7 @@ public class VueEmploye {
 	private Composite vueEmploye;
 	private Composite selection;
 	private Composite vue;
-	private Employe selectedEmploye;
+	private Employee selectedEmploye;
 	private Menu menu ;
 
 	//Creation VueEmploye --------------------------------------------------
@@ -134,7 +134,7 @@ public class VueEmploye {
 					if (selectedEmploye == null) {
 						throw new Error("selectedEmploye est vide");
 					}
-					Employe e = Employe.getEmployeById(selectedEmploye.getEmployeId());
+					Employee e = Employee.getEmployeById(selectedEmploye.getEmployeId());
 					MessageBox dialog = new MessageBox(parent.getShell(), SWT.ICON_QUESTION | SWT.YES | SWT.NO);
 			    	dialog.setText("Suppression Employe");
 			    	dialog.setMessage("Voulez vous supprimer l'employé "+e.getNom()+" "+e.getPrenom()+" ?");
@@ -444,7 +444,7 @@ public class VueEmploye {
 
 				try { 
 					int id = selectedEmploye.getEmployeId();
-					selectedEmploye = new Employe(id, titre.getText(), textNom.getText(), textPrenom.getText(), textMail.getText(), textTelephone.getText(), textNumeroMatricule.getText(), 
+					selectedEmploye = new Employee(id, titre.getText(), textNom.getText(), textPrenom.getText(), textMail.getText(), textTelephone.getText(), textNumeroMatricule.getText(), 
 							textPointure.getText(), textTaille.getText(), textDateArrivee.getText(), Double.parseDouble(textNombreHeures.getText()),
 						   Double.parseDouble(textRemboursementTransport.getText()), Double.parseDouble(textRemboursementTelephone.getText()), 
 						   Double.parseDouble(textSalaire.getText()), "Publié");
@@ -799,7 +799,7 @@ public class VueEmploye {
 		}
 		
 		//champs obligatoires
-		Employe employe = new Employe(titre,textNom,textPrenom,textNumeroMatricule);
+		Employee employe = new Employee(titre,textNom,textPrenom,textNumeroMatricule);
 		employe.setStatus("Publié");
 		  
 		//champs optionels
@@ -909,7 +909,7 @@ public class VueEmploye {
 		//on remplit la table
 		final TableColumn [] columns = table.getColumns ();
 		try {
-			for (Employe e : Employe.getAllEmploye()) {
+			for (Employee e : Employee.getAllEmploye()) {
 				//on verifie le status
 				if (e.getStatus().contentEquals("Publié")) {
 					TableItem item = new TableItem (table, SWT.NONE);
@@ -981,7 +981,7 @@ public class VueEmploye {
 					
 					selection.dispose();
 					try {
-						selectedEmploye = Employe.getEmployeById(Integer.parseInt(table.getSelection()[0].getText(14)));
+						selectedEmploye = Employee.getEmployeById(Integer.parseInt(table.getSelection()[0].getText(14)));
 					} catch (NumberFormatException | SQLException e1) {
 						System.out.println("erreur pour recuperer l'employe selectionne");
 				    	MessageBox dialog = new MessageBox(parent.getShell(), SWT.ICON_ERROR | SWT.OK);
@@ -1035,7 +1035,7 @@ public class VueEmploye {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				try {
-					Employe e = Employe.getEmployeById(selectedEmploye.getEmployeId());
+					Employee e = Employee.getEmployeById(selectedEmploye.getEmployeId());
 					MessageBox dialog = new MessageBox(parent.getShell(), SWT.ICON_QUESTION | SWT.YES | SWT.NO);
 			    	dialog.setText("Suppression Employe");
 			    	dialog.setMessage("Voulez-vous supprimer l'employé "+e.getNom()+" "+e.getPrenom()+" ?");

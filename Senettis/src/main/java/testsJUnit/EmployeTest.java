@@ -9,7 +9,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import classes.Employe;
+import classes.Employee;
 
 
 
@@ -17,16 +17,16 @@ import classes.Employe;
 public class EmployeTest
 {
 	
-    private Employe laetitia;
-    private Employe stan;
-    private Employe alyssa;
+    private Employee laetitia;
+    private Employee stan;
+    private Employee alyssa;
 
     @Before
     public void setUp() 
     {
-        laetitia = new Employe("Mme","C","Laetitia",1);
-        alyssa = new Employe("MME","C","Alyssa",2,"20-10-2020","Publié");
-        stan = new Employe("M.","T","Stan",3,"20/10/2020","Publié");
+        laetitia = new Employee("Mme","C","Laetitia",1);
+        alyssa = new Employee("MME","C","Alyssa",2,"20-10-2020","Publié");
+        stan = new Employee("M.","T","Stan",3,"20/10/2020","Publié");
     }
     
     @Test

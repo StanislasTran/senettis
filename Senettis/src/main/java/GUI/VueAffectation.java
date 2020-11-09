@@ -24,7 +24,7 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 
 import classes.Affectation;
-import classes.Employe;
+import classes.Employee;
 
 public class VueAffectation {
 
@@ -421,7 +421,7 @@ public class VueAffectation {
 		Composite modifComposite = new Composite(this.vueAffectation, SWT.NONE);
 
 		modifComposite.setLayout(new RowLayout(SWT.VERTICAL));
-		Employe employe = Employe.getEmployeById(affectation.getIdEmploye());
+		Employee employe = Employee.getEmployeById(affectation.getIdEmploye());
 
 		Label labelNom = new Label(modifComposite, SWT.NONE);
 		labelNom.setText(employe.getNom() + " " + employe.getPrenom());
@@ -514,7 +514,7 @@ public class VueAffectation {
 		Composite ajoutComposite = new Composite(this.vueAffectation, SWT.NONE);
 
 		ajoutComposite.setLayout(new RowLayout(SWT.VERTICAL));
-		Employe employe = Employe.getEmployeById(employeId);
+		Employee employe = Employee.getEmployeById(employeId);
 
 		Label labelNom = new Label(ajoutComposite, SWT.NONE);
 		labelNom.setText(employe.getNom() + " " + employe.getPrenom());

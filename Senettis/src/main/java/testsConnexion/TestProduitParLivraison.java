@@ -2,14 +2,14 @@ package testsConnexion;
 
 import java.sql.SQLException;
 
-import classes.Livraison;
-import classes.ProduitParLivraison;
+import classes.Delivery;
+import classes.ProductByDelivery;
 
 public class TestProduitParLivraison {
 	public static void main (String[]args) throws SQLException {
-		ProduitParLivraison pl=new ProduitParLivraison(2,1,"Publié");
+		ProductByDelivery pl=new ProductByDelivery(2,1,"Publié");
 		pl.insertDatabase();
 		
-		ProduitParLivraison.printAllProduitParLivraison();
+		ProductByDelivery.printAllProduitParLivraison();
 	}
 }

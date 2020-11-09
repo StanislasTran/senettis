@@ -1,5 +1,5 @@
 package classes;
 
-public enum Titre {
+public enum Title {
 	M,Mme
 }

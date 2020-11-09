@@ -13,7 +13,7 @@ import java.util.List;
 
 import connexion.SQLDatabaseConnection;
 
-public class Chantier {
+public class Site {
 
 	private String nom;
 	private String adresse;
@@ -21,20 +21,20 @@ public class Chantier {
 	private String status;
 	private int chantierId;
 
-	public Chantier(int chantierId, String nom, String adresse, Double CA,String status) {
+	public Site(int chantierId, String nom, String adresse, Double CA,String status) {
 		this(nom,adresse,CA,status);
 		
 		this.chantierId = chantierId;
 	}
 	
-	public Chantier(String nom, String adresse, Double CA,String status) {	
+	public Site(String nom, String adresse, Double CA,String status) {	
 		this(nom,status);
 
 		this.adresse = adresse;
 		this.CA = CA;
 	}
 
-	public Chantier(String nom,String status) {
+	public Site(String nom,String status) {
 		super();	
 		this.nom = nom;
 		this.status=status;
@@ -61,10 +61,10 @@ public class Chantier {
 		return statement;
 	}
 	
-	public static List<Chantier> getAllChantier() throws SQLException {
+	public static List<Site> getAllChantier() throws SQLException {
 
 		ResultSet result=selectAllChantier().getResultSet();
-		List<Chantier> allChantier=new ArrayList<Chantier>();
+		List<Site> allChantier=new ArrayList<Site>();
 		//System.out.println("Id|Nom|Adresse|CA|Status");
 		while(result.next()) {
 			int chantierId=result.getInt("ChantierId");
@@ -84,16 +84,16 @@ public class Chantier {
 			}
 			
 		    String status=result.getString("Status");
-		   allChantier.add(new Chantier(chantierId, nom, adresse, CA, status));
+		   allChantier.add(new Site(chantierId, nom, adresse, CA, status));
 		}
 		return allChantier;
 	}
 	
 	public static void printAllChantier() throws SQLException {
 		
-		List<Chantier> allChantier=getAllChantier();
+		List<Site> allChantier=getAllChantier();
 	
-		for (Chantier chantier : allChantier)	
+		for (Site chantier : allChantier)	
 			System.out.println(chantier);
 	}
 	
@@ -144,7 +144,7 @@ public class Chantier {
 	 * @return le chantier correspondant à l'id indique en argument
 	 * @throws SQLException
 	 */
-	public static Chantier getChantierById(int chantierId) throws SQLException {
+	public static Site getChantierById(int chantierId) throws SQLException {
 		String reqSql = "SELECT ChantierId,nom,adresse,CA,Status FROM Chantier WHERE ChantierId=?;";
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
@@ -172,7 +172,7 @@ public class Chantier {
 
 			String status = result.getString("status");
 
-			return new Chantier(chantierId, nom, adresse, CA, status);
+			return new Site(chantierId, nom, adresse, CA, status);
 
 		} else {
 			throw new SQLException("Data not found");

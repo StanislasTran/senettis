@@ -2,13 +2,13 @@ package testsConnexion;
 
 import java.sql.SQLException;
 
-import classes.Chantier;
+import classes.Site;
 
 public class TestChantier {
 	public static void main (String[]args) throws SQLException {
-		Chantier c=new Chantier("Chantier1","Publié");
+		Site c=new Site("Chantier1","Publié");
 		c.insertDatabase();
 		
-		Chantier.printAllChantier();
+		Site.printAllChantier();
 	}
 }

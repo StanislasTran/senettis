@@ -21,8 +21,8 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
-import classes.Chantier;
-import classes.Employe;
+import classes.Site;
+import classes.Employee;
 import classes.Product;
 
 public class Home {
@@ -163,7 +163,7 @@ public class Home {
 		presentation.setBackground(Couleur.gris);
 
 		Label presLabel = new Label(presentation, SWT.BACKGROUND);
-		String pres = "\n \nCette application gère actuellement "+Employe.getCountEmploye()+" employés et "+Chantier.getCountChantier()+" chantiers."+
+		String pres = "\n \nCette application gère actuellement "+Employee.getCountEmploye()+" employés et "+Site.getCountChantier()+" chantiers."+
 		'\n'+"Elle permet de stocker les informations des employés, \ndes chantiers ainsi que les produits et les livraisons."+'\n'+'\n'+'\n'
 		+"Pour plus d'information, merci de consulter la documentation de \nl'application accessible via le menu Aide.\n \n"+'\n'
 		+"SenettisDB a été développé par Laetitia Courgey et Stanislas Tran."+'\n'+'\n'+'\n'+'\n';

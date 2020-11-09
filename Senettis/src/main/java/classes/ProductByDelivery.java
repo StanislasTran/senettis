@@ -13,7 +13,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
 
-public class ProduitParLivraison {
+public class ProductByDelivery {
 
 	private Integer idLivraison;
 	private Integer idProduit;
@@ -59,10 +59,10 @@ public class ProduitParLivraison {
 		return statement;
 	}
 	
-	public static List<ProduitParLivraison> getAllProduitParLivraison() throws SQLException {
+	public static List<ProductByDelivery> getAllProduitParLivraison() throws SQLException {
 
 		ResultSet result=selectAllProduitParLivraison().getResultSet();
-		List<ProduitParLivraison> allProduitParLivraison=new ArrayList<ProduitParLivraison>();
+		List<ProductByDelivery> allProduitParLivraison=new ArrayList<ProductByDelivery>();
 		//System.out.println("Id|ProduitId|LivraisonId|Quantite|Status");
 		while(result.next()) {
 			int produitParLivraisonId=result.getInt("ProduitParLivraisonId");
@@ -70,7 +70,7 @@ public class ProduitParLivraison {
 			int livraisonId=result.getInt("Livraison");
 			int quantite=result.getInt("Quantite");
 		    String status=result.getString("Status");
-		   allProduitParLivraison.add(new ProduitParLivraison(produitParLivraisonId, livraisonId, produitId, quantite, status));
+		   allProduitParLivraison.add(new ProductByDelivery(produitParLivraisonId, livraisonId, produitId, quantite, status));
 		  
 			
 		}
@@ -78,14 +78,14 @@ public class ProduitParLivraison {
 		return allProduitParLivraison;
 	}
 	
-	public static List<ProduitParLivraison> getProductByLivraisonByLivraisonId(int livraisonId) throws SQLException {
+	public static List<ProductByDelivery> getProductByLivraisonByLivraisonId(int livraisonId) throws SQLException {
 		String reqSql = "SELECT ProduitParLivraisonId,Livraison,Produit,quantite,Status FROM ProduitParLivraison WHERE Livraison=?;";
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
 		statement.setObject(1, livraisonId, Types.INTEGER);
 		statement.executeQuery();
 		ResultSet result = statement.getResultSet();
-		List<ProduitParLivraison> results = new ArrayList<>();
+		List<ProductByDelivery> results = new ArrayList<>();
 
 		while (result.next()) {
 			int produitParLivraisonId = result.getInt("produitParLivraisonId");
@@ -94,7 +94,7 @@ public class ProduitParLivraison {
 			int quantite = result.getInt("quantite");
 			String status = result.getString("status");
 			
-			results.add(new ProduitParLivraison(produitParLivraisonId, livraisonId, produitId, quantite, status));
+			results.add(new ProductByDelivery(produitParLivraisonId, livraisonId, produitId, quantite, status));
 
 		} 
 		
@@ -107,7 +107,7 @@ public class ProduitParLivraison {
 	}
 	
 	
-	public static ProduitParLivraison getProductByLivraisonByLivraisonIdAndProductId(int livraisonId, int produitId) throws SQLException {
+	public static ProductByDelivery getProductByLivraisonByLivraisonIdAndProductId(int livraisonId, int produitId) throws SQLException {
 		String reqSql = "SELECT ProduitParLivraisonId,Livraison,Produit,quantite,Status FROM ProduitParLivraison WHERE Livraison=? and Produit=?;";
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
@@ -123,7 +123,7 @@ public class ProduitParLivraison {
 			int quantite = result.getInt("quantite");
 			String status = result.getString("status");
 			
-			return (new ProduitParLivraison(produitParLivraisonId, livraisonId, produitId, quantite, status));
+			return (new ProductByDelivery(produitParLivraisonId, livraisonId, produitId, quantite, status));
 
 		} 
 		else {
@@ -135,9 +135,9 @@ public class ProduitParLivraison {
 	
 	public static void printAllProduitParLivraison() throws SQLException {
 		
-		List<ProduitParLivraison> allProduitParLivraison=getAllProduitParLivraison();
+		List<ProductByDelivery> allProduitParLivraison=getAllProduitParLivraison();
 	
-		for (ProduitParLivraison produitParLivraison : allProduitParLivraison)	
+		for (ProductByDelivery produitParLivraison : allProduitParLivraison)	
 			System.out.println(produitParLivraison);
 	}
 	
@@ -218,13 +218,13 @@ public class ProduitParLivraison {
 		this.quantite = quantite;
 	}
 
-	public ProduitParLivraison(Integer produitParLivraisonId, Integer idLivraison, Integer idProduit, Integer quantite,String status) {
+	public ProductByDelivery(Integer produitParLivraisonId, Integer idLivraison, Integer idProduit, Integer quantite,String status) {
 		this(idLivraison, idProduit, quantite, status);
 		this.produitParLivraisonId = produitParLivraisonId;
 		
 	}
 
-	public ProduitParLivraison(Integer idLivraison, Integer idProduit, Integer quantite,String status) {
+	public ProductByDelivery(Integer idLivraison, Integer idProduit, Integer quantite,String status) {
 		this(idLivraison, idProduit, status);
 		this.quantite = quantite;
 		
@@ -232,7 +232,7 @@ public class ProduitParLivraison {
 
 
 
-	public ProduitParLivraison(Integer idLivraison, Integer idProduit,String status) {
+	public ProductByDelivery(Integer idLivraison, Integer idProduit,String status) {
 		super();
 		this.idLivraison = idLivraison;
 		this.idProduit = idProduit;

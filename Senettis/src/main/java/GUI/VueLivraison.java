@@ -18,10 +18,10 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
-import classes.Chantier;
-import classes.Livraison;
+import classes.Site;
+import classes.Delivery;
 import classes.Product;
-import classes.ProduitParLivraison;
+import classes.ProductByDelivery;
 
 public class VueLivraison {
 
@@ -30,7 +30,7 @@ public class VueLivraison {
 	private Composite vueLivraison;
 	private Composite selection;
 	private Composite vue;
-	private Livraison selectedLivraison;
+	private Delivery selectedLivraison;
 	private Menu menu ;
 
 	//Creation VueLivraison --------------------------------------------------
@@ -148,16 +148,16 @@ public class VueLivraison {
 	public void suppLivraison() {
 		try {
 			//on recupere la livraison selectionnee
-			Livraison l = Livraison.getLivraisonById(selectedLivraison.getLivraisonId());
+			Delivery l = Delivery.getLivraisonById(selectedLivraison.getLivraisonId());
 			
 			//on demande une confirmation
 			MessageBox dialog = new MessageBox(parent.getShell(), SWT.ICON_QUESTION | SWT.YES | SWT.NO);
 	    	dialog.setText("Suppression Livraison");
 	    	if (l.getDate() != null) {
-	    		dialog.setMessage("Voulez vous supprimer le livraison du "+l.getDate()+" sur le chantier "+Chantier.getChantierById(l.getIdChantier()).getNom()+" ?");
+	    		dialog.setMessage("Voulez vous supprimer le livraison du "+l.getDate()+" sur le chantier "+Site.getChantierById(l.getIdChantier()).getNom()+" ?");
 	    	}
 	    	else {
-	    		dialog.setMessage("Voulez vous supprimer le livraison de "+l.getPrixTotal()+" euros sur le chantier "+Chantier.getChantierById(l.getIdChantier()).getNom()+" ?");
+	    		dialog.setMessage("Voulez vous supprimer le livraison de "+l.getPrixTotal()+" euros sur le chantier "+Site.getChantierById(l.getIdChantier()).getNom()+" ?");
 	    	}
 	    	int buttonID = dialog.open();
 	    	
@@ -170,7 +170,7 @@ public class VueLivraison {
 					//on archive les produits associes
 					//on doit mettre dans un try car s'il n'y a pas de produits associes cela provoque une erreur
 					try {
-						for (ProduitParLivraison p : ProduitParLivraison.getProductByLivraisonByLivraisonId(l.getLivraisonId())) {
+						for (ProductByDelivery p : ProductByDelivery.getProductByLivraisonByLivraisonId(l.getLivraisonId())) {
 							p.setStatus("Archivé");
 							p.updateDatabase();
 						}
@@ -294,8 +294,8 @@ public class VueLivraison {
 		//on affiche le chantier selectionne
 		Combo chantier = new Combo(compositeChantier, SWT.BORDER);
 		try {
-			if (Chantier.getChantierById(selectedLivraison.getIdChantier()).getStatus().equals("Publié")) {
-				String stringChantier = Chantier.getChantierById(selectedLivraison.getIdChantier()).getNom()+"; id :"+selectedLivraison.getIdChantier().toString();
+			if (Site.getChantierById(selectedLivraison.getIdChantier()).getStatus().equals("Publié")) {
+				String stringChantier = Site.getChantierById(selectedLivraison.getIdChantier()).getNom()+"; id :"+selectedLivraison.getIdChantier().toString();
 				if (stringChantier.length() > 30) {
 					chantier.setText(stringChantier.substring(0, 30)+"...");
 					labelChantier.setText("Chantier* :");//pour pas que ca fasse un trop grand espace et que ca decale le titre
@@ -317,8 +317,8 @@ public class VueLivraison {
 		}
 		//on recupere les autres chantiers pour les afficher aussi et pouvoir modifier le chantier actuel
 		try {
-			for (Chantier c : Chantier.getAllChantier()) {
-				if (c.getNom() != Chantier.getChantierById(selectedLivraison.getIdChantier()).getNom() && c.getStatus().equals("Publié")) {
+			for (Site c : Site.getAllChantier()) {
+				if (c.getNom() != Site.getChantierById(selectedLivraison.getIdChantier()).getNom() && c.getStatus().equals("Publié")) {
 					String stringChantier =  c.getNom()+"; id :"+((Integer)c.getChantierId()).toString();
 					if (stringChantier.length() > 30) {
 						chantier.add(stringChantier.substring(0, 30)+"...");
@@ -450,7 +450,7 @@ public class VueLivraison {
 		//on modifie les quantites du tableau en y mettant celles des produits par livraison de la base de donnees
 		try {
 			if (selectedLivraison.getPrixTotal() > 0) {
-				for (ProduitParLivraison p : ProduitParLivraison.getProductByLivraisonByLivraisonId(selectedLivraison.getLivraisonId())) {
+				for (ProductByDelivery p : ProductByDelivery.getProductByLivraisonByLivraisonId(selectedLivraison.getLivraisonId())) {
 					//on verifie le status
 					if (p.getStatus().contentEquals("Publié")) {
 						for (TableItem i : tableProduit.getItems()) {
@@ -630,12 +630,12 @@ public class VueLivraison {
 		//on modifie les produits associes à la livraison
 	    for(int i = 0 ; i<produits.size() ; i++) {
 	    	try {//si le produit est deja associe a la livraison, on le modifie
-	    		ProduitParLivraison p = ProduitParLivraison.getProductByLivraisonByLivraisonIdAndProductId(selectedLivraison.getLivraisonId(), produits.get(i));
+	    		ProductByDelivery p = ProductByDelivery.getProductByLivraisonByLivraisonIdAndProductId(selectedLivraison.getLivraisonId(), produits.get(i));
 	    		p.setQuantite(quantites.get(i));
 	    		p.updateDatabase();
 	    	}catch (Exception e) {//si le produit n'est pas encore associe a la livraison on l'associe si la quantite n'est pas de 0
 	    		if (quantites.get(i) != 0) {
-		    		ProduitParLivraison p = new ProduitParLivraison(selectedLivraison.getLivraisonId(),  produits.get(i), quantites.get(i), "Publié");
+		    		ProductByDelivery p = new ProductByDelivery(selectedLivraison.getLivraisonId(),  produits.get(i), quantites.get(i), "Publié");
 		    		try {
 						p.insertDatabase();
 					} catch (SQLException e1) {
@@ -757,7 +757,7 @@ public class VueLivraison {
 		Combo chantier = new Combo(compositeChantier, SWT.BORDER);
 		chantier.setText("Selectionner ...");
 		try {
-			for (Chantier c : Chantier.getAllChantier()) {
+			for (Site c : Site.getAllChantier()) {
 				if (c.getStatus().equals("Publié")) {
 					String stringChantier =  c.getNom()+"; id :"+((Integer)c.getChantierId()).toString();
 					if (stringChantier.length() > 30) {
@@ -1001,7 +1001,7 @@ public class VueLivraison {
 	public void validerCreation(Integer idChantier, ArrayList<Integer> produits, ArrayList<Integer> quantites, String prix, String date) {
 
 		//champs obligatoires
-		Livraison livraison = new Livraison(idChantier);
+		Delivery livraison = new Delivery(idChantier);
 		livraison.setStatus("Publié");
 		  
 		//champs optionels
@@ -1035,7 +1035,7 @@ public class VueLivraison {
 	    
 	    for(int i = 0 ; i<produits.size() ; i++) {
 	    	if (quantites.get(i) != 0) {
-	    		ProduitParLivraison p = new ProduitParLivraison(idLivraison,  produits.get(i), quantites.get(i), "Publié");
+	    		ProductByDelivery p = new ProductByDelivery(idLivraison,  produits.get(i), quantites.get(i), "Publié");
 	    		try {
 					p.insertDatabase();
 				} catch (SQLException e) {
@@ -1095,11 +1095,11 @@ public class VueLivraison {
 		//on remplit la table
 		final TableColumn [] columns = table.getColumns ();
 		try {
-			for (Livraison l : Livraison.getAllLivraison()) {
+			for (Delivery l : Delivery.getAllLivraison()) {
 				//on verifie le status
 				if (l.getStatus().contentEquals("Publié")) {
 					TableItem item = new TableItem (table, SWT.NONE);
-					item.setText(0,Chantier.getChantierById(l.getIdChantier()).getNom());
+					item.setText(0,Site.getChantierById(l.getIdChantier()).getNom());
 					//item.setText(1,Produit.getProductById(l.getIdProduit()).getNom());
 					if (l.getDate() == null) {
 						item.setText(1,"");
@@ -1132,7 +1132,7 @@ public class VueLivraison {
 					selection.dispose();
 					try {
 						System.out.println(Integer.parseInt(table.getSelection()[0].getText(3)));
-						selectedLivraison = Livraison.getLivraisonById(Integer.parseInt(table.getSelection()[0].getText(3)));
+						selectedLivraison = Delivery.getLivraisonById(Integer.parseInt(table.getSelection()[0].getText(3)));
 					} catch (NumberFormatException | SQLException e1) {
 						System.out.println("erreur pour recuperer la livraison selectionnée");
 				    	MessageBox dialog = new MessageBox(parent.getShell(), SWT.ICON_ERROR | SWT.OK);

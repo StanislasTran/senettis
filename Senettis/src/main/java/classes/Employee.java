@@ -21,10 +21,10 @@ import java.sql.Types;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
-public class Employe {
+public class Employee {
 
 	private Integer employeId;
-	private Titre titre;
+	private Title titre;
 	private String nom;
 	private String prenom;
 	private String mail;
@@ -62,7 +62,7 @@ public class Employe {
 	 * @param salaire                :double
 	 * @param status                 : verification faite
 	 */
-	public Employe(int employeId, String t, String nom, String prenom, String mail, String telephone,
+	public Employee(int employeId, String t, String nom, String prenom, String mail, String telephone,
 			String numeroMatricule, String pointure, String taille, String dateArrivee, Double nombreHeures,
 			Double remboursementTransport, Double remboursementTelephone, Double salaire, String status) {
 		this(t, nom, prenom, mail, telephone, numeroMatricule, pointure, taille, dateArrivee, nombreHeures,
@@ -96,7 +96,7 @@ public class Employe {
 	 * @param salaire                :double
 	 * @param status                 : verification faite
 	 */
-	public Employe(String t, String nom, String prenom, String mail, String telephone, String numeroMatricule,
+	public Employee(String t, String nom, String prenom, String mail, String telephone, String numeroMatricule,
 			String pointure, String taille, String dateArrivee, Double nombreHeures, Double remboursementTransport,
 			Double remboursementTelephone, Double salaire, String status) {
 		this(t, nom, prenom, numeroMatricule, dateArrivee, status);
@@ -153,7 +153,7 @@ public class Employe {
 	 * @param dateArrivee     : string, verification faite
 	 * @param status          : verification faite
 	 */
-	public Employe(String t, String nom, String prenom, String numeroMatricule, String dateArrivee, String status) {
+	public Employee(String t, String nom, String prenom, String numeroMatricule, String dateArrivee, String status) {
 		this(t, nom, prenom, numeroMatricule);
 
 		// status
@@ -209,7 +209,7 @@ public class Employe {
 	 * @param prenom
 	 * @param numeroMatricule : int
 	 */
-	public Employe(String t, String nom, String prenom, String numeroMatricule) {
+	public Employee(String t, String nom, String prenom, String numeroMatricule) {
 		super();
 
 		// je verifie le titre
@@ -355,7 +355,7 @@ public class Employe {
 	 * @return l'employe correspondant à l'id indique en argument
 	 * @throws SQLException
 	 */
-	public static Employe getEmployeById(int employeId) throws SQLException {
+	public static Employee getEmployeById(int employeId) throws SQLException {
 		String reqSql = "SELECT EmployeId,titre,nom,prenom,mail,telephone,numero_matricule,pointure,taille,date_arrivee,nombre_heures,remboursement_transport,remboursement_telephone,Salaire,Status FROM Employe WHERE EmployeId=?;";
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
@@ -398,7 +398,7 @@ public class Employe {
 
 			String status = result.getString("status");
 
-			return new Employe(employeId, titre, nom, prenom, mail, telephone, numeroMatricule, pointure, taille,
+			return new Employee(employeId, titre, nom, prenom, mail, telephone, numeroMatricule, pointure, taille,
 					dateArrivee, nombreHeures, remboursementTransport, remboursementTelephone, salaire, status);
 
 		} else {
@@ -412,10 +412,10 @@ public class Employe {
 	 * @return une liste contenant tous les employes renvoyes par selectAllEmploye()
 	 * @throws SQLException
 	 */
-	public static List<Employe> getAllEmploye() throws SQLException {
+	public static List<Employee> getAllEmploye() throws SQLException {
 
 		ResultSet result = selectAllEmploye().getResultSet();
-		List<Employe> allEmploye = new ArrayList<Employe>();
+		List<Employee> allEmploye = new ArrayList<Employee>();
 		while (result.next()) {
 			int employeId = result.getInt("EmployeId");
 			String titre = result.getString("Titre");
@@ -442,7 +442,7 @@ public class Employe {
 			Double salaire = result.getDouble("Salaire");
 			String status = result.getString("Status");
 
-			allEmploye.add(new Employe(employeId, titre, nom, prenom, mail, telephone, numeroMatricule, pointure,
+			allEmploye.add(new Employee(employeId, titre, nom, prenom, mail, telephone, numeroMatricule, pointure,
 					taille, dateArrivee, nombreHeures, remboursementTransport, remboursementTelephone, salaire,
 					status));
 
@@ -453,9 +453,9 @@ public class Employe {
 
 	public static void printAllEmploye() throws SQLException {
 
-		List<Employe> allEmploye = getAllEmploye();
+		List<Employee> allEmploye = getAllEmploye();
 
-		for (Employe employe : allEmploye)
+		for (Employee employe : allEmploye)
 			System.out.println(employe);
 	}
 
@@ -489,7 +489,7 @@ public class Employe {
 		}
 	}
 
-	public void setTitre(Titre titre) {
+	public void setTitre(Title titre) {
 		if (titre == null) {
 			throw new Error("setTitre : le titre indique est vide");
 		}
