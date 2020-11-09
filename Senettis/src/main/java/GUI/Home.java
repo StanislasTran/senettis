@@ -23,7 +23,7 @@ import org.eclipse.swt.widgets.*;
 
 import classes.Chantier;
 import classes.Employe;
-import classes.Produit;
+import classes.Product;
 
 public class Home {
 

@@ -20,7 +20,7 @@ import org.eclipse.swt.widgets.*;
 
 import classes.Chantier;
 import classes.Livraison;
-import classes.Produit;
+import classes.Product;
 import classes.ProduitParLivraison;
 
 public class VueLivraison {
@@ -428,7 +428,7 @@ public class VueLivraison {
 		
 		//on remplit d'abord avec les quantites a 0 et on modifiera apres
 		try {
-			for (Produit p : Produit.getAllProduct()) {
+			for (Product p : Product.getAllProduct()) {
 				//on verifie le status
 				if (p.getStatus().contentEquals("Publié")) {
 					TableItem item = new TableItem (tableProduit, SWT.NONE);
@@ -860,7 +860,7 @@ public class VueLivraison {
 		
 		//on remplit la table
 		try {
-			for (Produit p : Produit.getAllProduct()) {
+			for (Product p : Product.getAllProduct()) {
 				if (p.getStatus().contentEquals("Publié")) {
 					TableItem item = new TableItem (tableProduit, SWT.NONE);
 					item.setText(0,((Integer)p.getProduitId()).toString());

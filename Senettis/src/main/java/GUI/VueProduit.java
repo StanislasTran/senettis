@@ -15,7 +15,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 //import javafx.embed.swt.FXCanvas ;
-import classes.Produit;
+import classes.Product;
 
 public class VueProduit {
 	private Composite listeProduit;
@@ -59,7 +59,7 @@ public class VueProduit {
 	 */
 	public void vueProduitAfficher(Composite composite) throws SQLException {
 
-		List<Produit> allProduct = Produit.getAllProduct();
+		List<Product> allProduct = Product.getAllProduct();
 
 		RowLayout rowLayoutV = new RowLayout();
 		rowLayoutV.type = SWT.VERTICAL;
@@ -99,7 +99,7 @@ public class VueProduit {
 
 		final TableColumn[] columns = table.getColumns();
 
-		for (Produit p : allProduct) {
+		for (Product p : allProduct) {
 			TableItem item = new TableItem(table, SWT.NONE);
 			item.setText(0, Integer.toString(p.getProduitId()));
 			item.setText(1, p.getNom());
@@ -261,7 +261,7 @@ public class VueProduit {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 
-				Produit produit = new Produit(textNom.getText(), Double.parseDouble(textPrix.getText()),
+				Product produit = new Product(textNom.getText(), Double.parseDouble(textPrix.getText()),
 						textCommentaire.getText(), "Publié");
 
 				try {
@@ -303,7 +303,7 @@ public class VueProduit {
 	}
 
 	public void updateProduct(Composite composite, int produitId) throws SQLException {
-		Produit produit = Produit.getProductById(produitId);
+		Product produit = Product.getProductById(produitId);
 
 		composite.setLayout(new RowLayout(SWT.VERTICAL));
 		composite.setBackground(Couleur.PeterRiver);
@@ -356,7 +356,7 @@ public class VueProduit {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 
-				Produit produit = new Produit(produitId, textNom.getText(), Double.parseDouble(textPrix.getText()),
+				Product produit = new Product(produitId, textNom.getText(), Double.parseDouble(textPrix.getText()),
 						textCommentaire.getText(), "Publié");
 
 				try {

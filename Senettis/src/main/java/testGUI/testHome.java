@@ -9,7 +9,7 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 
 import GUI.Home;
-import classes.Produit;
+import classes.Product;
 
 public class testHome {
 

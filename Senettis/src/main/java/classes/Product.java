@@ -12,7 +12,7 @@ import java.util.List;
 
 import connexion.SQLDatabaseConnection;
 
-public class Produit {
+public class Product {
 
 	private int produitId;
 	private String nom;
@@ -28,7 +28,7 @@ public class Produit {
 	 * @param <type>String</type> comment
 	 * @param <type>String</type> status
 	 */
-	public Produit(String name, Double price, String comment, String status) {
+	public Product(String name, Double price, String comment, String status) {
 		this(name, price, status);
 		this.comment = comment;
 
@@ -48,7 +48,7 @@ public class Produit {
 	 * @param <type> int /<type> price 
 	 * @param status
 	 */
-	public Produit(String name, Double price, String status) {
+	public Product(String name, Double price, String status) {
 		this.nom = name;
 		this.prix = price;
 		this.status = status;
@@ -61,7 +61,7 @@ public class Produit {
 	 * @param prix
 	 * @param status
 	 */
-	public Produit(int produitId, String nom, Double prix, String commentaires, String status) {
+	public Product(int produitId, String nom, Double prix, String commentaires, String status) {
 		this(nom, prix, commentaires, status);
 		this.produitId = produitId;
 
@@ -107,17 +107,17 @@ public class Produit {
 	 * @throws SQLException
 	 */
 
-	public static List<Produit> getAllProduct() throws SQLException {
+	public static List<Product> getAllProduct() throws SQLException {
 
 		ResultSet result = selectAllProduct().getResultSet();
-		List<Produit> allProduct = new ArrayList<Produit>();
+		List<Product> allProduct = new ArrayList<Product>();
 		while (result.next()) {
 			int produitId = result.getInt("ProduitId");
 			String name = result.getString("Nom");
 			Double price = result.getDouble("Prix");
 			String comment = result.getString("Commentaires");
 			String status = result.getString("Status");
-			allProduct.add(new Produit(produitId, name, price, comment, status));
+			allProduct.add(new Product(produitId, name, price, comment, status));
 
 		}
 
@@ -130,9 +130,9 @@ public class Produit {
 	 */
 	public static void printAllProduct() throws SQLException {
 
-		List<Produit> allProduct = getAllProduct();
+		List<Product> allProduct = getAllProduct();
 
-		for (Produit produit : allProduct)
+		for (Product produit : allProduct)
 			System.out.println(produit);
 	}
 
@@ -166,7 +166,7 @@ public class Produit {
 	 * @return
 	 * @throws SQLException
 	 */
-	public static Produit getProductById(int productId) throws SQLException {
+	public static Product getProductById(int productId) throws SQLException {
 		String reqSql = "SELECT ProduitId,Nom,Prix,Commentaires,Status FROM Produit WHERE ProduitId=?;";
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
@@ -181,7 +181,7 @@ public class Produit {
 			Double price = result.getDouble("Prix");
 			String comment = result.getString("Commentaires");
 			String status = result.getString("Status");
-			return new Produit(produitId, name, price, comment, status);
+			return new Product(produitId, name, price, comment, status);
 
 		} else {
 			throw new SQLException("Data not found");

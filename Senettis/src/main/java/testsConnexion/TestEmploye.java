@@ -3,7 +3,7 @@ package testsConnexion;
 import java.sql.SQLException;
 
 import classes.Employe;
-import classes.Produit;
+import classes.Product;
 
 public class TestEmploye {
 	public static void main (String[]args) throws SQLException {
