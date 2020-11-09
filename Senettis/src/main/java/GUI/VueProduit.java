@@ -104,7 +104,7 @@ public class VueProduit {
 			item.setText(0, Integer.toString(p.getProduitId()));
 			item.setText(1, p.getNom());
 			item.setText(2, "" + p.getPrix());
-			item.setText(3, p.getCommentaires());
+			item.setText(3, p.getComment());
 
 		}
 
@@ -341,7 +341,7 @@ public class VueProduit {
 		labelCommentaire.setText("Commentaires");
 		labelCommentaire.setBounds(10, 10, 100, 25);
 		final Text textCommentaire = new Text(compositeCommentaire, SWT.CENTER);
-		textCommentaire.setText("" + produit.getCommentaires());
+		textCommentaire.setText("" + produit.getComment());
 		textCommentaire.setBounds(10, 30, 100, 25);
 
 		// Validation button
