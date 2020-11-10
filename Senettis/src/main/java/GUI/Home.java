@@ -229,27 +229,12 @@ public class Home {
 		boutonEmploye.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				contenuColonneDroite.dispose();
-				colonneDroite.dispose();
-				compositeMain.dispose();
-				
-				compositeMain = new Composite(shell, SWT.NONE);
-
-				String backgroundLocation=this.getClass().getClassLoader().getResource("test4.png").getPath();
-				Image background=new Image(display,backgroundLocation);
-				compositeMain.setBackgroundImage(background);
-				
-				RowLayout rl = new RowLayout();
-				rl.spacing = 15; //mets un espace entre le menu et le titre 
-				compositeMain.setLayout(rl);
-
-				compositeColonneGauche();
-				
-				colonneDroite = new Composite(compositeMain, SWT.CENTER);
-				contenuColonneDroite = new VueEmploye(colonneDroite, display).getComposite();
-	
-				contenuColonneDroite.pack();colonneDroite.pack();
-				compositeMain.setSize(rect.width, rect.height);
+				if (!contenuColonneDroite.isDisposed()) {
+					contenuColonneDroite.dispose();
+				}
+				contenuColonneDroite = new VueEmploye(colonneDroite,display).getComposite();
+				contenuColonneDroite.pack();
+				colonneDroite.pack();
 
 			}
 		});
@@ -261,9 +246,6 @@ public class Home {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				if (!contenuColonneDroite.isDisposed()) {
-					for (Control c :contenuColonneDroite.getChildren()) {
-						if(!c.isDisposed()) { c.dispose(); }
-					}
 					contenuColonneDroite.dispose();
 				}
 				contenuColonneDroite = new VueChantier(colonneDroite,display).getComposite();
@@ -332,9 +314,6 @@ public class Home {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				if (!contenuColonneDroite.isDisposed()) {
-					for (Control c :contenuColonneDroite.getChildren()) {
-						if(!c.isDisposed()) { c.dispose(); }
-					}
 					contenuColonneDroite.dispose();
 				}
 				contenuColonneDroite = new VueLivraison(colonneDroite,display).getComposite();

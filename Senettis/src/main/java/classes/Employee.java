@@ -266,7 +266,7 @@ public class Employee {
 		statement.setObject(3, this.prenom, Types.VARCHAR);
 		statement.setObject(4, this.mail, Types.VARCHAR);
 		statement.setObject(5, this.telephone, Types.VARCHAR);
-		statement.setObject(6, this.numeroMatricule, Types.DECIMAL);
+		statement.setObject(6, this.numeroMatricule, Types.VARCHAR);
 		statement.setObject(7, this.pointure, Types.VARCHAR);
 		statement.setObject(8, this.taille, Types.VARCHAR);
 		statement.setObject(9, this.dateArrivee, Types.DATE);
@@ -299,7 +299,7 @@ public class Employee {
 		statement.setObject(3, this.prenom, Types.VARCHAR);
 		statement.setObject(4, this.mail, Types.VARCHAR);
 		statement.setObject(5, this.telephone, Types.VARCHAR);
-		statement.setObject(6, this.numeroMatricule, Types.DECIMAL);
+		statement.setObject(6, this.numeroMatricule, Types.VARCHAR);
 		statement.setObject(7, this.pointure, Types.VARCHAR);
 		statement.setObject(8, this.taille, Types.VARCHAR);
 		statement.setObject(9, this.dateArrivee, Types.DATE);
@@ -503,6 +503,7 @@ public class Employee {
 		return titre.toString();
 	}
 
+	@SuppressWarnings("static-access")
 	public void setTitre(String t) {
 		if (titre == null) {
 			throw new Error("setTitre : le titre indique est vide");
@@ -626,7 +627,9 @@ public class Employee {
 	}
 
 	public String getDateArrivee() {
-
+		if (dateArrivee == null) {
+			return "";
+		}
 		return dateArrivee;
 	}
 

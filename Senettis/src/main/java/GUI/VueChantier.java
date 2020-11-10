@@ -11,6 +11,8 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
+import classes.Affectation;
+import classes.Delivery;
 import classes.Site;
 
 public class VueChantier {
@@ -35,7 +37,16 @@ public class VueChantier {
 		this.display = display;
 		Couleur.setDisplay(display); // pour utiliser les couleurs du fichier couleur
 
-		newVueChantier(parent);
+		vueChantier = new Composite(composite, SWT.NONE);
+		RowLayout rowLayout = new RowLayout();
+		rowLayout.type = SWT.VERTICAL;
+		vueChantier.setLayout(rowLayout);
+
+		compositeSelectionCreer(vueChantier);
+		vueChantierAfficher(vueChantier);
+
+		vueChantier.pack();
+		vueChantier.getParent().pack();
 	}
 
 	/***
@@ -46,20 +57,11 @@ public class VueChantier {
 	 * @param composite : composite parent
 	 */
 	public void newVueChantier(Composite composite) {
-		if (vueChantier != null) {
-			vueChantier.dispose();
-		}
-
-		vueChantier = new Composite(composite, SWT.NONE);
-		RowLayout rowLayout = new RowLayout();
-		rowLayout.type = SWT.VERTICAL;
-		vueChantier.setLayout(rowLayout);
+		vue.dispose();selection.dispose();
 
 		compositeSelectionCreer(vueChantier);
 		vueChantierAfficher(vueChantier);
 
-		vue.pack();
-		selection.pack();
 		vueChantier.pack();
 		vueChantier.getParent().pack();
 	}
@@ -96,7 +98,7 @@ public class VueChantier {
 	 * 
 	 * @param composite : composite parent
 	 */
-	public void compositeSelectionModifier(Composite composite) {
+	public void compositeSelectionModifier(Table table, Composite composite) {
 		selection = new Composite(composite, SWT.NONE);
 		RowLayout rowLayout = new RowLayout();
 		rowLayout.marginWidth = 22;
@@ -137,14 +139,34 @@ public class VueChantier {
 					Site c = Site.getChantierById(selectedChantier.getChantierId());
 					MessageBox dialog = new MessageBox(parent.getShell(), SWT.ICON_QUESTION | SWT.YES | SWT.NO);
 					dialog.setText("Suppression Chantier");
-					dialog.setMessage("Voulez vous supprimer le chantier " + c.getNom() + " ?");
+					dialog.setMessage("Voulez vous supprimer le chantier " + c.getNom() + " ?\nToutes les affectations et livraisons liées à ce chantier seront supprimées.");
 					int buttonID = dialog.open();
 					switch (buttonID) {
 					case SWT.YES:
 						c.setStatus("Archivé");
 						c.updateDatabase();
-						newVueChantier(parent);
+						
+						for (Delivery d : Delivery.getAllLivraison()) {
+							if (d.getIdChantier() == c.getChantierId()) {
+								d.setStatus("Archivé");
+								d.updateDatabase();
+							}
+						}
+						
+						for (Affectation a : Affectation.getAllAffectation()) {
+							if (a.getIdChantier() == c.getChantierId()) {
+								a.setStatus("Archivé");
+								a.updateDatabase();
+							}
+						}
+						
+						//newVueChantier(parent);
 						selectedChantier = null;
+						
+						selection.dispose();
+						compositeSelectionCreer(vueChantier);
+						
+						updateTable(table, vueChantier);
 					}
 
 				} catch (NumberFormatException | SQLException e) {
@@ -574,58 +596,8 @@ public class VueChantier {
 		vue.setLayout(rowLayoutV);
 		vue.setBackground(Couleur.gris);
 
-		Table table = getTableAllChantier(this.vue);
-
-		// on ajoute un listener pour modifier l'interface si l'utilisateur clique sur
-		// une ligne
-		table.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				if (table.getSelectionIndex() != -1) {
-
-					selection.dispose();
-					try {
-						selectedChantier = Site
-								.getChantierById(Integer.parseInt(table.getSelection()[0].getText(3)));
-					} catch (NumberFormatException | SQLException e1) {
-						System.out.println("erreur pour recuperer le chantier selectionne");
-						MessageBox dialog = new MessageBox(parent.getShell(), SWT.ICON_ERROR | SWT.OK);
-						dialog.setText("Erreur");
-						dialog.setMessage("Une erreur est survenue. " + '\n' + e1.getMessage());
-						dialog.open();
-					}
-					compositeSelectionModifier(vueChantier);
-
-					// on ajoute un menu lorsque l'on fait clique droit sur une ligne
-					doMenu(table);
-				} else { // si plus rien n'est selectionner on passe selectedChantier a null et on enleve
-							// le menu du clic droit et on enleve les boutons pour modifier et supprimer
-					System.out.println("-1");
-
-					selectedChantier = null;
-
-					menu.dispose();
-					menu = new Menu(composite.getShell(), SWT.POP_UP);
-					table.setMenu(menu);
-
-					selection.dispose();
-					compositeSelectionCreer(vueChantier);
-				}
-			}
-		});
-
-	}
-
-	/**
-	 * Ajoute un table contenant la liste de tous les chantier au composité entré en
-	 * paramètre
-	 * 
-	 * @param <type>composite</type> composite
-	 * @return <type> Table </type> table
-	 */
-	public static Table getTableAllChantier(Composite composite) {
-		// creation de la table
 		final Table table = new Table(composite, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.FULL_SELECTION);
-		table.setLayoutData(new RowData(400, 400));
+		table.setLayoutData(new RowData(550, 400));
 		table.setLinesVisible(true);
 		table.setHeaderVisible(true);
 
@@ -666,7 +638,77 @@ public class VueChantier {
 		// on pack les colonnes
 		for (TableColumn col : columns)
 			col.pack();
-		return table;
+		
+		// on ajoute un listener pour modifier l'interface si l'utilisateur clique sur
+		// une ligne
+		table.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				if (table.getSelectionIndex() != -1) {
+
+					selection.dispose();
+					try {
+						selectedChantier = Site
+								.getChantierById(Integer.parseInt(table.getSelection()[0].getText(3)));
+					} catch (NumberFormatException | SQLException e1) {
+						System.out.println("erreur pour recuperer le chantier selectionne");
+						MessageBox dialog = new MessageBox(parent.getShell(), SWT.ICON_ERROR | SWT.OK);
+						dialog.setText("Erreur");
+						dialog.setMessage("Une erreur est survenue. " + '\n' + e1.getMessage());
+						dialog.open();
+					}
+					compositeSelectionModifier(table, vueChantier);
+
+					// on ajoute un menu lorsque l'on fait clique droit sur une ligne
+					doMenu(table);
+				} else { // si plus rien n'est selectionner on passe selectedChantier a null et on enleve
+							// le menu du clic droit et on enleve les boutons pour modifier et supprimer
+					System.out.println("-1");
+
+					selectedChantier = null;
+
+					menu.dispose();
+					menu = new Menu(composite.getShell(), SWT.POP_UP);
+					table.setMenu(menu);
+
+					selection.dispose();
+					compositeSelectionCreer(vueChantier);
+				}
+			}
+		});
+		
+		vue.pack();
+
+	}
+
+	/**
+	 * Ajoute un table contenant la liste de tous les chantier au composité entré en
+	 * paramètre
+	 * 
+	 * @param <type>composite</type> composite
+	 * @return <type> Table </type> table
+	 */
+	public void updateTable(Table table, Composite composite) {
+		table.removeAll();
+		
+		try {
+			for (Site c : Site.getAllChantier()) {
+				// on verifie le status
+				if (c.getStatus().contentEquals("Publié")) {
+					TableItem item = new TableItem(table, SWT.NONE);
+					item.setText(0, c.getNom());
+					item.setText(1, c.getAdresse());
+					item.setText(2, c.getCA().toString());
+					item.setText(3, Integer.toString(c.getChantierId()));
+				}
+			}
+		} catch (SQLException e) {
+			System.out.println("erreur dans la table des chantier");
+			MessageBox dialog = new MessageBox(composite.getShell(), SWT.ICON_ERROR | SWT.OK);
+			dialog.setText("Erreur");
+			dialog.setMessage("Une erreur est survenue. " + '\n' + e.getMessage());
+			dialog.open();
+		}
+
 	}
 
 	public void doMenu(Table table) {
@@ -695,14 +737,34 @@ public class VueChantier {
 					Site c = Site.getChantierById(selectedChantier.getChantierId());
 					MessageBox dialog = new MessageBox(parent.getShell(), SWT.ICON_QUESTION | SWT.YES | SWT.NO);
 					dialog.setText("Suppression Chantier");
-					dialog.setMessage("Voulez-vous supprimer le chantier " + c.getNom() + " ?");
+					dialog.setMessage("Voulez-vous supprimer le chantier " + c.getNom() + " ?\nToutes les affectations et livraisons liées à ce chantier seront supprimées.");
 					int buttonID = dialog.open();
 					switch (buttonID) {
 					case SWT.YES:
 						c.setStatus("Archivé");
 						c.updateDatabase();
-						newVueChantier(parent);
+						
+						for (Delivery d : Delivery.getAllLivraison()) {
+							if (d.getIdChantier() == c.getChantierId()) {
+								d.setStatus("Archivé");
+								d.updateDatabase();
+							}
+						}
+						
+						for (Affectation a : Affectation.getAllAffectation()) {
+							if (a.getIdChantier() == c.getChantierId()) {
+								a.setStatus("Archivé");
+								a.updateDatabase();
+							}
+						}
+						
+						//newVueChantier(parent);
 						selectedChantier = null;
+						
+						selection.dispose();
+						compositeSelectionCreer(vueChantier);
+						
+						updateTable(table, vueChantier);
 					}
 
 				} catch (NumberFormatException | SQLException e) {
