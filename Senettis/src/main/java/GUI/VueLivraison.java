@@ -44,7 +44,16 @@ public class VueLivraison {
 		this.display=display;
 	 	Couleur.setDisplay(display); // pour utiliser les couleurs du fichier couleur
 		
-		newVueLivraison(parent);
+	 	vueLivraison=new Composite(composite,SWT.NONE);
+		RowLayout rowLayout = new RowLayout();
+		rowLayout.type = SWT.VERTICAL;
+		vueLivraison.setLayout(rowLayout);
+		
+		compositeSelectionCreer(vueLivraison);
+		vueLivraisonAfficher(vueLivraison);
+		
+		vue.pack(); selection.pack(); vueLivraison.pack();
+		vueLivraison.getParent().pack();
 	}
 	
 	/***
@@ -53,17 +62,7 @@ public class VueLivraison {
 	 * @param composite : composite parent
 	 */
 	public void newVueLivraison (Composite composite) {
-		if (vueLivraison != null){
-			for (Control c : vueLivraison.getChildren()) {
-				c.dispose();
-			}
-			vueLivraison.dispose();
-		}
-		
-		vueLivraison=new Composite(composite,SWT.NONE);
-		RowLayout rowLayout = new RowLayout();
-		rowLayout.type = SWT.VERTICAL;
-		vueLivraison.setLayout(rowLayout);
+		vue.dispose();selection.dispose();
 		
 		compositeSelectionCreer(vueLivraison);
 		vueLivraisonAfficher(vueLivraison);
@@ -99,7 +98,7 @@ public class VueLivraison {
 	 * Creation de la partie Selection (la partie superieure droite) avec les boutons Creer, Modifier et Supprimer
 	 * @param composite : composite parent 
 	 */
-	public void compositeSelectionModifier(Composite composite) {
+	public void compositeSelectionModifier(Table table, Composite composite) {
 		selection = new Composite(composite, SWT.NONE);
 		RowLayout rowLayout = new RowLayout();
 		rowLayout.marginWidth = 22;
@@ -133,7 +132,7 @@ public class VueLivraison {
 		boutonSupprimer.addSelectionListener(new SelectionAdapter() {	
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				suppLivraison();
+				suppLivraison(table);
 			}
 		});
 		selection.pack();
@@ -145,7 +144,7 @@ public class VueLivraison {
 	 * fonction utilisee pour supprimer une livraison
 	 * cette fonction demande confirmation puis passe en archivé la livraison selectionne et les produits par livraison associes 
 	 */
-	public void suppLivraison() {
+	public void suppLivraison(Table table) {
 		try {
 			//on recupere la livraison selectionnee
 			Delivery l = Delivery.getLivraisonById(selectedLivraison.getLivraisonId());
@@ -177,9 +176,15 @@ public class VueLivraison {
 					}catch (Exception e) {}
 					
 					//on change d'affichage
-					newVueLivraison(parent);
+					//newVueLivraison(parent);
 					
 					selectedLivraison = null;
+					
+					selection.dispose();
+					compositeSelectionCreer(vueLivraison);
+					
+					table.removeAll();
+					updateTable(table);
 	        }
 
 		} catch (NumberFormatException | SQLException e) {
@@ -297,7 +302,7 @@ public class VueLivraison {
 			if (Site.getChantierById(selectedLivraison.getIdChantier()).getStatus().equals("Publié")) {
 				String stringChantier = Site.getChantierById(selectedLivraison.getIdChantier()).getNom()+"; id :"+selectedLivraison.getIdChantier().toString();
 				if (stringChantier.length() > 30) {
-					chantier.setText(stringChantier.substring(0, 30)+"...");
+					chantier.setText(stringChantier.substring(0, 23)+"..."+";id:"+((Integer)selectedLivraison.getIdChantier()).toString());
 					labelChantier.setText("Chantier* :");//pour pas que ca fasse un trop grand espace et que ca decale le titre
 				}
 				else {
@@ -321,7 +326,7 @@ public class VueLivraison {
 				if (c.getNom() != Site.getChantierById(selectedLivraison.getIdChantier()).getNom() && c.getStatus().equals("Publié")) {
 					String stringChantier =  c.getNom()+"; id :"+((Integer)c.getChantierId()).toString();
 					if (stringChantier.length() > 30) {
-						chantier.add(stringChantier.substring(0, 30)+"...");
+						chantier.add(stringChantier.substring(0, 23)+"..."+";id:"+((Integer)c.getChantierId()).toString());
 						labelChantier.setText("Chantier* :");
 					}
 					else {
@@ -687,7 +692,7 @@ public class VueLivraison {
 		
 		FillLayout fillLayout = new FillLayout();
 		fillLayout.type = SWT.VERTICAL;
-		fillLayout.marginWidth = 367;
+		fillLayout.marginWidth = 369;
 		selection.setLayout(fillLayout);
 		
 		//juste pour creer un espace 
@@ -761,7 +766,7 @@ public class VueLivraison {
 				if (c.getStatus().equals("Publié")) {
 					String stringChantier =  c.getNom()+"; id :"+((Integer)c.getChantierId()).toString();
 					if (stringChantier.length() > 30) {
-						chantier.add(stringChantier.substring(0, 30)+"...");
+						chantier.add(stringChantier.substring(0, 23)+"..."+";id:"+((Integer)c.getChantierId()).toString());
 						labelChantier.setText("Chantier* :");
 					}
 					else {
@@ -1075,7 +1080,7 @@ public class VueLivraison {
 		
 		//creation de la table
 	    final Table table = new Table (vue, SWT.BORDER | SWT.MULTI| SWT.V_SCROLL | SWT.FULL_SELECTION);
-	    table.setLayoutData(new RowData(300, 390));
+	    table.setLayoutData(new RowData(450, 390));
 	    table.setLinesVisible (true);
 		table.setHeaderVisible (true);
 		
@@ -1094,6 +1099,53 @@ public class VueLivraison {
 		
 		//on remplit la table
 		final TableColumn [] columns = table.getColumns ();
+		
+		updateTable(table);
+		
+		//on pack les colonnes
+		for (TableColumn col : columns)
+			col.pack ();
+		
+		//on ajoute un listener pour modifier l'interface si l'utilisateur clique sur une ligne
+		table.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				if (table.getSelectionIndex() != -1) {
+					System.out.println("not -1");
+					
+					selection.dispose();
+					try {
+						System.out.println(Integer.parseInt(table.getSelection()[0].getText(3)));
+						selectedLivraison = Delivery.getLivraisonById(Integer.parseInt(table.getSelection()[0].getText(3)));
+					} catch (NumberFormatException | SQLException e1) {
+						System.out.println("erreur pour recuperer la livraison selectionnée");
+				    	MessageBox dialog = new MessageBox(parent.getShell(), SWT.ICON_ERROR | SWT.OK);
+				    	dialog.setText("Erreur");
+				    	dialog.setMessage("Une erreur est survenue. "+'\n'+e1.getMessage());
+				    	dialog.open();
+					}
+					compositeSelectionModifier(table, vueLivraison);
+					
+					//on ajoute un menu lorsque l'on fait clique droit sur une ligne
+					doMenu(table);
+				}
+				else { // si plus rien n'est selectionner on passe selectedLivraison a null et on enleve le menu du clic droit et on enleve les boutons pour modifier et supprimer
+					System.out.println("-1");
+					
+					selectedLivraison = null;
+					
+					menu.dispose();
+					menu = new Menu (composite.getShell(), SWT.POP_UP);
+					table.setMenu (menu);
+					
+					selection.dispose();
+					compositeSelectionCreer(vueLivraison);
+				}
+			}
+		});
+		
+	}
+	
+	public void updateTable(Table table) {
 		try {
 			for (Delivery l : Delivery.getAllLivraison()) {
 				//on verifie le status
@@ -1118,48 +1170,6 @@ public class VueLivraison {
 	    	dialog.setMessage("Une erreur est survenue. "+'\n'+e.getMessage());
 	    	dialog.open();
 		}
-		
-		//on pack les colonnes
-		for (TableColumn col : columns)
-			col.pack ();
-		
-		//on ajoute un listener pour modifier l'interface si l'utilisateur clique sur une ligne
-		table.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				if (table.getSelectionIndex() != -1) {
-					System.out.println("not -1");
-					
-					selection.dispose();
-					try {
-						System.out.println(Integer.parseInt(table.getSelection()[0].getText(3)));
-						selectedLivraison = Delivery.getLivraisonById(Integer.parseInt(table.getSelection()[0].getText(3)));
-					} catch (NumberFormatException | SQLException e1) {
-						System.out.println("erreur pour recuperer la livraison selectionnée");
-				    	MessageBox dialog = new MessageBox(parent.getShell(), SWT.ICON_ERROR | SWT.OK);
-				    	dialog.setText("Erreur");
-				    	dialog.setMessage("Une erreur est survenue. "+'\n'+e1.getMessage());
-				    	dialog.open();
-					}
-					compositeSelectionModifier(vueLivraison);
-					
-					//on ajoute un menu lorsque l'on fait clique droit sur une ligne
-					doMenu(table);
-				}
-				else { // si plus rien n'est selectionner on passe selectedLivraison a null et on enleve le menu du clic droit et on enleve les boutons pour modifier et supprimer
-					System.out.println("-1");
-					
-					selectedLivraison = null;
-					
-					menu.dispose();
-					menu = new Menu (composite.getShell(), SWT.POP_UP);
-					table.setMenu (menu);
-					
-					selection.dispose();
-					compositeSelectionCreer(vueLivraison);
-				}
-			}
-		});
-		
 	}
 	
 	public void doMenu(Table table) {
@@ -1184,7 +1194,7 @@ public class VueLivraison {
 		delete.addSelectionListener(new SelectionAdapter() {	
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				suppLivraison();
+				suppLivraison(table);
 			}
 		});
 	}
