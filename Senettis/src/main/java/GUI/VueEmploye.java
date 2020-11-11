@@ -887,9 +887,7 @@ public class VueEmploye {
 		table.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (table.getSelectionIndex() != -1) {
-					System.out.println("not -1");
 
-					selection.dispose();
 					try {
 						selectedEmploye = Employee
 								.getEmployeById(Integer.parseInt(table.getSelection()[0].getText(14)));
@@ -906,7 +904,6 @@ public class VueEmploye {
 					doMenu(table);
 				} else { // si plus rien n'est selectionner on passe selectedEmploye a null et on enleve
 					// le menu du clic droit et on enleve les boutons pour modifier et supprimer
-					System.out.println("-1");
 
 					selectedEmploye = null;
 
@@ -914,7 +911,6 @@ public class VueEmploye {
 					menu = new Menu(vueEmploye.getShell(), SWT.POP_UP);
 					table.setMenu(menu);
 
-					selection.dispose();
 					compositeSelectionCreer();
 				}
 			}
@@ -1007,7 +1003,6 @@ public class VueEmploye {
 	/***
 	 * cree un menu sur la selection de la table des employes lors d'un clic droit
 	 * @param table
-	 * @param composite
 	 */
 	public void doMenu(Table table) {
 		menu = new Menu(vueEmploye.getShell(), SWT.POP_UP);
@@ -1060,27 +1055,24 @@ public class VueEmploye {
 	 * va archiver l'employe selectionne et les affections qui lui sont liées
 	 * puis afficher la table des employes mise a jour
 	 * @param table
+	 * @throws SQLException 
 	 */
-	public void suppEmploye(Table table) {
+	public void suppEmploye(Table table) throws SQLException {
 		if (selectedEmploye == null) {
 			throw new Error("selectedEmploye est vide");
 		}
 
-		Employee e;
-		try {
-			e = Employee.getEmployeById(selectedEmploye.getEmployeId());
-			e.setStatus("Archivé");
-			e.updateDatabase();
+		Employee e = Employee.getEmployeById(selectedEmploye.getEmployeId());
+		e.setStatus("Archivé");
+		e.updateDatabase();
 
-			for (Affectation a : Affectation.getAllAffectation()) {
-				if (a.getIdEmploye() == e.getEmployeId()) {
-					a.setStatus("Archivé");
-					a.updateDatabase();
-				}
+		for (Affectation a : Affectation.getAllAffectation()) {
+			if (a.getIdEmploye() == e.getEmployeId()) {
+				a.setStatus("Archivé");
+				a.updateDatabase();
 			}
-		} catch (SQLException e1) {
-			e1.printStackTrace();
 		}
+
 
 		// newVueEmploye(); -> marche pas bien je sais pas pourquoi
 
