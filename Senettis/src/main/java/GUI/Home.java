@@ -286,7 +286,7 @@ public class Home {
 					contenuColonneDroite.dispose();
 				}
 				try {
-					contenuColonneDroite = new VueAffectation(getColonneDroite()).getVueAffectation();
+					contenuColonneDroite = new ViewAffectation(getColonneDroite()).getVueAffectation();
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

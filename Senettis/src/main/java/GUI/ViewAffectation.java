@@ -14,7 +14,6 @@ import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
@@ -25,45 +24,57 @@ import org.eclipse.swt.widgets.Text;
 
 import classes.Affectation;
 import classes.Employee;
+import classes.Site;
 
-public class VueAffectation {
+public class ViewAffectation {
 
-	private Composite vueAffectation;
+	private Composite affectationView;
 	private Composite selection;
 	private Composite mainComposite;
 	private Composite rightComposite;
 	private Composite leftComposite;
+	private Composite rightColumn;
 
 	/**
-	 * Constructeur utilisé pour constuire la vue Affectation
+	 * Constructor
 	 * 
 	 * @param composite
 	 * @throws SQLException
 	 */
-	public VueAffectation(Composite composite) throws SQLException {
-		this.vueAffectation = new Composite(composite, SWT.NONE);
-		this.vueAffectation.setLayout(new RowLayout(SWT.VERTICAL));
-		createVueAffectation(composite);
+	public ViewAffectation(Composite composite) throws SQLException {
+		Couleur.setDisplay(composite.getDisplay());
+		this.affectationView = new Composite(composite, SWT.NONE);
+		this.affectationView.setLayout(new RowLayout(SWT.VERTICAL));
+		this.rightColumn = composite;
+		buildHome();
 	}
 
-	private void createVueAffectation(Composite composite) throws SQLException {
+	/**
+	 * Build the affectationView home
+	 * 
+	 * @param composite
+	 * @throws SQLException
+	 */
+	private void buildHome() throws SQLException {
 
-		compositeSelection(this.vueAffectation);
-		this.mainComposite = new Composite(this.vueAffectation, SWT.NONE);
+		selection(this.affectationView);
+
+		this.mainComposite = new Composite(this.affectationView, SWT.NONE);
 		this.mainComposite.setLayout(new RowLayout(SWT.HORIZONTAL));
 
 		this.leftComposite = new Composite(this.mainComposite, SWT.NONE);
 		this.rightComposite = new Composite(this.mainComposite, SWT.NONE);
 
-		Couleur.setDisplay(composite.getDisplay());
+		// TabFolder creation and fill
 
 		TabFolder tabFolder = new TabFolder(leftComposite, SWT.BORDER);
+
 		tabFolder.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(org.eclipse.swt.events.SelectionEvent event) {
 				selection.dispose();
 				disposeAllChildren(getRightComposite());
+				getVueAffectation().pack();
 
-				packAll();
 			}
 		});
 
@@ -72,15 +83,16 @@ public class VueAffectation {
 
 		TabItem tabChantier = new TabItem(tabFolder, SWT.NULL);
 		tabChantier.setText("Affectation par Chantier");
-		createTableEmployeStats(tabEmploye, this.vueAffectation);
+
+		createTableEmployeStats(tabEmploye);
 		createTableChantierStats(tabChantier);
 
 		mainComposite.pack();
 		tabFolder.pack();
 		leftComposite.pack();
 		rightComposite.pack();
-		vueAffectation.pack();
-		vueAffectation.getParent().pack();
+		affectationView.pack();
+		this.rightColumn.pack();
 
 	}
 
@@ -94,7 +106,7 @@ public class VueAffectation {
 	 * @throws SQLException
 	 */
 
-	private void createTableEmployeStats(TabItem tabEmploye, Composite composite) throws SQLException {
+	private void createTableEmployeStats(TabItem tabEmploye) throws SQLException {
 
 		final Table table = new Table(tabEmploye.getParent(),
 				SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.FULL_SELECTION);
@@ -131,6 +143,7 @@ public class VueAffectation {
 
 		table.addSelectionListener(new SelectionAdapter() {
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 
 				if (table.getSelectionIndex() != -1) {
@@ -138,8 +151,8 @@ public class VueAffectation {
 					int employeId = Integer.parseInt(table.getSelection()[0].getText());
 
 					try {
-						compositeSelectionAjouter(employeId);
-						compositeEmployeAffectationDisplay(employeId);
+						compositeSelectionAjouterForEmployee(employeId);
+						EmployeAffectationDisplay(employeId);
 
 					} catch (SQLException e1) {
 						// TODO Auto-generated catch block
@@ -148,7 +161,7 @@ public class VueAffectation {
 				} else {
 					System.out.println("erreur");
 				}
-				System.out.println("ok");
+
 			}
 
 		});
@@ -208,34 +221,37 @@ public class VueAffectation {
 			col.pack();
 
 		tabChantier.setControl(table);
+
+		table.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+
+				if (table.getSelectionIndex() != -1) {
+
+					int chantierId = Integer.parseInt(table.getSelection()[0].getText());
+
+					compositeSelectionAjouterForChantier(chantierId);
+					//EmployeAffectationDisplay(chantierId);
+				} else {
+					System.out.println("erreur");
+				}
+
+			}
+
+		});
 		table.pack();
 
 	}
 
 	/**
+	 * ADD the list of Site affected to an Employee selected by its employeeId
 	 * 
-	 * @param composite
-	 */
-	public void compositeSelection(Composite composite) {
-		this.selection = new Composite(composite, SWT.NONE);
-		RowLayout rowLayout = new RowLayout();
-		this.selection.setLayout(rowLayout);
-		this.selection.setBackground(Couleur.PeterRiver);
-
-		this.selection.pack();
-	}
-
-	/**
-	 * Ajoute un tableau contenant la liste des chantiers affectés à un employé à un
-	 * Composite
+	 * @param employeId <type>int</type>
 	 * 
-	 * @param employeId <type>int</type> Identifiant de l'employé affectés aux
-	 *                  chantiers à afficher
-	 * @param composite </type> Comppsite </type> Composite qui contient le tableau
-	 *                  affichant la liste des Chantiers
 	 * @throws SQLException
 	 */
-	public void compositeEmployeAffectationDisplay(int employeId) throws SQLException {
+	public void EmployeAffectationDisplay(int employeId) throws SQLException {
 		ResultSet result = Affectation.getEmployeAffectation(employeId);
 
 		disposeAllChildren(this.rightComposite);
@@ -275,9 +291,9 @@ public class VueAffectation {
 		table.addSelectionListener(new SelectionAdapter() {
 
 			public void widgetSelected(SelectionEvent e) {
-				
-				compositeSelectionModifier(affectationsId.get(table.getSelectionIndex()),employeId);
-				packAll();
+
+				AddModifButtonEmployee(affectationsId.get(table.getSelectionIndex()), employeId);
+
 			}
 
 			public void widgetDefaultSelected(SelectionEvent e) {
@@ -288,9 +304,10 @@ public class VueAffectation {
 			col.pack();
 
 		table.pack();
-		packAll();
 
-		this.leftComposite.pack();
+		this.affectationView.pack();
+		this.rightComposite.pack();
+		this.rightColumn.pack();
 
 	}
 
@@ -301,7 +318,7 @@ public class VueAffectation {
 	 */
 	public Composite getVueAffectation() {
 
-		return this.vueAffectation;
+		return this.affectationView;
 	}
 
 	/**
@@ -326,75 +343,26 @@ public class VueAffectation {
 		}
 	}
 
-	public void packAll() {
-		this.leftComposite.pack();
-		this.rightComposite.pack();
-		this.mainComposite.pack();
-
-		this.vueAffectation.pack();
-		this.vueAffectation.getParent().pack();
-
-	}
-
 	/**
-	 * Ajoute le boutton "ajouter Affectation" lorsque l'utilisateur clique sur un
-	 * employé
-	 * 
-	 * @param composite
-	 * @param produitId
-	 */
-
-	public void compositeSelectionAjouter(int employeId) {
-		this.selection.dispose();
-		this.selection = new Composite(this.vueAffectation, SWT.NONE);
-		this.selection.setLayout(new RowLayout(SWT.HORIZONTAL));
-
-		Button boutonAjout = new Button(this.selection, SWT.CENTER);
-		boutonAjout.setText("Ajouter Affectation");
-
-		boutonAjout.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				try {
-					ajouterAffectation(employeId);
-				} catch (SQLException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-			}
-
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-			}
-		});
-
-		this.selection.moveAbove(this.mainComposite);
-		boutonAjout.pack();
-		this.selection.pack();
-
-	}
-
-	/**
+	 * Add the button "Ajouter"and "Modifier" when the user click on an employee
 	 * 
 	 * @param employeId
 	 */
-	public void compositeSelectionModifier(int AffectationId,int employeId) {
-		compositeSelectionAjouter(employeId);
-		if(this.selection.getChildren().length==2) {
+	public void AddModifButtonEmployee(int affectationId, int employeId) {
+		compositeSelectionAjouterForEmployee(employeId);
+		if (this.selection.getChildren().length == 2) {
 			this.selection.getChildren()[1].dispose();
 		}
-		
-			Button boutonModifier = new Button(this.selection, SWT.CENTER);
-			boutonModifier.setText("Modifier Affectation");
-		
+
+		Button boutonModifier = new Button(this.selection, SWT.CENTER);
+		boutonModifier.setText("Modifier Affectation");
 
 		boutonModifier.addSelectionListener(new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				try {
-					ModifierEmployeAffectation(AffectationId);
+					ModifierEmployeAffectation(affectationId);
 				} catch (SQLException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -418,7 +386,7 @@ public class VueAffectation {
 		this.mainComposite.dispose();
 		this.selection.dispose();
 
-		Composite modifComposite = new Composite(this.vueAffectation, SWT.NONE);
+		Composite modifComposite = new Composite(this.affectationView, SWT.NONE);
 
 		modifComposite.setLayout(new RowLayout(SWT.VERTICAL));
 		Employee employe = Employee.getEmployeById(affectation.getIdEmploye());
@@ -453,7 +421,7 @@ public class VueAffectation {
 					Affectation affectation;
 					try {
 						affectation = Affectation.getAffectation(affectationId);
-						
+
 						affectation.setIdChantier(Integer.parseInt(table.getSelection()[0].getText(3)));
 						affectation.setNombreHeures(Double.parseDouble(nbHeureTexte.getText()));
 
@@ -462,7 +430,7 @@ public class VueAffectation {
 
 						getVueAffectation().pack();
 						getVueAffectation().getParent().pack();
-						createVueAffectation(getVueAffectation().getParent());
+						buildHome();
 					} catch (SQLException e2) {
 						// TODO Auto-generated catch block
 						e2.printStackTrace();
@@ -487,8 +455,8 @@ public class VueAffectation {
 		tableComposite.pack();
 		modifComposite.pack();
 		table.pack();
-		this.vueAffectation.pack();
-		this.vueAffectation.getParent().pack();
+		this.affectationView.pack();
+		this.affectationView.getParent().pack();
 
 	}
 
@@ -507,18 +475,143 @@ public class VueAffectation {
 
 	}
 
-	public void ajouterAffectation(int employeId) throws SQLException {
+	
+	/***
+	 * 
+	 * Selection composite management
+	 * 
+	 */
+
+	/**
+	 * 
+	 * @param composite
+	 */
+	public void selection(Composite composite) {
+		this.selection = new Composite(composite, SWT.NONE);
+		RowLayout rowLayout = new RowLayout();
+		this.selection.setLayout(rowLayout);
+		this.selection.setBackground(Couleur.PeterRiver);
+
+		this.selection.pack();
+	}
+
+	private void compositeSelectionAjouterForChantier(int chantierId) {
+
+		if (this.selection.isDisposed())
+			this.selection = new Composite(this.affectationView, SWT.NONE);
+		this.selection.setLayout(new RowLayout(SWT.HORIZONTAL));
+
+		if (this.selection.getChildren().length > 0)
+			selection.getChildren()[0].dispose();
+		Button boutonAjout = new Button(this.selection, SWT.CENTER);
+		boutonAjout.setText("Ajouter Affectation");
+
+		boutonAjout.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				try {
+					ajouterChantierAffectation(chantierId);
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+
+			
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
+
+		this.selection.moveAbove(this.mainComposite);
+		boutonAjout.pack();
+		this.selection.pack();
+		this.affectationView.pack();
+		this.leftComposite.pack();
+		this.rightColumn.pack();
+
+	}
+
+	/**
+	 * Add the button "Ajouter" when the user click on an employee the button
+	 * "Ajouter" Enable the user to access to the affectation creation page
+	 * 
+	 * @param composite
+	 * @param produitId
+	 */
+
+	public void compositeSelectionAjouterForEmployee(int employeId) {
+
+		if (this.selection.isDisposed())
+			this.selection = new Composite(this.affectationView, SWT.NONE);
+		this.selection.setLayout(new RowLayout(SWT.HORIZONTAL));
+
+		if (this.selection.getChildren().length > 0)
+			selection.getChildren()[0].dispose();
+		Button boutonAjout = new Button(this.selection, SWT.CENTER);
+		boutonAjout.setText("Ajouter Affectation");
+
+		boutonAjout.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				try {
+					ajouterAffectationEmploye(employeId);
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
+
+		this.selection.moveAbove(this.mainComposite);
+		boutonAjout.pack();
+		this.selection.pack();
+		this.affectationView.pack();
+		this.leftComposite.pack();
+		this.rightColumn.pack();
+
+	}
+	
+	/***
+	 * 
+	 * Composite Add management
+	 * 
+	 */
+	
+	/***
+	 * 
+	 * @param chantierId
+	 * @throws SQLException 
+	 */
+	
+	
+	private void ajouterChantierAffectation(int siteId) throws SQLException {
 		this.mainComposite.dispose();
 		this.selection.dispose();
 
-		Composite ajoutComposite = new Composite(this.vueAffectation, SWT.NONE);
+		Composite ajoutComposite = new Composite(this.affectationView, SWT.NONE);
 
 		ajoutComposite.setLayout(new RowLayout(SWT.VERTICAL));
-		Employee employe = Employee.getEmployeById(employeId);
+		Site site = Site.getChantierById(siteId);
+		
+		
+		
+		//Employe name part
+		
+		Label labelTitle = new Label(ajoutComposite, SWT.NONE);
+		labelTitle.setText(site.getNom() + " :  " + site.getAdresse());
 
-		Label labelNom = new Label(ajoutComposite, SWT.NONE);
-		labelNom.setText(employe.getNom() + " " + employe.getPrenom());
-
+		
+		
+		//nbHeures part
+		
 		Composite nbHeureComposite = new Composite(ajoutComposite, SWT.NONE);
 
 		nbHeureComposite.setLayout(new RowLayout(SWT.VERTICAL));
@@ -526,12 +619,16 @@ public class VueAffectation {
 		nbHeureLabel.setText("Nombre d'heures");
 		Text nbHeureTexte = new Text(nbHeureComposite, SWT.NONE);
 
-		nbHeureTexte.pack();
+		
 		Composite tableComposite = new Composite(ajoutComposite, SWT.NONE);
-		Table table = VueChantier.getTableAllChantier(ajoutComposite);
+		Table table = VueEmploye.getAllEmployer(ajoutComposite);
 
 		table.setLayoutData(new RowData(400, 100));
 
+		
+		
+		//ValidationButton part 
+		
 		Button buttonValide = new Button(ajoutComposite, SWT.CENTER);
 		buttonValide.setText("Valider");
 		buttonValide.addSelectionListener(new SelectionAdapter() {
@@ -540,16 +637,16 @@ public class VueAffectation {
 			public void widgetSelected(SelectionEvent e) {
 
 				if (table.getSelection().length == 1) {
-					Affectation affectation = new Affectation(Integer.parseInt(table.getSelection()[0].getText(3)),
-							employeId, Double.parseDouble(nbHeureTexte.getText()), "Publié");
+					Affectation affectation = new Affectation(siteId,
+							Integer.parseInt(table.getSelection()[0].getText(15)), Double.parseDouble(nbHeureTexte.getText()), "Publié");
 					try {
 						affectation.insertDatabase();
 						ajoutComposite.dispose();
 
 						getVueAffectation().pack();
 						getVueAffectation().getParent().pack();
-						createVueAffectation(getVueAffectation().getParent());
-						System.out.println("faiiit");
+						buildHome();
+
 					} catch (SQLException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
@@ -564,16 +661,114 @@ public class VueAffectation {
 
 		});
 
-		table.pack();
-
+		nbHeureTexte.pack();
+		/*
 		buttonValide.pack();
-		labelNom.pack();
+		labelTitle.pack();
 		nbHeureComposite.pack();
 		tableComposite.pack();
 		ajoutComposite.pack();
+		table.pack();*/
+		
+		
+		this.affectationView.pack();
+		this.rightColumn.pack();
+		
+
+		
+	}
+	
+	
+
+	/**
+	 * 
+	 * @param employeId
+	 * @throws SQLException
+	 */
+	public void ajouterAffectationEmploye(int employeeId) throws SQLException {
+		this.mainComposite.dispose();
+		this.selection.dispose();
+
+		Composite ajoutComposite = new Composite(this.affectationView, SWT.NONE);
+
+		ajoutComposite.setLayout(new RowLayout(SWT.VERTICAL));
+		Employee employee = Employee.getEmployeById(employeeId);
+		
+		
+		
+		//Employe name part
+		
+		Label labelName = new Label(ajoutComposite, SWT.NONE);
+		labelName.setText(employee.getNom() + "  " +employee.getPrenom() );
+
+		
+		
+		//nbHeures part
+		
+		Composite nbHeureComposite = new Composite(ajoutComposite, SWT.NONE);
+
+		nbHeureComposite.setLayout(new RowLayout(SWT.VERTICAL));
+		Label nbHeureLabel = new Label(nbHeureComposite, SWT.NONE);
+		nbHeureLabel.setText("Nombre d'heures");
+		Text nbHeureTexte = new Text(nbHeureComposite, SWT.NONE);
+
+		
+		Composite tableComposite = new Composite(ajoutComposite, SWT.NONE);
+		Table table = VueChantier.getTableAllChantier(ajoutComposite);
+
+		table.setLayoutData(new RowData(400, 100));
+
+		
+		
+		//ValidationButton part 
+		
+		Button buttonValide = new Button(ajoutComposite, SWT.CENTER);
+		buttonValide.setText("Valider");
+		buttonValide.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+
+				if (table.getSelection().length == 1) {
+					Affectation affectation = new Affectation(Integer.parseInt(table.getSelection()[0].getText(3)),
+							employeeId, Double.parseDouble(nbHeureTexte.getText()), "Publié");
+					try {
+						affectation.insertDatabase();
+						ajoutComposite.dispose();
+
+						getVueAffectation().pack();
+						getVueAffectation().getParent().pack();
+						buildHome();
+
+					} catch (SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+
+				}
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+
+		});
+
+		
+		
 		table.pack();
-		this.vueAffectation.pack();
-		this.vueAffectation.getParent().pack();
+		nbHeureTexte.pack();
+		buttonValide.pack();
+		labelName.pack();
+		nbHeureComposite.pack();
+		tableComposite.pack();
+		ajoutComposite.pack();
+		
+		this.affectationView.pack();
+		this.affectationView.getParent().pack();
+		
 
 	}
+
+
 }

@@ -182,6 +182,11 @@ public class Site {
 	
 	
 	
+	
+	
+
+	
+	
 	/**
 	 * getter and setter
 	 */
@@ -239,4 +244,6 @@ public class Site {
 	public void setChantierId(int chantierId) {
 		this.chantierId = chantierId;
 	}
+
+	
 }

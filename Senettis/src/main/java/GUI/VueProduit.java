@@ -2,25 +2,23 @@ package GUI;
 
 import java.sql.SQLException;
 
-import javax.swing.table.TableStringConverter;
-import java.util.*;
 import java.util.List;
+import java.util.Objects;
 
 import org.eclipse.swt.*;
-import org.eclipse.swt.custom.ScrolledComposite;
+
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 //import javafx.embed.swt.FXCanvas ;
 import classes.Product;
 
 public class VueProduit {
-	private Composite listeProduit;
+	private Composite productList;
 	private Composite selection;
-	private Composite vueProduit;
+	private Composite productView;
 
 	/**
 	 * Constructeur de la VueProduit
@@ -29,15 +27,15 @@ public class VueProduit {
 	 * @throws SQLException
 	 */
 	public VueProduit(Composite composite) throws SQLException {
-		this.vueProduit = new Composite(composite, SWT.NONE);
+		this.productView = new Composite(composite, SWT.NONE);
 		Couleur.setDisplay(composite.getDisplay());
-		vueProduit.setBackground(Couleur.PeterRiver);
+		productView.setBackground(Couleur.bleuFonce);
 
 		RowLayout rowLayoutV = new RowLayout(SWT.VERTICAL);
-		vueProduit.setLayout(rowLayoutV);
+		productView.setLayout(rowLayoutV);
 
-		compositeSelection(vueProduit);
-		vueProduitAfficher(vueProduit);
+		compositeSelection(this.productView);
+		vueProduitAfficher(this.productView);
 
 	}
 
@@ -47,29 +45,30 @@ public class VueProduit {
 	 * @return <type> Composite</type> vueProduit
 	 */
 	public Composite getVueProduit() {
-		return this.vueProduit;
+		return this.productView;
 	}
 
 	/**
-	 * Ajoute une table contenant tous les produits de la base de données dans le
-	 * composite entre en parametre
+	 * 
+	 * Add a table which contains all Product from the database in the composite
+	 * entered in parameter
 	 * 
 	 * @param <type>Composite </type>
 	 * @throws SQLException
 	 */
 	public void vueProduitAfficher(Composite composite) throws SQLException {
 
-		List<Product> allProduct = Product.getAllProduct();
+		List<Product> allProduct = Product.getAllPublished();
 
 		RowLayout rowLayoutV = new RowLayout();
 		rowLayoutV.type = SWT.VERTICAL;
 
-		listeProduit = new Composite(composite, SWT.BORDER);
+		productList = new Composite(composite, SWT.BORDER);
 
-		listeProduit.setLayout(rowLayoutV);
-		listeProduit.setBackground(Couleur.PeterRiver);
+		productList.setLayout(rowLayoutV);
+		productList.setBackground(Couleur.bleuFonce);
 
-		final Table table = new Table(listeProduit, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.FULL_SELECTION);
+		final Table table = new Table(productList, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.FULL_SELECTION);
 		table.setLayoutData(new RowData(400, 600));
 
 		table.setLinesVisible(true);
@@ -89,7 +88,6 @@ public class VueProduit {
 
 		});
 
-		// on met les noms des colonnes
 		String[] titles = { "ProduitId", "Nom", "Prix", "Commentaires" };
 
 		for (String title : titles) {
@@ -110,25 +108,24 @@ public class VueProduit {
 
 		for (TableColumn col : columns)
 			col.pack();
+		composite.pack();
 
 	}
 
-	
-	
-	
-	
 	/**
-	 * Permet de creer la zone de selection contenant les boutons pour Créer et
-	 * modifier les produits
+	 * Create the selection area which contain create and modify button
 	 * 
-	 * @param composite
+	 * @param <type> Composite </type> composite
 	 */
 	public void compositeSelection(Composite composite) {
+		
+		if(!Objects.isNull(selection) && !selection.isDisposed())
+			selection.dispose();
 		selection = new Composite(composite, SWT.NONE);
 		RowLayout rowLayout = new RowLayout();
 		rowLayout.marginWidth = 20;
 		selection.setLayout(rowLayout);
-		selection.setBackground(Couleur.PeterRiver);
+		selection.setBackground(Couleur.bleuFonce);
 
 		Button boutonCreer = new Button(selection, SWT.CENTER);
 
@@ -139,7 +136,7 @@ public class VueProduit {
 			public void widgetSelected(SelectionEvent arg0) {
 				System.out.println("bouton creer employe");
 				selection.dispose();
-				listeProduit.dispose();
+				productList.dispose();
 
 				createProduct(composite);
 
@@ -148,22 +145,21 @@ public class VueProduit {
 
 		boutonCreer.pack();
 		selection.pack();
+		composite.pack();
 	}
 
-	
-	
 	/**
 	 * 
-	 * @param <type> Composite >composite 
-	 * @param <type>int</type> produitId, identifiant du produit à modifier
+	 * @param <type>Composite</type >composite
+	 * @param <type>int</type>      productId
 	 */
-	public void compositeSelectionModif(Composite composite, int produitId) {
+	public void compositeSelectionModif(Composite composite, int productId) {
 		selection.dispose();
 		selection = new Composite(composite, SWT.NONE);
 		RowLayout rowLayout = new RowLayout();
 		rowLayout.marginWidth = 20;
 		selection.setLayout(rowLayout);
-		selection.setBackground(Couleur.PeterRiver);
+		selection.setBackground(Couleur.bleuFonce);
 
 		Button boutonCreer = new Button(selection, SWT.CENTER);
 
@@ -172,28 +168,29 @@ public class VueProduit {
 		boutonCreer.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				System.out.println("bouton creer employe");
+				
 				selection.dispose();
-				listeProduit.dispose();
+				productList.dispose();
 
 				createProduct(composite);
 
 			}
 		});
 
-		Button modifBouton = new Button(selection, SWT.PUSH);
-		modifBouton.setText("Modifier");
+		Button buttonModify = new Button(selection, SWT.PUSH);
+		buttonModify.setText("Modifier");
 
-		modifBouton.addSelectionListener(new SelectionAdapter() {
+		buttonModify.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 
 				try {
-					updateProduct(composite, produitId);
+				
 					selection.dispose();
-					listeProduit.dispose();
-					vueProduit.pack();
-					vueProduit.getParent().pack();
+					productList.dispose();
+					updateProduct(composite, productId);
+					productView.pack();
+					productView.getParent().pack();
 
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
@@ -202,58 +199,91 @@ public class VueProduit {
 
 			}
 		});
-		modifBouton.pack();
+
+		Button buttonRemove = new Button(selection, SWT.PUSH);
+		buttonRemove.setText("Supprimer");
+
+		buttonRemove.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+
+				try {
+					Product.removeById(productId);
+					productList.dispose();
+					selection.dispose();
+					compositeSelection(productView);
+					vueProduitAfficher(productView);
+
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+			}
+		});
+
+		buttonRemove.pack();
+
+		buttonModify.pack();
 
 		boutonCreer.pack();
 		selection.pack();
 	}
 
+	/**
+	 * add a <type>Composite </type> composite to create a Product in the database
+	 * 
+	 * @param composite
+	 */
 	public void createProduct(Composite composite) {
 
 		composite.setLayout(new RowLayout(SWT.VERTICAL));
-		composite.setBackground(Couleur.PeterRiver);
+		composite.setBackground(Couleur.bleuFonce);
 
+		addHeader("Creation Produit");
+		
 		// Nom part
 
 		Composite compositeNom = new Composite(composite, SWT.NONE);
-		compositeNom.setBackground(Couleur.PeterRiver);
-		Label labelNom = new Label(compositeNom, SWT.NONE);
-		labelNom.setBackground(Couleur.PeterRiver);
-		labelNom.setText("Nom");
-		labelNom.setBounds(10, 10, 100, 25);
-		final Text textNom = new Text(compositeNom, SWT.BORDER);
-		textNom.setText("");
-		textNom.setBounds(10, 30, 100, 25);
+		compositeNom.setBackground(Couleur.bleuFonce);
+		Label labelName = new Label(compositeNom, SWT.NONE);
+		labelName.setBackground(Couleur.bleuFonce);
+		labelName.setText("Nom");
+		labelName.setBounds(10, 10, 100, 25);
+		final Text textName = new Text(compositeNom, SWT.BORDER);
+		textName.setText("");
+		textName.setBounds(10, 30, 100, 25);
 
 		// Prix part
 
 		Composite compositePrix = new Composite(composite, SWT.BACKGROUND);
-		compositePrix.setBackground(Couleur.PeterRiver);
+		compositePrix.setBackground(Couleur.bleuFonce);
 		Label labelPrix = new Label(compositePrix, SWT.NONE);
-		labelPrix.setBackground(Couleur.PeterRiver);
+		labelPrix.setBackground(Couleur.bleuFonce);
 		labelPrix.setText("Prix");
 		labelPrix.setBounds(10, 10, 20, 25);
-		final Text textPrix = new Text(compositePrix, SWT.BORDER);
-		textPrix.setText("");
-		textPrix.setBounds(10, 30, 30, 25);
+		final Text textPrice = new Text(compositePrix, SWT.BORDER);
+		textPrice.setText("");
+		textPrice.setBounds(10, 30, 30, 25);
 
 		// Commentaire part
 
-		Composite compositeCommentaire = new Composite(composite, SWT.BACKGROUND);
-		compositeCommentaire.setBackground(Couleur.PeterRiver);
-		Label labelCommentaire = new Label(compositeCommentaire, SWT.NONE);
-		labelCommentaire.setBackground(Couleur.PeterRiver);
-		labelCommentaire.setText("Commentaires");
-		labelCommentaire.setBounds(10, 10, 100, 25);
-		final Text textCommentaire = new Text(compositeCommentaire, SWT.CENTER);
+		Composite compositeComment = new Composite(composite, SWT.BACKGROUND);
+		compositeComment.setBackground(Couleur.bleuFonce);
+		Label labelComment = new Label(compositeComment, SWT.NONE);
+		labelComment.setBackground(Couleur.bleuFonce);
+		labelComment.setText("Commentaires");
+		labelComment.setBounds(10, 10, 100, 25);
+		final Text textCommentaire = new Text(compositeComment, SWT.CENTER);
 		textCommentaire.setText("");
 		textCommentaire.setBounds(10, 30, 100, 25);
 
 		// Validation button
 
-		Composite compositeValidation = new Composite(composite, SWT.CENTER);
-		compositeValidation.setBackground(Couleur.PeterRiver);
-		Button validationButton = new Button(compositeValidation, SWT.BACKGROUND);
+		Composite compositeButtons = new Composite(composite, SWT.CENTER);
+		compositeButtons.setBackground(Couleur.bleuFonce);
+		compositeButtons.setLayout(new RowLayout());
+		Button validationButton = new Button(compositeButtons, SWT.BACKGROUND);
 		validationButton.setText("Valider");
 		validationButton.setBounds(10, 60, 100, 25);
 		validationButton.addSelectionListener(new SelectionAdapter() {
@@ -261,29 +291,22 @@ public class VueProduit {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 
-				Product produit = new Product(textNom.getText(), Double.parseDouble(textPrix.getText()),
+				Product produit = new Product(textName.getText(), Double.parseDouble(textPrice.getText()),
 						textCommentaire.getText(), "Publié");
 
 				try {
 					produit.insertDatabase();
+					compositeSelection(productView);
+					vueProduitAfficher(productView);
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 
-				RowLayout rowLayoutV = new RowLayout(SWT.VERTICAL);
-				vueProduit.setLayout(rowLayoutV);
-				compositeSelection(vueProduit);
-				try {
-					vueProduitAfficher(vueProduit);
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
 				compositeNom.dispose();
 				compositePrix.dispose();
-				compositeCommentaire.dispose();
-				compositeValidation.dispose();
+				compositeComment.dispose();
+				compositeButtons.dispose();
 				composite.pack();
 				composite.getParent().pack();
 
@@ -293,112 +316,196 @@ public class VueProduit {
 
 		});
 
-		labelNom.pack();
+		Button buttonCancel = new Button(compositeButtons, SWT.BACKGROUND);
+		buttonCancel.setText("Annuler");
+		buttonCancel.setBounds(10, 60, 100, 25);
+		buttonCancel.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+
+				try {
+
+					compositeSelection(productView);
+					vueProduitAfficher(productView);
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				compositeNom.dispose();
+				compositePrix.dispose();
+				compositeComment.dispose();
+				compositeButtons.dispose();
+				composite.pack();
+				composite.getParent().pack();
+
+
+			}
+
+		});
+
+		labelName.pack();
 		labelPrix.pack();
 		validationButton.pack();
-		labelCommentaire.pack();
+		labelComment.pack();
 		composite.pack();
 		composite.getParent().pack();
 
 	}
 
-	public void updateProduct(Composite composite, int produitId) throws SQLException {
-		Product produit = Product.getProductById(produitId);
+	/**
+	 * add an composite to update a product in the composite entered in parameter by
+	 * using it's productId
+	 * 
+	 * @param <type> Composite </type>composite
+	 * @param <type> int </type> productId
+	 * @throws SQLException
+	 */
+	public void updateProduct(Composite composite, int productId) throws SQLException {
+		Product produit = Product.getProductById(productId);
 
+		
 		composite.setLayout(new RowLayout(SWT.VERTICAL));
-		composite.setBackground(Couleur.PeterRiver);
-
-		// Nom part
+		composite.setBackground(Couleur.bleuFonce);
+		addHeader("Modifier le produit");
+	
+		// Name part
 
 		Composite compositeNom = new Composite(composite, SWT.NONE);
-		compositeNom.setBackground(Couleur.PeterRiver);
-		Label labelNom = new Label(compositeNom, SWT.NONE);
-		labelNom.setBackground(Couleur.PeterRiver);
-		labelNom.setText("Nom");
-		labelNom.setBounds(10, 10, 100, 25);
+		compositeNom.setBackground(Couleur.bleuFonce);
+		compositeNom.setLayout(new RowLayout());
+		Label labelName = new Label(compositeNom, SWT.NONE);
+		labelName.setBackground(Couleur.bleuFonce);
+		labelName.setText("Nom");
+		labelName.setBounds(10, 10, 100, 25);
 		final Text textNom = new Text(compositeNom, SWT.BORDER);
 		textNom.setText("" + produit.getNom());
 		textNom.setBounds(10, 30, 100, 25);
 
-		// Prix part
+		// Price part
 
 		Composite compositePrix = new Composite(composite, SWT.BACKGROUND);
-		compositePrix.setBackground(Couleur.PeterRiver);
-		Label labelPrix = new Label(compositePrix, SWT.NONE);
-		labelPrix.setBackground(Couleur.PeterRiver);
-		labelPrix.setText("Prix");
-		labelPrix.setBounds(10, 10, 20, 25);
+		compositePrix.setBackground(Couleur.bleuFonce);
+		compositePrix.setLayout(new RowLayout());
+		Label labelPrice = new Label(compositePrix, SWT.NONE);
+		labelPrice.setBackground(Couleur.bleuFonce);
+		labelPrice.setText("Prix");
+		labelPrice.setBounds(10, 10, 20, 25);
 		final Text textPrix = new Text(compositePrix, SWT.BORDER);
 		textPrix.setText("" + produit.getPrix());
 		textPrix.setBounds(10, 30, 30, 25);
 
-		// Commentaire part
+		// Comment part
 
-		Composite compositeCommentaire = new Composite(composite, SWT.BACKGROUND);
-		compositeCommentaire.setBackground(Couleur.PeterRiver);
-		Label labelCommentaire = new Label(compositeCommentaire, SWT.NONE);
-		labelCommentaire.setBackground(Couleur.PeterRiver);
-		labelCommentaire.setText("Commentaires");
-		labelCommentaire.setBounds(10, 10, 100, 25);
-		final Text textCommentaire = new Text(compositeCommentaire, SWT.CENTER);
-		textCommentaire.setText("" + produit.getComment());
-		textCommentaire.setBounds(10, 30, 100, 25);
+		Composite compositeComment = new Composite(composite, SWT.BACKGROUND);
+		compositeComment.setBackground(Couleur.bleuFonce);
+		compositeComment.setLayout(new RowLayout());
+		Label labelComment = new Label(compositeComment, SWT.NONE);
+		labelComment.setBackground(Couleur.bleuFonce);
+		labelComment.setText("Commentaires");
+		labelComment.setBounds(10, 10, 100, 25);
+		final Text textComment = new Text(compositeComment, SWT.CENTER);
+		textComment.setText("" + produit.getComment());
+		textComment.setBounds(10, 30, 100, 25);
 
 		// Validation button
 
-		Composite compositeValidation = new Composite(composite, SWT.CENTER);
-		compositeValidation.setBackground(Couleur.PeterRiver);
-		Button validationButton = new Button(compositeValidation, SWT.BACKGROUND);
-		validationButton.setText("Valider");
-		validationButton.setBounds(10, 60, 100, 25);
-		validationButton.addSelectionListener(new SelectionAdapter() {
+		Composite compositeButtons = new Composite(composite, SWT.CENTER);
+		compositeButtons.setBackground(Couleur.bleuFonce);
+		compositeButtons.setLayout(new RowLayout());
+		Button buttonValidation = new Button(compositeButtons, SWT.BACKGROUND);
+		buttonValidation.setText("Valider");
+		buttonValidation.setBounds(10, 60, 100, 25);
+		buttonValidation.addSelectionListener(new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 
-				Product produit = new Product(produitId, textNom.getText(), Double.parseDouble(textPrix.getText()),
-						textCommentaire.getText(), "Publié");
+				Product produit = new Product(productId, textNom.getText(), Double.parseDouble(textPrix.getText()),
+						textComment.getText(), "Publié");
 
 				try {
 					produit.updateDatabase();
+					compositeSelection(productView);
+					vueProduitAfficher(productView);
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 
-				RowLayout rowLayoutV = new RowLayout(SWT.VERTICAL);
-				vueProduit.setLayout(rowLayoutV);
-				compositeSelection(vueProduit);
-				try {
-					vueProduitAfficher(vueProduit);
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
 				compositeNom.dispose();
 				compositePrix.dispose();
-				compositeCommentaire.dispose();
-				compositeValidation.dispose();
+				compositeComment.dispose();
+				compositeButtons.dispose();
 				composite.pack();
 				composite.getParent().pack();
-
-				System.out.println("done");
 
 			}
 
 		});
 
-		labelNom.pack();
-		labelPrix.pack();
-		validationButton.pack();
-		labelCommentaire.pack();
+		Button buttonCancel = new Button(compositeButtons, SWT.BACKGROUND);
+		buttonCancel.setText("Annuler");
+		buttonCancel.setBounds(10, 60, 100, 25);
+		buttonCancel.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+
+				try {
+
+					compositeSelection(productView);
+					vueProduitAfficher(productView);
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+				compositeNom.dispose();
+				compositePrix.dispose();
+				compositeComment.dispose();
+				compositeButtons.dispose();
+				composite.pack();
+				composite.getParent().pack();
+
+			}
+
+		});
+
+		labelName.pack();
+		labelPrice.pack();
+		buttonValidation.pack();
+		compositeButtons.pack();
+		buttonCancel.pack();
+		labelComment.pack();
 		composite.pack();
 		composite.getParent().pack();
 
 	}
 
 	public void setVueProduit(Composite composite) {
-		this.vueProduit = composite;
+		this.productView = composite;
+	}
+
+	public void addHeader(String header) {
+		if (!this.selection.isDisposed())
+			this.selection.dispose();
+		this.selection = new Composite(this.productView, SWT.BORDER);
+		this.selection.setBackground(Couleur.bleuFonce);
+		RowLayout layout=new RowLayout();
+		this.selection.setLayout(layout);
+		layout.marginWidth=50;
+		
+		
+		Label HeadLabel = new Label(this.selection, SWT.TITLE);
+
+		HeadLabel.setText(header);
+		Font fontTitle = new Font(HeadLabel.getDisplay(), "Arial", 12, SWT.BOLD);
+		HeadLabel.setForeground(Couleur.bleuClair);
+		HeadLabel.setFont(fontTitle);
+		HeadLabel.setBackground(Couleur.bleuFonce);
+		this.selection.pack();
+		HeadLabel.pack();
 	}
 
 }

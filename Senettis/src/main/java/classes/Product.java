@@ -14,9 +14,9 @@ import connexion.SQLDatabaseConnection;
 
 public class Product {
 
-	private int produitId;
-	private String nom;
-	private Double prix;
+	private int productId;
+	private String name;
+	private Double price;
 	private String comment;
 	private String status;
 
@@ -24,7 +24,7 @@ public class Product {
 	 * Constructor for Produit
 	 * 
 	 * @param <type>Double</type> price
-	 * @param <type> String </type> name
+	 * @param <type>              String </type> name
 	 * @param <type>String</type> comment
 	 * @param <type>String</type> status
 	 */
@@ -34,23 +34,22 @@ public class Product {
 
 	}
 
-	
 	/*****************************************
 	 * 
-	 *            Constructors
+	 * Constructors
 	 * 
 	 ****************************************/
-	
+
 	/***
 	 * Constructor
 	 * 
 	 * @param <type> String </type> name </String>
-	 * @param <type> int /<type> price 
+	 * @param <type> int /<type> price
 	 * @param status
 	 */
 	public Product(String name, Double price, String status) {
-		this.nom = name;
-		this.prix = price;
+		this.name = name;
+		this.price = price;
 		this.status = status;
 	}
 
@@ -63,9 +62,15 @@ public class Product {
 	 */
 	public Product(int produitId, String nom, Double prix, String commentaires, String status) {
 		this(nom, prix, commentaires, status);
-		this.produitId = produitId;
+		this.productId = produitId;
 
 	}
+
+	/****************************************
+	 * 
+	 * Queries
+	 * 
+	 ***************************************/
 
 	/**
 	 * Insert the product into the database
@@ -79,8 +84,8 @@ public class Product {
 
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
-		statement.setObject(1, this.nom, Types.VARCHAR);
-		statement.setObject(2, this.prix, Types.DECIMAL);
+		statement.setObject(1, this.name, Types.VARCHAR);
+		statement.setObject(2, this.price, Types.DECIMAL);
 		statement.setObject(3, this.comment, Types.VARCHAR);
 		statement.setObject(4, this.status, Types.VARCHAR);
 
@@ -88,6 +93,7 @@ public class Product {
 	}
 
 	/**
+	 * Select all Product in the database and return the result
 	 * 
 	 * @return
 	 * @throws SQLException
@@ -100,9 +106,49 @@ public class Product {
 		statement.executeQuery(reqSql);
 		return statement;
 	}
-	
+
+	/**
+	 * Select all published product in the database and return the result
+	 * 
+	 * @return <type> Statement</type> statement which contain the request result
+	 * @throws SQLException
+	 */
+	private static Statement selectAllPublished() throws SQLException {
+		String reqSql = "SELECT * FROM Produit WHERE Status='Publié'";
+
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		Statement statement = connection.createStatement();
+		statement.executeQuery(reqSql);
+		return statement;
+	}
+
+	/**
+	 * return the list of all published product stored in the database
+	 * 
+	 * @return <type> List<product> </type>
+	 * @throws SQLException
+	 */
+
+	public static List<Product> getAllPublished() throws SQLException {
+
+		ResultSet result = selectAllPublished().getResultSet();
+		List<Product> allProduct = new ArrayList<Product>();
+		while (result.next()) {
+			int produitId = result.getInt("ProduitId");
+			String name = result.getString("Nom");
+			Double price = result.getDouble("Prix");
+			String comment = result.getString("Commentaires");
+			String status = result.getString("Status");
+			allProduct.add(new Product(produitId, name, price, comment, status));
+
+		}
+
+		return allProduct;
+	}
+
 	/**
 	 * return the list of all product stored in the database
+	 * 
 	 * @return <type> List<product> </type>
 	 * @throws SQLException
 	 */
@@ -125,7 +171,8 @@ public class Product {
 	}
 
 	/**
-	 * print all product in the consol
+	 * print all product in the database
+	 * 
 	 * @throws SQLException
 	 */
 	public static void printAllProduct() throws SQLException {
@@ -147,13 +194,11 @@ public class Product {
 
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
-		statement.setObject(1, this.nom.toString(), Types.VARCHAR);
-		statement.setObject(2, this.prix, Types.DECIMAL);
+		statement.setObject(1, this.name.toString(), Types.VARCHAR);
+		statement.setObject(2, this.price, Types.DECIMAL);
 		statement.setObject(3, this.comment, Types.VARCHAR);
 		statement.setObject(4, this.status, Types.VARCHAR);
-		statement.setObject(5, this.produitId, Types.INTEGER);
-		// System.out.println(this.produitId);
-		// System.out.println("MAJ");
+		statement.setObject(5, this.productId, Types.INTEGER);
 		return statement.executeUpdate();
 
 	}
@@ -167,7 +212,11 @@ public class Product {
 	 * @throws SQLException
 	 */
 	public static Product getProductById(int productId) throws SQLException {
-		String reqSql = "SELECT ProduitId,Nom,Prix,Commentaires,Status FROM Produit WHERE ProduitId=?;";
+
+		String selection = "ProduitId,Nom,Prix,Commentaires,Status";
+		String source = "Produit";
+		String condition = "ProduitId=?";
+		String reqSql = "SELECT " + selection + " FROM " + source + " WHERE " + condition + " ;";
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
 		statement.setObject(1, productId, Types.INTEGER);
@@ -189,6 +238,26 @@ public class Product {
 
 	}
 
+	/**
+	 * Change a product status to 'Archivé'
+	 * 
+	 * @param productId
+	 * @return <type>int </type>
+	 * @throws SQLException
+	 */
+	public static int removeById(int productId) throws SQLException {
+
+		String source = "Produit";
+		String modif = "status='Archivé'";
+		String condition = "ProduitId=?";
+		String reqSql = "Update " + source + " SET " + modif + " WHERE " + condition + " ;";
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		PreparedStatement statement = connection.prepareStatement(reqSql);
+		statement.setObject(1, productId, Types.INTEGER);
+		return statement.executeUpdate();
+
+	}
+
 	/***
 	 * 
 	 * Getter and setter
@@ -196,11 +265,11 @@ public class Product {
 	 */
 
 	public int getProduitId() {
-		return produitId;
+		return productId;
 	}
 
 	public void setProduitId(int produitId) {
-		this.produitId = produitId;
+		this.productId = produitId;
 	}
 
 	public String getStatus() {
@@ -215,28 +284,28 @@ public class Product {
 	 * @return the prix
 	 */
 	public Double getPrix() {
-		return prix;
+		return price;
 	}
 
 	/**
 	 * @param prix the prix to set
 	 */
 	private void setPrix(Double prix) {
-		this.prix = prix;
+		this.price = prix;
 	}
 
 	/**
 	 * @return the nom
 	 */
 	public String getNom() {
-		return nom;
+		return name;
 	}
 
 	/**
 	 * @param nom the nom to set
 	 */
 	private void setNom(String nom) {
-		this.nom = nom;
+		this.name = nom;
 	}
 
 	/**
@@ -256,7 +325,7 @@ public class Product {
 	@Override
 	public String toString() {
 
-		return "" + this.produitId + "|" + this.nom + "|" + this.prix + "|" + this.comment + "|" + this.status;
+		return "" + this.productId + "|" + this.name + "|" + this.price + "|" + this.comment + "|" + this.status;
 	}
 
 }
