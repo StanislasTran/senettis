@@ -205,6 +205,34 @@ public class Affectation {
 
 	}
 
+	
+	/**
+	 * Execute a query and return the list of all employee  affected to the siteId entered in parameter
+	 * @param employeId
+	 * @return
+	 * @throws SQLException
+	 */
+	public static ResultSet getSiteAffectation(int siteId) throws SQLException {
+		String selection = "AffectationId,Nom,Prenom,Affectation.Nombre_heures,Affectation.AffectationId,Numero_matricule";
+		String source = "Employe INNER JOIN Affectation ON Employe.EmployeId=Affectation.Employe ";
+		String condition = "Affectation.Chantier=?";
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		String reqSql = "SELECT " + selection + " FROM " + source + " WHERE " + condition;
+
+		PreparedStatement statement = connection.prepareStatement(reqSql);
+		statement.setObject(1, siteId, Types.INTEGER);
+		statement.execute();
+		return statement.getResultSet();
+	}
+	
+	
+
+	/**
+	 * Execute a query and return the list of all site affected to the employeId entered in parameter
+	 * @param employeId
+	 * @return
+	 * @throws SQLException
+	 */
 	public static ResultSet getEmployeAffectation(int employeId) throws SQLException {
 		String selection = "ChantierId,nom,adresse,Nombre_heures,Affectation.AffectationId";
 		String source = "chantier INNER JOIN Affectation ON Chantier.ChantierId=Affectation.Chantier ";

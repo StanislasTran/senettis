@@ -9,6 +9,7 @@ import java.sql.Statement;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import connexion.SQLDatabaseConnection;
 
@@ -18,7 +19,7 @@ public class Product {
 	private String name;
 	private Double price;
 	private String comment;
-	private String status;
+	private Status status;
 
 	/**
 	 * Constructor for Produit
@@ -28,7 +29,7 @@ public class Product {
 	 * @param <type>String</type> comment
 	 * @param <type>String</type> status
 	 */
-	public Product(String name, Double price, String comment, String status) {
+	public Product(String name, Double price, String comment, Status status) {
 		this(name, price, status);
 		this.comment = comment;
 
@@ -47,7 +48,7 @@ public class Product {
 	 * @param <type> int /<type> price
 	 * @param status
 	 */
-	public Product(String name, Double price, String status) {
+	public Product(String name, Double price, Status status) {
 		this.name = name;
 		this.price = price;
 		this.status = status;
@@ -60,7 +61,7 @@ public class Product {
 	 * @param prix
 	 * @param status
 	 */
-	public Product(int produitId, String nom, Double prix, String commentaires, String status) {
+	public Product(int produitId, String nom, Double prix, String commentaires, Status status) {
 		this(nom, prix, commentaires, status);
 		this.productId = produitId;
 
@@ -87,7 +88,7 @@ public class Product {
 		statement.setObject(1, this.name, Types.VARCHAR);
 		statement.setObject(2, this.price, Types.DECIMAL);
 		statement.setObject(3, this.comment, Types.VARCHAR);
-		statement.setObject(4, this.status, Types.VARCHAR);
+		statement.setObject(4, this.status.getValue(), Types.VARCHAR);
 
 		return statement.executeUpdate();
 	}
@@ -138,7 +139,8 @@ public class Product {
 			String name = result.getString("Nom");
 			Double price = result.getDouble("Prix");
 			String comment = result.getString("Commentaires");
-			String status = result.getString("Status");
+			
+			Status status =Status.getStatus(result.getString("Status"));
 			allProduct.add(new Product(produitId, name, price, comment, status));
 
 		}
@@ -162,7 +164,7 @@ public class Product {
 			String name = result.getString("Nom");
 			Double price = result.getDouble("Prix");
 			String comment = result.getString("Commentaires");
-			String status = result.getString("Status");
+			Status status = Status.getStatus(result.getString("Status"));
 			allProduct.add(new Product(produitId, name, price, comment, status));
 
 		}
@@ -229,7 +231,7 @@ public class Product {
 			String name = result.getString("Nom");
 			Double price = result.getDouble("Prix");
 			String comment = result.getString("Commentaires");
-			String status = result.getString("Status");
+			Status status = Status.getStatus(result.getString("Status"));
 			return new Product(produitId, name, price, comment, status);
 
 		} else {
@@ -260,65 +262,113 @@ public class Product {
 
 	/***
 	 * 
-	 * Getter and setter
+	 * Getters
 	 * 
 	 */
 
+	/***
+	 * 
+	 * Getter for the attribute productId
+	 * 
+	 * @return <type> int</type> productId
+	 */
 	public int getProduitId() {
 		return productId;
 	}
 
-	public void setProduitId(int produitId) {
-		this.productId = produitId;
-	}
-
-	public String getStatus() {
+	public Status getStatus() {
 		return status;
 	}
 
-	private void setStatus(String status) {
-		this.status = status;
-	}
-
 	/**
-	 * @return the prix
+	 * Getter for the attribute price
+	 * 
+	 * @return <type>Double </type> Price
 	 */
-	public Double getPrix() {
+	public Double getPrice() {
 		return price;
 	}
 
 	/**
-	 * @param prix the prix to set
-	 */
-	private void setPrix(Double prix) {
-		this.price = prix;
-	}
-
-	/**
-	 * @return the nom
-	 */
-	public String getNom() {
-		return name;
-	}
-
-	/**
-	 * @param nom the nom to set
-	 */
-	private void setNom(String nom) {
-		this.name = nom;
-	}
-
-	/**
-	 * @return the commentaire
+	 * Getter for the attribute comment
+	 * 
+	 * @return <type>String</type> comment
 	 */
 	public String getComment() {
 		return comment;
 	}
 
+	
+
 	/**
-	 * @param commentaire the commentaire to set
+	 * getter for the attribute name
+	 * @return <type>String</type> name
 	 */
+	public String getName() {
+		return name;
+	}
+	
+	
+	/**********************
+	 * 
+	 * 		Setters
+	 * 
+	 *********************/
+
+	/**
+	 * setter for the attribute produitId
+	 * 
+	 * @param <type>int</type> produitId superior or equal to 0;
+	 * @throws IllegalArgumentException
+	 */
+	public void setProduitId(int produitId) {
+		if (produitId < 0)
+			throw new IllegalArgumentException("produitId can't be negative");
+		this.productId = produitId;
+	}
+
+	/***
+	 *	 *
+	 * @param status
+	 */
+	
+	/**
+	 * setter for the attribute status
+	 * @param <type>Status </type>status
+	 */
+	private void setStatus(Status status) {
+		this.status = status;
+	}
+
+	/**
+	 * setter for the attribute price
+	 * @param <type>Double</type> prix
+	 */
+	private void setPrice(Double prix) {
+		this.price = prix;
+	}
+
+	
+
+	/**
+	 * setter for the attribute name
+	 * @param <type>String</type> name
+	 */
+	private void setName(String name) {
+		if(Objects.isNull(name))
+			throw new IllegalArgumentException("name can't be null");
+		this.name = name;
+	}
+	
+
+	/**
+	 * setter for the attribute comment
+	 * @param <type>String</type> comment
+	 */
+	
 	private void setComment(String comment) {
+		if(Objects.isNull(comment))
+			throw new IllegalArgumentException("comment can't be null");
 		this.comment = comment;
 	}
 

@@ -444,11 +444,11 @@ public class VueLivraison {
 		try {
 			for (Product p : Product.getAllProduct()) {
 				//on verifie le status
-				if (p.getStatus().contentEquals("Publié")) {
+				if (p.getStatus().getValue().contentEquals("Publié")) {
 					TableItem item = new TableItem (tableProduit, SWT.NONE);
 					item.setText(0,((Integer)p.getProduitId()).toString());
-					item.setText(1,p.getNom());
-					item.setText(2,p.getPrix().toString());
+					item.setText(1,p.getName());
+					item.setText(2,p.getPrice().toString());
 					item.setText(3,p.getComment());
 					item.setText(4,"0");
 				}
@@ -883,11 +883,11 @@ public class VueLivraison {
 		//on remplit la table
 		try {
 			for (Product p : Product.getAllProduct()) {
-				if (p.getStatus().contentEquals("Publié")) {
+				if (p.getStatus().getValue().contentEquals("Publié")) {
 					TableItem item = new TableItem (tableProduit, SWT.NONE);
 					item.setText(0,((Integer)p.getProduitId()).toString());
-					item.setText(1,p.getNom());
-					item.setText(2,p.getPrix().toString());
+					item.setText(1,p.getName());
+					item.setText(2,p.getPrice().toString());
 					item.setText(3,p.getComment());
 					item.setText(4,"0");
 				}
