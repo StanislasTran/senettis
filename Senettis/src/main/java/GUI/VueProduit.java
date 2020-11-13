@@ -14,6 +14,7 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 //import javafx.embed.swt.FXCanvas ;
 import classes.Product;
+import classes.Status;
 
 public class VueProduit {
 	private Composite productList;
@@ -100,8 +101,8 @@ public class VueProduit {
 		for (Product p : allProduct) {
 			TableItem item = new TableItem(table, SWT.NONE);
 			item.setText(0, Integer.toString(p.getProduitId()));
-			item.setText(1, p.getNom());
-			item.setText(2, "" + p.getPrix());
+			item.setText(1, p.getName());
+			item.setText(2, "" + p.getPrice());
 			item.setText(3, p.getComment());
 
 		}
@@ -292,7 +293,7 @@ public class VueProduit {
 			public void widgetSelected(SelectionEvent arg0) {
 
 				Product produit = new Product(textName.getText(), Double.parseDouble(textPrice.getText()),
-						textCommentaire.getText(), "Publié");
+						textCommentaire.getText(), Status.PUBLISHED);
 
 				try {
 					produit.insertDatabase();
@@ -379,7 +380,7 @@ public class VueProduit {
 		labelName.setText("Nom");
 		labelName.setBounds(10, 10, 100, 25);
 		final Text textNom = new Text(compositeNom, SWT.BORDER);
-		textNom.setText("" + produit.getNom());
+		textNom.setText("" + produit.getName());
 		textNom.setBounds(10, 30, 100, 25);
 
 		// Price part
@@ -392,7 +393,7 @@ public class VueProduit {
 		labelPrice.setText("Prix");
 		labelPrice.setBounds(10, 10, 20, 25);
 		final Text textPrix = new Text(compositePrix, SWT.BORDER);
-		textPrix.setText("" + produit.getPrix());
+		textPrix.setText("" + produit.getPrice());
 		textPrix.setBounds(10, 30, 30, 25);
 
 		// Comment part
@@ -422,7 +423,7 @@ public class VueProduit {
 			public void widgetSelected(SelectionEvent arg0) {
 
 				Product produit = new Product(productId, textNom.getText(), Double.parseDouble(textPrix.getText()),
-						textComment.getText(), "Publié");
+						textComment.getText(), Status.getStatus("Publié"));
 
 				try {
 					produit.updateDatabase();
