@@ -16,6 +16,7 @@ import org.eclipse.swt.widgets.*;
 
 import classes.Affectation;
 import classes.Employee;
+import classes.SickLeave;
 
 public class VueEmploye {
 
@@ -23,8 +24,9 @@ public class VueEmploye {
 	private Composite vueEmploye;
 	private Composite selection;
 	private Composite vue;
-	private Employee selectedEmploye;
+	private Object selectedItem;
 	private Menu menu;
+	private Table table;
 
 	// Creation VueEmploye --------------------------------------------------
 	/***
@@ -42,55 +44,15 @@ public class VueEmploye {
 		rowLayout.type = SWT.VERTICAL;
 		vueEmploye.setLayout(rowLayout);
 
-		compositeSelectionCreer();
-		vueEmployeAfficher();
-
-		vueEmploye.pack();
-		vueEmploye.getParent().pack();
-	}
-
-	/***
-	 * retourne la partie superieur de vueEmploye
-	 * @return le composite selection de vueEmploye
-	 */
-	public Composite getSelection() {
-		return selection;
-	}
-
-	/***
-	 * retourne la partie principale de vueEmploye
-	 * @return la partie vue de vueEmploye
-	 */
-	public Composite getVue() {
-		return vue;
-	}
-
-	/***
-	 * Pour créer une vueEmploye : Appelle les
-	 * fonctions compositeSelectionCreer et vueEmployeAfficher pour creer les composites 
-	 * Vue et selection
-	 * 
-	 * @param composite : composite vueEmploye
-	 */
-	public void newVueEmploye() {
-		//Label test=new Label(vueEmploye,SWT.NONE);test.pack();
-
-		compositeSelectionCreer();
-		vueEmployeAfficher();
+		tableViewSelection(0);
+		tableViewVue(0);
 
 		vueEmploye.pack();
 		vueEmploye.getParent().pack();
 	}
 
 
-	// Modification de la partie Selection
-	// --------------------------------------------------
-	/***
-	 * Creation de la partie Selection (la partie superieure droite) avec uniquement
-	 * le bouton Creer
-	 * 
-	 */
-	public void compositeSelectionCreer() {
+	public void tableViewSelection(int mode) {//mode 0 -> employe //mode 1 -> sl 
 		if (!Objects.isNull(selection) && !selection.isDisposed()) {
 			selection.dispose();
 		}
@@ -102,122 +64,418 @@ public class VueEmploye {
 		selection.setLayout(rowLayout);
 		selection.setBackground(Couleur.gris);
 
-		Button boutonCreer = new Button(selection, SWT.CENTER);
-		boutonCreer.setText("Créer");
-		boutonCreer.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent arg0) {
-				vueEmployeCreer();
+		//employee mode
+		if (mode == 0) {
+			Button boutonCreer = new Button(selection, SWT.CENTER);
+			boutonCreer.setText("Ajouter un employé");
+			boutonCreer.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent arg0) {
+					formViewVue(0,0,0);
+					formViewSelection(0,0);
+					formViewVue(0,0,0);
+
+					vueEmploye.pack();
+					vueEmploye.getParent().pack();
+				}
+			});
+
+			Button boutonSLCreation = new Button(selection, SWT.CENTER);
+			boutonSLCreation.setText("Ajouter un arrêt Maladie");
+			boutonSLCreation.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent arg0) {
+					formViewVue(1,0,0);
+					formViewSelection(1,0);
+					formViewVue(1,0,0);
+
+					vueEmploye.pack();
+					vueEmploye.getParent().pack();
+
+				}
+			});
+
+			Button boutonSLTable = new Button(selection, SWT.CENTER);
+			boutonSLTable.setText("Gérer les arrêts Maladie");
+			boutonSLTable.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent arg0) {
+					selectedItem = null;
+					if (!menu.isDisposed()) {
+						menu.dispose();
+						menu = new Menu(vueEmploye.getShell(), SWT.POP_UP);
+						table.setMenu(menu);
+					}
+					
+					
+					tableViewSelection(1);
+					tableViewVue(1);
+
+					vueEmploye.pack();
+					vueEmploye.getParent().pack();
+
+				}
+			});
+
+			if (selectedItem != null) {
+				// Bouton Modifier
+				Button boutonModifier = new Button(selection, SWT.CENTER);
+				boutonModifier.setText("Modifier l'employé");
+				boutonModifier.addSelectionListener(new SelectionAdapter() {
+					@Override
+					public void widgetSelected(SelectionEvent arg0) {
+						formViewVue(0,1,0);
+						formViewSelection(0,1);
+						formViewVue(0,1,0);
+
+						vueEmploye.pack();
+						vueEmploye.getParent().pack();
+					}
+				});
+
+				// Bouton Supprimer
+				Button boutonSupprimer = new Button(selection, SWT.CENTER);
+				boutonSupprimer.setText("Supprimer l'employé");
+				boutonSupprimer.addSelectionListener(new SelectionAdapter() {
+					@Override
+					public void widgetSelected(SelectionEvent arg0) {
+						try {
+							if (selectedItem == null) {
+								throw new Error("selectedItem est vide");
+							}
+
+							Employee e = Employee.getEmployeById(((Employee) selectedItem).getEmployeId());
+
+							//on demande validation
+							MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_QUESTION | SWT.YES | SWT.NO);
+							dialog.setText("Suppression Employe");
+							dialog.setMessage("Voulez vous supprimer l'employé " + e.getNom() + " " + e.getPrenom()
+							+ " ?\nToutes les affectations liées à cet employé seront supprimées.");
+							int buttonID = dialog.open();
+
+							switch (buttonID) {
+							case SWT.YES:
+								suppEmploye(table);
+							}
+
+						} catch (NumberFormatException | SQLException e) {
+							System.out.println("erreur dans la supression");
+							MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_ERROR | SWT.OK);
+							dialog.setText("Erreur Supression");
+							dialog.setMessage("Une erreur est survenue lors de la supression de l'employé. " + '\n' + e.getMessage());
+							dialog.open();
+						}
+					}
+				});
 			}
-		});
+		}
+
+
+		//sick leave mode
+		if (mode == 1) {
+			Button boutonCreer = new Button(selection, SWT.CENTER);
+			boutonCreer.setText("Ajouter un arrêt maladie");
+			boutonCreer.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent arg0) {
+					formViewVue(1,0,1);
+					formViewSelection(1,0);
+					formViewVue(1,0,1);
+
+					vueEmploye.pack();
+					vueEmploye.getParent().pack();
+				}
+			});
+
+			if (selectedItem != null) {
+				// Bouton Modifier
+				Button boutonModifier = new Button(selection, SWT.CENTER);
+				boutonModifier.setText("Modifier l'arrêt maladie");
+				boutonModifier.addSelectionListener(new SelectionAdapter() {
+					@Override
+					public void widgetSelected(SelectionEvent arg0) {
+						formViewVue(1,1,1);
+						formViewSelection(1,1);
+						formViewVue(1,1,1);
+
+						vueEmploye.pack();
+						vueEmploye.getParent().pack();
+					}
+				});
+
+				// Bouton Supprimer
+				Button boutonSupprimer = new Button(selection, SWT.CENTER);
+				boutonSupprimer.setText("Supprimer l'arrêt maladie");
+				boutonSupprimer.addSelectionListener(new SelectionAdapter() {
+					@Override
+					public void widgetSelected(SelectionEvent arg0) {
+						try {
+							if (selectedItem == null) {
+								throw new Error("selectedItem est vide");
+							}
+							SickLeave sl = SickLeave.getSickLeaveById(((SickLeave)selectedItem).getIdSickLeave());
+
+							//on demande validation
+							MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_QUESTION | SWT.YES | SWT.NO);
+							dialog.setText("Suppression Arrêt maladie");
+							dialog.setMessage("Voulez vous supprimer l'arrêt maladie du " + sl.getDateDebut()+" pour l'employé " + Employee.getEmployeById(sl.getIdEmploye()).getNom() + " " + Employee.getEmployeById(sl.getIdEmploye()).getPrenom()
+							+ " ?");
+							int buttonID = dialog.open();
+
+							switch (buttonID) {
+							case SWT.YES:
+								suppSL(table);
+							}
+
+						} catch (NumberFormatException | SQLException e) {
+							System.out.println("erreur dans la supression");
+							MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_ERROR | SWT.OK);
+							dialog.setText("Erreur Supression");
+							dialog.setMessage("Une erreur est survenue lors de la supression de l'arrêt maladie. " + '\n' + e.getMessage());
+							dialog.open();
+
+						}
+
+					}
+				});
+			}
+			
+			Button boutonRetour = new Button(selection, SWT.CENTER);
+			boutonRetour.setText("Retour aux employés");
+			boutonRetour.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent arg0) {
+					selectedItem = null;
+					if (!menu.isDisposed()) {
+						menu.dispose();
+						menu = new Menu(vueEmploye.getShell(), SWT.POP_UP);
+						table.setMenu(menu);
+					}
+					
+					tableViewSelection(0);
+					tableViewVue(0);
+
+					vueEmploye.pack();
+					vueEmploye.getParent().pack();
+				}
+			});
+
+		}
+
 		selection.pack();
 	}
 
-	/***
-	 * Creation de la partie Selection (la partie superieure droite) avec les
-	 * boutons Creer, Modifier et Supprimer
-	 * 
-	 * @param composite : composite vueEmploye
-	 * @param table : la table affichant tous les employes 
-	 */
-	public void compositeSelectionModifier(Table table) {
-		if (!Objects.isNull(selection) && !selection.isDisposed()) {
-			selection.dispose();
+
+	public void tableViewVue(int mode) {
+		if (!Objects.isNull(vue) && !vue.isDisposed()) {
+			vue.dispose();
 		}
 
-		selection = new Composite(vueEmploye, SWT.NONE);
-		RowLayout rowLayout = new RowLayout();
-		rowLayout.marginWidth = 22;
-		rowLayout.marginTop = 6;
-		selection.setLayout(rowLayout);
-		selection.setBackground(Couleur.gris);
+		RowLayout rowLayoutV = new RowLayout();
+		rowLayoutV.type = SWT.VERTICAL;
 
-		// Bouton Creer
-		Button boutonCreer = new Button(selection, SWT.CENTER);
-		boutonCreer.setText("Créer");
-		boutonCreer.addSelectionListener(new SelectionAdapter() {
+		vue = new Composite(vueEmploye, SWT.NONE);
+		vue.setLayout(rowLayoutV);
+		vue.setBackground(Couleur.gris);
+
+		table = new Table(vue, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.FULL_SELECTION);
+		table.setLinesVisible(true);
+		table.setHeaderVisible(true);
+
+		if (mode == 0) {
+			table.setLayoutData(new RowData(1047, 450));
+			String[] titles = { "Titre  ", "Nom        ", "Prenom     ", "Email             ", "Téléphone", "N° de matricule", "Pointure", "Taille",
+					"Date d'arrivée", "Ancienneté", "Nb d'heures", "Remb. Transport", "Remb. Telephone", "Salaire", "Id DB" };
+
+			for (String title : titles) {
+				TableColumn column = new TableColumn(table, SWT.NONE);
+				column.setText(title);
+			}
+
+			final TableColumn[] columns = table.getColumns();
+			for (TableColumn col : columns)
+				col.pack();
+
+			table.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					if (table.getSelectionIndex() != -1) {
+
+						try {
+							selectedItem = Employee.getEmployeById(Integer.parseInt(table.getSelection()[0].getText(14)));
+						} catch (NumberFormatException | SQLException e1) {
+							System.out.println("erreur pour recuperer l'employe selectionne");
+							MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_ERROR | SWT.OK);
+							dialog.setText("Erreur");
+							dialog.setMessage("Une erreur est survenue. " + '\n' + e1.getMessage());
+							dialog.open();
+						}
+
+						tableViewSelection(0);
+
+						// on ajoute un menu lorsque l'on fait clique droit sur une ligne
+						doEmployeeMenu(table);
+					} else { // si plus rien n'est selectionner on passe selectedItem a null et on enleve
+						// le menu du clic droit et on enleve les boutons pour modifier et supprimer
+
+						selectedItem = null;
+						if (!menu.isDisposed()) {
+							menu.dispose();
+							menu = new Menu(vueEmploye.getShell(), SWT.POP_UP);
+							table.setMenu(menu);
+						}
+						tableViewSelection(0);
+					}
+				}
+			});
+
+			updateEmployeeTable(table);
+		}
+		//////////////////////////////////////////////////////////////////////////::
+		if (mode == 1) {
+			table.setLayoutData(new RowData(600, 450));
+			// on met les noms des colonnes //espaces dans les titres pour changer la taille des colonnes
+			String[] titles = { "Id Employe ", "Nom        ", "Prenom     ", "Date de début    ", "Durée      ", "Motif           ", "Cout     ", "Id Arrêt Maladie"};
+			for (String title : titles) {
+				TableColumn column = new TableColumn(table, SWT.NONE);
+				column.setText(title);
+			}
+
+			final TableColumn[] columns = table.getColumns();
+			for (TableColumn col : columns)
+				col.pack();
+
+			// on ajoute un listener pour modifier l'interface si l'utilisateur clique sur
+			// une ligne
+			table.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					if (table.getSelectionIndex() != -1) {
+						try {
+							selectedItem = SickLeave.getSickLeaveById(Integer.parseInt(table.getSelection()[0].getText(7)));
+						} catch (NumberFormatException | SQLException e1) {
+							System.out.println("erreur pour recuperer l'arret maladie");
+							MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_ERROR | SWT.OK);
+							dialog.setText("Erreur");
+							dialog.setMessage("Une erreur est survenue. " + '\n' + e1.getMessage());
+							dialog.open();
+						}
+
+						tableViewSelection(1);
+
+						doSLMenu(table);
+					} else { // si plus rien n'est selectionner on passe selectedItem a null et on enleve
+						// le menu du clic droit et on enleve les boutons pour modifier et supprimer
+
+						selectedItem = null;
+						if (!menu.isDisposed()) {
+							menu.dispose();
+							menu = new Menu(vueEmploye.getShell(), SWT.POP_UP);
+							table.setMenu(menu);
+						}
+						tableViewSelection(1);
+					}
+				}
+			});
+
+			updateSLTable(table);
+
+		}
+		vue.pack();
+	}
+
+
+
+	public void doSLMenu (Table table) {
+
+		menu = new Menu(vueEmploye.getShell(), SWT.POP_UP);
+		table.setMenu(menu);
+
+		// pour modifier
+		MenuItem update = new MenuItem(menu, SWT.PUSH);
+		update.setText("Modifier l'arrêt maladie");
+		update.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				vueEmployeCreer();
+				if (table.getSelection().length != 0) {
+					formViewVue(1,1,1);
+					formViewSelection(1,1);
+					formViewVue(1,1,1);
+
+					vueEmploye.pack();
+					vueEmploye.getParent().pack();
+				}
 			}
 		});
 
-		// Bouton Modifier
-		Button boutonModifier = new Button(selection, SWT.CENTER);
-		boutonModifier.setText("Modifier");
-		boutonModifier.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent arg0) {
-				vueEmployeModifier();
-			}
-		});
-
-		// Bouton Supprimer
-		Button boutonSupprimer = new Button(selection, SWT.CENTER);
-		boutonSupprimer.setText("Supprimer");
-		boutonSupprimer.addSelectionListener(new SelectionAdapter() {
+		// pour supprimer
+		MenuItem delete = new MenuItem(menu, SWT.PUSH);
+		delete.setText("Supprimer l'arrêt maladie");
+		delete.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				try {
-					if (selectedEmploye == null) {
-						throw new Error("selectedEmploye est vide");
+					if (selectedItem == null) {
+						throw new Error("selectedItem est vide");
 					}
-					Employee e = Employee.getEmployeById(selectedEmploye.getEmployeId());
+					SickLeave sl = SickLeave.getSickLeaveById(((SickLeave)selectedItem).getIdSickLeave());
 
 					//on demande validation
 					MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_QUESTION | SWT.YES | SWT.NO);
-					dialog.setText("Suppression Employe");
-					dialog.setMessage("Voulez vous supprimer l'employé " + e.getNom() + " " + e.getPrenom()
-					+ " ?\nToutes les affectations liées à cet employé seront supprimées.");
+					dialog.setText("Suppression Arrêt maladie");
+					dialog.setMessage("Voulez vous supprimer l'arrêt maladie du " + sl.getDateDebut()+" pour l'employé " + Employee.getEmployeById(sl.getIdEmploye()).getNom() + " " + Employee.getEmployeById(sl.getIdEmploye()).getPrenom()
+					+ " ?");
 					int buttonID = dialog.open();
 
 					switch (buttonID) {
 					case SWT.YES:
-						suppEmploye(table);
+						suppSL(table);
 					}
 
 				} catch (NumberFormatException | SQLException e) {
 					System.out.println("erreur dans la supression");
 					MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_ERROR | SWT.OK);
 					dialog.setText("Erreur Supression");
-					dialog.setMessage("Une erreur est survenue lors de la supression de l'employé. " + '\n' + e.getMessage());
+					dialog.setMessage("Une erreur est survenue lors de la supression de l'arrêt maladie. " + '\n' + e.getMessage());
 					dialog.open();
 
 				}
-
 			}
 		});
-		selection.pack();
-	}
-
-	// Modification d'un employe --------------------------------------------------
-	/***
-	 * Regroupe les fonctions a appeler pour faire une modification 
-	 * la fonciton va appeler
-	 * les fonctions titreModification et formulaireModification
-	 */
-	public void vueEmployeModifier() {
-		titreModification();
-		formulaireModification();
-
-		vueEmploye.pack();
-		vueEmploye.getParent().pack();
 
 	}
 
-	/***
-	 * va modifier la partie selection (partie superieure droite) en y mettant un
-	 * titre pour la modification
-	 */
-	public void titreModification() {
+	//mode -> employe ou sick leave // type -> modif1 ou crea 0
+	public void formViewSelection(int mode, int type ) {
 		if (!Objects.isNull(selection) && !selection.isDisposed()) {
 			selection.dispose();
 		}
+
+		String title = ""; int addSize = 0;
+		if (mode == 0 && type == 0) {//creation employe
+			title = "Création d'un employé";
+			addSize = vue.getSize().x;
+			addSize = (addSize - 174)/2;
+		}
+		else if (mode == 0) {//modif employe
+			title = "Modification d'un employé";
+			addSize = vue.getSize().x;
+			addSize = (addSize - 200)/2;
+		}
+		else if (mode == 1 &&  type == 0) {//creation sick leave
+			title = "Création d'un Arrêt Maladie";
+			addSize = vue.getSize().x;
+			addSize = (addSize - 208)/2;
+		}
+		else if (mode == 1) {//modif sick leave
+			title = "Modification d'un Arrêt Maladie";
+			addSize = vue.getSize().x;
+			addSize = (addSize - 231)/2;
+		}
+
 		selection = new Composite(vueEmploye, SWT.CENTER);
 
 		FillLayout fillLayout = new FillLayout();
 		fillLayout.type = SWT.VERTICAL;
-		fillLayout.marginWidth = 402;
+		fillLayout.marginWidth = addSize;
 		selection.setLayout(fillLayout);
 
 		// juste pour creer un espace
@@ -227,7 +485,7 @@ public class VueEmploye {
 
 		selection.setBackground(Couleur.bleuFonce);
 		Label HeadLabel = new Label(selection, SWT.TITLE);
-		HeadLabel.setText("Modification d'un Employe");
+		HeadLabel.setText(title);
 		Font fontTitle = new Font(HeadLabel.getDisplay(), "Arial", 12, SWT.BOLD);
 		HeadLabel.setForeground(Couleur.bleuClair);
 		HeadLabel.setFont(fontTitle);
@@ -241,19 +499,13 @@ public class VueEmploye {
 		selection.pack();
 	}
 
-	/***
-	 * Va modifier la partie Vue (partie inferieure droite) et y ajoutant le
-	 * formulaire de modification d'un employe grace a la methode showFormulaire
-	 * 
-	 */
-	public void formulaireModification() {
-		if (selectedEmploye == null) {
-			throw new Error("selectedEmploye est vide");
-		}
 
+	//mode employe ou sick leave //type cre ou modif
+	public void formViewVue(int mode, int type, int cancel) {
 		if (!Objects.isNull(vue) && !vue.isDisposed()) {
 			vue.dispose();
 		}
+
 
 		// creation de la vue
 		vue = new Composite(vueEmploye, SWT.NONE);
@@ -261,31 +513,339 @@ public class VueEmploye {
 		fillLayoutH.type = SWT.HORIZONTAL;
 		vue.setLayout(fillLayoutH);
 
-		showFormulaire(2,selectedEmploye.getTitre(),selectedEmploye.getNom(),selectedEmploye.getPrenom(),selectedEmploye.getMail(),selectedEmploye.getTelephone(),
-				selectedEmploye.getNumeroMatricule().toString(),selectedEmploye.getPointure(),selectedEmploye.getTaille(),selectedEmploye.getDateArrivee(),
-				selectedEmploye.getNombreHeures().toString(),selectedEmploye.getRemboursementTransport().toString(),selectedEmploye.getRemboursementTelephone().toString(),
-				selectedEmploye.getSalaire().toString());
+		if (mode == 0 && type == 1) {
+			showFormulaire(2,((Employee)selectedItem).getTitre(),((Employee)selectedItem).getNom(),((Employee)selectedItem).getPrenom(),((Employee)selectedItem).getMail(),((Employee)selectedItem).getTelephone(),
+					((Employee)selectedItem).getNumeroMatricule().toString(),((Employee)selectedItem).getPointure(),((Employee)selectedItem).getTaille(),((Employee)selectedItem).getDateArrivee(),
+					((Employee)selectedItem).getNombreHeures().toString(),((Employee)selectedItem).getRemboursementTransport().toString(),((Employee)selectedItem).getRemboursementTelephone().toString(),
+					((Employee)selectedItem).getSalaire().toString());
+		}
+		else if (mode == 0) {
+			showFormulaire(1,"","","","","","","","","","","","","");
+		}
+		else if (mode == 1) {
+			try {
+				getSLViewContent(type, cancel);
+			} catch (SQLException e) {
+				System.out.println("erreur dans le formulaire Arret maladie");
+				MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_ERROR | SWT.OK);
+				dialog.setText("Erreur Supression");
+				dialog.setMessage("Une erreur est survenue lors de la création du formulaire arrêt maladie. " + '\n' + e.getMessage());
+				dialog.open();
+			}
+		}
 
 		vue.pack();
+
+
 	}
+
+
+	public void getSLViewContent(int type, int cancel) throws SQLException {
+
+		FillLayout fillLayoutV = new FillLayout();
+		fillLayoutV.type = SWT.VERTICAL;
+		fillLayoutV.marginWidth = 10;
+		Composite column1 = new Composite(vue, SWT.BORDER);
+		Composite column2 = new Composite(vue, SWT.BORDER);
+		column1.setBackground(Couleur.bleuClair);
+		column2.setBackground(Couleur.bleuClair);
+		column1.setLayout(fillLayoutV);
+		column2.setLayout(fillLayoutV);
+
+		// utilisé pour tous les composites des arguments
+		FillLayout fillLayoutH5 = new FillLayout();
+		fillLayoutH5.marginHeight = 30;
+		fillLayoutH5.spacing = 5;
+		fillLayoutH5.type = SWT.HORIZONTAL;
+
+		// employee
+		Composite employeeComposite = new Composite(column1, SWT.NONE);
+		employeeComposite.setBackground(Couleur.bleuClair);
+		employeeComposite.setLayout(fillLayoutH5);
+
+		Label employeeLabel = new Label(employeeComposite, SWT.NONE);
+		employeeLabel.setBackground(Couleur.bleuClair);
+		employeeLabel.setText("Employé* : ");
+
+		Combo employee = new Combo(employeeComposite, SWT.BORDER);
+		if (type ==1) {
+			if (selectedItem != null) {
+				String name = Employee.getEmployeById(((SickLeave)selectedItem).getIdEmploye()).getNom()+" "+Employee.getEmployeById(((SickLeave)selectedItem).getIdEmploye()).getPrenom();
+				if (name.length()>30) {
+					name = name.substring(0, 30)+"; id : "+((SickLeave)selectedItem).getIdEmploye();
+				}
+				else {
+					name = name+"; id : "+((SickLeave)selectedItem).getIdEmploye();
+				}
+				employee.setText(name);
+				for(Employee e : Employee.getAllEmploye()) {
+					if(e.getEmployeId() != ((SickLeave)selectedItem).getIdEmploye()) {
+						name = e.getNom()+" "+e.getPrenom();
+						if (name.length()>30) {
+							name = name.substring(0, 30)+"; id : "+e.getEmployeId();
+						}
+						else {
+							name = name+"; id : "+e.getEmployeId();
+						}
+						employee.add(name);
+					}
+				}
+			}
+		}
+		else {
+			employee.setText("Selectionner ...");
+			String name;
+			for(Employee e : Employee.getAllEmploye()) {
+				name = e.getNom()+" "+e.getPrenom();
+				if (name.length()>30) {
+					name = name.substring(0, 30)+"; id : "+e.getEmployeId();
+				}
+				else {
+					name = name+"; id : "+e.getEmployeId();
+				}
+				employee.add(name);
+
+			}
+		}
+
+		// date
+		Composite dateComposite = new Composite(column1, SWT.NONE);
+		dateComposite.setBackground(Couleur.bleuClair);
+		dateComposite.setLayout(fillLayoutH5);
+
+		Label dateLabel = new Label(dateComposite, SWT.NONE);
+		dateLabel.setBackground(Couleur.bleuClair);
+		dateLabel.setText("Date de début* :                                 ");
+
+		final Text date = new Text(dateComposite, SWT.BORDER);
+		if (type == 1) {
+			if (selectedItem != null) {
+				date.setText(((SickLeave)selectedItem).getDateDebut());
+			}
+		}
+		else {
+			date.setText("");
+		}
+		date.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent me) {
+				if (!(date.getText().isEmpty())) {// pour ne pas tester quand l'utilisateur est en train de
+					// modifier
+					if (date.getText().length() == 2) {
+						date.append("/");
+					}
+					if (date.getText().length() == 5) {
+						date.append("/");
+					}
+				}
+			}
+		});
+
+
+		// duration
+		Composite durationComposite = new Composite(column1, SWT.NONE);
+		durationComposite.setBackground(Couleur.bleuClair);
+		durationComposite.setLayout(fillLayoutH5);
+
+		Label durationLabel = new Label(durationComposite, SWT.NONE);
+		durationLabel.setBackground(Couleur.bleuClair);
+		durationLabel.setText("Durée de l'arrêt : ");
+
+		final Text duration = new Text(durationComposite, SWT.BORDER);
+		if (type == 1) {
+			if (selectedItem != null) {
+				duration.setText(((SickLeave)selectedItem).getDuree());
+			}
+		}
+		else {
+			duration.setText("");
+		}
+
+		// motive
+		Composite motiveComposite = new Composite(column2, SWT.NONE);
+		motiveComposite.setBackground(Couleur.bleuClair);
+		motiveComposite.setLayout(fillLayoutH5);
+
+		Label motiveLabel = new Label(motiveComposite, SWT.NONE);
+		motiveLabel.setBackground(Couleur.bleuClair);
+		motiveLabel.setText("Motif de l'arrêt : ");
+
+		final Text motive = new Text(motiveComposite, SWT.BORDER);
+		if (type == 1) {
+			if (selectedItem != null) {
+				motive.setText(((SickLeave)selectedItem).getMotive());
+			}
+		}
+		else {
+			motive.setText("");
+		}
+
+		// cost
+		Composite costComposite = new Composite(column2, SWT.NONE);
+		costComposite.setBackground(Couleur.bleuClair);
+		costComposite.setLayout(fillLayoutH5);
+
+		Label costLabel = new Label(costComposite, SWT.NONE);
+		costLabel.setBackground(Couleur.bleuClair);
+		costLabel.setText("Coût eventuel : ");
+
+		final Text cost = new Text(costComposite, SWT.BORDER);
+		if (type == 1) {
+			if (selectedItem != null) {
+				cost.setText(((SickLeave)selectedItem).getCost().toString());
+			}
+		}
+		else {
+			cost.setText("");
+		}
+
+		// Boutons
+		Composite compositeBoutons = new Composite(column2, SWT.CENTER);
+		compositeBoutons.setBackground(Couleur.bleuClair);
+		compositeBoutons.setLayout(fillLayoutH5);
+
+		Button buttonAnnulation = new Button(compositeBoutons, SWT.BACKGROUND);
+		buttonAnnulation.setText("Annuler");
+		buttonAnnulation.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				tableViewSelection(cancel);
+				tableViewVue(cancel);
+
+				vueEmploye.pack();
+				vueEmploye.getParent().pack();
+			}
+		});
+
+		Button buttonValidation = new Button(compositeBoutons, SWT.BACKGROUND);
+		buttonValidation.setText("Valider");
+		buttonValidation.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+
+				try {
+					createSL(employee.getText(), date.getText(), duration.getText(), motive.getText(), cost.getText(), cancel);
+				} catch (Throwable e) {
+					System.out.println("erreur dans la creation SickLeave");
+					MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_ERROR | SWT.OK);
+					dialog.setText("Erreur Création");
+					dialog.setMessage("Une erreur est survenue lors de la création de l'arrêt maladie. " + '\n' + e.getMessage());
+					dialog.open();
+				}
+			}
+		});
+		vue.pack();
+	}
+
+
+	public void updateSLTable(Table table) {
+
+		table.removeAll();
+
+		// on remplit la table
+		try {
+			for (SickLeave sl : SickLeave.getAllSickLeave()) {
+				// on verifie le status
+				if (sl.getStatus().contentEquals("Publié")) {
+					TableItem item = new TableItem(table, SWT.NONE);
+					item.setText(0, Integer.toString(sl.getIdEmploye()));
+					item.setText(1, Employee.getEmployeById(sl.getIdEmploye()).getNom());
+					item.setText(2, Employee.getEmployeById(sl.getIdEmploye()).getPrenom());
+					item.setText(3, sl.getDateDebut());
+					item.setText(4, sl.getDuree());
+					item.setText(5, sl.getMotive());
+					item.setText(6, Double.toString(sl.getCost()));
+					item.setText(7, Integer.toString(sl.getIdSickLeave()));
+				}
+			}
+		} catch (SQLException e) {
+			System.out.println("erreur dans la table des Arret Maladie");
+			MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_ERROR | SWT.OK);
+			dialog.setText("Erreur");
+			dialog.setMessage("Une erreur est survenue. " + '\n' + e.getMessage());
+			dialog.open();
+		}
+
+	}
+
+
+	public void createSL(String employee, String date, String duration, String motive, String cost, int cancel) {
+		//employee
+		int employeeId;SickLeave sl;
+		try {
+			String s = employee.split(";")[1].replace(" ",""); 
+			employeeId = Integer.parseInt(s.substring(3,s.length()));
+		} catch (Exception e) {
+			throw new Error("Merci d'indiquer un employé.");
+		}
+
+		if (!(date.isEmpty())) {
+			sl = new SickLeave(employeeId, date, "Publié");
+		}
+		else {
+			throw new Error("Merci d'indiquer une date.");
+		}
+
+		if (!(duration.isEmpty())) {
+			sl.setDuration(duration);
+		}
+
+		if (!(motive.isEmpty())) {
+			sl.setMotive(motive);
+		}
+
+		if (!(cost.isEmpty())) {
+			try {
+				sl.setCost(Double.parseDouble(cost));
+			}catch(Exception e) {
+				try {
+					sl.setCost(Double.parseDouble(cost+".0"));
+				}catch(Exception e1) {
+					throw new Error("Le cout est érroné.");
+				}
+			}
+		}
+
+		try {
+			sl.insertDatabase();
+			System.out.println("on a insere le sick leave !!");
+			MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_INFORMATION | SWT.OK);
+			dialog.setText("Création réussie");
+			dialog.setMessage("L'arrêt maladie a bien été ajouté à la base de données.");
+			dialog.open();
+
+			tableViewSelection(cancel);
+			tableViewVue(cancel);
+
+			vueEmploye.pack();
+			vueEmploye.getParent().pack();
+		} catch (SQLException e) {
+			throw new Error("Une erreur est survenue lors de la création de l'arrêt maladie.");
+		}
+	}
+	//------------------------------------------------------------------------------------------------------------------------------
+
+
+
 
 	/***
 	 * modifie un employe dans la base de données
 	 */
 	public void validerModification() {
-		if (selectedEmploye == null) {
-			throw new Error("selectedEmploye est vide");
+		if (selectedItem == null) {
+			throw new Error("selectedItem est vide");
 		}
 
 		// on insert dans la base de données
 		try {
-			selectedEmploye.updateDatabase();
+			((Employee)selectedItem).updateDatabase();
 			System.out.println("on a modifie l employe !!");
 			MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_INFORMATION | SWT.OK);
 			dialog.setText("Modification réussie");
 			dialog.setMessage("L'employé a bien été modifié dans la base de données.");
 			dialog.open();
-			selectedEmploye = null;
+			selectedItem = null;
 		} catch (SQLException e) {
 			e.printStackTrace();
 			System.out.println("erreur dans la modif");
@@ -295,76 +855,15 @@ public class VueEmploye {
 			dialog.open();
 		}
 
-		newVueEmploye();
-	}
-
-	// Création d'un employe --------------------------------------------------
-	/***
-	 * va appeler les fonctions qui modifie la partie vue et la partie selection
-	 * afin d'afficher le formulaire de création 
-	 * appelle titreCreation et formulaireCreation
-	 */
-	public void vueEmployeCreer() {
-		titreCreation();
-		formulaireCreation();
-
+		tableViewSelection(0);
+		tableViewVue(0);
 		vueEmploye.pack();
 		vueEmploye.getParent().pack();
-
 	}
 
-	/***
-	 * modifie la partie selection (partie superieur droite) en ajoutant un titre de
-	 * creation
-	 */
-	public void titreCreation() {
-		if (!Objects.isNull(selection) && !selection.isDisposed()) {
-			selection.dispose();
-		}
-		selection = new Composite(vueEmploye, SWT.CENTER);
 
-		FillLayout fillLayout = new FillLayout();
-		fillLayout.type = SWT.VERTICAL;
-		fillLayout.marginWidth = 416;
-		selection.setLayout(fillLayout);
 
-		// juste pour creer un espace
-		Label l1 = new Label(selection, SWT.NONE);
-		l1.setText("");
-		l1.setBackground(Couleur.bleuFonce);
 
-		selection.setBackground(Couleur.bleuFonce);
-		Label HeadLabel = new Label(selection, SWT.TITLE);
-		HeadLabel.setText("Creation d'un Employe");
-		Font fontTitle = new Font(HeadLabel.getDisplay(), "Arial", 12, SWT.BOLD);
-		HeadLabel.setForeground(Couleur.bleuClair);
-		HeadLabel.setFont(fontTitle);
-		HeadLabel.setBackground(Couleur.bleuFonce);
-
-		// juste pour creer un espace
-		Label l2 = new Label(selection, SWT.NONE);
-		l2.setText("");
-		l2.setBackground(Couleur.bleuFonce);
-
-		selection.pack();
-	}
-
-	/***
-	 * cree la vue de modification et fait appel a showFormulaire pour afficher le formulaire de modification
-	 */
-	public void formulaireCreation() {
-		if (!Objects.isNull(vue) && !vue.isDisposed()) {
-			vue.dispose();
-		}
-		vue = new Composite(vueEmploye, SWT.NONE);
-		FillLayout fillLayoutH = new FillLayout();
-		fillLayoutH.type = SWT.HORIZONTAL;
-		vue.setLayout(fillLayoutH);
-
-		showFormulaire(1,"","","","","","","","","","","","","");
-
-		vue.pack();
-	}
 
 	/***
 	 * Affiche le formulaire pour une modification ou une creation en fonction du type donne en argument 
@@ -605,7 +1104,11 @@ public class VueEmploye {
 
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				newVueEmploye();
+				tableViewSelection(0);
+				tableViewVue(0);
+
+				vueEmploye.pack();
+				vueEmploye.getParent().pack();
 			}
 		});
 
@@ -647,8 +1150,8 @@ public class VueEmploye {
 				public void widgetSelected(SelectionEvent arg0) {
 
 					try {
-						int id = selectedEmploye.getEmployeId();
-						selectedEmploye = new Employee(id, titre.getText(), textNom.getText(), textPrenom.getText(),
+						int id = ((Employee)selectedItem).getEmployeId();
+						selectedItem = new Employee(id, titre.getText(), textNom.getText(), textPrenom.getText(),
 								textMail.getText(), textTelephone.getText(), textNumeroMatricule.getText(),
 								textPointure.getText(), textTaille.getText(), textDateArrivee.getText(),
 								Double.parseDouble(textNombreHeures.getText()),
@@ -758,7 +1261,12 @@ public class VueEmploye {
 			dialog.setText("Création réussie");
 			dialog.setMessage("L'employé a bien été ajouté à la base de données.");
 			dialog.open();
-			newVueEmploye();
+
+			tableViewSelection(0);
+			tableViewVue(0);
+			vueEmploye.pack();
+			vueEmploye.getParent().pack();
+			
 		} catch (SQLException e) {
 			System.out.println("erreur dans la création");
 			MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_ERROR | SWT.OK);
@@ -768,88 +1276,7 @@ public class VueEmploye {
 		}
 	}
 
-	// --------------------------------------------------------------------------
-	/***
-	 * affiche le tableau avec tous les employes dans la base de donnees dont le
-	 * status est publie
-	 */
-	public void vueEmployeAfficher() {
-		if (!Objects.isNull(vue) && !vue.isDisposed()) {
-			vue.dispose();
-		}
 
-		RowLayout rowLayoutV = new RowLayout();
-		rowLayoutV.type = SWT.VERTICAL;
-
-		vue = new Composite(vueEmploye, SWT.NONE);
-		vue.setLayout(rowLayoutV);
-		vue.setBackground(Couleur.gris);
-
-		// creation de la table
-		final Table table = new Table(vue, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.FULL_SELECTION);
-		table.setLayoutData(new RowData(1047, 450));
-		table.setLinesVisible(true);
-		table.setHeaderVisible(true);
-
-		// on met les noms des colonnes //espaces dans les titres pour changer la taille des colonnes
-		String[] titles = { "Titre  ", "Nom        ", "Prenom     ", "Email             ", "Téléphone", "N° de matricule", "Pointure", "Taille",
-				"Date d'arrivée", "Ancienneté", "Nb d'heures", "Remb. Transport", "Remb. Telephone", "Salaire" };
-		for (String title : titles) {
-			TableColumn column = new TableColumn(table, SWT.NONE);
-			column.setText(title);
-		}
-
-		// je voulais cacher cette colonne mais ca ne fonctionne pas
-		TableColumn column = new TableColumn(table, SWT.NONE);
-		column.setText("Id DB");
-		column.setWidth(0);
-		column.setResizable(false);
-
-		// on pack les colonnes
-		final TableColumn[] columns = table.getColumns();
-		for (TableColumn col : columns)
-			col.pack();
-
-		// on ajoute un listener pour modifier l'interface si l'utilisateur clique sur
-		// une ligne
-		table.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				if (table.getSelectionIndex() != -1) {
-
-					try {
-						selectedEmploye = Employee
-								.getEmployeById(Integer.parseInt(table.getSelection()[0].getText(14)));
-					} catch (NumberFormatException | SQLException e1) {
-						System.out.println("erreur pour recuperer l'employe selectionne");
-						MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_ERROR | SWT.OK);
-						dialog.setText("Erreur");
-						dialog.setMessage("Une erreur est survenue. " + '\n' + e1.getMessage());
-						dialog.open();
-					}
-
-					compositeSelectionModifier(table);
-
-					// on ajoute un menu lorsque l'on fait clique droit sur une ligne
-					doMenu(table);
-				} else { // si plus rien n'est selectionner on passe selectedEmploye a null et on enleve
-					// le menu du clic droit et on enleve les boutons pour modifier et supprimer
-
-					selectedEmploye = null;
-
-					menu.dispose();
-					menu = new Menu(vueEmploye.getShell(), SWT.POP_UP);
-					table.setMenu(menu);
-
-					compositeSelectionCreer();
-				}
-			}
-		});
-
-		updateTable(table);
-
-		vue.pack();
-
-	}
 
 	/***
 	 * methode utilisee pour affectation
@@ -959,7 +1386,7 @@ public class VueEmploye {
 	 * methode utilisée pour remplir la table affichant les employes
 	 * @param table
 	 */
-	public void updateTable(Table table) {
+	public void updateEmployeeTable(Table table) {
 
 		table.removeAll();
 
@@ -1038,30 +1465,35 @@ public class VueEmploye {
 	 * cree un menu sur la selection de la table des employes lors d'un clic droit
 	 * @param table
 	 */
-	public void doMenu(Table table) {
+	public void doEmployeeMenu(Table table) {
 		menu = new Menu(vueEmploye.getShell(), SWT.POP_UP);
 		table.setMenu(menu);
 
 		// pour modifier
 		MenuItem update = new MenuItem(menu, SWT.PUSH);
-		update.setText("Modifier l'element");
+		update.setText("Modifier l'employé");
 		update.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				if (table.getSelection().length != 0) {
-					vueEmployeModifier();
+					formViewVue(0,1,0);
+					formViewSelection(0,1);
+					formViewVue(0,1,0);
+
+					vueEmploye.pack();
+					vueEmploye.getParent().pack();
 				}
 			}
 		});
 
 		// pour supprimer
 		MenuItem delete = new MenuItem(menu, SWT.PUSH);
-		delete.setText("Supprimer l'element");
+		delete.setText("Supprimer l'employé");
 		delete.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				try {
-					Employee e = Employee.getEmployeById(selectedEmploye.getEmployeId());
+					Employee e = Employee.getEmployeById(((Employee)selectedItem).getEmployeId());
 					MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_QUESTION | SWT.YES | SWT.NO);
 					dialog.setText("Suppression Employe");
 					dialog.setMessage("Voulez vous supprimer l'employé " + e.getNom() + " " + e.getPrenom()
@@ -1092,11 +1524,11 @@ public class VueEmploye {
 	 * @throws SQLException 
 	 */
 	public void suppEmploye(Table table) throws SQLException {
-		if (selectedEmploye == null) {
-			throw new Error("selectedEmploye est vide");
+		if (selectedItem == null) {
+			throw new Error("selectedItem est vide");
 		}
 
-		Employee e = Employee.getEmployeById(selectedEmploye.getEmployeId());
+		Employee e = Employee.getEmployeById(((Employee)selectedItem).getEmployeId());
 		e.setStatus("Archivé");
 		e.updateDatabase();
 
@@ -1106,21 +1538,59 @@ public class VueEmploye {
 				a.updateDatabase();
 			}
 		}
+		
+		tableViewSelection(0);
+		updateEmployeeTable(table);
+		
+		vueEmploye.pack();
+		vueEmploye.getParent().pack();
 
-
-		// newVueEmploye(); -> marche pas bien je sais pas pourquoi
-
-		compositeSelectionCreer();
-		updateTable(table);
-
-		selectedEmploye = null;
+		selectedItem = null;
 	}
 
 
+	
+	
+	public void suppSL(Table table) throws SQLException {
+		if (selectedItem == null) {
+			throw new Error("selectedItem est vide");
+		}
+
+		SickLeave sl = SickLeave.getSickLeaveById(((SickLeave)selectedItem).getIdSickLeave());
+		
+		sl.setStatus("Archivé");
+		sl.updateDatabase();
+
+		tableViewSelection(1);
+		updateSLTable(table);
+
+		vueEmploye.pack();
+		vueEmploye.getParent().pack();
+
+		selectedItem = null;
+	}
+	
 
 	public Composite getComposite() {
 		return this.vueEmploye;
 
+	}
+
+
+	/***
+	 * retourne la partie superieur de vueEmploye
+	 * @return le composite selection de vueEmploye
+	 */
+	public Composite getSelection() {
+		return selection;
+	}
+
+	/***
+	 * retourne la partie principale de vueEmploye
+	 * @return la partie vue de vueEmploye
+	 */
+	public Composite getVue() {
+		return vue;
 	}
 
 }
