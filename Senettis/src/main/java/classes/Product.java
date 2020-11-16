@@ -191,7 +191,7 @@ public class Product {
 	}
 
 	/**
-	 * Met à jour le produit dans la base de données en utlisant sont Identifiant
+	 *update the product in the database by using the product attributes
 	 * 
 	 * @return <type>int</type>
 	 * @throws SQLException
