@@ -96,7 +96,7 @@ public class ViewProduct {
 
 		});
 
-		String[] titles = { "ProduitId", "Nom", "Prix", "Commentaires" };
+		String[] titles = { "ProduitId", "Nom", "Marque","Prix","Commentaires" };
 
 		for (String title : titles) {
 			TableColumn column = new TableColumn(table, SWT.NONE);
@@ -109,8 +109,13 @@ public class ViewProduct {
 			TableItem item = new TableItem(table, SWT.NONE);
 			item.setText(0, Integer.toString(p.getProduitId()));
 			item.setText(1, p.getName());
-			item.setText(2, "" + p.getPrice());
-			item.setText(3, p.getComment());
+			if(Objects.isNull(p.getBrand())|| p.getBrand().isBlank())
+				item.setText(2,"Inconnue");
+			else
+			item.setText(2,p.getBrand());
+			item.setText(3, "" + p.getPrice());
+			
+			item.setText(4, p.getComment());
 
 		}
 
@@ -140,7 +145,7 @@ public class ViewProduct {
 
 		addHeader("Creation Produit");
 
-		// Nom part
+		// Name part
 
 		Composite compositeNom = new Composite(mainView, SWT.NONE);
 		compositeNom.setBackground(Couleur.bleuFonce);
@@ -151,8 +156,20 @@ public class ViewProduct {
 		final Text textName = new Text(compositeNom, SWT.BORDER);
 		textName.setText("");
 		textName.setBounds(10, 30, 100, 25);
+		
+		// Brand part
 
-		// Prix part
+				Composite compositeBrand = new Composite(mainView, SWT.BACKGROUND);
+				compositeBrand.setBackground(Couleur.bleuFonce);
+				Label labelBrand = new Label(compositeBrand, SWT.NONE);
+				labelBrand.setBackground(Couleur.bleuFonce);
+				labelBrand.setText("Marque");
+				labelBrand.setBounds(10, 10, 100, 25);
+				final Text textBrand = new Text(compositeBrand, SWT.CENTER);
+				textBrand.setText("");
+				textBrand.setBounds(10, 30, 100, 25);
+
+		// Price part
 
 		Composite compositePrix = new Composite(mainView, SWT.BACKGROUND);
 		compositePrix.setBackground(Couleur.bleuFonce);
@@ -164,7 +181,9 @@ public class ViewProduct {
 		textPrice.setText("");
 		textPrice.setBounds(10, 30, 30, 25);
 
-		// Commentaire part
+		
+
+		// comment part
 
 		Composite compositeComment = new Composite(mainView, SWT.BACKGROUND);
 		compositeComment.setBackground(Couleur.bleuFonce);
@@ -192,6 +211,7 @@ public class ViewProduct {
 				String name = textName.getText();
 				String price = textPrice.getText();
 				String comment = textCommentaire.getText();
+				String brand = textBrand.getText();
 				boolean isChecked = false;
 				try {
 					isChecked = checkProduit(name, price);
@@ -207,7 +227,8 @@ public class ViewProduct {
 				if (isChecked) {
 
 					try {
-						Product produit = new Product(name, Double.parseDouble(price), comment, Status.PUBLISHED);
+						Product produit = new Product(name, brand,Double.parseDouble(price), comment, 
+								Status.PUBLISHED);
 
 						if (produit.insertDatabase() < 1)
 							throw new SQLException(
@@ -304,7 +325,7 @@ public class ViewProduct {
 	 */
 	public void updateProduct(int productId) throws SQLException {
 
-		Product produit = Product.getProductById(productId);
+		Product product = Product.getProductById(productId);
 
 		if (!Objects.isNull(mainView) && !mainView.isDisposed()) {
 			mainView.dispose();
@@ -319,30 +340,44 @@ public class ViewProduct {
 
 		// Name part
 
-		Composite compositeNom = new Composite(mainView, SWT.NONE);
-		compositeNom.setBackground(Couleur.bleuFonce);
-		compositeNom.setLayout(new RowLayout());
-		Label labelName = new Label(compositeNom, SWT.NONE);
+		Composite compositeName = new Composite(mainView, SWT.NONE);
+		compositeName.setBackground(Couleur.bleuFonce);
+		compositeName.setLayout(new RowLayout());
+		Label labelName = new Label(compositeName, SWT.NONE);
 		labelName.setBackground(Couleur.bleuFonce);
 		labelName.setText("Nom");
 		labelName.setBounds(10, 10, 100, 25);
-		final Text textNom = new Text(compositeNom, SWT.BORDER);
-		textNom.setText("" + produit.getName());
-		textNom.setBounds(10, 30, 100, 25);
+		final Text textName = new Text(compositeName, SWT.BORDER);
+		textName.setText("" + product.getName());
+		textName.setBounds(10, 30, 100, 25);
+		
+		// Brand part
+
+				Composite compositeBrand = new Composite(mainView, SWT.BACKGROUND);
+				compositeBrand.setBackground(Couleur.bleuFonce);
+				Label labelBrand = new Label(compositeBrand, SWT.NONE);
+				labelBrand.setBackground(Couleur.bleuFonce);
+				labelBrand.setText("Marque");
+				labelBrand.setBounds(10, 10, 100, 25);
+				final Text textBrand = new Text(compositeBrand, SWT.CENTER);
+				textBrand.setText("");
+				textBrand.setBounds(10, 30, 100, 25);
+
 
 		// Price part
 
-		Composite compositePrix = new Composite(mainView, SWT.BACKGROUND);
-		compositePrix.setBackground(Couleur.bleuFonce);
-		compositePrix.setLayout(new RowLayout());
-		Label labelPrice = new Label(compositePrix, SWT.NONE);
+		Composite compositePrice = new Composite(mainView, SWT.BACKGROUND);
+		compositePrice.setBackground(Couleur.bleuFonce);
+		compositePrice.setLayout(new RowLayout());
+		Label labelPrice = new Label(compositePrice, SWT.NONE);
 		labelPrice.setBackground(Couleur.bleuFonce);
 		labelPrice.setText("Prix");
 		labelPrice.setBounds(10, 10, 20, 25);
-		final Text textPrix = new Text(compositePrix, SWT.BORDER);
-		textPrix.setText("" + produit.getPrice());
-		textPrix.setBounds(10, 30, 30, 25);
+		final Text textPrice = new Text(compositePrice, SWT.BORDER);
+		textPrice.setText("" + product.getPrice());
+		textPrice.setBounds(10, 30, 30, 25);
 
+		
 		// Comment part
 
 		Composite compositeComment = new Composite(mainView, SWT.BACKGROUND);
@@ -353,7 +388,7 @@ public class ViewProduct {
 		labelComment.setText("Commentaires");
 		labelComment.setBounds(10, 10, 100, 25);
 		final Text textComment = new Text(compositeComment, SWT.CENTER);
-		textComment.setText("" + produit.getComment());
+		textComment.setText("" + product.getComment());
 		textComment.setBounds(10, 30, 100, 25);
 
 		// Validation button
@@ -368,27 +403,44 @@ public class ViewProduct {
 
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
+				String name = textName.getText();
+				String price = textPrice.getText();
+				String comment = textComment.getText();
+				String brand = textBrand.getText();
 
-				Product produit = new Product(productId, textNom.getText(), Double.parseDouble(textPrix.getText()),
-						textComment.getText(), Status.getStatus("Publié"));
-
+				boolean isChecked = false;
 				try {
-					produit.updateDatabase();
-					compositeSelection();
-					addCreateButton();
-					productViewDisplay();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					isChecked = checkProduit(name, price);
+				} catch (IllegalArgumentException argException) {
+					System.out.println(argException.getMessage());
+					MessageBox dialog = new MessageBox(productView.getShell(), SWT.ICON_ERROR | SWT.OK);
+					dialog.setText("Erreur Création :");
+					dialog.setMessage("Une erreur est survenue lors de la mise à jour du produit. " + '\n'
+							+ argException.getMessage());
+					dialog.open();
 				}
 
-				compositeNom.dispose();
-				compositePrix.dispose();
-				compositeComment.dispose();
-				compositeButtons.dispose();
-				mainView.pack();
-				mainView.getParent().pack();
+				Product produit = new Product(productId, name,brand, Double.parseDouble(price), comment, 
+						Status.getStatus("Publié"));
 
+				if (isChecked) {
+					try {
+						produit.updateDatabase();
+						compositeSelection();
+						addCreateButton();
+						productViewDisplay();
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+
+					compositeName.dispose();
+					compositePrice.dispose();
+					compositeComment.dispose();
+					compositeButtons.dispose();
+					mainView.pack();
+					mainView.getParent().pack();
+				}
 			}
 
 		});
@@ -411,8 +463,8 @@ public class ViewProduct {
 					e.printStackTrace();
 				}
 
-				compositeNom.dispose();
-				compositePrix.dispose();
+				compositeName.dispose();
+				compositePrice.dispose();
 				compositeComment.dispose();
 				compositeButtons.dispose();
 				mainView.pack();

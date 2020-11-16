@@ -19,21 +19,8 @@ public class Product {
 	private String name;
 	private Double price;
 	private String comment;
+	private String brand;
 	private Status status;
-
-	/**
-	 * Constructor for Produit
-	 * 
-	 * @param <type>Double</type> price
-	 * @param <type>              String </type> name
-	 * @param <type>String</type> comment
-	 * @param <type>String</type> status
-	 */
-	public Product(String name, Double price, String comment, Status status) {
-		this(name, price, status);
-		this.comment = comment;
-
-	}
 
 	/*****************************************
 	 * 
@@ -61,9 +48,24 @@ public class Product {
 	 * @param prix
 	 * @param status
 	 */
-	public Product(int produitId, String nom, Double prix, String commentaires, Status status) {
-		this(nom, prix, commentaires, status);
+	public Product(int produitId, String nom,String brand, Double prix, String commentaires, Status status) {
+		this(nom,brand, prix, commentaires, status);
 		this.productId = produitId;
+
+	}
+
+	/**
+	 * Constructor for Produit
+	 * 
+	 * @param <type>Double</type> price
+	 * @param <type>              String </type> name
+	 * @param <type>String</type> comment
+	 * @param <type>String</type> status
+	 */
+	public Product(String name,String brand, Double price, String comment, Status status) {
+		this(name, price, status);
+		this.comment = comment;
+		this.brand = brand;
 
 	}
 
@@ -81,17 +83,17 @@ public class Product {
 	 * @throws SQLException
 	 */
 	public int insertDatabase() throws SQLException {
-		String reqSql = "INSERT INTO Produit(Nom,Prix,Commentaires,Status) VALUES (?,?,?,?)";
+		String reqSql = "INSERT INTO Produit(Nom,Marque,Prix,Commentaires,Status) VALUES (?,?,?,?,?)";
 
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
 		statement.setObject(1, this.name, Types.VARCHAR);
-		statement.setObject(2, this.price, Types.DECIMAL);
-		statement.setObject(3, this.comment, Types.VARCHAR);
-		statement.setObject(4, this.status.getValue(), Types.VARCHAR);
-		
-		 
-		return  statement.executeUpdate();
+		statement.setObject(2, this.brand, Types.VARCHAR);
+		statement.setObject(3, this.price, Types.DECIMAL);
+		statement.setObject(4, this.comment, Types.VARCHAR);
+		statement.setObject(5, this.status.getValue(), Types.VARCHAR);
+
+		return statement.executeUpdate();
 	}
 
 	/**
@@ -140,9 +142,10 @@ public class Product {
 			String name = result.getString("Nom");
 			Double price = result.getDouble("Prix");
 			String comment = result.getString("Commentaires");
+			String brand = result.getString("Marque");
 
 			Status status = Status.getStatus(result.getString("Status"));
-			allProduct.add(new Product(produitId, name, price, comment, status));
+			allProduct.add(new Product(produitId, name, brand,price, comment, status));
 
 		}
 
@@ -165,8 +168,9 @@ public class Product {
 			String name = result.getString("Nom");
 			Double price = result.getDouble("Prix");
 			String comment = result.getString("Commentaires");
+			String brand = result.getString("brand");
 			Status status = Status.getStatus(result.getString("Status"));
-			allProduct.add(new Product(produitId, name, price, comment, status));
+			allProduct.add(new Product(produitId, brand,name, price, comment,  status));
 
 		}
 
@@ -193,15 +197,17 @@ public class Product {
 	 * @throws SQLException
 	 */
 	public int updateDatabase() throws SQLException {
-		String reqSql = "UPDATE Produit SET nom=?, prix=?, commentaires=?, status=? WHERE ProduitId=?;";
+		String reqSql = "UPDATE Produit SET nom=?,Marque=?, prix=?, commentaires=?, status=?  WHERE ProduitId=?;";
 
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
 		statement.setObject(1, this.name.toString(), Types.VARCHAR);
-		statement.setObject(2, this.price, Types.DECIMAL);
-		statement.setObject(3, this.comment, Types.VARCHAR);
-		statement.setObject(4, this.status.getValue(), Types.VARCHAR);
-		statement.setObject(5, this.productId, Types.INTEGER);
+		statement.setObject(2, this.brand, Types.VARCHAR);
+		statement.setObject(3, this.price, Types.DECIMAL);
+		statement.setObject(4, this.comment, Types.VARCHAR);
+		statement.setObject(5, this.status.getValue(), Types.VARCHAR);
+	
+		statement.setObject(6, this.productId, Types.INTEGER);
 		return statement.executeUpdate();
 
 	}
@@ -216,7 +222,7 @@ public class Product {
 	 */
 	public static Product getProductById(int productId) throws SQLException {
 
-		String selection = "ProduitId,Nom,Prix,Commentaires,Status";
+		String selection = "ProduitId,Nom,Prix,Commentaires,Marque,Status";
 		String source = "Produit";
 		String condition = "ProduitId=?";
 		String reqSql = "SELECT " + selection + " FROM " + source + " WHERE " + condition + " ;";
@@ -232,8 +238,9 @@ public class Product {
 			String name = result.getString("Nom");
 			Double price = result.getDouble("Prix");
 			String comment = result.getString("Commentaires");
+			String brand = result.getString("Marque");
 			Status status = Status.getStatus(result.getString("Status"));
-			return new Product(produitId, name, price, comment, status);
+			return new Product(produitId, name,brand, price, comment,  status);
 
 		} else {
 			throw new SQLException("Data not found");
@@ -260,8 +267,6 @@ public class Product {
 		return statement.executeUpdate();
 
 	}
-
-
 
 	/***
 	 * 
@@ -308,6 +313,16 @@ public class Product {
 	 */
 	public String getName() {
 		return name;
+	}
+
+	/**
+	 * Getter for the attribute brand
+	 * 
+	 * @return <type> String </type>
+	 */
+	public String getBrand() {
+
+		return this.brand;
 	}
 
 	/**********************
