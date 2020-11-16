@@ -24,9 +24,9 @@ public class EmployeTest
     @Before
     public void setUp() 
     {
-        laetitia = new Employee("Mme","C","Laetitia",1);
-        alyssa = new Employee("MME","C","Alyssa",2,"20-10-2020","Publié");
-        stan = new Employee("M.","T","Stan",3,"20/10/2020","Publié");
+        laetitia = new Employee("Mme","C","Laetitia","1");
+        alyssa = new Employee("MME","C","Alyssa","2","20-10-2020","Publié");
+        stan = new Employee("M.","T","Stan","3","20/10/2020","Publié");
     }
     
     @Test
@@ -36,11 +36,11 @@ public class EmployeTest
      laetitia.setMail("l@l.fr"); //ok
      
     }
-    /*
+   
     @Test
     public void testGet() 
     {
-        laetitia.setDateArrivee(new Date(System.currentTimeMillis()));
+        laetitia.setDateArrivee("10/02/2020");
         laetitia.setMail("l@l.fr");
         laetitia.setNombreHeures(12.0);
         laetitia.setPointure("38");
@@ -49,21 +49,8 @@ public class EmployeTest
         laetitia.setRemboursementTransport(0.0);
         laetitia.setSalaire(300000.0);
         laetitia.setTelephone("01.23.45.67.89");
-        
-	     String s = "";
-	     s += laetitia.getTitre() + ", ";
-	     s += laetitia.getPrenom() + ", ";
-	     s += laetitia.getNom() + ", ";
-	     s += laetitia.getNumeroMatricule() + ", ";
-	     s += laetitia.getDateArrivee() + ", ";
-	     s += laetitia.getMail() + ", ";
-	     s += laetitia.getNombreHeures() + ", ";
-	     s += laetitia.getRemboursementTransport() + ", ";
-	     s += laetitia.getRemboursementTelephone() + ", ";
-	     s += laetitia.getSalaire() + ", ";
-	     s += laetitia.getTelephone() + ", ";
 	     
-	     System.out.println(s);
+	     System.out.println(laetitia.toString());
     }
     
     @Test
@@ -73,6 +60,5 @@ public class EmployeTest
         assertEquals(stan.getDateArrivee(),alyssa.getDateArrivee());
     }
     
-    */
 }
 

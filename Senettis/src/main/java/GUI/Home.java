@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import javax.swing.JFileChooser;
 
 import org.eclipse.swt.*;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.MouseEvent;
@@ -35,7 +36,8 @@ public class Home {
 	RowLayout rowLayoutV;
 	FillLayout fillLayoutV;
 
-	Composite compositeMain;
+	ScrolledComposite compositeMain;
+	Composite contenuCompositeMain;
 
 	Composite colonneGauche;
 	Composite espaceLogo;
@@ -52,6 +54,80 @@ public class Home {
 	public void menuBar() {
 		// creation du menu Aide
 		Menu menuBar = new Menu(shell, SWT.BAR);
+		
+		//employee
+		MenuItem menuHeaderEmployee = new MenuItem(menuBar, SWT.CASCADE);
+		menuHeaderEmployee.setText("&Employés");
+		Menu employeeMenu = new Menu(shell, SWT.DROP_DOWN);
+		menuHeaderEmployee.setMenu(employeeMenu);
+
+		MenuItem employeeItem = new MenuItem(employeeMenu, SWT.CASCADE);
+		employeeItem.setText("&Gérer les employés");
+		employeeItem.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				
+			}
+		});
+		
+		final Menu subMenuEmployee = new Menu(shell, SWT.DROP_DOWN);
+		employeeItem.setMenu(subMenuEmployee);
+		
+		MenuItem employeeCreation = new MenuItem(subMenuEmployee, SWT.PUSH);
+		employeeCreation.setText("&Créer un employé");
+		employeeCreation.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				
+			}
+		});
+		MenuItem employeeTable = new MenuItem(subMenuEmployee, SWT.PUSH);
+		employeeTable.setText("&Afficher les employés");
+		employeeTable.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				
+			}
+		});
+		MenuItem employeeGlobalCost = new MenuItem(subMenuEmployee, SWT.PUSH);
+		employeeGlobalCost.setText("&Gérer les couts des employés");
+		employeeGlobalCost.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				
+			}
+		});
+		
+		//Sick leave
+		MenuItem SLItem = new MenuItem(employeeMenu, SWT.CASCADE);
+		SLItem.setText("&Gérer les arrêts maladies");
+		SLItem.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				
+			}
+		});
+		final Menu subMenuSickLeave = new Menu(shell, SWT.DROP_DOWN);
+		SLItem.setMenu(subMenuSickLeave);
+		
+		MenuItem sickLeaveCreation = new MenuItem(subMenuSickLeave, SWT.PUSH);
+		sickLeaveCreation.setText("&Créer un arrêt maladie");
+		sickLeaveCreation.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				
+			}
+		});
+		MenuItem sickLeaveTable = new MenuItem(subMenuSickLeave, SWT.PUSH);
+		sickLeaveTable.setText("&Afficher les arrêts maladies");
+		sickLeaveTable.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				
+			}
+		});
+		
+		//help
 		MenuItem menuHeader = new MenuItem(menuBar, SWT.CASCADE);
 		menuHeader.setText("&Aide");
 
@@ -79,30 +155,45 @@ public class Home {
 		shell.setMenuBar(menuBar);
 	}
 
-	
+
 	/***
 	 * Affiche le compositeMain à l'ouverture de l'app, c'est le composite principal il regroupe la colonne gauche et la colonne droite
 	 * @throws SQLException
 	 */
 	public void compositeMain() throws SQLException {
-		compositeMain = new Composite(shell, SWT.NONE);
-
+		compositeMain = new ScrolledComposite(shell, SWT.H_SCROLL
+				| SWT.V_SCROLL|SWT.SCROLLBAR_OVERLAY|SWT.SCROLL_PAGE|SWT.SCROLL_LINE);
+		
+		compositeMain.setExpandHorizontal(true);
+		compositeMain.setExpandVertical(true);
+		compositeMain.setAlwaysShowScrollBars(true);
+		
+		contenuCompositeMain = new Composite(compositeMain, SWT.NONE);
+			
 		String backgroundLocation=this.getClass().getClassLoader().getResource("test4.png").getPath();
-		 
+
 		Image background=new Image(display,backgroundLocation);
 
-		compositeMain.setBackgroundImage(background);
+		contenuCompositeMain.setBackgroundImage(background);
 		RowLayout rl = new RowLayout();
 		rl.spacing = 15; //mets un espace entre le menu et le titre 
-		compositeMain.setLayout(rl);
+		contenuCompositeMain.setLayout(rl);
 
 		compositeColonneGauche();
 		compositeColonneDroite();
-
-		// compositeMain.pack();
-		compositeMain.setSize(rect.width, rect.height);// permet au compositeMain d'avoir la taille de l'ecran
+		
+		contenuCompositeMain.pack();
+		//contenuCompositeMain.setSize(50, 50);
+		//contenuCompositeMain.setSize(rect.width, rect.height);// permet au compositeMain d'avoir la taille de l'ecran
+		
+		compositeMain.setContent(contenuCompositeMain);
+		//compositeMain.setMinSize(rect.width-25, rect.height-75);//aidez moi rien ne marche :(
+		compositeMain.setMinSize(rect.width, rect.height);
+		//compositeMain.setLayout(new RowLayout());
+		//compositeMain.pack();
+		shell.setLayout(new RowLayout());
 	}
-	
+
 
 	/************************
 	 * 
@@ -111,7 +202,7 @@ public class Home {
 	 ************************/
 
 	public void compositeColonneDroite() throws SQLException {
-		colonneDroite = new Composite(compositeMain, SWT.CENTER);
+		colonneDroite = new Composite(contenuCompositeMain, SWT.CENTER);
 		this.contenuColonneDroite = new Composite(colonneDroite, SWT.CENTER);
 		contenuColonneDroite.setLayout(rowLayoutV);
 		contenuColonneDroite.setBackground(Couleur.gris);
@@ -122,20 +213,20 @@ public class Home {
 		contenuColonneDroite.pack();
 		colonneDroite.pack();
 	}
-	
+
 	public void titre() {
 		Composite titre = new Composite(contenuColonneDroite, SWT.CENTER);
-		
+
 		FillLayout fillLayout = new FillLayout();
 		fillLayout.type = SWT.VERTICAL;
 		fillLayout.marginWidth = 236;
 		titre.setLayout(fillLayout);
-		
+
 		//juste pour creer un espace 
 		Label l1 = new Label(titre, SWT.NONE);
 		l1.setText("");
 		l1.setBackground(Couleur.bleuFonce);
-		
+
 		titre.setBackground(Couleur.bleuFonce);
 		Label HeadLabel =new Label(titre,SWT.TITLE);
 		HeadLabel.setText("Bienvenue sur l'application Senettis");
@@ -143,17 +234,17 @@ public class Home {
 		HeadLabel.setForeground(Couleur.bleuClair);
 		HeadLabel.setFont(fontTitle);
 		HeadLabel.setBackground(Couleur.bleuFonce);
-		
+
 		//juste pour creer un espace 
 		Label l2 = new Label(titre, SWT.NONE);
 		l2.setText("");
 		l2.setBackground(Couleur.bleuFonce);
-		
+
 		titre.pack();
 	}
-	
+
 	public void presentation () throws SQLException {
-		
+
 		Composite presentation = new Composite(contenuColonneDroite, SWT.CENTER);
 		RowLayout rowLayout = new RowLayout();
 		rowLayout.type = SWT.VERTICAL;
@@ -164,9 +255,9 @@ public class Home {
 
 		Label presLabel = new Label(presentation, SWT.BACKGROUND);
 		String pres = "\n \nCette application gère actuellement "+Employee.getCountEmploye()+" employés et "+Site.getCountChantier()+" chantiers."+
-		'\n'+"Elle permet de stocker les informations des employés, \ndes chantiers ainsi que les produits et les livraisons."+'\n'+'\n'+'\n'
-		+"Pour plus d'information, merci de consulter la documentation de \nl'application accessible via le menu Aide.\n \n"+'\n'
-		+"SenettisDB a été développé par Laetitia Courgey et Stanislas Tran."+'\n'+'\n'+'\n'+'\n';
+				'\n'+"Elle permet de stocker les informations des employés, \ndes chantiers ainsi que les produits et les livraisons."+'\n'+'\n'+'\n'
+				+"Pour plus d'information, merci de consulter la documentation de \nl'application accessible via le menu Aide.\n \n"+'\n'
+				+"SenettisDB a été développé par Laetitia Courgey et Stanislas Tran."+'\n'+'\n'+'\n'+'\n';
 		presLabel.setText(pres);
 		// nbEmployeLabel.setText("Nombre d'mployé dans la base : "+Employe.getCountEmploye());
 		presLabel.setBackground(Couleur.gris);
@@ -182,11 +273,13 @@ public class Home {
 	 ************************/
 
 	public void compositeColonneGauche() {
-		colonneGauche = new Composite(compositeMain, SWT.BACKGROUND);
+		colonneGauche = new Composite(contenuCompositeMain, SWT.BACKGROUND);
 		colonneGauche.setLayout(fillLayoutV);
 
 		compositeLogo();
 		compositeMenu();
+
+		colonneGauche.pack();
 	}
 
 	public void compositeLogo() {
@@ -214,13 +307,14 @@ public class Home {
 			}
 		});
 
+		logo.pack();
 	}
 
 	public void compositeMenu() {				
 		// on ajoute les elements à la colonne menu
 		menu = new Composite(colonneGauche, SWT.NONE);
 		menu.setLayout(fillLayoutV);
-		
+
 		Button boutonEmploye = new Button(menu, SWT.NONE);
 		boutonEmploye.setText("Employés");
 		boutonEmploye.setBackground(Couleur.blanc);
@@ -253,8 +347,8 @@ public class Home {
 				colonneDroite.pack();
 			}
 		});
-		
-		
+
+
 		Button boutonAffectation = new Button(menu, SWT.NONE);
 		boutonAffectation.setText("Affectations");
 		boutonAffectation.setBackground(Couleur.blanc);
@@ -321,7 +415,7 @@ public class Home {
 				colonneDroite.pack();
 			}
 		});
-
+		menu.pack();
 	}
 
 	private Composite getColonneDroite() {

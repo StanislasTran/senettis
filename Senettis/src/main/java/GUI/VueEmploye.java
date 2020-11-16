@@ -30,8 +30,7 @@ public class VueEmploye {
 	/***
 	 * Utilisé depuis Home pour créer une vueEmploye
 	 * 
-	 * @param composite : le composite contenuColonneGauche qui va contenir
-	 *                  vueEmploye
+	 * @param composite : le composite contenuColonneGauche qui va contenir vueEmploye
 	 * @param display
 	 */
 	public VueEmploye(Composite composite, Display display) {
@@ -52,7 +51,6 @@ public class VueEmploye {
 
 	/***
 	 * retourne la partie superieur de vueEmploye
-	 * 
 	 * @return le composite selection de vueEmploye
 	 */
 	public Composite getSelection() {
@@ -61,7 +59,6 @@ public class VueEmploye {
 
 	/***
 	 * retourne la partie principale de vueEmploye
-	 * 
 	 * @return la partie vue de vueEmploye
 	 */
 	public Composite getVue() {
@@ -69,13 +66,14 @@ public class VueEmploye {
 	}
 
 	/***
-	 * Pour créer une vueEmploye : Appelle les fonctions compositeSelectionCreer et
-	 * vueEmployeAfficher pour creer les composites Vue et selection
+	 * Pour créer une vueEmploye : Appelle les
+	 * fonctions compositeSelectionCreer et vueEmployeAfficher pour creer les composites 
+	 * Vue et selection
 	 * 
 	 * @param composite : composite vueEmploye
 	 */
 	public void newVueEmploye() {
-		// Label test=new Label(vueEmploye,SWT.NONE);test.pack();
+		//Label test=new Label(vueEmploye,SWT.NONE);test.pack();
 
 		compositeSelectionCreer();
 		vueEmployeAfficher();
@@ -83,6 +81,7 @@ public class VueEmploye {
 		vueEmploye.pack();
 		vueEmploye.getParent().pack();
 	}
+
 
 	// Modification de la partie Selection
 	// --------------------------------------------------
@@ -119,7 +118,7 @@ public class VueEmploye {
 	 * boutons Creer, Modifier et Supprimer
 	 * 
 	 * @param composite : composite vueEmploye
-	 * @param table     : la table affichant tous les employes
+	 * @param table : la table affichant tous les employes 
 	 */
 	public void compositeSelectionModifier(Table table) {
 		if (!Objects.isNull(selection) && !selection.isDisposed()) {
@@ -165,11 +164,11 @@ public class VueEmploye {
 					}
 					Employee e = Employee.getEmployeById(selectedEmploye.getEmployeId());
 
-					// on demande validation
+					//on demande validation
 					MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_QUESTION | SWT.YES | SWT.NO);
 					dialog.setText("Suppression Employe");
 					dialog.setMessage("Voulez vous supprimer l'employé " + e.getNom() + " " + e.getPrenom()
-							+ " ?\nToutes les affectations liées à cet employé seront supprimées.");
+					+ " ?\nToutes les affectations liées à cet employé seront supprimées.");
 					int buttonID = dialog.open();
 
 					switch (buttonID) {
@@ -181,8 +180,7 @@ public class VueEmploye {
 					System.out.println("erreur dans la supression");
 					MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_ERROR | SWT.OK);
 					dialog.setText("Erreur Supression");
-					dialog.setMessage(
-							"Une erreur est survenue lors de la supression de l'employé. " + '\n' + e.getMessage());
+					dialog.setMessage("Une erreur est survenue lors de la supression de l'employé. " + '\n' + e.getMessage());
 					dialog.open();
 
 				}
@@ -194,8 +192,9 @@ public class VueEmploye {
 
 	// Modification d'un employe --------------------------------------------------
 	/***
-	 * Regroupe les fonctions a appeler pour faire une modification la fonciton va
-	 * appeler les fonctions titreModification et formulaireModification
+	 * Regroupe les fonctions a appeler pour faire une modification 
+	 * la fonciton va appeler
+	 * les fonctions titreModification et formulaireModification
 	 */
 	public void vueEmployeModifier() {
 		titreModification();
@@ -262,12 +261,10 @@ public class VueEmploye {
 		fillLayoutH.type = SWT.HORIZONTAL;
 		vue.setLayout(fillLayoutH);
 
-		showFormulaire(2, selectedEmploye.getTitre(), selectedEmploye.getNom(), selectedEmploye.getPrenom(),
-				selectedEmploye.getMail(), selectedEmploye.getTelephone(),
-				selectedEmploye.getNumeroMatricule().toString(), selectedEmploye.getPointure(),
-				selectedEmploye.getTaille(), selectedEmploye.getDateArrivee(),
-				selectedEmploye.getNombreHeures().toString(), selectedEmploye.getRemboursementTransport().toString(),
-				selectedEmploye.getRemboursementTelephone().toString(), selectedEmploye.getSalaire().toString());
+		showFormulaire(2,selectedEmploye.getTitre(),selectedEmploye.getNom(),selectedEmploye.getPrenom(),selectedEmploye.getMail(),selectedEmploye.getTelephone(),
+				selectedEmploye.getNumeroMatricule().toString(),selectedEmploye.getPointure(),selectedEmploye.getTaille(),selectedEmploye.getDateArrivee(),
+				selectedEmploye.getNombreHeures().toString(),selectedEmploye.getRemboursementTransport().toString(),selectedEmploye.getRemboursementTelephone().toString(),
+				selectedEmploye.getSalaire().toString());
 
 		vue.pack();
 	}
@@ -304,8 +301,8 @@ public class VueEmploye {
 	// Création d'un employe --------------------------------------------------
 	/***
 	 * va appeler les fonctions qui modifie la partie vue et la partie selection
-	 * afin d'afficher le formulaire de création appelle titreCreation et
-	 * formulaireCreation
+	 * afin d'afficher le formulaire de création 
+	 * appelle titreCreation et formulaireCreation
 	 */
 	public void vueEmployeCreer() {
 		titreCreation();
@@ -353,8 +350,7 @@ public class VueEmploye {
 	}
 
 	/***
-	 * cree la vue de modification et fait appel a showFormulaire pour afficher le
-	 * formulaire de modification
+	 * cree la vue de modification et fait appel a showFormulaire pour afficher le formulaire de modification
 	 */
 	public void formulaireCreation() {
 		if (!Objects.isNull(vue) && !vue.isDisposed()) {
@@ -365,18 +361,15 @@ public class VueEmploye {
 		fillLayoutH.type = SWT.HORIZONTAL;
 		vue.setLayout(fillLayoutH);
 
-		showFormulaire(1, "", "", "", "", "", "", "", "", "", "", "", "", "");
+		showFormulaire(1,"","","","","","","","","","","","","");
 
 		vue.pack();
 	}
 
 	/***
-	 * Affiche le formulaire pour une modification ou une creation en fonction du
-	 * type donne en argument
-	 * 
-	 * @param type                   : 1 pour une creation, 2 pour une modification
-	 *                               les autres arguments correspondent aux valeurs
-	 *                               a afficher dans les champs du formulaire
+	 * Affiche le formulaire pour une modification ou une creation en fonction du type donne en argument 
+	 * @param type : 1 pour une creation, 2 pour une modification
+	 * les autres arguments correspondent aux valeurs a afficher dans les champs du formulaire
 	 * @param Titre
 	 * @param nom
 	 * @param prenom
@@ -392,9 +385,8 @@ public class VueEmploye {
 	 * @param salaire
 	 */
 	@SuppressWarnings("unlikely-arg-type")
-	public void showFormulaire(int type, String Titre, String nom, String prenom, String mail, String telephone,
-			String numeroMatricule, String pointure, String taille, String dateArrivee, String nbHeures,
-			String remboursementTransport, String remboursementTelephone, String salaire) {
+	public void showFormulaire(int type, String Titre, String nom, String prenom, String mail, String telephone, String numeroMatricule, String pointure, String taille, String dateArrivee,
+			String nbHeures, String remboursementTransport, String remboursementTelephone, String salaire) {
 		// on cree trois colonne pour repartir les champs
 		FillLayout fillLayoutV = new FillLayout();
 		fillLayoutV.type = SWT.VERTICAL;
@@ -428,10 +420,12 @@ public class VueEmploye {
 		if (titre.equals("M")) {
 			titre.setText("M");
 			titre.add("Mme");
-		} else if (titre.equals("Mme")) {
+		}
+		else if (titre.equals("Mme")) {
 			titre.setText("Mme");
 			titre.add("M");
-		} else {
+		}
+		else {
 			titre.setText("Mme");
 			titre.add("M");
 		}
@@ -618,7 +612,7 @@ public class VueEmploye {
 		Button buttonValidation = new Button(compositeBoutons, SWT.BACKGROUND);
 		buttonValidation.setText("Valider");
 
-		// creation
+		//creation
 		if (type == 1) {
 			buttonValidation.addSelectionListener(new SelectionAdapter() {
 
@@ -644,7 +638,8 @@ public class VueEmploye {
 			});
 		}
 
-		// modification
+
+		//modification
 		if (type == 2) {
 			buttonValidation.addSelectionListener(new SelectionAdapter() {
 
@@ -666,8 +661,8 @@ public class VueEmploye {
 						System.out.println("erreur dans la modif");
 						MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_ERROR | SWT.OK);
 						dialog.setText("Erreur Modification");
-						dialog.setMessage("Une erreur est survenue lors de la modification de l'employé. " + '\n'
-								+ e.getMessage());
+						dialog.setMessage(
+								"Une erreur est survenue lors de la modification de l'employé. " + '\n' + e.getMessage());
 						dialog.open();
 					}
 
@@ -676,6 +671,7 @@ public class VueEmploye {
 		}
 
 	}
+
 
 	/***
 	 * cree un employe a partir du formulaire et l'inserer dans la base de donnees
@@ -795,11 +791,9 @@ public class VueEmploye {
 		table.setLinesVisible(true);
 		table.setHeaderVisible(true);
 
-		// on met les noms des colonnes //espaces dans les titres pour changer la taille
-		// des colonnes
-		String[] titles = { "Titre  ", "Nom        ", "Prenom     ", "Email             ", "Téléphone",
-				"N° de matricule", "Pointure", "Taille", "Date d'arrivée", "Ancienneté", "Nb d'heures",
-				"Remb. Transport", "Remb. Telephone", "Salaire" };
+		// on met les noms des colonnes //espaces dans les titres pour changer la taille des colonnes
+		String[] titles = { "Titre  ", "Nom        ", "Prenom     ", "Email             ", "Téléphone", "N° de matricule", "Pointure", "Taille",
+				"Date d'arrivée", "Ancienneté", "Nb d'heures", "Remb. Transport", "Remb. Telephone", "Salaire" };
 		for (String title : titles) {
 			TableColumn column = new TableColumn(table, SWT.NONE);
 			column.setText(title);
@@ -857,9 +851,9 @@ public class VueEmploye {
 
 	}
 
+	
 	/***
 	 * methode utilisee pour affectation
-	 * 
 	 * @param composite : composite ou ajouter la table
 	 * @return la table contenant touts les employes publies
 	 */
@@ -870,27 +864,80 @@ public class VueEmploye {
 		table.setLinesVisible(true);
 		table.setHeaderVisible(true);
 
-		// on met les noms des colonnes
-		String[] titles = { "Nom", "Prenom", "Email", "matricule", "Id DB" };
+		//on met les noms des colonnes
+		String[] titles = { "Titre", "Nom", "Prenom", "Email", "Téléphone", "N° de matricule", "Pointure", "Taille",
+				"Date d'arrivée", "Ancienneté", "Nb d'heures", "Remb. Transport", "Remb. Telephone", "Salaire" };
 		for (String title : titles) {
 			TableColumn column = new TableColumn(table, SWT.NONE);
 			column.setText(title);
 		}
 
-		// on remplit la table
+		//je voulais cacher cette colonne mais ca ne fonctionne pas
+		TableColumn column = new TableColumn(table, SWT.NONE);
+		column.setText("Id DB");
+		column.setWidth(0);
+		column.setResizable(false);
+
+		//on remplit la table
 		final TableColumn[] columns = table.getColumns();
 		try {
 			for (Employee e : Employee.getAllEmploye()) {
 				// on verifie le status
 				if (e.getStatus().contentEquals("Publié")) {
 					TableItem item = new TableItem(table, SWT.NONE);
+					item.setText(0, e.getTitre());
+					item.setText(1, e.getNom());
+					item.setText(2, e.getPrenom());
+					item.setText(3, e.getMail());
+					item.setText(4, e.getTelephone());
+					item.setText(5, e.getNumeroMatricule());
+					item.setText(6, e.getPointure());
+					item.setText(7, e.getTaille());
 
-					item.setText(0, e.getNom());
-					item.setText(1, e.getPrenom());
-					item.setText(2, e.getMail());
-					item.setText(3, e.getNumeroMatricule());
-					item.setText(4, "" + e.getEmployeId());
+					// date et anciennete
+					if (e.getDateArrivee() != null) {
+						item.setText(8, e.getDateArrivee());
 
+						String date = e.getDateArrivee();
+						int j1 = Integer.parseInt(date.substring(0, 2));
+						int m1 = Integer.parseInt(date.substring(3, 5));
+						int a1 = Integer.parseInt(date.substring(6, 10));
+						LocalDate currentdate = LocalDate.now();
+						int j2 = currentdate.getDayOfMonth();
+						int m2 = currentdate.getMonthValue();
+						int a2 = currentdate.getYear();
+
+						if (a2 - a1 < 0) {
+							item.setText(9, "euuuh ... ");
+						} else if (a2 - a1 == 0) {
+							item.setText(9, "moins d'un an");
+						} else {
+							if ((m1 > m2) || (m1 == m2 && j1 > j2)) {
+								if (a2 - a1 - 1 == 0) {
+									item.setText(9, "");
+								} else if (a2 - a1 - 1 == 1) {
+									item.setText(9, Integer.toString(a2 - a1 - 1) + " an");
+								} else {
+									item.setText(9, Integer.toString(a2 - a1 - 1) + " ans");
+								}
+							} else {
+								if (a2 - a1 == 1) {
+									item.setText(9, Integer.toString(a2 - a1) + " an");
+								} else {
+									item.setText(9, Integer.toString(a2 - a1) + " ans");
+								}
+							}
+						}
+					} else {
+						item.setText(8, "");
+						item.setText(9, "");
+					}
+
+					item.setText(10, Double.toString(e.getNombreHeures()));
+					item.setText(11, Double.toString(e.getRemboursementTransport()));
+					item.setText(12, Double.toString(e.getRemboursementTelephone()));
+					item.setText(13, Double.toString(e.getSalaire()));
+					item.setText(14, Integer.toString(e.getEmployeId()));
 				}
 			}
 		} catch (SQLException e) {
@@ -908,9 +955,9 @@ public class VueEmploye {
 		return table;
 	}
 
+
 	/***
 	 * methode utilisée pour remplir la table affichant les employes
-	 * 
 	 * @param table
 	 */
 	public void updateTable(Table table) {
@@ -990,7 +1037,6 @@ public class VueEmploye {
 
 	/***
 	 * cree un menu sur la selection de la table des employes lors d'un clic droit
-	 * 
 	 * @param table
 	 */
 	public void doMenu(Table table) {
@@ -1020,7 +1066,7 @@ public class VueEmploye {
 					MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_QUESTION | SWT.YES | SWT.NO);
 					dialog.setText("Suppression Employe");
 					dialog.setMessage("Voulez vous supprimer l'employé " + e.getNom() + " " + e.getPrenom()
-							+ " ?\nToutes les affectations liées à cet employé seront supprimées.");
+					+ " ?\nToutes les affectations liées à cet employé seront supprimées.");
 					int buttonID = dialog.open();
 					switch (buttonID) {
 					case SWT.YES:
@@ -1039,12 +1085,12 @@ public class VueEmploye {
 
 	}
 
+
 	/***
-	 * va archiver l'employe selectionne et les affections qui lui sont liées puis
-	 * afficher la table des employes mise a jour
-	 * 
+	 * va archiver l'employe selectionne et les affections qui lui sont liées
+	 * puis afficher la table des employes mise a jour
 	 * @param table
-	 * @throws SQLException
+	 * @throws SQLException 
 	 */
 	public void suppEmploye(Table table) throws SQLException {
 		if (selectedEmploye == null) {
@@ -1062,6 +1108,7 @@ public class VueEmploye {
 			}
 		}
 
+
 		// newVueEmploye(); -> marche pas bien je sais pas pourquoi
 
 		compositeSelectionCreer();
@@ -1069,6 +1116,8 @@ public class VueEmploye {
 
 		selectedEmploye = null;
 	}
+
+
 
 	public Composite getComposite() {
 		return this.vueEmploye;

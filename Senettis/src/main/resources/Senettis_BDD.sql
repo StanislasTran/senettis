@@ -57,6 +57,7 @@ Create table Employe (
     Nom VARCHAR (100) NOT NULL,
     Prenom VARCHAR (100) NOT NULL,
     Mail VARCHAR(50),
+	Qualifications VARCHAR(50),
     Telephone VARCHAR(15),
     Numero_matricule VARCHAR(40) NOT NULL,
     Pointure VARCHAR(10),
@@ -165,4 +166,118 @@ UPDATE
 ProduitParLivraison
 SET Date_de_modification = GETDATE()
  WHERE ProduitParLivraisonId IN (SELECT DISTINCT ProduitParLivraisonId FROM Inserted);
+ GO
+
+ 
+Create table CoutChantier (
+    "CoutChantierId"  INT PRIMARY KEY IDENTITY (1, 1),
+    "Date" DATE NOT NULL,
+	Chantier int NOT NULL,
+    FOREIGN KEY (Chantier) REFERENCES Chantier(ChantierId), 
+	CA decimal,
+	cout_matériel decimal,
+	cout_livraison_total decimal, 
+	"Status" VARCHAR (50) NOT NULL,
+	"Date_de_creation" DateTime  NOT NUll Default (GETDATE()), 
+	"Date_de_modification" DateTime  NOT NUll Default (GETDATE()), 
+	CONSTRAINT check_status_coutChantier CHECK (("Status") IN ('Publié','Brouillon','Archivé')),
+	
+);
+
+GO
+
+Create TRIGGER CoutChantier_Update
+ON CoutChantier
+AFTER UPDATE
+AS
+UPDATE
+CoutChantier
+SET Date_de_modification = GETDATE()
+ WHERE CoutChantierId IN (SELECT DISTINCT CoutChantierId FROM Inserted);
+ GO
+
+Create table CoutEmploye (
+    "CoutEmployeId"  INT PRIMARY KEY IDENTITY (1, 1),
+    "Date" DATE NOT NULL,
+	Employe int NOT NULL,
+    FOREIGN KEY (Employe) REFERENCES Employe(EmployeId), 
+	mutuelle decimal,
+	indemnite_panier decimal,
+	salaire_brut decimal, 
+	salaire_net decimal, 
+	cout_transport decimal, 
+	cout_telephone decimal, 
+	cout_prime_total decimal, 
+	cout_AM_total decimal,
+	"Status" VARCHAR (50) NOT NULL,
+	"Date_de_creation" DateTime  NOT NUll Default (GETDATE()), 
+	"Date_de_modification" DateTime  NOT NUll Default (GETDATE()), 
+	CONSTRAINT check_status_coutEmploye CHECK (("Status") IN ('Publié','Brouillon','Archivé')),
+	
+);
+
+GO
+
+Create TRIGGER CoutEmploye_Update
+ON CoutEmploye
+AFTER UPDATE
+AS
+UPDATE
+CoutEmploye
+SET Date_de_modification = GETDATE()
+ WHERE CoutEmployeId IN (SELECT DISTINCT CoutEmployeId FROM Inserted);
+ GO
+
+Create table Prime (
+    "PrimeId"  INT PRIMARY KEY IDENTITY (1, 1),
+    "Date" DATE ,
+	Employe int NOT NULL,
+    FOREIGN KEY (Employe) REFERENCES Employe(EmployeId), 
+    Type_de_prime VARCHAR (100) NOT NULL,
+	"montant" decimal,
+	"Status" VARCHAR (50) NOT NULL,
+	"Date_de_creation" DateTime  NOT NUll Default (GETDATE()), 
+	"Date_de_modification" DateTime  NOT NUll Default (GETDATE()), 
+	CONSTRAINT check_status_Prime CHECK (("Status") IN ('Publié','Brouillon','Archivé')),
+	
+);
+
+GO
+
+Create TRIGGER Prime_Update
+ON Prime
+AFTER UPDATE
+AS
+UPDATE
+Prime
+SET Date_de_modification = GETDATE()
+ WHERE PrimeId IN (SELECT DISTINCT PrimeId FROM Inserted);
+ GO
+
+
+ Create table ArretMaladie (
+    "AMId"  INT PRIMARY KEY IDENTITY (1, 1),
+    "Date_de_debut" DATE NOT NULL,
+	Employe int NOT NULL,
+    FOREIGN KEY (Employe) REFERENCES Employe(EmployeId), 
+    "Duree" VARCHAR (100),
+    "Motif" VARCHAR (500),
+	"cout" decimal,
+	"Status" VARCHAR (50) NOT NULL,
+	"Date_de_creation" DateTime  NOT NUll Default (GETDATE()), 
+	"Date_de_modification" DateTime  NOT NUll Default (GETDATE()), 
+	CONSTRAINT check_status_AM CHECK (("Status") IN ('Publié','Brouillon','Archivé')),
+	
+);
+
+GO
+
+Create TRIGGER AM_Update
+ON ArretMaladie
+AFTER UPDATE
+AS
+UPDATE
+ArretMaladie
+SET Date_de_modification = GETDATE()
+ WHERE AMId IN (SELECT DISTINCT AMId FROM Inserted);
  GO
