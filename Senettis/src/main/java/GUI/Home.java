@@ -294,7 +294,7 @@ public class Home {
 					contenuColonneDroite.dispose();
 				}
 				try {
-					contenuColonneDroite = new VueProduit(getColonneDroite()).getVueProduit();
+					contenuColonneDroite = new ViewProduct(getColonneDroite()).getVueProduit();
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
