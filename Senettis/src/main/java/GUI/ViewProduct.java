@@ -143,18 +143,17 @@ public class ViewProduct {
 
 		}
 		mainView = new Composite(this.productView, SWT.CENTER);
-		FillLayout fillLayout=new FillLayout(SWT.VERTICAL);
-		fillLayout.marginWidth=50;
+		FillLayout fillLayout = new FillLayout(SWT.VERTICAL);
+		fillLayout.marginWidth = 50;
 		mainView.setLayout(fillLayout);
 		mainView.setBackground(Couleur.bleuClair);
 		productView.setBackground(Couleur.bleuClair);
 
 		productView.layout(true, true);
-		
-		
+
 		addHeader("Creation Produit");
 
-		FillLayout fillLayoutH5=new FillLayout();
+		FillLayout fillLayoutH5 = new FillLayout();
 		fillLayoutH5.marginHeight = 30;
 		fillLayoutH5.marginWidth = 20;
 		fillLayoutH5.spacing = 5;
@@ -342,10 +341,8 @@ public class ViewProduct {
 	 */
 	public void updateProduct(int productId) throws SQLException {
 
-		
 		Product product = Product.getProductById(productId);
-		
-		
+
 		this.productView.setLayout(new RowLayout(SWT.VERTICAL));
 
 		if (!Objects.isNull(mainView) && !mainView.isDisposed()) {
@@ -354,27 +351,21 @@ public class ViewProduct {
 
 		}
 		mainView = new Composite(this.productView, SWT.CENTER);
-		FillLayout fillLayout=new FillLayout(SWT.VERTICAL);
-		fillLayout.marginWidth=50;
+		FillLayout fillLayout = new FillLayout(SWT.VERTICAL);
+		fillLayout.marginWidth = 50;
 		mainView.setLayout(fillLayout);
 		mainView.setBackground(Couleur.bleuClair);
 		productView.setBackground(Couleur.bleuClair);
 
 		productView.layout(true, true);
-		
-		
+
 		addHeader("Creation Produit");
 
-		FillLayout fillLayoutH5=new FillLayout();
+		FillLayout fillLayoutH5 = new FillLayout();
 		fillLayoutH5.marginHeight = 30;
 		fillLayoutH5.marginWidth = 20;
 		fillLayoutH5.spacing = 5;
 		fillLayoutH5.type = SWT.HORIZONTAL;
-
-
-		
-
-	
 
 		// Name part
 
@@ -464,6 +455,14 @@ public class ViewProduct {
 					try {
 						produit.updateDatabase();
 						compositeSelection();
+
+						// validationMessageBox
+
+						MessageBox dialog = new MessageBox(productView.getShell(), SWT.ICON_WORKING | SWT.OK);
+						dialog.setText("Succes");
+						dialog.setMessage("Le produit " + name + " a bien été enregistré");
+						dialog.open();
+
 						addCreateButton();
 						productViewDisplay();
 					} catch (SQLException e) {
@@ -495,9 +494,12 @@ public class ViewProduct {
 					compositeSelection();
 					addCreateButton();
 					productViewDisplay();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+				} catch (SQLException sqlException) {
+					MessageBox dialog = new MessageBox(productView.getShell(), SWT.ICON_ERROR | SWT.OK);
+					dialog.setText("Erreur Création :");
+					dialog.setMessage("Une erreur est survenue lors de l'insertion du produit dans la base de données. "
+							+ '\n' + sqlException.getMessage());
+					dialog.open();
 				}
 
 				compositeName.dispose();
@@ -583,7 +585,7 @@ public class ViewProduct {
 		boutonCreer.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				
+
 				selection.dispose();
 				mainView.dispose();
 
@@ -598,17 +600,19 @@ public class ViewProduct {
 		this.productView.pack();
 
 	}
+
 	/**
 	 * Add a header in Selection composite with title <param>header</param>
+	 * 
 	 * @param <type>String</type> header
 	 */
 	public void addHeader(String header) {
 		if (!this.selection.isDisposed())
 			this.selection.dispose();
-		this.selection = new Composite(this.productView, SWT.CENTER|SWT.BORDER);
+		this.selection = new Composite(this.productView, SWT.CENTER | SWT.BORDER);
 		this.selection.setBackground(Couleur.bleuFonce);
 		FillLayout layout = new FillLayout();
-		layout.marginWidth=100;
+		layout.marginWidth = 100;
 		this.selection.setLayout(layout);
 
 		Label HeadLabel = new Label(this.selection, SWT.TITLE);
@@ -620,7 +624,7 @@ public class ViewProduct {
 		HeadLabel.setBackground(Couleur.bleuFonce);
 		this.selection.pack();
 		HeadLabel.pack();
-	
+
 	}
 
 	/**
@@ -665,7 +669,7 @@ public class ViewProduct {
 
 		this.selection.pack();
 	}
-	
+
 	/**
 	 * this function is used to optimized the refresh of Selection composite
 	 */
