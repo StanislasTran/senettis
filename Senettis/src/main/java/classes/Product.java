@@ -89,8 +89,9 @@ public class Product {
 		statement.setObject(2, this.price, Types.DECIMAL);
 		statement.setObject(3, this.comment, Types.VARCHAR);
 		statement.setObject(4, this.status.getValue(), Types.VARCHAR);
-
-		return statement.executeUpdate();
+		
+		 
+		return  statement.executeUpdate();
 	}
 
 	/**
@@ -139,8 +140,8 @@ public class Product {
 			String name = result.getString("Nom");
 			Double price = result.getDouble("Prix");
 			String comment = result.getString("Commentaires");
-			
-			Status status =Status.getStatus(result.getString("Status"));
+
+			Status status = Status.getStatus(result.getString("Status"));
 			allProduct.add(new Product(produitId, name, price, comment, status));
 
 		}
@@ -199,7 +200,7 @@ public class Product {
 		statement.setObject(1, this.name.toString(), Types.VARCHAR);
 		statement.setObject(2, this.price, Types.DECIMAL);
 		statement.setObject(3, this.comment, Types.VARCHAR);
-		statement.setObject(4, this.status, Types.VARCHAR);
+		statement.setObject(4, this.status.getValue(), Types.VARCHAR);
 		statement.setObject(5, this.productId, Types.INTEGER);
 		return statement.executeUpdate();
 
@@ -260,6 +261,8 @@ public class Product {
 
 	}
 
+
+
 	/***
 	 * 
 	 * Getters
@@ -298,20 +301,18 @@ public class Product {
 		return comment;
 	}
 
-	
-
 	/**
 	 * getter for the attribute name
+	 * 
 	 * @return <type>String</type> name
 	 */
 	public String getName() {
 		return name;
 	}
-	
-	
+
 	/**********************
 	 * 
-	 * 		Setters
+	 * Setters
 	 * 
 	 *********************/
 
@@ -328,12 +329,14 @@ public class Product {
 	}
 
 	/***
-	 *	 *
+	 * *
+	 * 
 	 * @param status
 	 */
-	
+
 	/**
 	 * setter for the attribute status
+	 * 
 	 * @param <type>Status </type>status
 	 */
 	private void setStatus(Status status) {
@@ -342,32 +345,32 @@ public class Product {
 
 	/**
 	 * setter for the attribute price
+	 * 
 	 * @param <type>Double</type> prix
 	 */
 	private void setPrice(Double prix) {
 		this.price = prix;
 	}
 
-	
-
 	/**
 	 * setter for the attribute name
+	 * 
 	 * @param <type>String</type> name
 	 */
 	private void setName(String name) {
-		if(Objects.isNull(name))
+		if (Objects.isNull(name))
 			throw new IllegalArgumentException("name can't be null");
 		this.name = name;
 	}
-	
 
 	/**
 	 * setter for the attribute comment
+	 * 
 	 * @param <type>String</type> comment
 	 */
-	
+
 	private void setComment(String comment) {
-		if(Objects.isNull(comment))
+		if (Objects.isNull(comment))
 			throw new IllegalArgumentException("comment can't be null");
 		this.comment = comment;
 	}
