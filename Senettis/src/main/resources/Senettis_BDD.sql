@@ -3,6 +3,7 @@
 Create table Produit (
     "ProduitId"  INT PRIMARY KEY IDENTITY (1, 1),
     "Nom" VARCHAR (100) NOT NULL,
+	"Marque" VARCHAR (100),
     "Prix" decimal (4,2) NOT NULL,
     "Commentaires" VARCHAR (500),
 	"Status" VARCHAR (50) NOT NULL,
