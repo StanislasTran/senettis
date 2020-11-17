@@ -33,10 +33,6 @@ public class Employee {
 	private String pointure;
 	private String taille;
 	private String dateArrivee;
-	private Double nombreHeures;
-	private Double remboursementTransport;
-	private Double remboursementTelephone;
-	private Double salaire;
 	private String status;
 
 	// Constructeurs-----------------------------------------------
@@ -63,10 +59,8 @@ public class Employee {
 	 * @param status                 : verification faite
 	 */
 	public Employee(int employeId, String t, String nom, String prenom, String mail, String telephone,
-			String numeroMatricule, String pointure, String taille, String dateArrivee, Double nombreHeures,
-			Double remboursementTransport, Double remboursementTelephone, Double salaire, String status) {
-		this(t, nom, prenom, mail, telephone, numeroMatricule, pointure, taille, dateArrivee, nombreHeures,
-				remboursementTransport, remboursementTelephone, salaire, status);
+			String numeroMatricule, String pointure, String taille, String dateArrivee, String status) {
+		this(t, nom, prenom, mail, telephone, numeroMatricule, pointure, taille, dateArrivee, status);
 
 		// id
 		if ((Integer) employeId != null) {
@@ -90,15 +84,10 @@ public class Employee {
 	 * @param pointure
 	 * @param taille
 	 * @param dateArrivee            : string, verification faite
-	 * @param nombreHeures           : double
-	 * @param remboursementTransport :double
-	 * @param remboursementTelephone : double
-	 * @param salaire                :double
 	 * @param status                 : verification faite
 	 */
 	public Employee(String t, String nom, String prenom, String mail, String telephone, String numeroMatricule,
-			String pointure, String taille, String dateArrivee, Double nombreHeures, Double remboursementTransport,
-			Double remboursementTelephone, Double salaire, String status) {
+			String pointure, String taille, String dateArrivee, String status) {
 		this(t, nom, prenom, numeroMatricule, dateArrivee, status);
 
 		// je verifie que l adresse mail est correcte
@@ -128,18 +117,6 @@ public class Employee {
 		
 		// taille
 		this.taille = taille;
-		
-		// nombreHeures
-		this.nombreHeures = nombreHeures;
-		
-		// remboursement transport
-		this.remboursementTransport = remboursementTransport;
-		
-		// remboursement telephone
-		this.remboursementTelephone = remboursementTelephone;
-		
-		// salaire
-		this.salaire = salaire;
 	}
 
 	/***
@@ -257,7 +234,7 @@ public class Employee {
 	 * @throws SQLException
 	 */
 	public int insertDatabase() throws SQLException {
-		String reqSql = "INSERT INTO Employe(titre,nom,prenom,mail,telephone,numero_matricule,pointure,taille,date_arrivee,nombre_heures,remboursement_transport,remboursement_telephone,salaire,status) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+		String reqSql = "INSERT INTO Employe(titre,nom,prenom,mail,telephone,numero_matricule,pointure,taille,date_arrivee,status) VALUES (?,?,?,?,?,?,?,?,?,?)";
 
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
@@ -270,11 +247,7 @@ public class Employee {
 		statement.setObject(7, this.pointure, Types.VARCHAR);
 		statement.setObject(8, this.taille, Types.VARCHAR);
 		statement.setObject(9, this.dateArrivee, Types.DATE);
-		statement.setObject(10, this.nombreHeures, Types.DECIMAL);
-		statement.setObject(11, this.remboursementTransport, Types.VARCHAR);
-		statement.setObject(12, this.remboursementTelephone, Types.VARCHAR);
-		statement.setObject(13, this.salaire, Types.DECIMAL);
-		statement.setObject(14, this.status, Types.VARCHAR);
+		statement.setObject(10, this.status, Types.VARCHAR);
 
 		return statement.executeUpdate();
 	}
@@ -290,7 +263,7 @@ public class Employee {
 	 * @throws SQLException
 	 */
 	public int updateDatabase() throws SQLException {
-		String reqSql = "UPDATE Employe SET titre=?, nom=?, prenom=?, mail=?, telephone=?, numero_matricule=?, pointure=?, taille=?, date_arrivee=?, nombre_heures=?, remboursement_transport=?, remboursement_telephone=?, salaire=?, status=? WHERE EmployeId=?;";
+		String reqSql = "UPDATE Employe SET titre=?, nom=?, prenom=?, mail=?, telephone=?, numero_matricule=?, pointure=?, taille=?, date_arrivee=?, status=? WHERE EmployeId=?;";
 
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
@@ -303,12 +276,8 @@ public class Employee {
 		statement.setObject(7, this.pointure, Types.VARCHAR);
 		statement.setObject(8, this.taille, Types.VARCHAR);
 		statement.setObject(9, this.dateArrivee, Types.DATE);
-		statement.setObject(10, this.nombreHeures, Types.DECIMAL);
-		statement.setObject(11, this.remboursementTransport, Types.VARCHAR);
-		statement.setObject(12, this.remboursementTelephone, Types.VARCHAR);
-		statement.setObject(13, this.salaire, Types.DECIMAL);
-		statement.setObject(14, this.status, Types.VARCHAR);
-		statement.setObject(15, this.employeId, Types.INTEGER);
+		statement.setObject(10, this.status, Types.VARCHAR);
+		statement.setObject(11, this.employeId, Types.INTEGER);
 
 		return statement.executeUpdate();
 	}
@@ -356,7 +325,7 @@ public class Employee {
 	 * @throws SQLException
 	 */
 	public static Employee getEmployeById(int employeId) throws SQLException {
-		String reqSql = "SELECT EmployeId,titre,nom,prenom,mail,telephone,numero_matricule,pointure,taille,date_arrivee,nombre_heures,remboursement_transport,remboursement_telephone,Salaire,Status FROM Employe WHERE EmployeId=?;";
+		String reqSql = "SELECT EmployeId,titre,nom,prenom,mail,telephone,numero_matricule,pointure,taille,date_arrivee,Status FROM Employe WHERE EmployeId=?;";
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
 		statement.setObject(1, employeId, Types.INTEGER);
@@ -375,37 +344,90 @@ public class Employee {
 			String pointure = result.getString("Pointure");
 			String taille = result.getString("Taille");
 			String dateArrivee = result.getString("Date_arrivee");
-			
-			Double nombreHeures = 0.0;
-			if (result.getString("Nombre_heures") != null) {
-				nombreHeures = Double.parseDouble(result.getString("Nombre_heures"));
-			}
-			
-			Double remboursementTransport = 0.0;
-			if (result.getString("remboursement_transport") != null) {
-				remboursementTransport = Double.parseDouble(result.getString("remboursement_transport"));
-			}
-			
-			Double remboursementTelephone = 0.0;
-			if (result.getString("remboursement_telephone") != null) {
-				remboursementTelephone = Double.parseDouble(result.getString("remboursement_telephone"));
-			}
-			
-			Double salaire = 0.0;
-			if (result.getString("salaire") != null) {
-				salaire = Double.parseDouble(result.getString("salaire"));
-			}
 
 			String status = result.getString("status");
 
 			return new Employee(employeId, titre, nom, prenom, mail, telephone, numeroMatricule, pointure, taille,
-					dateArrivee, nombreHeures, remboursementTransport, remboursementTelephone, salaire, status);
+					dateArrivee, status);
 
 		} else {
 			throw new SQLException("Data not found");
 		}
 	}
 
+	
+	public static void retrieveByMatricule(String matricule) throws SQLException {
+		String reqSql = "SELECT EmployeId FROM Employe WHERE Numero_matricule=?;";
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		PreparedStatement statement = connection.prepareStatement(reqSql);
+		statement.setObject(1, matricule, Types.VARCHAR);
+		statement.executeQuery();
+
+		ResultSet result = statement.getResultSet();
+		int employeId;
+		if (result.next()) {
+			employeId = result.getInt("EmployeId");
+
+		} else {
+			throw new SQLException("Data not found");
+		}
+		
+		try {
+			Employee e = getEmployeById(employeId);
+			 e.setStatus("Publié");
+			 e.updateDatabase();
+		}catch (Exception e) {
+			throw e;
+		}
+	}
+	
+	
+	public static void retrieveByNomPrenom(String nom, String prenom) throws SQLException {
+		String reqSql = "SELECT EmployeId FROM Employe WHERE Nom=? and Prenom=?;";
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		PreparedStatement statement = connection.prepareStatement(reqSql);
+		statement.setObject(1, nom, Types.VARCHAR);
+		statement.setObject(2, prenom, Types.VARCHAR);
+		statement.executeQuery();
+
+		ResultSet result = statement.getResultSet();
+		int employeId;
+		if (result.next()) {
+			employeId = result.getInt("EmployeId");
+
+		} else {
+			throw new SQLException("Data not found");
+		}
+		
+		try {
+			Employee e = getEmployeById(employeId);
+			 e.setStatus("Publié");
+			 e.updateDatabase();
+		}catch (Exception e) {
+			throw e;
+		}
+	}
+	
+	
+	
+	public static int getIdByMatricule(String matricule) throws SQLException {
+		String reqSql = "SELECT EmployeId FROM Employe WHERE numero_matricule=?;";
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		PreparedStatement statement = connection.prepareStatement(reqSql);
+		statement.setObject(1, matricule, Types.VARCHAR);
+		statement.executeQuery();
+
+		ResultSet result = statement.getResultSet();
+
+		if (result.next()) {
+			return result.getInt("EmployeId");
+
+		} else {
+			throw new SQLException("Data not found");
+		}
+	}
+	
+	
 	// -----------------------------------------------
 	/***
 	 * 
@@ -436,15 +458,10 @@ public class Employee {
 				dateArrivee = usDate.substring(8, 10) + "/" + usDate.substring(5, 7) + "/" + usDate.substring(0, 4);
 			}
 
-			Double nombreHeures = result.getDouble("Nombre_heures");
-			Double remboursementTransport = result.getDouble("Remboursement_transport");
-			Double remboursementTelephone = result.getDouble("Remboursement_telephone");
-			Double salaire = result.getDouble("Salaire");
 			String status = result.getString("Status");
 
 			allEmploye.add(new Employee(employeId, titre, nom, prenom, mail, telephone, numeroMatricule, pointure,
-					taille, dateArrivee, nombreHeures, remboursementTransport, remboursementTelephone, salaire,
-					status));
+					taille, dateArrivee, status));
 
 		}
 
@@ -464,8 +481,7 @@ public class Employee {
 
 		return "" + this.employeId + "|" + this.titre + "|" + this.nom + "|" + this.prenom + "|" + this.mail + "|"
 				+ this.telephone + "|" + this.numeroMatricule + "|" + this.pointure + "|" + this.taille + "|"
-				+ this.dateArrivee + "|" + this.nombreHeures + "|" + this.remboursementTransport + "|"
-				+ this.remboursementTelephone + "|" + this.salaire + "|" + this.status;
+				+ this.dateArrivee + "|" + this.status;
 	}
 
 	// Getter and setter-----------------------------------------------
@@ -662,61 +678,7 @@ public class Employee {
 
 	}
 
-	public Double getNombreHeures() {
-		if (nombreHeures == null) {
-			return 0.0;
-		}
-		return nombreHeures;
-	}
 
-	public void setNombreHeures(Double nombreHeures) {
-		if (nombreHeures == null) {
-			throw new Error("setNombreHeures : le nombreHeures indique est vide");
-		}
-		this.nombreHeures = nombreHeures;
-	}
-
-	public Double getRemboursementTransport() {
-		if (remboursementTransport == null) {
-			return 0.0;
-		}
-		return remboursementTransport;
-	}
-
-	public void setRemboursementTransport(Double remboursementTransport) {
-		if (remboursementTransport == null) {
-			throw new Error("setRemboursementTransport : le remboursementTransport indique est vide");
-		}
-		this.remboursementTransport = remboursementTransport;
-	}
-
-	public Double getRemboursementTelephone() {
-		if (remboursementTelephone == null) {
-			return 0.0;
-		}
-		return remboursementTelephone;
-	}
-
-	public void setRemboursementTelephone(Double remboursementTelephone) {
-		if (remboursementTelephone == null) {
-			throw new Error("setRemboursementTelephone : le remboursementTelephone indique est vide");
-		}
-		this.remboursementTelephone = remboursementTelephone;
-	}
-
-	public Double getSalaire() {
-		if (salaire == null) {
-			return 0.0;
-		}
-		return salaire;
-	}
-
-	public void setSalaire(Double salaire) {
-		if (salaire == null) {
-			throw new Error("setSalaire : le salaire indique est vide");
-		}
-		this.salaire = salaire;
-	}
 
 	public int getEmployeId() {
 		return employeId;

@@ -2,10 +2,12 @@ package GUI;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.Objects;
 
 import org.eclipse.swt.*;
+import org.eclipse.swt.custom.TableEditor;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -15,7 +17,10 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
 import classes.Affectation;
+import classes.CoutsEmploye;
 import classes.Employee;
+import classes.Product;
+import classes.ProductByDelivery;
 
 public class VueEmploye {
 
@@ -25,6 +30,8 @@ public class VueEmploye {
 	private Composite vue;
 	private Employee selectedEmploye;
 	private Menu menu;
+	private Table tableCouts;
+	private ArrayList<TableEditor> editors;
 
 	// Creation VueEmploye --------------------------------------------------
 	/***
@@ -110,6 +117,25 @@ public class VueEmploye {
 				vueEmployeCreer();
 			}
 		});
+
+		Button boutonCouts = new Button(selection, SWT.CENTER);
+		boutonCouts.setText("Gérer les couts employés");
+		boutonCouts.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				vueCompleteCouts("");
+			}
+		});
+		
+		Button boutonAncienEmploye = new Button(selection, SWT.CENTER);
+		boutonAncienEmploye.setText("Récupérer ancien employé");
+		boutonAncienEmploye.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				vueRecup();
+			}
+			
+		});
 		selection.pack();
 	}
 
@@ -187,8 +213,861 @@ public class VueEmploye {
 
 			}
 		});
+
+		Button boutonCouts = new Button(selection, SWT.CENTER);
+		boutonCouts.setText("Gérer les couts employés");
+		boutonCouts.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				vueCompleteCouts("");
+			}
+		});
+		
+		
+		Button boutonAncienEmploye = new Button(selection, SWT.CENTER);
+		boutonAncienEmploye.setText("Récupérer ancien employé");
+		boutonAncienEmploye.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				vueRecup();
+			}
+			
+		});
 		selection.pack();
 	}
+
+	
+	public void vueRecup() {
+		if (!Objects.isNull(selection) && !selection.isDisposed()) {
+			selection.dispose();
+		}
+		selection = new Composite(vueEmploye, SWT.CENTER);
+
+		FillLayout fillLayout = new FillLayout();
+		fillLayout.type = SWT.VERTICAL;
+		fillLayout.marginWidth = 26;
+		selection.setLayout(fillLayout);
+
+		// juste pour creer un espace
+		Label l1 = new Label(selection, SWT.NONE);
+		l1.setText("");
+		l1.setBackground(Couleur.bleuFonce);
+
+		selection.setBackground(Couleur.bleuFonce);
+		Label HeadLabel = new Label(selection, SWT.TITLE);
+		HeadLabel.setText("Récupération d'un Employe");
+		Font fontTitle = new Font(HeadLabel.getDisplay(), "Arial", 12, SWT.BOLD);
+		HeadLabel.setForeground(Couleur.bleuClair);
+		HeadLabel.setFont(fontTitle);
+		HeadLabel.setBackground(Couleur.bleuFonce);
+
+		// juste pour creer un espace
+		Label l2 = new Label(selection, SWT.NONE);
+		l2.setText("");
+		l2.setBackground(Couleur.bleuFonce);
+
+		selection.pack();
+		///////////////////////////////////////////////////////////////////////////////////////
+		if (!Objects.isNull(vue) && !vue.isDisposed()) {
+			vue.dispose();
+		}
+
+		// creation de la vue
+		vue = new Composite(vueEmploye, SWT.NONE);
+		FillLayout fillLayoutH = new FillLayout();
+		fillLayoutH.type = SWT.HORIZONTAL;
+		vue.setLayout(fillLayoutH);
+		
+		// on cree trois colonne pour repartir les champs
+		FillLayout fillLayoutV = new FillLayout();
+		fillLayoutV.type = SWT.VERTICAL;
+		fillLayoutV.marginWidth = 10;
+		Composite colonne1 = new Composite(vue, SWT.BORDER);
+		colonne1.setBackground(Couleur.bleuClair);
+		colonne1.setLayout(fillLayoutV);
+
+		// utilisé pour tous les composites des arguments
+		FillLayout fillLayoutH5 = new FillLayout();
+		fillLayoutH5.marginHeight = 30;
+		fillLayoutH5.spacing = 5;
+		fillLayoutH5.type = SWT.HORIZONTAL;
+		
+		// titre
+		Composite compositeTitre = new Composite(colonne1, SWT.NONE);
+		compositeTitre.setBackground(Couleur.bleuClair);
+		compositeTitre.setLayout(fillLayoutH5);
+
+		Label labelTitre = new Label(compositeTitre, SWT.NONE);
+		labelTitre.setBackground(Couleur.bleuClair);
+		labelTitre.setText("Merci de renseigner un matricule ou un nom\net un prénom.");
+
+		// Nom
+		Composite compositeNom = new Composite(colonne1, SWT.NONE);
+		compositeNom.setBackground(Couleur.bleuClair);
+		compositeNom.setLayout(fillLayoutH5);
+
+		Label labelNom = new Label(compositeNom, SWT.NONE);
+		labelNom.setBackground(Couleur.bleuClair);
+		labelNom.setText("Nom :                            ");
+
+		final Text textNom = new Text(compositeNom, SWT.BORDER);
+		textNom.setText("");
+
+		// prenom
+		Composite compositePrenom = new Composite(colonne1, SWT.NONE);
+		compositePrenom.setBackground(Couleur.bleuClair);
+		compositePrenom.setLayout(fillLayoutH5);
+
+		Label labelPrenom = new Label(compositePrenom, SWT.NONE);
+		labelPrenom.setBackground(Couleur.bleuClair);
+		labelPrenom.setText("Prénom : ");
+
+		final Text textPrenom = new Text(compositePrenom, SWT.BORDER);
+		textPrenom.setText("");
+		
+		// Matricule
+		Composite compositeMatricule = new Composite(colonne1, SWT.NONE);
+		compositeMatricule.setBackground(Couleur.bleuClair);
+		compositeMatricule.setLayout(fillLayoutH5);
+
+		Label labelMatricule = new Label(compositeMatricule, SWT.NONE);
+		labelMatricule.setBackground(Couleur.bleuClair);
+		labelMatricule.setText("Matricule : ");
+
+		final Text textMatricule = new Text(compositeMatricule, SWT.BORDER);
+		textMatricule.setText("");
+
+		// Boutons
+		Composite compositeBoutons = new Composite(colonne1, SWT.CENTER);
+		compositeBoutons.setBackground(Couleur.bleuClair);
+		compositeBoutons.setLayout(fillLayoutH5);
+
+		Button buttonAnnulation = new Button(compositeBoutons, SWT.BACKGROUND);
+		buttonAnnulation.setText("Annuler");
+		buttonAnnulation.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				newVueEmploye();
+			}
+		});
+
+		Button buttonValidation = new Button(compositeBoutons, SWT.BACKGROUND);
+		buttonValidation.setText("Valider");
+		buttonValidation.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+
+				try {
+					if (!textMatricule.getText().isBlank()) {
+						Employee.retrieveByMatricule(textMatricule.getText());
+					}
+					else if (!textNom.getText().isBlank() && !textPrenom.getText().isBlank()) {
+						Employee.retrieveByNomPrenom(textNom.getText(),textPrenom.getText());
+					}
+					else {
+						throw new Error("Merci d'indiquer un nom et prénom ou un matricule.");
+					}
+					System.out.println("on a recuperer employe !!");
+					MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_INFORMATION | SWT.OK);
+					dialog.setText("Récupération réussie");
+					dialog.setMessage("L'employé a été rajouté à la base de données.");
+					dialog.open();
+					newVueEmploye();
+				} catch (Throwable e) {
+					e.printStackTrace();
+					System.out.println("erreur dans la recup");
+					MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_ERROR | SWT.OK);
+					dialog.setText("Erreur Récupération");
+					dialog.setMessage(
+							"Une erreur est survenue. " + '\n' + e.getMessage());
+					dialog.open();
+				}
+			}
+		});
+		
+		vue.pack();
+		vueEmploye.pack();
+		vueEmploye.getParent().pack();
+	}
+
+	public void vueCompleteCouts(String periode) {
+
+		selectionCouts();
+		vueCouts();
+
+		vueEmploye.pack();
+		vueEmploye.getParent().pack();
+
+	}
+
+	public void selectionCouts() {
+		if (!Objects.isNull(selection) && !selection.isDisposed()) {
+			selection.dispose();
+		}
+
+		selection = new Composite(vueEmploye, SWT.NONE);
+		RowLayout rowLayout = new RowLayout();
+		rowLayout.marginWidth = 22;
+		rowLayout.marginTop = 6;
+		rowLayout.spacing = 60;
+		selection.setLayout(rowLayout);
+		selection.setBackground(Couleur.gris);
+
+		FillLayout fillLayoutH5 = new FillLayout();
+		fillLayoutH5.type = SWT.HORIZONTAL;
+
+		Composite compositePeriode = new Composite(selection, SWT.NONE);
+		compositePeriode.setLayout(fillLayoutH5);
+
+		Label labelPeriode = new Label(compositePeriode, SWT.NONE);
+		labelPeriode.setText("Periode : ");
+
+		Combo periode = new Combo(compositePeriode, SWT.BORDER);
+		LocalDate currentdate = LocalDate.now();
+		Month month = currentdate.getMonth();
+		int year = currentdate.getYear();
+
+		periode.setText(month.toString()+" "+year);
+
+		for(int i = 2020; i <= year+1 ; i++) {
+			for (int j =1 ; j <= 12 ; j++) {
+				periode.add(Month.of(j)+" "+i);
+			}
+		}
+		periode.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				updateCoutsTable(periode.getText());
+			}
+		});
+
+
+		Button boutonMoisPrecedent = new Button(selection, SWT.CENTER);
+		boutonMoisPrecedent.setText("Récupérer les valeurs précédentes");
+		boutonMoisPrecedent.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				try {
+					String[] moisAnnee = periode.getText().split(" ");
+					Integer mois = Month.valueOf(moisAnnee[0]).getValue();
+					Integer annee = Integer.parseInt(moisAnnee[1]);
+					if (mois == 1) {
+						mois = 12;
+						annee -= 1;
+					}
+					else {mois -= 1;}
+					System.out.println(mois.toString()+" "+annee.toString());
+					for(CoutsEmploye ce : CoutsEmploye.getAllCoutEmploye()) {
+						if(mois == ce.getMois() && (Integer.compare(annee, ce.getAnnee())==0)) {
+							CoutsEmploye newCE = ce;
+							if (ce.getMois() <12) { 
+								newCE.setMois(ce.getMois()+1); 
+								newCE.setAnnee(ce.getAnnee());
+							}
+							else { 
+								newCE.setMois(1);
+								newCE.setAnnee(ce.getAnnee()+1);
+							}
+							try {
+								newCE.insertDatabase();
+							}catch(Exception e) {
+							}
+						}
+					}
+				} catch (SQLException e) {
+					System.out.println("erreur dans la table des couts employes");
+					MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_ERROR | SWT.OK);
+					dialog.setText("Erreur");
+					dialog.setMessage("Une erreur est survenue. "+'\n'+e.getMessage());
+					dialog.open();
+				}
+				updateCoutsTable(periode.getText());
+
+			}
+		});
+
+		Button boutonGestionCouts = new Button(selection, SWT.CENTER);
+		boutonGestionCouts.setText("Gérer les couts à amortir");
+		boutonGestionCouts.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				//TODO
+			}
+		});
+
+		selection.pack();
+	}
+
+
+	public void vueCouts() {
+		if (!Objects.isNull(vue) && !vue.isDisposed()) {
+			vue.dispose();
+		}
+
+		vue = new Composite(vueEmploye, SWT.NONE);
+		RowLayout rowLayoutH = new RowLayout();
+		rowLayoutH.type = SWT.VERTICAL;
+		vue.setLayout(rowLayoutH);
+
+		LocalDate currentdate = LocalDate.now();
+		Month month = currentdate.getMonth();
+		int year = currentdate.getYear();
+
+		//creation de la table des produits
+		tableCouts = new Table (vue, SWT.BORDER | SWT.MULTI| SWT.V_SCROLL | SWT.FULL_SELECTION);
+		tableCouts.setLayoutData(new RowData(1045,530));
+		tableCouts.setLinesVisible (true);
+		tableCouts.setHeaderVisible (true);
+
+		//on met les noms des colonnes
+		String[] titles = {"Id", "Nom" ,"Prenom","Matricule" ,"Période", "salaire Net","salaire Brut","nombreHeures",
+				"charges patronales","masse salariale","menage","vitrerie","fournituresSanitaires",
+				"misesBlanc","Transport","Telephone","mutuelle","paniers", "prets","saisie arret", "autres"};
+		for (String title : titles) {
+			TableColumn column = new TableColumn (tableCouts, SWT.NONE);
+			column.setText (title);
+		}
+
+		updateCoutsTable(month.toString()+" "+year);
+
+		menu = new Menu(vueEmploye.getShell(), SWT.POP_UP);
+		tableCouts.setMenu(menu);
+
+		// pour supprimer
+		MenuItem delete = new MenuItem(menu, SWT.PUSH);
+		delete.setText("Supprimer l'element");
+		delete.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				try {
+					TableItem item = (TableItem) tableCouts.getSelection()[0];
+					MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_QUESTION | SWT.YES | SWT.NO);
+					dialog.setText("Suppression Cout Employe");
+					dialog.setMessage("Voulez vous supprimer les couts de l'employé " + item.getText(1) + " " + item.getText(2)+ " ?");
+					int buttonID = dialog.open();
+					switch (buttonID) {
+					case SWT.YES:
+						int id = Integer.parseInt(item.getText(0));
+						CoutsEmploye ce = CoutsEmploye.getCoutEmployeById(id);
+						ce.setStatus("Archivé");
+						ce.updateDatabase();
+						
+						String[] moisAnnee = item.getText(4).split("/");
+						String periode = Month.of(Integer.parseInt(moisAnnee[0])).toString()+" "+((Integer)Integer.parseInt(moisAnnee[1])).toString();
+						updateCoutsTable(periode);
+					}
+
+				} catch (NumberFormatException | SQLException e1) {
+					System.out.println("erreur pour supprimer l'employe");
+					MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_ERROR | SWT.OK);
+					dialog.setText("Erreur");
+					dialog.setMessage("Une erreur est survenue. " + '\n' + e1.getMessage());
+					dialog.open();
+				}
+			}
+		});
+		
+		//validation
+		Composite validation = new Composite(vue, SWT.NONE);
+		RowLayout rowLayout = new RowLayout();
+		rowLayout.marginWidth = 22;
+		rowLayout.marginTop = 6;
+		rowLayout.spacing = 20;
+		validation.setLayout(rowLayout);
+		validation.setBackground(Couleur.gris);
+
+		Button boutonAnnuler = new Button(validation, SWT.CENTER);
+		boutonAnnuler.setText("    Retour aux employés    ");
+		boutonAnnuler.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				newVueEmploye();
+			}
+		});
+
+		Button boutonValider = new Button(validation, SWT.CENTER);
+		boutonValider.setText("     Sauvegarder     ");
+		boutonValider.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				for (int ligne = 0; ligne < tableCouts.getItems().length; ligne++){
+					System.out.println(tableCouts.getItem(ligne).getText(0));
+					Integer id = Integer.parseInt(tableCouts.getItem(ligne).getText(0));
+					CoutsEmploye ce;
+					try {
+						ce = CoutsEmploye.getCoutEmployeById(id);
+						ce.setSalaireNet(Double.parseDouble(tableCouts.getItem(ligne).getText(5)));
+						ce.setSalaireBrut(Double.parseDouble(tableCouts.getItem(ligne).getText(6)));
+						ce.setNombreHeures(Double.parseDouble(tableCouts.getItem(ligne).getText(7)));
+						ce.setChargesP(Double.parseDouble(tableCouts.getItem(ligne).getText(8)));
+						ce.setMasseS(Double.parseDouble(tableCouts.getItem(ligne).getText(9)));
+						ce.setMenage(Double.parseDouble(tableCouts.getItem(ligne).getText(10)));
+						ce.setVitrerie(Double.parseDouble(tableCouts.getItem(ligne).getText(11)));
+						ce.setFournituresSanitaires(Double.parseDouble(tableCouts.getItem(ligne).getText(12)));
+						ce.setMisesBlanc(Double.parseDouble(tableCouts.getItem(ligne).getText(13)));
+						ce.setRemboursementTransport(Double.parseDouble(tableCouts.getItem(ligne).getText(14)));
+						ce.setRemboursementTelephone(Double.parseDouble(tableCouts.getItem(ligne).getText(15)));
+						ce.setMutuelle(Double.parseDouble(tableCouts.getItem(ligne).getText(16)));
+						ce.setPaniers(Double.parseDouble(tableCouts.getItem(ligne).getText(17)));
+						ce.setPrets(Double.parseDouble(tableCouts.getItem(ligne).getText(18)));
+						ce.setAutres(Double.parseDouble(tableCouts.getItem(ligne).getText(20)));
+						ce.setSaisieArret(Double.parseDouble(tableCouts.getItem(ligne).getText(19)));
+						ce.updateDatabase();
+					} catch (SQLException e) {
+						System.out.println("erreur dans la table des couts employes");
+						MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_ERROR | SWT.OK);
+						dialog.setText("Erreur");
+						dialog.setMessage("Une erreur est survenue. "+'\n'+e.getMessage());
+						dialog.open();
+					}
+				}
+
+				try {
+					String[] moisAnnee = tableCouts.getItem(0).getText(4).split("/");
+					String periode = Month.of(Integer.parseInt(moisAnnee[0])).toString()+" "+((Integer)Integer.parseInt(moisAnnee[1])).toString();
+					System.out.println("on a modifie les couts employe !!");
+					MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_INFORMATION | SWT.OK);
+					dialog.setText("Modification réussie");
+					dialog.setMessage("Les couts employé ont bien été modifiés dans la base de données.");
+					dialog.open();
+					updateCoutsTable(periode);
+				} catch (Exception e) {
+					System.out.println("erreur dans la table des couts employes");
+					MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_ERROR | SWT.OK);
+					dialog.setText("Erreur");
+					dialog.setMessage("Une erreur est survenue. "+'\n'+e.getMessage());
+					dialog.open();
+				}
+			}
+		});
+
+		validation.pack();
+		vue.pack();
+	}
+
+
+	public void updateCoutsTable(String periode) {
+		if(!Objects.isNull(tableCouts)) {
+			tableCouts.removeAll();
+		}
+
+		//on remplit la table
+		final TableColumn [] columns = tableCouts.getColumns();
+
+		String[] moisAnnee = periode.split(" ");
+		String mois = moisAnnee[0];
+		String annee = moisAnnee[1];
+		Month moisInt = Month.valueOf(mois);
+
+		try {
+			for (CoutsEmploye ce : CoutsEmploye.getAllCoutEmploye()) {
+				//on verifie le status
+				if (ce.getStatus().equals("Publié") && ce.getAnnee()==Integer.parseInt(annee) && ce.getMois()==moisInt.getValue()) {
+					TableItem item = new TableItem (tableCouts, SWT.NONE);
+					item.setText(0,ce.getCoutEmployeId().toString());
+					item.setText(1,Employee.getEmployeById(ce.getEmployeId()).getNom());
+					item.setText(2,Employee.getEmployeById(ce.getEmployeId()).getPrenom());
+					item.setText(3,Employee.getEmployeById(ce.getEmployeId()).getNumeroMatricule());
+					String p = ce.getMois().toString()+'/'+ce.getAnnee().toString();
+					item.setText(4,p);
+					item.setText(5,ce.getSalaireNet().toString());
+					item.setText(6,ce.getSalaireBrut().toString());
+					item.setText(7,ce.getNombreHeures().toString());
+					item.setText(8,ce.getChargesP().toString());
+					item.setText(9,ce.getMasseS().toString());
+					item.setText(10,ce.getMenage().toString());
+					item.setText(11,ce.getVitrerie().toString());
+					item.setText(12,ce.getFournituresSanitaires().toString());
+					item.setText(13,ce.getMisesBlanc().toString());
+					item.setText(14,ce.getRemboursementTransport().toString());
+					item.setText(15,ce.getRemboursementTelephone().toString());
+					item.setText(16,ce.getMutuelle().toString());
+					item.setText(17,ce.getPaniers().toString());
+					item.setText(18,ce.getPrets().toString());
+					item.setText(19,ce.getSaisieArret().toString());
+					item.setText(20,ce.getAutres().toString());
+				}
+			}
+		} catch (SQLException e1) {
+			System.out.println("erreur dans la table des couts employes");
+			MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_ERROR | SWT.OK);
+			dialog.setText("Erreur");
+			dialog.setMessage("Une erreur est survenue. "+'\n'+e1.getMessage());
+			dialog.open();
+		}
+
+		//on pack les colonnes
+		for (TableColumn col : columns)
+			col.pack ();
+
+		tableCouts.addSelectionListener(getListener());
+
+		//TODO
+		//tableCouts.setSelection(1);
+		//tableCouts.setFocus();
+		//tableCouts.selectAll();
+		//tableCouts.select(1);tableCouts.forceFocus();
+
+		vue.pack();
+	}
+
+
+	public SelectionAdapter getListener() {
+		editors = new ArrayList<TableEditor>();
+
+		//CREATION DES EDITOR POUR CHAQUE COLONNE
+		final TableEditor editorSN = new TableEditor (tableCouts);
+		editorSN.horizontalAlignment = SWT.LEFT;editorSN.grabHorizontal = true;editors.add(editorSN);
+
+		final TableEditor editorSB = new TableEditor (tableCouts);
+		editorSB.horizontalAlignment = SWT.LEFT;editorSB.grabHorizontal = true;editors.add(editorSB);
+
+		final TableEditor editorNH = new TableEditor (tableCouts);
+		editorNH.horizontalAlignment = SWT.LEFT;editorNH.grabHorizontal = true;editors.add(editorNH);
+
+		final TableEditor editorCP = new TableEditor (tableCouts);
+		editorCP.horizontalAlignment = SWT.LEFT;editorCP.grabHorizontal = true;editors.add(editorCP);
+
+		final TableEditor editorMS = new TableEditor (tableCouts);
+		editorMS.horizontalAlignment = SWT.LEFT;editorMS.grabHorizontal = true;editors.add(editorMS);
+
+		final TableEditor editorMe = new TableEditor (tableCouts);
+		editorMe.horizontalAlignment = SWT.LEFT;editorMe.grabHorizontal = true;editors.add(editorMe);
+
+		final TableEditor editorV = new TableEditor (tableCouts);
+		editorV.horizontalAlignment = SWT.LEFT;editorV.grabHorizontal = true;editors.add(editorV);
+
+		final TableEditor editorFS = new TableEditor (tableCouts);
+		editorFS.horizontalAlignment = SWT.LEFT;editorFS.grabHorizontal = true;editors.add(editorFS);
+
+		final TableEditor editorMB = new TableEditor (tableCouts);
+		editorMB.horizontalAlignment = SWT.LEFT;editorMB.grabHorizontal = true;editors.add(editorMB);
+
+		final TableEditor editorTr = new TableEditor (tableCouts);
+		editorTr.horizontalAlignment = SWT.LEFT;editorTr.grabHorizontal = true;editors.add(editorTr);
+
+		final TableEditor editorTe = new TableEditor (tableCouts);
+		editorTe.horizontalAlignment = SWT.LEFT;editorTe.grabHorizontal = true;editors.add(editorTe);
+
+		final TableEditor editorMu = new TableEditor (tableCouts);
+		editorMu.horizontalAlignment = SWT.LEFT;editorMu.grabHorizontal = true;editors.add(editorMu);
+
+		final TableEditor editorPa = new TableEditor (tableCouts);
+		editorPa.horizontalAlignment = SWT.LEFT;editorPa.grabHorizontal = true;editors.add(editorPa);
+
+		final TableEditor editorPr = new TableEditor (tableCouts);
+		editorPr.horizontalAlignment = SWT.LEFT;editorPr.grabHorizontal = true;editors.add(editorPr);
+
+		final TableEditor editorSA = new TableEditor (tableCouts);
+		editorSA.horizontalAlignment = SWT.LEFT;editorSA.grabHorizontal = true;editors.add(editorSA);
+
+		final TableEditor editorA = new TableEditor (tableCouts);
+		editorA.horizontalAlignment = SWT.LEFT;editorA.grabHorizontal = true;editors.add(editorA);
+
+		SelectionAdapter listener = new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				//on dispose les anciens editors
+				if (editorSN.getEditor() != null) { editorSN.getEditor().dispose();}
+				if (editorSB.getEditor() != null) { editorSB.getEditor().dispose();}
+				if (editorNH.getEditor() != null) { editorNH.getEditor().dispose();}
+				if (editorCP.getEditor() != null) { editorCP.getEditor().dispose();}
+				if (editorMS.getEditor() != null) { editorMS.getEditor().dispose();}
+				if (editorMe.getEditor() != null) { editorMe.getEditor().dispose();}
+				if (editorV.getEditor() != null) { editorV.getEditor().dispose();}
+				if (editorFS.getEditor() != null) { editorFS.getEditor().dispose();}
+				if (editorMB.getEditor() != null) { editorMB.getEditor().dispose();}
+				if (editorTr.getEditor() != null) { editorTr.getEditor().dispose();}
+				if (editorTe.getEditor() != null) { editorTe.getEditor().dispose();}
+				if (editorMu.getEditor() != null) { editorMu.getEditor().dispose();}
+				if (editorPa.getEditor() != null) { editorPa.getEditor().dispose();}
+				if (editorPr.getEditor() != null) { editorPr.getEditor().dispose();}
+				if (editorSA.getEditor() != null) { editorSA.getEditor().dispose();}
+				if (editorA.getEditor() != null) { editorA.getEditor().dispose();}
+
+				//on recupere la ligne selectionne
+				TableItem item = (TableItem) e.item;
+				if (item == null) { return; }
+
+				//editors --------------------------------------------------------------------------
+				Text newEditorSN = new Text(tableCouts, SWT.NONE);
+				newEditorSN.setText(item.getText(5));
+				newEditorSN.addModifyListener(new ModifyListener() { 
+					public void modifyText(ModifyEvent me) { 
+						if (!(newEditorSN.getText().isEmpty())) {//pour ne pas tester quand l'utilisateur est en train de modifier
+							try {
+								item.setText(5,newEditorSN.getText());
+							} catch(Exception e) {
+								System.out.println("erreur dans la modif"); MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_ERROR | SWT.OK);
+								dialog.setText("Erreur Editor"); dialog.setMessage("Saisie invalide."+'\n'+e.getMessage()); dialog.open(); 
+							}
+						}
+					}
+				});
+				editorSN.setEditor(newEditorSN, item, 5);
+
+
+				Text newEditorSB = new Text(tableCouts, SWT.NONE);
+				newEditorSB.setText(item.getText(6));
+				newEditorSB.addModifyListener(new ModifyListener() { 
+					public void modifyText(ModifyEvent me) { 
+						if (!(newEditorSB.getText().isEmpty())) {//pour ne pas tester quand l'utilisateur est en train de modifier
+							try {
+								item.setText(6,newEditorSB.getText());
+							} catch(Exception e) {
+								System.out.println("erreur dans la modif"); MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_ERROR | SWT.OK);
+								dialog.setText("Erreur Editor"); dialog.setMessage("Saisie invalide."+'\n'+e.getMessage()); dialog.open(); 
+							}
+						}
+					}
+				});
+				editorSB.setEditor(newEditorSB, item, 6);
+
+
+				Text newEditorNH = new Text(tableCouts, SWT.NONE);
+				newEditorNH.setText(item.getText(7));
+				newEditorNH.addModifyListener(new ModifyListener() { 
+					public void modifyText(ModifyEvent me) { 
+						if (!(newEditorNH.getText().isEmpty())) {//pour ne pas tester quand l'utilisateur est en train de modifier
+							try {
+								item.setText(7,newEditorNH.getText());
+							} catch(Exception e) {
+								System.out.println("erreur dans la modif"); MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_ERROR | SWT.OK);
+								dialog.setText("Erreur Editor"); dialog.setMessage("Saisie invalide."+'\n'+e.getMessage()); dialog.open(); 
+							}
+						}
+					}
+				});
+				editorNH.setEditor(newEditorNH, item, 7);
+
+
+				Text newEditorCP = new Text(tableCouts, SWT.NONE);
+				newEditorCP.setText(item.getText(8));
+				newEditorCP.addModifyListener(new ModifyListener() { 
+					public void modifyText(ModifyEvent me) { 
+						if (!(newEditorCP.getText().isEmpty())) {//pour ne pas tester quand l'utilisateur est en train de modifier
+							try {
+								item.setText(8,newEditorCP.getText());
+							} catch(Exception e) {
+								System.out.println("erreur dans la modif"); MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_ERROR | SWT.OK);
+								dialog.setText("Erreur Editor"); dialog.setMessage("Saisie invalide."+'\n'+e.getMessage()); dialog.open(); 
+							}
+						}
+					}
+				});
+				editorCP.setEditor(newEditorCP, item, 8);
+
+
+				Text newEditorMS = new Text(tableCouts, SWT.NONE);
+				newEditorMS.setText(item.getText(9));
+				newEditorMS.addModifyListener(new ModifyListener() { 
+					public void modifyText(ModifyEvent me) { 
+						if (!(newEditorMS.getText().isEmpty())) {//pour ne pas tester quand l'utilisateur est en train de modifier
+							try {
+								item.setText(9,newEditorMS.getText());
+							} catch(Exception e) {
+								System.out.println("erreur dans la modif"); MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_ERROR | SWT.OK);
+								dialog.setText("Erreur Editor"); dialog.setMessage("Saisie invalide."+'\n'+e.getMessage()); dialog.open(); 
+							}
+						}
+					}
+				});
+				editorMS.setEditor(newEditorMS, item, 9);
+
+
+				Text newEditorMe = new Text(tableCouts, SWT.NONE);
+				newEditorMe.setText(item.getText(10));
+				newEditorMe.addModifyListener(new ModifyListener() { 
+					public void modifyText(ModifyEvent me) { 
+						if (!(newEditorMe.getText().isEmpty())) {//pour ne pas tester quand l'utilisateur est en train de modifier
+							try {
+								item.setText(10,newEditorMe.getText());
+							} catch(Exception e) {
+								System.out.println("erreur dans la modif"); MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_ERROR | SWT.OK);
+								dialog.setText("Erreur Editor"); dialog.setMessage("Saisie invalide."+'\n'+e.getMessage()); dialog.open(); 
+							}
+						}
+					}
+				});
+				editorMe.setEditor(newEditorMe, item, 10);
+
+
+				Text newEditorV = new Text(tableCouts, SWT.NONE);
+				newEditorV.setText(item.getText(11));
+				newEditorV.addModifyListener(new ModifyListener() { 
+					public void modifyText(ModifyEvent me) { 
+						if (!(newEditorV.getText().isEmpty())) {//pour ne pas tester quand l'utilisateur est en train de modifier
+							try {
+								item.setText(11,newEditorV.getText());
+							} catch(Exception e) {
+								System.out.println("erreur dans la modif"); MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_ERROR | SWT.OK);
+								dialog.setText("Erreur Editor"); dialog.setMessage("Saisie invalide."+'\n'+e.getMessage()); dialog.open(); 
+							}
+						}
+					}
+				});
+				editorV.setEditor(newEditorV, item, 11);
+
+
+				Text newEditorFS= new Text(tableCouts, SWT.NONE);
+				newEditorFS.setText(item.getText(12));
+				newEditorFS.addModifyListener(new ModifyListener() { 
+					public void modifyText(ModifyEvent me) { 
+						if (!(newEditorFS.getText().isEmpty())) {//pour ne pas tester quand l'utilisateur est en train de modifier
+							try {
+								item.setText(12,newEditorFS.getText());
+							} catch(Exception e) {
+								System.out.println("erreur dans la modif"); MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_ERROR | SWT.OK);
+								dialog.setText("Erreur Editor"); dialog.setMessage("Saisie invalide."+'\n'+e.getMessage()); dialog.open(); 
+							}
+						}
+					}
+				});
+				editorFS.setEditor(newEditorFS, item, 12);
+
+
+				Text newEditorMB= new Text(tableCouts, SWT.NONE);
+				newEditorMB.setText(item.getText(13));
+				newEditorMB.addModifyListener(new ModifyListener() { 
+					public void modifyText(ModifyEvent me) { 
+						if (!(newEditorMB.getText().isEmpty())) {//pour ne pas tester quand l'utilisateur est en train de modifier
+							try {
+								item.setText(13,newEditorMB.getText());
+							} catch(Exception e) {
+								System.out.println("erreur dans la modif"); MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_ERROR | SWT.OK);
+								dialog.setText("Erreur Editor"); dialog.setMessage("Saisie invalide."+'\n'+e.getMessage()); dialog.open(); 
+							}
+						}
+					}
+				});
+				editorMB.setEditor(newEditorMB, item, 13);
+
+
+				Text newEditorTr= new Text(tableCouts, SWT.NONE);
+				newEditorTr.setText(item.getText(14));
+				newEditorTr.addModifyListener(new ModifyListener() { 
+					public void modifyText(ModifyEvent me) { 
+						if (!(newEditorTr.getText().isEmpty())) {//pour ne pas tester quand l'utilisateur est en train de modifier
+							try {
+								item.setText(14,newEditorTr.getText());
+							} catch(Exception e) {
+								System.out.println("erreur dans la modif"); MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_ERROR | SWT.OK);
+								dialog.setText("Erreur Editor"); dialog.setMessage("Saisie invalide."+'\n'+e.getMessage()); dialog.open(); 
+							}
+						}
+					}
+				});
+				editorTr.setEditor(newEditorTr, item, 14);
+
+
+				Text newEditorTe= new Text(tableCouts, SWT.NONE);
+				newEditorTe.setText(item.getText(15));
+				newEditorTe.addModifyListener(new ModifyListener() { 
+					public void modifyText(ModifyEvent me) { 
+						if (!(newEditorTe.getText().isEmpty())) {//pour ne pas tester quand l'utilisateur est en train de modifier
+							try {
+								item.setText(15,newEditorTe.getText());
+							} catch(Exception e) {
+								System.out.println("erreur dans la modif"); MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_ERROR | SWT.OK);
+								dialog.setText("Erreur Editor"); dialog.setMessage("Saisie invalide."+'\n'+e.getMessage()); dialog.open(); 
+							}
+						}
+					}
+				});
+				editorTe.setEditor(newEditorTe, item, 15);
+
+
+				Text newEditorMu= new Text(tableCouts, SWT.NONE);
+				newEditorMu.setText(item.getText(16));
+				newEditorMu.addModifyListener(new ModifyListener() { 
+					public void modifyText(ModifyEvent me) { 
+						if (!(newEditorMu.getText().isEmpty())) {//pour ne pas tester quand l'utilisateur est en train de modifier
+							try {
+								item.setText(16,newEditorMu.getText());
+							} catch(Exception e) {
+								System.out.println("erreur dans la modif"); MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_ERROR | SWT.OK);
+								dialog.setText("Erreur Editor"); dialog.setMessage("Saisie invalide."+'\n'+e.getMessage()); dialog.open(); 
+							}
+						}
+					}
+				});
+				editorMu.setEditor(newEditorMu, item, 16);
+
+
+				Text newEditorPa= new Text(tableCouts, SWT.NONE);
+				newEditorPa.setText(item.getText(17));
+				newEditorPa.addModifyListener(new ModifyListener() { 
+					public void modifyText(ModifyEvent me) { 
+						if (!(newEditorPa.getText().isEmpty())) {//pour ne pas tester quand l'utilisateur est en train de modifier
+							try {
+								item.setText(17,newEditorPa.getText());
+							} catch(Exception e) {
+								System.out.println("erreur dans la modif"); MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_ERROR | SWT.OK);
+								dialog.setText("Erreur Editor"); dialog.setMessage("Saisie invalide."+'\n'+e.getMessage()); dialog.open(); 
+							}
+						}
+					}
+				});
+				editorPa.setEditor(newEditorPa, item, 17);
+
+
+				Text newEditorPr= new Text(tableCouts, SWT.NONE);
+				newEditorPr.setText(item.getText(18));
+				newEditorPr.addModifyListener(new ModifyListener() { 
+					public void modifyText(ModifyEvent me) { 
+						if (!(newEditorPr.getText().isEmpty())) {//pour ne pas tester quand l'utilisateur est en train de modifier
+							try {
+								item.setText(18,newEditorPr.getText());
+							} catch(Exception e) {
+								System.out.println("erreur dans la modif"); MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_ERROR | SWT.OK);
+								dialog.setText("Erreur Editor"); dialog.setMessage("Saisie invalide."+'\n'+e.getMessage()); dialog.open(); 
+							}
+						}
+					}
+				});
+				editorPr.setEditor(newEditorPr, item, 18);
+
+
+				Text newEditorSA= new Text(tableCouts, SWT.NONE);
+				newEditorSA.setText(item.getText(19));
+				newEditorSA.addModifyListener(new ModifyListener() { 
+					public void modifyText(ModifyEvent me) { 
+						if (!(newEditorSA.getText().isEmpty())) {//pour ne pas tester quand l'utilisateur est en train de modifier
+							try {
+								item.setText(19,newEditorSA.getText());
+							} catch(Exception e) {
+								System.out.println("erreur dans la modif"); MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_ERROR | SWT.OK);
+								dialog.setText("Erreur Editor"); dialog.setMessage("Saisie invalide."+'\n'+e.getMessage()); dialog.open(); 
+							}
+						}
+					}
+				});
+				editorSA.setEditor(newEditorSA, item, 19);
+
+
+				Text newEditorA= new Text(tableCouts, SWT.NONE);
+				newEditorA.setText(item.getText(20));
+				newEditorA.addModifyListener(new ModifyListener() { 
+					public void modifyText(ModifyEvent me) { 
+						if (!(newEditorA.getText().isEmpty())) {//pour ne pas tester quand l'utilisateur est en train de modifier
+							try {
+								item.setText(20,newEditorA.getText());
+							} catch(Exception e) {
+								System.out.println("erreur dans la modif"); MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_ERROR | SWT.OK);
+								dialog.setText("Erreur Editor"); dialog.setMessage("Saisie invalide."+'\n'+e.getMessage()); dialog.open(); 
+							}
+						}
+					}
+				});
+				editorA.setEditor(newEditorA, item, 20);
+			} 
+		};
+		return listener;
+	}
+
+
+
 
 	// Modification d'un employe --------------------------------------------------
 	/***
@@ -217,7 +1096,7 @@ public class VueEmploye {
 
 		FillLayout fillLayout = new FillLayout();
 		fillLayout.type = SWT.VERTICAL;
-		fillLayout.marginWidth = 402;
+		fillLayout.marginWidth = 182;
 		selection.setLayout(fillLayout);
 
 		// juste pour creer un espace
@@ -262,9 +1141,7 @@ public class VueEmploye {
 		vue.setLayout(fillLayoutH);
 
 		showFormulaire(2,selectedEmploye.getTitre(),selectedEmploye.getNom(),selectedEmploye.getPrenom(),selectedEmploye.getMail(),selectedEmploye.getTelephone(),
-				selectedEmploye.getNumeroMatricule().toString(),selectedEmploye.getPointure(),selectedEmploye.getTaille(),selectedEmploye.getDateArrivee(),
-				selectedEmploye.getNombreHeures().toString(),selectedEmploye.getRemboursementTransport().toString(),selectedEmploye.getRemboursementTelephone().toString(),
-				selectedEmploye.getSalaire().toString());
+				selectedEmploye.getNumeroMatricule().toString(),selectedEmploye.getPointure(),selectedEmploye.getTaille(),selectedEmploye.getDateArrivee());
 
 		vue.pack();
 	}
@@ -325,7 +1202,7 @@ public class VueEmploye {
 
 		FillLayout fillLayout = new FillLayout();
 		fillLayout.type = SWT.VERTICAL;
-		fillLayout.marginWidth = 416;
+		fillLayout.marginWidth = 196;
 		selection.setLayout(fillLayout);
 
 		// juste pour creer un espace
@@ -361,7 +1238,7 @@ public class VueEmploye {
 		fillLayoutH.type = SWT.HORIZONTAL;
 		vue.setLayout(fillLayoutH);
 
-		showFormulaire(1,"","","","","","","","","","","","","");
+		showFormulaire(1,"","","","","","","","","");
 
 		vue.pack();
 	}
@@ -379,27 +1256,19 @@ public class VueEmploye {
 	 * @param pointure
 	 * @param taille
 	 * @param dateArrivee
-	 * @param nbHeures
-	 * @param remboursementTransport
-	 * @param remboursementTelephone
-	 * @param salaire
 	 */
 	@SuppressWarnings("unlikely-arg-type")
-	public void showFormulaire(int type, String Titre, String nom, String prenom, String mail, String telephone, String numeroMatricule, String pointure, String taille, String dateArrivee,
-			String nbHeures, String remboursementTransport, String remboursementTelephone, String salaire) {
+	public void showFormulaire(int type, String titre, String nom, String prenom, String mail, String telephone, String numeroMatricule, String pointure, String taille, String dateArrivee) {
 		// on cree trois colonne pour repartir les champs
 		FillLayout fillLayoutV = new FillLayout();
 		fillLayoutV.type = SWT.VERTICAL;
 		fillLayoutV.marginWidth = 10;
 		Composite colonne1 = new Composite(vue, SWT.BORDER);
 		Composite colonne2 = new Composite(vue, SWT.BORDER);
-		Composite colonne3 = new Composite(vue, SWT.BORDER);
 		colonne1.setBackground(Couleur.bleuClair);
 		colonne2.setBackground(Couleur.bleuClair);
-		colonne3.setBackground(Couleur.bleuClair);
 		colonne1.setLayout(fillLayoutV);
 		colonne2.setLayout(fillLayoutV);
-		colonne3.setLayout(fillLayoutV);
 
 		// utilisé pour tous les composites des arguments
 		FillLayout fillLayoutH5 = new FillLayout();
@@ -416,19 +1285,18 @@ public class VueEmploye {
 		labelTitre.setBackground(Couleur.bleuClair);
 		labelTitre.setText("Titre : ");
 
-		Combo titre = new Combo(compositeTitre, SWT.BORDER);
+		Combo comboTitre = new Combo(compositeTitre, SWT.BORDER);
 		if (titre.equals("M")) {
-			titre.setText("M");
-			titre.add("Mme");
+			comboTitre.setText("M");
 		}
 		else if (titre.equals("Mme")) {
-			titre.setText("Mme");
-			titre.add("M");
+			comboTitre.setText("Mme");
 		}
 		else {
-			titre.setText("Mme");
-			titre.add("M");
+			comboTitre.setText("Selectionner ...");
 		}
+		comboTitre.add("M");
+		comboTitre.add("Mme");
 
 		// Nom
 		Composite compositeNom = new Composite(colonne1, SWT.NONE);
@@ -540,62 +1408,8 @@ public class VueEmploye {
 			}
 		});
 
-		// NombreHeures
-		Composite compositeNombreHeures = new Composite(colonne2, SWT.NONE);
-		compositeNombreHeures.setBackground(Couleur.bleuClair);
-		compositeNombreHeures.setLayout(fillLayoutH5);
-
-		Label labelNombreHeures = new Label(compositeNombreHeures, SWT.NONE);
-		labelNombreHeures.setBackground(Couleur.bleuClair);
-		labelNombreHeures.setText("Nombre d'heures : ");
-
-		final Text textNombreHeures = new Text(compositeNombreHeures, SWT.BORDER);
-		textNombreHeures.setText(nbHeures);
-
-		// RemboursementTransport
-		Composite compositeRemboursementTransport = new Composite(colonne3, SWT.NONE);
-		compositeRemboursementTransport.setBackground(Couleur.bleuClair);
-		compositeRemboursementTransport.setLayout(fillLayoutH5);
-
-		Label labelRemboursementTransport = new Label(compositeRemboursementTransport, SWT.NONE);
-		labelRemboursementTransport.setBackground(Couleur.bleuClair);
-		labelRemboursementTransport.setText("Remboursement transport : ");
-
-		final Text textRemboursementTransport = new Text(compositeRemboursementTransport, SWT.BORDER);
-		textRemboursementTransport.setText(remboursementTransport);
-
-		// RemboursementTelephone
-		Composite compositeRemboursementTelephone = new Composite(colonne3, SWT.NONE);
-		compositeRemboursementTelephone.setBackground(Couleur.bleuClair);
-		compositeRemboursementTelephone.setLayout(fillLayoutH5);
-
-		Label labelRemboursementTelephone = new Label(compositeRemboursementTelephone, SWT.NONE);
-		labelRemboursementTelephone.setBackground(Couleur.bleuClair);
-		labelRemboursementTelephone.setText("Remboursement telephone : ");
-
-		final Text textRemboursementTelephone = new Text(compositeRemboursementTelephone, SWT.BORDER);
-		textRemboursementTelephone.setText(remboursementTelephone);
-
-		// Salaire
-		Composite compositeSalaire = new Composite(colonne3, SWT.NONE);
-		compositeSalaire.setBackground(Couleur.bleuClair);
-		compositeSalaire.setLayout(fillLayoutH5);
-
-		Label labelSalaire = new Label(compositeSalaire, SWT.NONE);
-		labelSalaire.setBackground(Couleur.bleuClair);
-		labelSalaire.setText("Salaire : ");
-
-		final Text textSalaire = new Text(compositeSalaire, SWT.BORDER);
-		textSalaire.setText(salaire);
-
-		// ne s'affiche pas
-		// utiliser pour avoir le meme nombre de composite sur chaque colonne et qu'ils
-		// prennent donc la meme taille
-		Composite test = new Composite(colonne3, SWT.NONE);
-		test.setBackground(Couleur.bleuClair);
-
 		// Boutons
-		Composite compositeBoutons = new Composite(colonne3, SWT.CENTER);
+		Composite compositeBoutons = new Composite(colonne2, SWT.CENTER);
 		compositeBoutons.setBackground(Couleur.bleuClair);
 		compositeBoutons.setLayout(fillLayoutH5);
 
@@ -620,11 +1434,9 @@ public class VueEmploye {
 				public void widgetSelected(SelectionEvent arg0) {
 
 					try {
-						validerCreation(titre.getText(), textNom.getText(), textPrenom.getText(),
+						validerCreation(comboTitre.getText(), textNom.getText(), textPrenom.getText(),
 								textNumeroMatricule.getText(), textMail.getText(), textTelephone.getText(),
-								textPointure.getText(), textTaille.getText(), textDateArrivee.getText(),
-								textNombreHeures.getText(), textRemboursementTransport.getText(),
-								textRemboursementTelephone.getText(), textSalaire.getText());
+								textPointure.getText(), textTaille.getText(), textDateArrivee.getText());
 					} catch (Throwable e) {
 						e.printStackTrace();
 						System.out.println("erreur dans la creation");
@@ -648,13 +1460,9 @@ public class VueEmploye {
 
 					try {
 						int id = selectedEmploye.getEmployeId();
-						selectedEmploye = new Employee(id, titre.getText(), textNom.getText(), textPrenom.getText(),
+						selectedEmploye = new Employee(id, comboTitre.getText(), textNom.getText(), textPrenom.getText(),
 								textMail.getText(), textTelephone.getText(), textNumeroMatricule.getText(),
-								textPointure.getText(), textTaille.getText(), textDateArrivee.getText(),
-								Double.parseDouble(textNombreHeures.getText()),
-								Double.parseDouble(textRemboursementTransport.getText()),
-								Double.parseDouble(textRemboursementTelephone.getText()),
-								Double.parseDouble(textSalaire.getText()), "Publié");
+								textPointure.getText(), textTaille.getText(), textDateArrivee.getText(), "Publié");
 						validerModification();
 					} catch (Throwable e) {
 						e.printStackTrace();
@@ -691,9 +1499,7 @@ public class VueEmploye {
 	 * @param textSalaire
 	 */
 	public void validerCreation(String titre, String textNom, String textPrenom, String textNumeroMatricule,
-			String textMail, String textTelephone, String textPointure, String textTaille, String textDateArrivee,
-			String textNombreHeures, String textRemboursementTransport, String textRemboursementTelephone,
-			String textSalaire) {
+			String textMail, String textTelephone, String textPointure, String textTaille, String textDateArrivee) {
 
 		if (textNom.isEmpty() || textPrenom.isEmpty() || textNumeroMatricule.isEmpty()) {
 			throw new Error("Merci d'indiquer au moins le nom, le prénom et le numéro de matricule de l'employé.");
@@ -722,37 +1528,12 @@ public class VueEmploye {
 			employe.setDateArrivee(textDateArrivee);
 		}
 
-		// nombre heures
-		if (textNombreHeures != "" && textNombreHeures.contains(".")) {
-			employe.setNombreHeures(Double.parseDouble(textNombreHeures));
-		} else if (textNombreHeures != "" && textNombreHeures.matches(".*\\d.*")) {
-			employe.setNombreHeures(Double.parseDouble(textNombreHeures + ".0"));
-		}
-
-		// remboursement transport
-		if (textRemboursementTransport != "" && textRemboursementTransport.contains(".")) {
-			employe.setRemboursementTransport(Double.parseDouble(textRemboursementTransport));
-		} else if (textRemboursementTransport != "" && textRemboursementTransport.matches(".*\\d.*")) {
-			employe.setRemboursementTransport(Double.parseDouble(textRemboursementTransport + ".0"));
-		}
-
-		// remboursement telephone
-		if (textRemboursementTelephone != "" && textRemboursementTelephone.contains(".")) {
-			employe.setRemboursementTelephone(Double.parseDouble(textRemboursementTelephone));
-		} else if (textRemboursementTelephone != "" && textRemboursementTelephone.matches(".*\\d.*")) {
-			employe.setRemboursementTelephone(Double.parseDouble(textRemboursementTelephone + ".0"));
-		}
-
-		// salaire
-		if (textSalaire != "" && textSalaire.contains(".")) {
-			employe.setSalaire(Double.parseDouble(textSalaire));
-		} else if (textSalaire != "" && textSalaire.matches(".*\\d.*")) {
-			employe.setSalaire(Double.parseDouble(textSalaire + ".0"));
-		}
-
 		// on insert dans la base de données
 		try {
 			employe.insertDatabase();
+			LocalDate currentDate = LocalDate.now();
+			CoutsEmploye ce = new CoutsEmploye(Employee.getIdByMatricule(employe.getNumeroMatricule()),currentDate.getMonthValue(),currentDate.getYear(),"Publié");
+			ce.insertDatabase();
 			System.out.println("on a insere l employe !!");
 			MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_INFORMATION | SWT.OK);
 			dialog.setText("Création réussie");
@@ -787,13 +1568,13 @@ public class VueEmploye {
 
 		// creation de la table
 		final Table table = new Table(vue, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.FULL_SELECTION);
-		table.setLayoutData(new RowData(1047, 450));
+		table.setLayoutData(new RowData(847, 450));
 		table.setLinesVisible(true);
 		table.setHeaderVisible(true);
 
 		// on met les noms des colonnes //espaces dans les titres pour changer la taille des colonnes
 		String[] titles = { "Titre  ", "Nom        ", "Prenom     ", "Email             ", "Téléphone", "N° de matricule", "Pointure", "Taille",
-				"Date d'arrivée", "Ancienneté", "Nb d'heures", "Remb. Transport", "Remb. Telephone", "Salaire" };
+				"Date d'ancienneté", "Ancienneté"};
 		for (String title : titles) {
 			TableColumn column = new TableColumn(table, SWT.NONE);
 			column.setText(title);
@@ -818,7 +1599,7 @@ public class VueEmploye {
 
 					try {
 						selectedEmploye = Employee
-								.getEmployeById(Integer.parseInt(table.getSelection()[0].getText(14)));
+								.getEmployeById(Integer.parseInt(table.getSelection()[0].getText(10)));
 					} catch (NumberFormatException | SQLException e1) {
 						System.out.println("erreur pour recuperer l'employe selectionne");
 						MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_ERROR | SWT.OK);
@@ -851,7 +1632,7 @@ public class VueEmploye {
 
 	}
 
-	
+
 	/***
 	 * methode utilisee pour affectation
 	 * @param composite : composite ou ajouter la table
@@ -860,23 +1641,17 @@ public class VueEmploye {
 	public static Table getAllEmployer(Composite composite) {
 
 		Table table = new Table(composite, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.FULL_SELECTION);
-		table.setLayoutData(new RowData(1047, 450));
+		table.setLayoutData(new RowData(847, 450));
 		table.setLinesVisible(true);
 		table.setHeaderVisible(true);
 
 		//on met les noms des colonnes
 		String[] titles = { "Titre", "Nom", "Prenom", "Email", "Téléphone", "N° de matricule", "Pointure", "Taille",
-				"Date d'arrivée", "Ancienneté", "Nb d'heures", "Remb. Transport", "Remb. Telephone", "Salaire" };
+				"Date d'ancienneté", "Ancienneté", "Id"};
 		for (String title : titles) {
 			TableColumn column = new TableColumn(table, SWT.NONE);
 			column.setText(title);
 		}
-
-		//je voulais cacher cette colonne mais ca ne fonctionne pas
-		TableColumn column = new TableColumn(table, SWT.NONE);
-		column.setText("Id DB");
-		column.setWidth(0);
-		column.setResizable(false);
 
 		//on remplit la table
 		final TableColumn[] columns = table.getColumns();
@@ -918,12 +1693,20 @@ public class VueEmploye {
 								} else if (a2 - a1 - 1 == 1) {
 									item.setText(9, Integer.toString(a2 - a1 - 1) + " an");
 								} else {
+									if ((m1==m2)&&(a2-a1-1==5)) {
+										System.out.println("iciciegb");
+										item.setForeground(9, Couleur.rouge);
+									}
 									item.setText(9, Integer.toString(a2 - a1 - 1) + " ans");
 								}
 							} else {
 								if (a2 - a1 == 1) {
 									item.setText(9, Integer.toString(a2 - a1) + " an");
 								} else {
+									if ((m1==m2)&&(a2-a1-1==5)) {
+										System.out.println("iciciegb2");
+										item.setForeground(9, Couleur.rouge);
+									}
 									item.setText(9, Integer.toString(a2 - a1) + " ans");
 								}
 							}
@@ -933,11 +1716,7 @@ public class VueEmploye {
 						item.setText(9, "");
 					}
 
-					item.setText(10, Double.toString(e.getNombreHeures()));
-					item.setText(11, Double.toString(e.getRemboursementTransport()));
-					item.setText(12, Double.toString(e.getRemboursementTelephone()));
-					item.setText(13, Double.toString(e.getSalaire()));
-					item.setText(14, Integer.toString(e.getEmployeId()));
+					item.setText(10, Integer.toString(e.getEmployeId()));
 				}
 			}
 		} catch (SQLException e) {
@@ -1003,12 +1782,19 @@ public class VueEmploye {
 								} else if (a2 - a1 - 1 == 1) {
 									item.setText(9, Integer.toString(a2 - a1 - 1) + " an");
 								} else {
+									if ((m1==m2)&&(a2-a1-1==5)) {
+										//item.setForeground(Couleur.rouge);
+										item.setForeground(9, Couleur.rouge);
+									}
 									item.setText(9, Integer.toString(a2 - a1 - 1) + " ans");
 								}
 							} else {
 								if (a2 - a1 == 1) {
 									item.setText(9, Integer.toString(a2 - a1) + " an");
 								} else {
+									if ((m1==m2)&&(a2-a1==5)) {
+										item.setForeground(9, Couleur.rouge);
+									}
 									item.setText(9, Integer.toString(a2 - a1) + " ans");
 								}
 							}
@@ -1018,11 +1804,7 @@ public class VueEmploye {
 						item.setText(9, "");
 					}
 
-					item.setText(10, Double.toString(e.getNombreHeures()));
-					item.setText(11, Double.toString(e.getRemboursementTransport()));
-					item.setText(12, Double.toString(e.getRemboursementTelephone()));
-					item.setText(13, Double.toString(e.getSalaire()));
-					item.setText(14, Integer.toString(e.getEmployeId()));
+					item.setText(10, Integer.toString(e.getEmployeId()));
 				}
 			}
 		} catch (SQLException e) {
@@ -1103,8 +1885,9 @@ public class VueEmploye {
 
 		for (Affectation a : Affectation.getAllAffectation()) {
 			if (a.getIdEmploye() == e.getEmployeId()) {
-				a.setStatus("Archivé");
+				//a.setStatus("Archivé");
 				a.updateDatabase();
+				//TODO
 			}
 		}
 

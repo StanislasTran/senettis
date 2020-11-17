@@ -12,6 +12,7 @@ public class Couleur {
 	public final static Color gris = new Color(displ, 240, 240, 240);
 	public final static Color PeterRiver=new Color(displ,52,152,219);
 	public final static Color blanc = new Color(displ, 254, 254, 254);
+	public final static Color rouge = new Color(displ, 254, 0, 0);
 	
 	public static void setDisplay(Display display) {
 		displ=display;
