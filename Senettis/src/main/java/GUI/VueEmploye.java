@@ -21,6 +21,7 @@ import classes.CoutsEmploye;
 import classes.Employee;
 import classes.Product;
 import classes.ProductByDelivery;
+import classes.Status;
 
 public class VueEmploye {
 
@@ -1885,9 +1886,8 @@ public class VueEmploye {
 
 		for (Affectation a : Affectation.getAllAffectation()) {
 			if (a.getIdEmploye() == e.getEmployeId()) {
-				//a.setStatus("Archivé");
+				a.setStatus(Status.ARCHIVED);
 				a.updateDatabase();
-				//TODO
 			}
 		}
 

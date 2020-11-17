@@ -15,6 +15,7 @@ import org.eclipse.swt.widgets.*;
 import classes.Affectation;
 import classes.Delivery;
 import classes.Site;
+import classes.Status;
 
 public class VueChantier {
 
@@ -186,7 +187,7 @@ public class VueChantier {
 		
 		for (Affectation a : Affectation.getAllAffectation()) {
 			if (a.getIdChantier() == c.getChantierId()) {
-				a.setStatus("Archivé");
+				a.setStatus(Status.ARCHIVED);
 				a.updateDatabase();
 			}
 		}
