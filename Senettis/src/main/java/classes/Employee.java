@@ -377,7 +377,7 @@ public class Employee {
 			 e.setStatus("Publié");
 			 e.updateDatabase();
 		}catch (Exception e) {
-			throw e;
+			throw new Error("Erreur de matricule, aucun employé ne correspond.");
 		}
 	}
 	

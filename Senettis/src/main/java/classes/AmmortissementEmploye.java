@@ -37,14 +37,14 @@ public class AmmortissementEmploye {
 	private String type;
 
 	// Constructeurs----------------------------------------------
-	public AmmortissementEmploye(int ammortissementEmployeId, int employeId, Integer moisD, Integer anneeD,Integer moisF, Integer anneeF,String descritpion,Double montantParMois, Integer duree, Double valeur, String type, String status) {
+	public AmmortissementEmploye(int ammortissementEmployeId, int employeId, Integer moisD, Integer anneeD,Integer moisF, Integer anneeF,String description,Double montantParMois, Integer duree, Double valeur, String type, String status) {
 		this(employeId,moisD, anneeD, moisF,anneeF,montantParMois, duree, valeur, type, status);
 		if ((Integer) ammortissementEmployeId != null) {
 			this.ammortissementEmployeId = ammortissementEmployeId;
 		} else {
 			throw new Error("Le ammortissementEmployeId est vide, merci de spécifier un id ou d'utiliser un autre constructeur.");
 		}
-		
+		this.description = description;	
 	}
 	
 	public AmmortissementEmploye(int employeId, Integer moisD, Integer anneeD,Integer moisF, Integer anneeF,Double montantParMois,String description, Integer duree, Double valeur, String type, String status) {
@@ -146,12 +146,14 @@ public class AmmortissementEmploye {
 		statement.setObject(5, this.type, Types.VARCHAR);
 		statement.setObject(6, this.status, Types.VARCHAR);
 		statement.setObject(7, this.anneeD, Types.INTEGER);
-		statement.setObject(8, this.ammortissementEmployeId, Types.INTEGER);
-		statement.setObject(9, this.moisF, Types.INTEGER);
-		statement.setObject(10, this.anneeF, Types.INTEGER);
+		statement.setObject(8, this.moisF, Types.INTEGER);
+		statement.setObject(9, this.anneeF, Types.INTEGER);
+		statement.setObject(10, this.montantParMois, Types.DECIMAL);
 		statement.setObject(11, this.description, Types.VARCHAR);
-		statement.setObject(12, this.montantParMois, Types.DECIMAL);
-
+		statement.setObject(12, this.ammortissementEmployeId, Types.INTEGER);
+		System.out.println(this.description);
+		System.out.println(this.type);
+		System.out.println(this.ammortissementEmployeId);
 		return statement.executeUpdate();
 	}
 

@@ -150,6 +150,7 @@ public class VueEmploye {
 						case SWT.YES:
 							ae.setStatus("Archivé");
 							ae.updateDatabase();
+							updateTableAmorti();
 						}
 					} catch (Exception e) {
 						System.out.println("erreur pour supprimer l'element");
@@ -485,7 +486,7 @@ public class VueEmploye {
 			textDesc.setText(selectedAmorti.getDescription());
 		}
 		else {
-			textDesc.setText("Prêt");
+			textDesc.setText("");
 		}
 
 
@@ -543,14 +544,22 @@ public class VueEmploye {
 
 					Double valeurTotale = Double.parseDouble(textValeur.getText());
 
-					AmmortissementEmploye ae = new AmmortissementEmploye(employeId, moisD, anneeD, moisF, anneeF, valeurTotale/duree, textDesc.getText(), duree, valeurTotale, type.getText(), "Publié");
+					AmmortissementEmploye ae = new AmmortissementEmploye(selectedAmorti.getAmmortissementEmployeId(), employeId, moisD, anneeD, moisF, anneeF, textDesc.getText(), valeurTotale/duree, duree, valeurTotale, type.getText(), "Publié");
 					if (selectedAmorti != null) {
 						ae.updateDatabase();
+						MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_INFORMATION | SWT.OK);
+						dialog.setText("Modification réussie");
+						dialog.setMessage("Ce cout a bien été modifié dans la base de données.");
+						dialog.open();
 					}
 					else {
 						ae.insertDatabase();
+						MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_INFORMATION | SWT.OK);
+						dialog.setText("Création réussie");
+						dialog.setMessage("Ce cout a bien été ajouté dans la base de données.");
+						dialog.open();
 					}
-
+					vueAmortissement();
 				} catch (Throwable e) {
 					e.printStackTrace();
 					System.out.println("erreur dans la creation");
@@ -2066,6 +2075,7 @@ public class VueEmploye {
 						case SWT.YES:
 							ae.setStatus("Archivé");
 							ae.updateDatabase();
+							updateTableAmorti();
 						}
 					}
 					else if (selectedEmploye!=null) {
