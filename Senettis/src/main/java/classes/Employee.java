@@ -483,6 +483,11 @@ public class Employee {
 				+ this.telephone + "|" + this.numeroMatricule + "|" + this.pointure + "|" + this.taille + "|"
 				+ this.dateArrivee + "|" + this.status;
 	}
+	
+	public String getNameString() {
+
+		return "" +this.nom + " " + this.prenom ;
+	}
 
 	// Getter and setter-----------------------------------------------
 	public String getStatus() {

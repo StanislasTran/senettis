@@ -288,7 +288,8 @@ public class Home {
 		Image image = new Image(display, "images\\moyenLogo.jpg");
 		logo.setImage(image);
 
-		logo.addMouseListener(new MouseListener() {
+		//TODO on peut essayer de remettre le fait que en cliquant sur le logo on revient a l'accueil
+		/*logo.addMouseListener(new MouseListener() {
 
 			@Override
 			public void mouseDoubleClick(MouseEvent e) {}
@@ -305,7 +306,7 @@ public class Home {
 					e1.printStackTrace();
 				}
 			}
-		});
+		});*/
 
 		logo.pack();
 	}

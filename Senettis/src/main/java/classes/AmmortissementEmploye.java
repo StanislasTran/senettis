@@ -25,16 +25,20 @@ public class AmmortissementEmploye {
 
 	private Integer ammortissementEmployeId;
 	private Integer employeId;
-	private Integer mois;
-	private Integer annee;
-	private Double duree;
+	private Integer moisD;
+	private Integer anneeD;
+	private Integer moisF;
+	private Integer anneeF;
+	private String description;
+	private Double montantParMois;
+	private Integer duree;
 	private Double valeur;
 	private String status;
 	private String type;
 
 	// Constructeurs----------------------------------------------
-	public AmmortissementEmploye(int ammortissementEmployeId, int employeId, Integer mois, Integer annee, Double duree, Double valeur, String type, String status) {
-		this(employeId,mois, annee, duree, valeur, type, status);
+	public AmmortissementEmploye(int ammortissementEmployeId, int employeId, Integer moisD, Integer anneeD,Integer moisF, Integer anneeF,String descritpion,Double montantParMois, Integer duree, Double valeur, String type, String status) {
+		this(employeId,moisD, anneeD, moisF,anneeF,montantParMois, duree, valeur, type, status);
 		if ((Integer) ammortissementEmployeId != null) {
 			this.ammortissementEmployeId = ammortissementEmployeId;
 		} else {
@@ -43,14 +47,14 @@ public class AmmortissementEmploye {
 		
 	}
 	
-	public AmmortissementEmploye(int employeId, Integer mois, Integer annee, Double duree, Double valeur, String type, String status) {
-		this(employeId, mois, annee, valeur, type, status);
+	public AmmortissementEmploye(int employeId, Integer moisD, Integer anneeD,Integer moisF, Integer anneeF,Double montantParMois,String description, Integer duree, Double valeur, String type, String status) {
+		this(employeId,moisD, anneeD, moisF,anneeF,montantParMois, duree, valeur, type, status);
 		
-		this.duree = duree;		
+		this.description = description;		
 	}
 	
 	
-	public AmmortissementEmploye(int employeId, Integer mois, Integer annee, Double valeur, String type, String status) {
+	public AmmortissementEmploye(int employeId, Integer moisD, Integer anneeD,Integer moisF, Integer anneeF,Double montantParMois, Integer duree, Double valeur, String type, String status) {
 		// id
 		if ((Integer) employeId != null) {
 			this.employeId = employeId;
@@ -58,16 +62,28 @@ public class AmmortissementEmploye {
 			throw new Error("L'employeId est vide, merci de spécifier un id.");
 		}
 		
-		if (mois != null) {
-			this.mois = mois;
+		if (moisD != null) {
+			this.moisD = moisD;
 		} else {
-			throw new Error("Le mois n'est pas spécifié.");
+			throw new Error("Le mois de depart n'est pas spécifié.");
 		}
 		
-		if (annee != null) {
-			this.annee = annee;
+		if (anneeD != null) {
+			this.anneeD = anneeD;
 		} else {
-			throw new Error("L'annee n'est pas spécifiée.");
+			throw new Error("L'annee de depart n'est pas spécifiée.");
+		}
+		
+		if (moisF != null) {
+			this.moisF = moisF;
+		} else {
+			throw new Error("Le mois de fin n'est pas spécifié.");
+		}
+		
+		if (anneeF != null) {
+			this.anneeF = anneeF;
+		} else {
+			throw new Error("L'annee de fin n'est pas spécifiée.");
 		}
 		
 		if (status != null) {
@@ -88,6 +104,8 @@ public class AmmortissementEmploye {
 		
 		this.valeur = valeur;
 		this.type = type;
+		this.duree=duree;
+		this.montantParMois = montantParMois;
 		
 	}
 
@@ -95,35 +113,44 @@ public class AmmortissementEmploye {
 
 	// Liens avec la BDD-----------------------------------------------
 	public int insertDatabase() throws SQLException {
-		String reqSql = "INSERT INTO AmmortissementEmploye(mois, annee,employe,valeur,duree,type,status) VALUES (?,?,?,?,?,?,?)";
+		String reqSql = "INSERT INTO AmmortissementEmploye(moisDepart, anneeDepart,employe,valeur,duree,type,status,moisFin,anneeFin,valeurParMois,description) VALUES (?,?,?,?,?,?,?,?,?,?,?)";
 
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
-		statement.setObject(1, this.mois, Types.INTEGER);
-		statement.setObject(2, this.annee, Types.INTEGER);
+		statement.setObject(1, this.moisD, Types.INTEGER);
+		statement.setObject(2, this.anneeD, Types.INTEGER);
 		statement.setObject(3, this.employeId, Types.INTEGER);
 		statement.setObject(4, this.valeur, Types.DECIMAL);
-		statement.setObject(5, this.duree, Types.DECIMAL);
+		statement.setObject(5, this.duree, Types.INTEGER);
 		statement.setObject(6, this.type, Types.VARCHAR);
 		statement.setObject(7, this.status, Types.VARCHAR);
+		statement.setObject(8, this.moisF, Types.INTEGER);
+		statement.setObject(9, this.anneeF, Types.INTEGER);
+		statement.setObject(10, this.montantParMois, Types.DECIMAL);
+		statement.setObject(11, this.description, Types.VARCHAR);
+		
 
 		return statement.executeUpdate();
 	}
 
 
 	public int updateDatabase() throws SQLException {
-		String reqSql = "UPDATE AmmortissementEmploye SET mois=?, employe=?, duree=?, valeur=?, type=?, status=?, annee=? WHERE AmmortissementEmployeId=?";
+		String reqSql = "UPDATE AmmortissementEmploye SET moisDepart=?, employe=?, duree=?, valeur=?, type=?, status=?, anneeDepart=?,moisFin=?,anneeFin=?,valeurParMois=?,description=? WHERE AmmortissementEmployeId=?";
 				
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
-		statement.setObject(1, this.mois, Types.INTEGER);
+		statement.setObject(1, this.moisD, Types.INTEGER);
 		statement.setObject(2, this.employeId, Types.INTEGER);
-		statement.setObject(3, this.duree, Types.DECIMAL);
+		statement.setObject(3, this.duree, Types.INTEGER);
 		statement.setObject(4, this.valeur, Types.DECIMAL);
 		statement.setObject(5, this.type, Types.VARCHAR);
 		statement.setObject(6, this.status, Types.VARCHAR);
-		statement.setObject(7, this.annee, Types.INTEGER);
+		statement.setObject(7, this.anneeD, Types.INTEGER);
 		statement.setObject(8, this.ammortissementEmployeId, Types.INTEGER);
+		statement.setObject(9, this.moisF, Types.INTEGER);
+		statement.setObject(10, this.anneeF, Types.INTEGER);
+		statement.setObject(11, this.description, Types.VARCHAR);
+		statement.setObject(12, this.montantParMois, Types.DECIMAL);
 
 		return statement.executeUpdate();
 	}
@@ -155,7 +182,7 @@ public class AmmortissementEmploye {
 
 
 	public static AmmortissementEmploye getAmmortissementEmployeById(int ammortissementEmployeId) throws SQLException {
-		String reqSql = "SELECT AmmortissementEmployeId,mois,annee,employe,duree,valeur,type,status FROM AmmortissementEmploye WHERE AmmortissementEmployeId=?";
+		String reqSql = "SELECT AmmortissementEmployeId,moisDepart,anneeDepart,employe,duree,valeur,type,status,moisFin,anneeFin,valeurParMois,description FROM AmmortissementEmploye WHERE AmmortissementEmployeId=?";
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
 		statement.setObject(1, ammortissementEmployeId, Types.INTEGER);
@@ -165,24 +192,29 @@ public class AmmortissementEmploye {
 
 		if (result.next()) {
 			ammortissementEmployeId = result.getInt("AmmortissementEmployeId");
-			Integer mois = result.getInt("mois");
-			Integer annee = result.getInt("annee");
+			Integer moisD = result.getInt("moisDepart");
+			Integer anneeD = result.getInt("anneeDepart");
+			Integer moisF = result.getInt("moisFin");
+			Integer anneeF = result.getInt("anneeFin");
 			int employeId = result.getInt("Employe");
-			
-			Double duree = 0.0;
-			if (result.getString("duree") != null) {
-				duree = Double.parseDouble(result.getString("duree"));
-			}
+
+			Integer duree = result.getInt("duree");
 			
 			Double valeur = 0.0;
 			if (result.getString("valeur") != null) {
 				valeur = Double.parseDouble(result.getString("valeur"));
 			}
 			
+			Double montantParMois = 0.0;
+			if (result.getString("valeurParMois") != null) {
+				montantParMois = Double.parseDouble(result.getString("valeurParMois"));
+			}
+			
 			String type = result.getString("type");
 			String status = result.getString("status");
+			String description = result.getString("description");
 
-			return new AmmortissementEmploye(ammortissementEmployeId, employeId,mois, annee,duree,valeur,type, status);
+			return new AmmortissementEmploye(ammortissementEmployeId, employeId,moisD, anneeD,moisF,anneeF,description,montantParMois,duree,valeur,type, status);
 
 		} else {
 			throw new SQLException("Data not found");
@@ -196,25 +228,29 @@ public class AmmortissementEmploye {
 		List<AmmortissementEmploye> allCoutEmploye = new ArrayList<AmmortissementEmploye>();
 		while (result.next()) {
 			int ammortissementEmployeId = result.getInt("AmmortissementEmployeId");
-			Integer mois = result.getInt("mois");
-			Integer annee = result.getInt("annee");
+			Integer moisD = result.getInt("moisDepart");
+			Integer anneeD = result.getInt("anneeDepart");
+			Integer moisF = result.getInt("moisFin");
+			Integer anneeF = result.getInt("anneeFin");
 			int employeId = result.getInt("Employe");
 			
-			Double duree = 0.0;
-			if (result.getString("duree") != null) {
-				duree = Double.parseDouble(result.getString("duree"));
-			}
+			Integer duree = result.getInt("duree");
 			
 			Double valeur = 0.0;
 			if (result.getString("valeur") != null) {
 				valeur = Double.parseDouble(result.getString("valeur"));
 			}
 			
+			Double montantParMois = 0.0;
+			if (result.getString("valeurParMois") != null) {
+				montantParMois = Double.parseDouble(result.getString("valeurParMois"));
+			}
+			
 			String type = result.getString("type");
 			String status = result.getString("status");
+			String description = result.getString("description");
 
-			allCoutEmploye.add(new AmmortissementEmploye(ammortissementEmployeId, employeId,mois, annee,duree, valeur, type, status));
-
+			allCoutEmploye.add(new AmmortissementEmploye(ammortissementEmployeId, employeId,moisD, anneeD,moisF,anneeF,description,montantParMois,duree,valeur,type, status));
 		}
 
 		return allCoutEmploye;
@@ -269,27 +305,12 @@ public class AmmortissementEmploye {
 		this.ammortissementEmployeId = ammortissementEmployeId;
 	}
 
-	public Integer getMois() {
-		return mois;
-	}
 
-	public void setMois(Integer mois) {
-		this.mois = mois;
-	}
-
-	public Integer getAnnee() {
-		return annee;
-	}
-
-	public void setAnnee(Integer annee) {
-		this.annee = annee;
-	}
-
-	public Double getDuree() {
+	public Integer getDuree() {
 		return duree;
 	}
 
-	public void setDuree(Double duree) {
+	public void setDuree(Integer duree) {
 		this.duree = duree;
 	}
 
@@ -307,6 +328,57 @@ public class AmmortissementEmploye {
 
 	public void setType(String type) {
 		this.type = type;
+	}
+
+	public Integer getMoisD() {
+		return moisD;
+	}
+
+	public void setMoisD(Integer moisD) {
+		this.moisD = moisD;
+	}
+
+	public Integer getAnneeD() {
+		return anneeD;
+	}
+
+	public void setAnneeD(Integer anneeD) {
+		this.anneeD = anneeD;
+	}
+
+	public Integer getMoisF() {
+		return moisF;
+	}
+
+	public void setMoisF(Integer moisF) {
+		this.moisF = moisF;
+	}
+
+	public Integer getAnneeF() {
+		return anneeF;
+	}
+
+	public void setAnneeF(Integer anneeF) {
+		this.anneeF = anneeF;
+	}
+
+	public String getDescription() {
+		if (description != null) {
+			return description;
+		}
+		return "";
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public Double getMontantParMois() {
+		return montantParMois;
+	}
+
+	public void setMontantParMois(Double montantParMois) {
+		this.montantParMois = montantParMois;
 	}
 
 	

@@ -37,21 +37,15 @@ public class CoutsEmploye {
 	private Double paniers;
 	private Double prets;
 	private Double saisieArret;
-	private Double menage;
-	private Double vitrerie;
-	private Double fournituresSanitaires;
-	private Double misesBlanc;
-	private Double autres;
 	private Double nombreHeures;
 	private String status;
 
 	// Constructeurs----------------------------------------------
 	public CoutsEmploye(int coutEmployeId, int employeId, Integer mois, Integer annee, Double remboursementTransport, Double remboursementTelephone, 
 			Double salaireNet, Double salaireBrut, Double chargesP, Double masseS, Double mutuelle, Double paniers,
-			Double prets, Double saisieArret, Double menage, Double vitrerie, Double fournituresSanitaires, Double misesBlanc, 
-			Double autres, Double nombreHeures, String status) {
+			Double prets, Double saisieArret, Double nombreHeures, String status) {
 		this(employeId,mois, annee,remboursementTransport,remboursementTelephone, salaireNet,salaireBrut,chargesP,masseS,mutuelle,paniers, 
-				prets,saisieArret,menage,vitrerie,fournituresSanitaires,misesBlanc, autres, nombreHeures, status);
+				prets,saisieArret, nombreHeures, status);
 		if ((Integer) coutEmployeId != null) {
 			this.coutEmployeId = coutEmployeId;
 		} else {
@@ -62,8 +56,7 @@ public class CoutsEmploye {
 	
 	public CoutsEmploye(int employeId, Integer mois, Integer annee, Double remboursementTransport, Double remboursementTelephone, 
 			Double salaireNet, Double salaireBrut, Double chargesP, Double masseS, Double mutuelle, Double paniers,
-			Double prets, Double saisieArret, Double menage, Double vitrerie, Double fournituresSanitaires, Double misesBlanc, 
-			Double autres, Double nombreHeures, String status) {
+			Double prets, Double saisieArret, Double nombreHeures, String status) {
 		this(employeId, mois, annee, status);
 		
 		this.remboursementTransport = remboursementTransport;
@@ -76,12 +69,7 @@ public class CoutsEmploye {
 		this.paniers = paniers;
 		this.prets = prets;
 		this.saisieArret = saisieArret;
-		this.menage = menage;
-		this.vitrerie = vitrerie;
-		this.fournituresSanitaires = fournituresSanitaires;
-		this.misesBlanc = misesBlanc;
 		this.nombreHeures = nombreHeures;
-		this.autres = autres;
 		
 	}
 	
@@ -128,7 +116,7 @@ public class CoutsEmploye {
 
 	// Liens avec la BDD-----------------------------------------------
 	public int insertDatabase() throws SQLException {
-		String reqSql = "INSERT INTO CoutEmploye(mois, annee,employe,mutuelle,indemnite_panier,salaire_brut,salaire_net,cout_transport,cout_telephone,charges_patronales,masse_salariale,menage,vitrerie,mises_a_blanc,fournitures_sanitaires,autres,remboursement_prets,saisie_arret,nb_heures,status) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+		String reqSql = "INSERT INTO CoutEmploye(mois, annee,employe,mutuelle,indemnite_panier,salaire_brut,salaire_net,cout_transport,cout_telephone,charges_patronales,masse_salariale,remboursement_prets,saisie_arret,nb_heures,status) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
@@ -143,22 +131,17 @@ public class CoutsEmploye {
 		statement.setObject(9, this.remboursementTelephone, Types.DECIMAL);
 		statement.setObject(10, this.chargesP, Types.DECIMAL);
 		statement.setObject(11, this.masseS, Types.DECIMAL);
-		statement.setObject(12, this.menage, Types.DECIMAL);
-		statement.setObject(13, this.vitrerie, Types.DECIMAL);
-		statement.setObject(14, this.misesBlanc, Types.DECIMAL);
-		statement.setObject(15, this.fournituresSanitaires, Types.DECIMAL);
-		statement.setObject(16, this.autres, Types.DECIMAL);
-		statement.setObject(17, this.prets, Types.DECIMAL);
-		statement.setObject(18, this.saisieArret, Types.DECIMAL);
-		statement.setObject(19, this.nombreHeures, Types.DECIMAL);
-		statement.setObject(20, this.status, Types.VARCHAR);
+		statement.setObject(12, this.prets, Types.DECIMAL);
+		statement.setObject(13, this.saisieArret, Types.DECIMAL);
+		statement.setObject(14, this.nombreHeures, Types.DECIMAL);
+		statement.setObject(15, this.status, Types.VARCHAR);
 
 		return statement.executeUpdate();
 	}
 
 
 	public int updateDatabase() throws SQLException {
-		String reqSql = "UPDATE CoutEmploye SET mois=?, employe=?, mutuelle=?, indemnite_panier=?, salaire_brut=?, salaire_net=?, cout_transport=?, cout_telephone=?, charges_patronales=?, masse_salariale=?, menage=?, vitrerie=?, mises_a_blanc=?, fournitures_sanitaires=?, autres=?, remboursement_prets=?, saisie_arret=?, nb_heures=?, status=?, annee=? WHERE CoutEmployeId=?";
+		String reqSql = "UPDATE CoutEmploye SET mois=?, employe=?, mutuelle=?, indemnite_panier=?, salaire_brut=?, salaire_net=?, cout_transport=?, cout_telephone=?, charges_patronales=?, masse_salariale=?, remboursement_prets=?, saisie_arret=?, nb_heures=?, status=?, annee=? WHERE CoutEmployeId=?";
 				
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
@@ -172,17 +155,12 @@ public class CoutsEmploye {
 		statement.setObject(8, this.remboursementTelephone, Types.DECIMAL);
 		statement.setObject(9, this.chargesP, Types.DECIMAL);
 		statement.setObject(10, this.masseS, Types.DECIMAL);
-		statement.setObject(11, this.menage, Types.DECIMAL);
-		statement.setObject(12, this.vitrerie, Types.DECIMAL);
-		statement.setObject(13, this.misesBlanc, Types.DECIMAL);
-		statement.setObject(14, this.fournituresSanitaires, Types.DECIMAL);
-		statement.setObject(15, this.autres, Types.DECIMAL);
-		statement.setObject(16, this.prets, Types.DECIMAL);
-		statement.setObject(17, this.saisieArret, Types.DECIMAL);
-		statement.setObject(18, this.nombreHeures, Types.DECIMAL);
-		statement.setObject(19, this.status, Types.VARCHAR);
-		statement.setObject(20, this.annee, Types.INTEGER);
-		statement.setObject(21, this.coutEmployeId, Types.INTEGER);
+		statement.setObject(11, this.prets, Types.DECIMAL);
+		statement.setObject(12, this.saisieArret, Types.DECIMAL);
+		statement.setObject(13, this.nombreHeures, Types.DECIMAL);
+		statement.setObject(14, this.status, Types.VARCHAR);
+		statement.setObject(15, this.annee, Types.INTEGER);
+		statement.setObject(16, this.coutEmployeId, Types.INTEGER);
 
 		return statement.executeUpdate();
 	}
@@ -214,7 +192,7 @@ public class CoutsEmploye {
 
 
 	public static CoutsEmploye getCoutEmployeById(int coutEmployeId) throws SQLException {
-		String reqSql = "SELECT CoutEmployeId,mois,annee,employe,mutuelle,indemnite_panier,salaire_brut,salaire_net,cout_transport,cout_telephone,charges_patronales,masse_salariale,menage,vitrerie,mises_a_blanc,fournitures_sanitaires,autres,remboursement_prets,saisie_arret,nb_heures,status FROM CoutEmploye WHERE CoutEmployeId=?";
+		String reqSql = "SELECT CoutEmployeId,mois,annee,employe,mutuelle,indemnite_panier,salaire_brut,salaire_net,cout_transport,cout_telephone,charges_patronales,masse_salariale,remboursement_prets,saisie_arret,nb_heures,status FROM CoutEmploye WHERE CoutEmployeId=?";
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
 		statement.setObject(1, coutEmployeId, Types.INTEGER);
@@ -269,31 +247,6 @@ public class CoutsEmploye {
 				masseS = Double.parseDouble(result.getString("masse_salariale"));
 			}
 			
-			Double menage = 0.0;
-			if (result.getString("menage") != null) {
-				menage = Double.parseDouble(result.getString("menage"));
-			}
-			
-			Double vitrerie = 0.0;
-			if (result.getString("vitrerie") != null) {
-				vitrerie = Double.parseDouble(result.getString("vitrerie"));
-			}
-			
-			Double misesBlanc = 0.0;
-			if (result.getString("mises_a_blanc") != null) {
-				misesBlanc = Double.parseDouble(result.getString("mises_a_blanc"));
-			}
-			
-			Double fournituresSanitaires = 0.0;
-			if (result.getString("fournitures_sanitaires") != null) {
-				fournituresSanitaires = Double.parseDouble(result.getString("fournitures_sanitaires"));
-			}
-
-			Double autres = 0.0;
-			if (result.getString("autres") != null) {
-				autres = Double.parseDouble(result.getString("autres"));
-			}
-			
 			Double prets = 0.0;
 			if (result.getString("remboursement_prets") != null) {
 				prets = Double.parseDouble(result.getString("remboursement_prets"));
@@ -312,7 +265,7 @@ public class CoutsEmploye {
 			String status = result.getString("status");
 
 			return new CoutsEmploye(coutEmployeId, employeId,mois, annee,remboursementTransport,remboursementTelephone, salaireNet,salaireBrut,chargesP,masseS,mutuelle,paniers, 
-					prets,saisieArret,menage,vitrerie,fournituresSanitaires,misesBlanc, autres,nombreHeures, status);
+					prets,saisieArret,nombreHeures, status);
 
 		} else {
 			throw new SQLException("Data not found");
@@ -371,31 +324,6 @@ public class CoutsEmploye {
 				masseS = Double.parseDouble(result.getString("masse_salariale"));
 			}
 			
-			Double menage = 0.0;
-			if (result.getString("menage") != null) {
-				menage = Double.parseDouble(result.getString("menage"));
-			}
-			
-			Double vitrerie = 0.0;
-			if (result.getString("vitrerie") != null) {
-				vitrerie = Double.parseDouble(result.getString("vitrerie"));
-			}
-			
-			Double misesBlanc = 0.0;
-			if (result.getString("mises_a_blanc") != null) {
-				misesBlanc = Double.parseDouble(result.getString("mises_a_blanc"));
-			}
-			
-			Double fournituresSanitaires = 0.0;
-			if (result.getString("fournitures_sanitaires") != null) {
-				fournituresSanitaires = Double.parseDouble(result.getString("fournitures_sanitaires"));
-			}
-
-			Double autres = 0.0;
-			if (result.getString("autres") != null) {
-				autres = Double.parseDouble(result.getString("autres"));
-			}
-			
 			Double prets = 0.0;
 			if (result.getString("remboursement_prets") != null) {
 				prets = Double.parseDouble(result.getString("remboursement_prets"));
@@ -414,7 +342,7 @@ public class CoutsEmploye {
 			String status = result.getString("status");
 
 			allCoutEmploye.add(new CoutsEmploye(coutEmployeId, employeId,mois, annee,remboursementTransport,remboursementTelephone, salaireNet,salaireBrut,
-					chargesP,masseS,mutuelle,paniers, prets,saisieArret,menage,vitrerie,fournituresSanitaires,misesBlanc, autres,nombreHeures, status));
+					chargesP,masseS,mutuelle,paniers, prets,saisieArret,nombreHeures, status));
 
 		}
 
@@ -435,7 +363,7 @@ public class CoutsEmploye {
 		return "" + this.coutEmployeId + "|" + this.employeId + "|" + this.mois + "|" + this.annee + "|" + this.remboursementTransport + "|" + this.remboursementTelephone + "|"
 				+ this.salaireNet + "|" + this.salaireBrut + "|" + this.chargesP + "|" + this.masseS + "|"
 				+ this.mutuelle + "|" + this.paniers + "|" + this.prets + "|"
-				+ this.saisieArret + "|" + this.menage + "|" + this.vitrerie + "|" + this.fournituresSanitaires + "|" + this.misesBlanc + "|" + this.autres  + "|" + this.nombreHeures
+				+ this.saisieArret + "|" + this.nombreHeures
 				+ "|" + this.status;
 	}
 
@@ -610,45 +538,7 @@ public class CoutsEmploye {
 		this.saisieArret = saisieArret;
 	}
 
-	public Double getMenage() {
-		return menage;
-	}
 
-	public void setMenage(Double menage) {
-		this.menage = menage;
-	}
-
-	public Double getVitrerie() {
-		return vitrerie;
-	}
-
-	public void setVitrerie(Double vitrerie) {
-		this.vitrerie = vitrerie;
-	}
-
-	public Double getFournituresSanitaires() {
-		return fournituresSanitaires;
-	}
-
-	public void setFournituresSanitaires(Double fournituresSanitaires) {
-		this.fournituresSanitaires = fournituresSanitaires;
-	}
-
-	public Double getMisesBlanc() {
-		return misesBlanc;
-	}
-
-	public void setMisesBlanc(Double misesBlanc) {
-		this.misesBlanc = misesBlanc;
-	}
-
-	public Double getAutres() {
-		return autres;
-	}
-
-	public void setAutres(Double autres) {
-		this.autres = autres;
-	}
 	
 	
 	
