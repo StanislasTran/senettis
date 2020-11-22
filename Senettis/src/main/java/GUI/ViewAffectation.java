@@ -2,6 +2,9 @@ package GUI;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.Month;
+import java.time.Year;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -12,6 +15,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.RowData;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
@@ -25,6 +29,7 @@ import org.eclipse.swt.widgets.Text;
 import classes.Affectation;
 import classes.Employee;
 import classes.Site;
+import classes.Status;
 
 public class ViewAffectation {
 
@@ -34,6 +39,13 @@ public class ViewAffectation {
 	private Composite rightComposite;
 	private Composite leftComposite;
 	private Composite rightColumn;
+	private Combo monthFilter;
+	private Combo yearFilter;
+	private Button createButton;
+	private Button modifyButton;
+	private Composite filterComposite;
+	private Composite buttons;
+	private Button removeButton;
 
 	/**
 	 * Constructor
@@ -57,7 +69,11 @@ public class ViewAffectation {
 	 */
 	private void buildHome() throws SQLException {
 
+		// selection part
+
 		selection(this.affectationView);
+		createMonthFilter();
+		createYearFilter();
 
 		this.mainComposite = new Composite(this.affectationView, SWT.NONE);
 		this.mainComposite.setLayout(new RowLayout(SWT.HORIZONTAL));
@@ -70,12 +86,12 @@ public class ViewAffectation {
 		TabFolder tabFolder = new TabFolder(leftComposite, SWT.BORDER);
 
 		tabFolder.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(org.eclipse.swt.events.SelectionEvent event) {
-				selection.dispose();
-				disposeAllChildren(getRightComposite());
-				getVueAffectation().pack();
+			public void widgetSelected(SelectionEvent e) {
+				cleanRightComposite();
+				cleanButtons();
 
 			}
+
 		});
 
 		TabItem tabEmploye = new TabItem(tabFolder, SWT.NULL);
@@ -84,11 +100,58 @@ public class ViewAffectation {
 		TabItem tabChantier = new TabItem(tabFolder, SWT.NULL);
 		tabChantier.setText("Affectation par Chantier");
 
-		createTableEmployeStats(tabEmploye);
-		createTableChantierStats(tabChantier);
+		this.monthFilter.addSelectionListener(new SelectionAdapter() {
 
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				Month month = Month.of(monthFilter.getSelectionIndex() + 1);
+				Year year = Year.of(Integer.parseInt(yearFilter.getText()));
+				try {
+
+					cleanButtons();
+					cleanRightComposite();
+					createTableEmployeStats(tabEmploye, month, year);
+					createTableChantierStats(tabChantier, month, year);
+					disposeAllChildren(rightComposite);
+					mainComposite.layout(true, true);
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+
+		});
+
+		this.yearFilter.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				Month month = Month.of(monthFilter.getSelectionIndex() + 1);
+				Year year = Year.of(Integer.parseInt(yearFilter.getText()));
+				try {
+					cleanButtons();
+					cleanRightComposite();
+					createTableEmployeStats(tabEmploye, month, year);
+					createTableChantierStats(tabChantier, month, year);
+					disposeAllChildren(rightComposite);
+					mainComposite.layout(true, true);
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+
+		});
+
+		Month month = Month.of(monthFilter.getSelectionIndex() + 1);
+		Year year = Year.of(Integer.parseInt(yearFilter.getText()));
+		createTableEmployeStats(tabEmploye, month, year);
+		createTableChantierStats(tabChantier, month, year);
+
+		System.out.println(selection.isDisposed());
 		mainComposite.pack();
 		tabFolder.pack();
+		this.selection.pack();
 		leftComposite.pack();
 		rightComposite.pack();
 		affectationView.pack();
@@ -110,7 +173,7 @@ public class ViewAffectation {
 	 * @param tabEmploye
 	 * @throws SQLException
 	 */
-	private void createTableEmployeStats(TabItem tabEmploye) throws SQLException {
+	private void createTableEmployeStats(TabItem tabEmploye, Month month, Year year) throws SQLException {
 
 		final Table table = new Table(tabEmploye.getParent(),
 				SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.FULL_SELECTION);
@@ -118,14 +181,14 @@ public class ViewAffectation {
 
 		table.setLinesVisible(true);
 		table.setHeaderVisible(true);
-		String[] titles = { "EmployeId", "Nom", "Prenom", "Nombre d'employés différents", "Nombre d'heures total" };
+		String[] titles = { "EmployeId", "Nom", "Prenom", "Nombre de chantier différents", "Nombre d'heures total" };
 
 		for (String title : titles) {
 			TableColumn column = new TableColumn(table, SWT.NONE);
 			column.setText(title);
 		}
 
-		ResultSet result = Affectation.getEmployeStats();
+		ResultSet result = Affectation.getEmployeStats(month, year);
 		final TableColumn[] columns = table.getColumns();
 		while (result.next()) {
 			TableItem item = new TableItem(table, SWT.NONE);
@@ -139,7 +202,7 @@ public class ViewAffectation {
 				item.setText(3, result.getString("nb_chantier"));
 
 			if (Objects.isNull(result.getString("nb_heure")))
-				item.setText(4, "Inconnu");
+				item.setText(4, "0");
 			else
 				item.setText(4, result.getString("nb_heure"));
 
@@ -155,7 +218,10 @@ public class ViewAffectation {
 					int employeId = Integer.parseInt(table.getSelection()[0].getText());
 
 					try {
-						compositeSelectionAjouterForEmployee(employeId);
+						if (!Objects.isNull(modifyButton) && !modifyButton.isDisposed()) {
+							modifyButton.dispose();
+						}
+						addAjouterForEmployee(employeId);
 						EmployeAffectationDisplay(employeId);
 
 					} catch (SQLException e1) {
@@ -186,7 +252,7 @@ public class ViewAffectation {
 	 *
 	 * @throws SQLException
 	 */
-	private void createTableChantierStats(TabItem tabChantier) throws SQLException {
+	private void createTableChantierStats(TabItem tabChantier, Month month, Year year) throws SQLException {
 
 		final Table table = new Table(tabChantier.getParent(),
 				SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.FULL_SELECTION);
@@ -202,7 +268,7 @@ public class ViewAffectation {
 			column.setText(title);
 		}
 
-		ResultSet result = Affectation.getChantierStats();
+		ResultSet result = Affectation.getChantierStats(month, year);
 		final TableColumn[] columns = table.getColumns();
 		while (result.next()) {
 			TableItem item = new TableItem(table, SWT.NONE);
@@ -236,6 +302,7 @@ public class ViewAffectation {
 					int siteId = Integer.parseInt(table.getSelection()[0].getText());
 
 					addButtonAjouterForSite(siteId);
+
 					try {
 						siteAffectationDisplay(siteId);
 					} catch (SQLException e1) {
@@ -269,9 +336,11 @@ public class ViewAffectation {
 	 * @throws SQLException
 	 */
 	public void EmployeAffectationDisplay(int employeId) throws SQLException {
-		ResultSet result = Affectation.getEmployeAffectation(employeId);
 
-		disposeAllChildren(this.rightComposite);
+		this.cleanRightComposite();
+		Month month = Month.of(this.monthFilter.getSelectionIndex() + 1);
+		Year year = Year.of(Integer.parseInt(this.yearFilter.getText()));
+		ResultSet result = Affectation.getEmployeAffectationPublished(employeId, month, year);
 
 		final Table table = new Table(this.rightComposite, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.FULL_SELECTION);
 		table.setLayoutData(new RowData(900, 800));
@@ -309,7 +378,8 @@ public class ViewAffectation {
 
 			public void widgetSelected(SelectionEvent e) {
 
-				AddModifButtonEmployee(affectationsId.get(table.getSelectionIndex()), employeId);
+				AddModifButtonEmployee(affectationsId.get(table.getSelectionIndex()));
+				addRemoveForEmployee(affectationsId.get(table.getSelectionIndex()), employeId);
 
 			}
 
@@ -335,7 +405,10 @@ public class ViewAffectation {
 	 * @throws SQLException
 	 */
 	public void siteAffectationDisplay(int siteId) throws SQLException {
-		ResultSet result = Affectation.getSiteAffectation(siteId);
+		cleanRightComposite();
+		Month month = Month.of(this.monthFilter.getSelectionIndex() + 1);
+		Year year = Year.of(Integer.parseInt(this.yearFilter.getText()));
+		ResultSet result = Affectation.getSiteAffectationPublished(siteId, month, year);
 		disposeAllChildren(this.rightComposite);
 
 		final Table table = new Table(this.rightComposite, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.FULL_SELECTION);
@@ -372,6 +445,7 @@ public class ViewAffectation {
 			public void widgetSelected(SelectionEvent e) {
 
 				AddModifButtonSite(affectationsId.get(table.getSelectionIndex()), siteId);
+				addRemoveForSite(affectationsId.get(table.getSelectionIndex()), siteId);
 
 			}
 
@@ -457,28 +531,36 @@ public class ViewAffectation {
 	 */
 	public void selection(Composite composite) {
 		this.selection = new Composite(composite, SWT.NONE);
-		RowLayout rowLayout = new RowLayout();
+		RowLayout rowLayout = new RowLayout(SWT.VERTICAL);
 		this.selection.setLayout(rowLayout);
-		this.selection.setBackground(Couleur.PeterRiver);
+
+		this.filterComposite = new Composite(this.selection, SWT.NONE);
+		this.filterComposite.setLayout(new RowLayout(SWT.HORIZONTAL));
+
+		this.buttons = new Composite(this.selection, SWT.NONE);
+		this.buttons.setLayout(new RowLayout(SWT.HORIZONTAL));
 
 		this.selection.pack();
+		this.filterComposite.pack();
+		this.buttons.pack();
+		composite.pack();
 	}
 
 	/**
-	 * Add the button "Ajouter"and "Modifier" when the user click on an employee
+	 * Add "Modifier" when the user click on an employee
 	 * 
 	 * @param employeId
 	 */
-	public void AddModifButtonEmployee(int affectationId, int employeId) {
-		compositeSelectionAjouterForEmployee(employeId);
-		if (this.selection.getChildren().length == 2) {
-			this.selection.getChildren()[1].dispose();
+	public void AddModifButtonEmployee(int affectationId) {
+		if (!Objects.isNull(this.modifyButton) && !this.modifyButton.isDisposed()) {
+			this.modifyButton.dispose();
 		}
 
-		Button boutonModifier = new Button(this.selection, SWT.CENTER);
-		boutonModifier.setText("Modifier Affectation");
+		this.modifyButton = new Button(this.buttons, SWT.CENTER);
+		this.buttons.layout(true, true);
+		this.modifyButton.setText("Modifier Affectation");
 
-		boutonModifier.addSelectionListener(new SelectionAdapter() {
+		this.modifyButton.addSelectionListener(new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -495,27 +577,29 @@ public class ViewAffectation {
 			}
 		});
 
+		this.modifyButton.moveBelow(this.createButton);
 		this.selection.moveAbove(this.mainComposite);
-		boutonModifier.pack();
+		this.modifyButton.pack();
 		this.selection.pack();
 
 	}
 
 	/**
-	 * Add the button "Ajouter"and "Modifier" when the user click on an employee
+	 * Add "Modifier" when the user click on a site
 	 * 
 	 * @param employeId
 	 */
 	public void AddModifButtonSite(int affectationId, int siteId) {
-		addButtonAjouterForSite(siteId);
-		if (this.selection.getChildren().length == 2) {
-			this.selection.getChildren()[1].dispose();
+		if (!Objects.isNull(modifyButton) && !modifyButton.isDisposed()) {
+			modifyButton.dispose();
+			buttons.layout(true, true);
+
 		}
+		this.modifyButton = new Button(this.buttons, SWT.CENTER);
+		buttons.layout(true, true);
+		this.modifyButton.setText("Modifier Affectation");
 
-		Button boutonModifier = new Button(this.selection, SWT.CENTER);
-		boutonModifier.setText("Modifier Affectation");
-
-		boutonModifier.addSelectionListener(new SelectionAdapter() {
+		this.modifyButton.addSelectionListener(new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -532,8 +616,7 @@ public class ViewAffectation {
 			}
 		});
 
-		this.selection.moveAbove(this.mainComposite);
-		boutonModifier.pack();
+		this.modifyButton.pack();
 		this.selection.pack();
 
 	}
@@ -546,16 +629,21 @@ public class ViewAffectation {
 	 */
 	private void addButtonAjouterForSite(int chantierId) {
 
-		if (this.selection.isDisposed())
-			this.selection = new Composite(this.affectationView, SWT.NONE);
-		this.selection.setLayout(new RowLayout(SWT.HORIZONTAL));
+		if (!Objects.isNull(this.createButton) && !this.createButton.isDisposed()) {
+			createButton.dispose();
+			buttons.layout(true, true);
+		}
+		this.createButton = new Button(this.buttons, SWT.CENTER);
+		buttons.layout(true, true);
 
-		if (this.selection.getChildren().length > 0)
-			selection.getChildren()[0].dispose();
-		Button boutonAjout = new Button(this.selection, SWT.CENTER);
-		boutonAjout.setText("Ajouter Affectation");
+		this.createButton.setText("Ajouter Affectation");
 
-		boutonAjout.addSelectionListener(new SelectionAdapter() {
+		if (!Objects.isNull(this.modifyButton) && !this.modifyButton.isDisposed()) {
+			this.createButton.moveAbove(this.modifyButton);
+			buttons.layout(true, true);
+		}
+
+		this.createButton.addSelectionListener(new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -573,12 +661,11 @@ public class ViewAffectation {
 		});
 
 		this.selection.moveAbove(this.mainComposite);
-		boutonAjout.pack();
+		this.createButton.pack();
 		this.selection.pack();
 		this.affectationView.pack();
 		this.leftComposite.pack();
 		this.rightColumn.pack();
-
 	}
 
 	/**
@@ -589,18 +676,17 @@ public class ViewAffectation {
 	 * @param produitId
 	 */
 
-	public void compositeSelectionAjouterForEmployee(int employeId) {
+	public void addAjouterForEmployee(int employeId) {
 
-		if (this.selection.isDisposed())
-			this.selection = new Composite(this.affectationView, SWT.NONE);
-		this.selection.setLayout(new RowLayout(SWT.HORIZONTAL));
+		if (!Objects.isNull(this.createButton) && !this.createButton.isDisposed()) {
+			createButton.dispose();
+			buttons.layout(true, true);
+		}
+		this.createButton = new Button(this.buttons, SWT.CENTER);
+		buttons.layout(true, true);
+		this.createButton.setText("Ajouter Affectation");
 
-		if (this.selection.getChildren().length > 0)
-			selection.getChildren()[0].dispose();
-		Button boutonAjout = new Button(this.selection, SWT.CENTER);
-		boutonAjout.setText("Ajouter Affectation");
-
-		boutonAjout.addSelectionListener(new SelectionAdapter() {
+		this.createButton.addSelectionListener(new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -616,13 +702,175 @@ public class ViewAffectation {
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 		});
+		if (!Objects.isNull(this.modifyButton) && !this.modifyButton.isDisposed()) {
+			this.createButton.moveAbove(this.modifyButton);
+			buttons.layout(true, true);
+			System.out.println("oui");
+		}
 
 		this.selection.moveAbove(this.mainComposite);
-		boutonAjout.pack();
+		this.createButton.pack();
 		this.selection.pack();
 		this.affectationView.pack();
 		this.leftComposite.pack();
 		this.rightColumn.pack();
+
+	}
+
+	/**
+	 * Add the button "Supprimer affectation"
+	 * 
+	 * @param affectationId
+	 */
+	public void addRemoveForSite(int affectationId, int siteId) {
+
+		if (!Objects.isNull(this.removeButton) && !this.removeButton.isDisposed()) {
+			removeButton.dispose();
+			buttons.layout(true, true);
+		}
+		this.removeButton = new Button(this.buttons, SWT.CENTER);
+		buttons.layout(true, true);
+		this.removeButton.setText("Supprimer Affectation");
+
+		this.removeButton.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				try {
+					remove(affectationId);
+					siteAffectationDisplay(siteId);
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
+
+		if (!Objects.isNull(this.modifyButton) && !this.modifyButton.isDisposed()) {
+			this.removeButton.moveBelow(this.modifyButton);
+			buttons.layout(true, true);
+
+		} else {
+			if (!Objects.isNull(this.createButton) && !this.createButton.isDisposed()) {
+				this.removeButton.moveBelow(this.createButton);
+				buttons.layout(true, true);
+
+			}
+		}
+
+		this.selection.moveAbove(this.mainComposite);
+		this.removeButton.pack();
+		this.selection.pack();
+		this.affectationView.pack();
+		this.leftComposite.pack();
+		this.rightColumn.pack();
+
+	}
+
+	/**
+	 * Add the button "Supprimer affectation"
+	 * 
+	 * @param affectationId
+	 */
+	public void addRemoveForEmployee(int affectationId, int employeId) {
+
+		if (!Objects.isNull(this.removeButton) && !this.removeButton.isDisposed()) {
+			removeButton.dispose();
+			buttons.layout(true, true);
+		}
+		this.removeButton = new Button(this.buttons, SWT.CENTER);
+		buttons.layout(true, true);
+		this.removeButton.setText("Supprimer Affectation");
+
+		this.removeButton.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				try {
+					remove(affectationId);
+					EmployeAffectationDisplay(employeId);
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
+
+		if (!Objects.isNull(this.modifyButton) && !this.modifyButton.isDisposed()) {
+			this.removeButton.moveBelow(this.modifyButton);
+			buttons.layout(true, true);
+
+		} else {
+			if (!Objects.isNull(this.createButton) && !this.createButton.isDisposed()) {
+				this.removeButton.moveBelow(this.createButton);
+				buttons.layout(true, true);
+
+			}
+		}
+
+		this.selection.moveAbove(this.mainComposite);
+		this.removeButton.pack();
+		this.selection.pack();
+		this.affectationView.pack();
+		this.leftComposite.pack();
+		this.rightColumn.pack();
+
+	}
+
+	protected void remove(int affectationId) throws SQLException {
+		Affectation.getAffectation(affectationId).remove();
+
+	}
+
+	/**
+	 * Create the filter on Month
+	 */
+	private void createMonthFilter() {
+		if (Objects.isNull(monthFilter) || monthFilter.isDisposed()) {
+			Composite monthComposite = new Composite(this.filterComposite, SWT.NONE);
+			monthComposite.setLayout(new RowLayout(SWT.HORIZONTAL));
+			Label monthLabel = new Label(monthComposite, SWT.NONE);
+			monthLabel.setText("Mois");
+			this.monthFilter = new Combo(monthComposite, SWT.NONE);
+
+			String[] frenchMonth = { "Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août",
+					"Septembre", "Octobre", "Novembre", "Décembre" };
+
+			for (String m : frenchMonth)
+				this.monthFilter.add(m);
+			int currentMonth = LocalDate.now().getMonth().getValue();
+			this.monthFilter.select(currentMonth - 1);
+			this.monthFilter.pack();
+			this.buttons.pack();
+			this.selection.pack();
+
+		}
+
+	}
+
+	// Year part
+	private void createYearFilter() {
+		if (Objects.isNull(yearFilter) || yearFilter.isDisposed()) {
+			Composite yearComposite = new Composite(this.filterComposite, SWT.NONE);
+			yearComposite.setLayout(new RowLayout(SWT.HORIZONTAL));
+			Label yearLabel = new Label(yearComposite, SWT.NONE);
+			yearLabel.setText("Année");
+			this.yearFilter = new Combo(yearComposite, SWT.NONE);
+
+			int currentYear = Year.now().getValue();
+			for (int i = currentYear - 2; i < currentYear + 3; i++)
+				this.yearFilter.add("" + i);
+			this.yearFilter.select(2);
+			this.yearFilter.pack();
+		}
 
 	}
 
@@ -634,7 +882,9 @@ public class ViewAffectation {
 
 	/***
 	 * 
-	 * @param chantierId
+	 * Display the form to add an Affectation to a Site
+	 * 
+	 * @param <type>int</type>chantierId
 	 * @throws SQLException
 	 */
 
@@ -661,24 +911,55 @@ public class ViewAffectation {
 		nbHeureLabel.setText("Nombre d'heures");
 		Text nbHeureTexte = new Text(nbHeureComposite, SWT.NONE);
 
-		Composite tableComposite = new Composite(ajoutComposite, SWT.NONE);
-		Table table = VueEmploye.getAllEmployer(ajoutComposite);
+		Table table = VueEmploye.getAllEmployerForAffectation(ajoutComposite);
 
 		table.setLayoutData(new RowData(400, 100));
 
+		// Month part
+
+		Composite monthComposite = new Composite(ajoutComposite, SWT.NONE);
+		monthComposite.setLayout(new RowLayout(SWT.HORIZONTAL));
+		Label monthLabel = new Label(monthComposite, SWT.NONE);
+		monthLabel.setText("Mois");
+		Combo comboMonth = new Combo(monthComposite, SWT.NONE);
+
+		String[] frenchMonth = { "Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre",
+				"Octobre", "Novembre", "Décembre" };
+
+		for (String m : frenchMonth)
+			comboMonth.add(m);
+		int currentMonth = LocalDate.now().getMonth().getValue();
+		comboMonth.select(currentMonth - 1);
+
+		// Year part
+		Composite yearComposite = new Composite(ajoutComposite, SWT.NONE);
+		yearComposite.setLayout(new RowLayout(SWT.HORIZONTAL));
+		Label yearLabel = new Label(yearComposite, SWT.NONE);
+		yearLabel.setText("Année");
+		Combo comboYear = new Combo(yearComposite, SWT.NONE);
+
+		int currentYear = Year.now().getValue();
+		for (int i = currentYear - 2; i < currentYear + 3; i++)
+			comboYear.add("" + i);
+		comboYear.select(2);
+
+		Composite buttonComposite = new Composite(ajoutComposite, SWT.NONE);
+		buttonComposite.setLayout(new RowLayout(SWT.HORIZONTAL));
 		// ValidationButton part
 
-		Button buttonValide = new Button(ajoutComposite, SWT.CENTER);
+		Button buttonValide = new Button(buttonComposite, SWT.CENTER);
 		buttonValide.setText("Valider");
 		buttonValide.addSelectionListener(new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-
+				Integer idEmploye = Integer.parseInt(table.getSelection()[0].getText(3));
+				Double nbHeure = Double.parseDouble(nbHeureTexte.getText());
+				Month month = Month.of(comboMonth.getSelectionIndex() + 1);
+				Year year = Year.of(Integer.parseInt(comboYear.getText()));
+				Status status = Status.PUBLISHED;
 				if (table.getSelection().length == 1) {
-					Affectation affectation = new Affectation(siteId,
-							Integer.parseInt(table.getSelection()[0].getText(4)),
-							Double.parseDouble(nbHeureTexte.getText()), "Publié");
+					Affectation affectation = new Affectation(siteId, idEmploye, nbHeure, month, year, status);
 					try {
 						affectation.insertDatabase();
 						ajoutComposite.dispose();
@@ -701,11 +982,29 @@ public class ViewAffectation {
 
 		});
 
+		Button buttonCancel = new Button(buttonComposite, SWT.CENTER);
+		buttonCancel.setText("Retour");
+		buttonCancel.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				try {
+					ajoutComposite.dispose();
+					buildHome();
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+
+		});
+
 		nbHeureTexte.pack();
-		/*
-		 * buttonValide.pack(); labelTitle.pack(); nbHeureComposite.pack();
-		 * tableComposite.pack(); ajoutComposite.pack(); table.pack();
-		 */
 
 		this.affectationView.pack();
 		this.rightColumn.pack();
@@ -713,8 +1012,9 @@ public class ViewAffectation {
 	}
 
 	/**
+	 * Display the form to add an affectation to an Employee
 	 * 
-	 * @param employeId
+	 * @param <type>int</type> employeId
 	 * @throws SQLException
 	 */
 	public void ajouterAffectationEmploye(int employeeId) throws SQLException {
@@ -745,32 +1045,96 @@ public class ViewAffectation {
 
 		table.setLayoutData(new RowData(400, 100));
 
+		// Month part
+
+		Composite monthComposite = new Composite(ajoutComposite, SWT.NONE);
+		monthComposite.setLayout(new RowLayout(SWT.HORIZONTAL));
+		Label monthLabel = new Label(monthComposite, SWT.NONE);
+		monthLabel.setText("Mois");
+		Combo comboMonth = new Combo(monthComposite, SWT.NONE);
+
+		String[] frenchMonth = { "Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre",
+				"Octobre", "Novembre", "Décembre" };
+
+		for (String m : frenchMonth)
+			comboMonth.add(m);
+		int currentMonth = LocalDate.now().getMonthValue();
+
+		comboMonth.select(currentMonth - 1);
+
+		// Year part
+		Composite yearComposite = new Composite(ajoutComposite, SWT.NONE);
+		yearComposite.setLayout(new RowLayout(SWT.HORIZONTAL));
+		Label yearLabel = new Label(yearComposite, SWT.NONE);
+		yearLabel.setText("Année");
+		Combo comboYear = new Combo(yearComposite, SWT.NONE);
+
+		int currentYear = Year.now().getValue();
+		for (int i = currentYear - 2; i < currentYear + 3; i++)
+			comboYear.add("" + i);
+		comboYear.select(2);
+
+		Composite buttonComposite = new Composite(ajoutComposite, SWT.NONE);
+
+		buttonComposite.setLayout(new RowLayout(SWT.HORIZONTAL));
 		// ValidationButton part
 
-		Button buttonValide = new Button(ajoutComposite, SWT.CENTER);
+		Button buttonValide = new Button(buttonComposite, SWT.CENTER);
 		buttonValide.setText("Valider");
 		buttonValide.addSelectionListener(new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+				if (table.getSelection().length > 0) {
+					Integer affectationId = Integer.parseInt(table.getSelection()[0].getText(3));
 
-				if (table.getSelection().length == 1) {
-					Affectation affectation = new Affectation(Integer.parseInt(table.getSelection()[0].getText(3)),
-							employeeId, Double.parseDouble(nbHeureTexte.getText()), "Publié");
-					try {
-						affectation.insertDatabase();
-						ajoutComposite.dispose();
+					Integer siteId = Integer.parseInt(table.getSelection()[0].getText(3));
 
-						getVueAffectation().pack();
-						getVueAffectation().getParent().pack();
-						buildHome();
+					Double nbHeure = Double.parseDouble(nbHeureTexte.getText());
+					Month month = Month.of(comboMonth.getSelectionIndex() + 1);
+					System.out.println(month);
+					Year year = Year.of(Integer.parseInt(comboYear.getText()));
 
-					} catch (SQLException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
+					Status status = Status.PUBLISHED;
+					if (table.getSelection().length == 1) {
+						Affectation affectation = new Affectation(siteId, employeeId, nbHeure, month, year, status);
+						try {
+							affectation.insertDatabase();
+							ajoutComposite.dispose();
+
+							getVueAffectation().pack();
+							getVueAffectation().getParent().pack();
+							buildHome();
+
+						} catch (SQLException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+
 					}
-
 				}
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+
+		});
+
+		Button buttonCancel = new Button(buttonComposite, SWT.CENTER);
+		buttonCancel.setText("Retour");
+		buttonCancel.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				try {
+					ajoutComposite.dispose();
+					buildHome();
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+
 			}
 
 			@Override
@@ -835,8 +1199,12 @@ public class ViewAffectation {
 
 		table.setLayoutData(new RowData(400, 100));
 
-		Button buttonValide = new Button(modifComposite, SWT.CENTER);
+		Composite buttonComposite = new Composite(modifComposite, SWT.NONE);
+		buttonComposite.setLayout(new RowLayout(SWT.HORIZONTAL));
+
+		Button buttonValide = new Button(buttonComposite, SWT.CENTER);
 		buttonValide.setText("Valider");
+
 		buttonValide.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -861,17 +1229,36 @@ public class ViewAffectation {
 						e2.printStackTrace();
 					}
 
-					System.out.println("faiiit");
-
 				}
 			}
 
 		});
 
-		table.pack();
+		Button buttonCancel = new Button(buttonComposite, SWT.CENTER);
+		buttonCancel.setText("Retour");
 
+		buttonCancel.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				try {
+					modifComposite.dispose();
+
+					buildHome();
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+
+			}
+
+		});
+
+		table.pack();
+		buttonCancel.pack();
 		buttonValide.pack();
 		labelNom.pack();
+		buttonComposite.pack();
 		nbHeureComposite.pack();
 		tableComposite.pack();
 		modifComposite.pack();
@@ -912,12 +1299,15 @@ public class ViewAffectation {
 
 		nbHeureTexte.pack();
 		Composite tableComposite = new Composite(modifComposite, SWT.NONE);
-		Table table = VueEmploye.getAllEmployer(modifComposite);
+		Table table = VueEmploye.getAllEmployerForAffectation(modifComposite);
 		setSelectionOnChantierId(table, affectation.getIdChantier());
 
 		table.setLayoutData(new RowData(400, 100));
 
-		Button buttonValide = new Button(modifComposite, SWT.CENTER);
+		Composite buttonComposite = new Composite(modifComposite, SWT.NONE);
+		buttonComposite.setLayout(new RowLayout(SWT.HORIZONTAL));
+
+		Button buttonValide = new Button(buttonComposite, SWT.CENTER);
 		buttonValide.setText("Valider");
 		buttonValide.addSelectionListener(new SelectionAdapter() {
 
@@ -929,7 +1319,7 @@ public class ViewAffectation {
 					try {
 						affectation = Affectation.getAffectation(affectationId);
 
-						affectation.setIdEmploye(Integer.parseInt(table.getSelection()[0].getText(4)));
+						affectation.setIdEmploye(Integer.parseInt(table.getSelection()[0].getText(3)));
 						affectation.setNombreHeures(Double.parseDouble(nbHeureTexte.getText()));
 
 						affectation.update();
@@ -950,6 +1340,24 @@ public class ViewAffectation {
 
 		});
 
+		Button buttonCancel = new Button(buttonComposite, SWT.CENTER);
+		buttonCancel.setText("Retour");
+		buttonCancel.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				try {
+					modifComposite.dispose();
+					buildHome();
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+
+			}
+
+		});
+
 		table.pack();
 
 		buttonValide.pack();
@@ -963,4 +1371,71 @@ public class ViewAffectation {
 
 	}
 
+	/**
+	 * Dispose and create a new empty rightComposite
+	 */
+	private void cleanRightComposite() {
+		if (!Objects.isNull(this.rightComposite) && !this.rightComposite.isDisposed()) {
+			this.rightComposite.dispose();
+			this.mainComposite.layout(true, true);
+		}
+		this.rightComposite = new Composite(this.mainComposite, SWT.NONE);
+		this.mainComposite.layout(true, true);
+		this.mainComposite.pack();
+		this.rightComposite.pack();
+		this.affectationView.pack();
+		this.rightColumn.pack();
+	}
+
+	/**
+	 * dispose all buttons
+	 */
+	private void cleanButtons() {
+		if (!Objects.isNull(createButton) && !createButton.isDisposed()) {
+			createButton.dispose();
+			buttons.layout(true, true);
+
+		}
+
+		if (!Objects.isNull(modifyButton) && !modifyButton.isDisposed()) {
+			modifyButton.dispose();
+			buttons.layout(true, true);
+
+		}
+
+		this.buttons.pack();
+		this.selection.pack();
+		this.affectationView.pack();
+		this.rightColumn.pack();
+
+	}
+
+	/*******************
+	 * 
+	 * Check functions
+	 * 
+	 *****************/
+
+	/**
+	 * Check if the number of hours is valid
+	 * @param nbHours
+	 * @return
+	 */
+	public boolean checkAffectation(String nbHours) {
+
+		
+		if (Objects.isNull(nbHours))
+			throw new IllegalArgumentException("L'attribut price ne peut pas être null");
+
+		try {
+			Double priceCheck = Double.parseDouble(nbHours);
+			
+			if (priceCheck <= 0)
+				throw new IllegalArgumentException("Le  prix doit être supérieur à 0");
+		} catch (NumberFormatException parseDoubleException) {
+			throw new IllegalArgumentException("Le prix entré n'est pas valide, veuillez entrer une valeur numérique");
+		}
+
+		return true;
+	}
 }

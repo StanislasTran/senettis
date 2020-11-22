@@ -10,6 +10,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
 import java.time.Month;
+import java.time.Year;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -24,7 +25,7 @@ public class Affectation {
 	private Double nbHours;
 
 	private Month month;
-	private Integer year;
+	private Year year;
 	private Status status;
 
 	/**********************
@@ -40,7 +41,7 @@ public class Affectation {
 	 * @param idEmploye
 	 * @param status
 	 */
-	public Affectation(Integer idChantier, Integer idEmploye, Month month, Integer year, Status status) {
+	public Affectation(Integer idChantier, Integer idEmploye, Month month, Year year, Status status) {
 		super();
 		this.idChantier = idChantier;
 		this.idEmploye = idEmploye;
@@ -57,7 +58,7 @@ public class Affectation {
 	 * @param nombreHeures
 	 * @param status
 	 */
-	public Affectation(Integer idChantier, Integer idEmploye, Double nombreHeures, Month month, Integer year,
+	public Affectation(Integer idChantier, Integer idEmploye, Double nombreHeures, Month month, Year year,
 			Status status) {
 		this(idChantier, idEmploye, month, year, status);
 		this.nbHours = nombreHeures;
@@ -73,7 +74,7 @@ public class Affectation {
 	 * @param status
 	 */
 	public Affectation(Integer affectationId, Integer idChantier, Integer idEmploye, Double nombreHeures, Month month,
-			Integer year, Status status) {
+			Year year, Status status) {
 		this(idChantier, idEmploye, nombreHeures, month, year, status);
 		this.affectationId = affectationId;
 	}
@@ -101,8 +102,8 @@ public class Affectation {
 		statement.setObject(1, this.idChantier, Types.INTEGER);
 		statement.setObject(2, this.idEmploye, Types.INTEGER);
 		statement.setObject(3, this.nbHours, Types.DECIMAL);
-		statement.setObject(4, this.month, Types.INTEGER);
-		statement.setObject(5, this.year, Types.INTEGER);
+		statement.setObject(4, this.month.getValue(), Types.INTEGER);
+		statement.setObject(5, this.year.getValue(), Types.INTEGER);
 		statement.setObject(6, this.status, Types.VARCHAR);
 
 		return statement.executeUpdate();
@@ -123,8 +124,10 @@ public class Affectation {
 		statement.setObject(1, this.idEmploye.toString(), Types.INTEGER);
 		statement.setObject(2, this.idChantier, Types.INTEGER);
 		statement.setObject(3, this.nbHours, Types.DECIMAL);
-		statement.setObject(4, this.status, Types.VARCHAR);
-		statement.setObject(5, this.affectationId, Types.INTEGER);
+		statement.setObject(3, this.month.getValue(),Types.INTEGER);
+		statement.setObject(4, this.year.getValue(),Types.INTEGER);
+		statement.setObject(5, this.status, Types.VARCHAR);
+		statement.setObject(6, this.affectationId, Types.INTEGER);
 
 		return statement.executeUpdate();
 	}
@@ -164,7 +167,7 @@ public class Affectation {
 			Integer chantierId = result.getInt("Chantier");
 			Double nombreHeures = result.getDouble("Nombre_heures");
 			Month month = Month.of(result.getInt("Mois"));
-			Integer year = result.getInt("Annee");
+			Year year = Year.of(result.getInt("Annee"));
 			Status status = Status.getStatus(result.getString("Status"));
 			allAffectation
 					.add(new Affectation(affectationId, employeId, chantierId, nombreHeures, month, year, status));
@@ -311,7 +314,7 @@ public class Affectation {
 			else
 				nombre_heures = 0.0;
 			Month month = Month.of(result.getInt("Mois"));
-			Integer year = result.getInt("Annee");
+			Year year = Year.of(result.getInt("Annee"));
 			Status status = Status.getStatus(result.getString("status"));
 
 			return new Affectation(affectationId, chantier, employe, nombre_heures, month, year, status);
@@ -335,7 +338,7 @@ public class Affectation {
 		statement.setObject(2, this.idEmploye, Types.INTEGER);
 		statement.setObject(3, this.nbHours, Types.DECIMAL);
 		statement.setObject(4, this.month.getValue(),Types.INTEGER);
-		statement.setObject(5, this.year,Types.INTEGER);
+		statement.setObject(5, this.year.getValue(),Types.INTEGER);
 		statement.setObject(6, this.affectationId, Types.INTEGER);
 		System.out.println(reqSql);
 
@@ -343,6 +346,10 @@ public class Affectation {
 		
 
 	}
+	
+	
+	
+
 
 	/***************************
 	 * 
@@ -477,7 +484,7 @@ public class Affectation {
 	 * 
 	 * @return <type> Integer </type> year
 	 */
-	public Integer getYear() {
+	public Year getYear() {
 		return this.year;
 	}
 
@@ -486,7 +493,7 @@ public class Affectation {
 	 * 
 	 * @param <type> Integer </type>year
 	 */
-	public void setYear(Integer year) {
+	public void setYear(Year year) {
 		if (Objects.isNull(year))
 			throw new IllegalArgumentException("year can't be null");
 		this.year = year;
