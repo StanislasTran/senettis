@@ -225,14 +225,14 @@ public class ViewProduct {
 			public void widgetSelected(SelectionEvent arg0) {
 
 				String name = textName.getText();
-				String price = textPrice.getText();
+				String price = textPrice.getText().replace(",",".");
 				String comment = textCommentaire.getText();
 				String brand = textBrand.getText();
 				boolean isChecked = false;
 				try {
-					isChecked = checkProduit(name, price);
+					isChecked = checkProduct(name, price);
 				} catch (IllegalArgumentException argException) {
-					System.out.println(argException.getMessage());
+					
 					MessageBox dialog = new MessageBox(productView.getShell(), SWT.ICON_ERROR | SWT.OK);
 					dialog.setText("Erreur Création :");
 					dialog.setMessage("Une erreur est survenue lors de la création du produit. " + '\n'
@@ -432,13 +432,13 @@ public class ViewProduct {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				String name = textName.getText();
-				String price = textPrice.getText();
+				String price = textPrice.getText().replace(",", ".");
 				String comment = textComment.getText();
 				String brand = textBrand.getText();
 
 				boolean isChecked = false;
 				try {
-					isChecked = checkProduit(name, price);
+					isChecked = checkProduct(name, price);
 				} catch (IllegalArgumentException argException) {
 					System.out.println(argException.getMessage());
 					MessageBox dialog = new MessageBox(productView.getShell(), SWT.ICON_ERROR | SWT.OK);
@@ -729,7 +729,7 @@ public class ViewProduct {
 	 * 
 	 *****************/
 
-	public boolean checkProduit(String name, String price) {
+	public boolean checkProduct(String name, String price) {
 
 		if (Objects.isNull(name))
 			throw new IllegalArgumentException("L'attribut name ne peut pas être null");

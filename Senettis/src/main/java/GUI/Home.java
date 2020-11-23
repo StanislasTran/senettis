@@ -170,7 +170,7 @@ public class Home {
 		
 		contenuCompositeMain = new Composite(compositeMain, SWT.NONE);
 			
-		String backgroundLocation=this.getClass().getClassLoader().getResource("test4.png").getPath();
+		String backgroundLocation=this.getClass().getClassLoader().getResource("backgroundGradiant1.jpg").getPath();
 
 		Image background=new Image(display,backgroundLocation);
 
@@ -310,7 +310,11 @@ public class Home {
 		logo.pack();
 	}
 
-	public void compositeMenu() {				
+	public void compositeMenu() {		
+		
+		
+		
+	
 		// on ajoute les elements à la colonne menu
 		menu = new Composite(colonneGauche, SWT.NONE);
 		menu.setLayout(fillLayoutV);
@@ -332,7 +336,8 @@ public class Home {
 
 			}
 		});
-
+		
+		
 		Button boutonChantier = new Button(menu, SWT.NONE);
 		boutonChantier.setText("Chantiers");
 
@@ -349,9 +354,13 @@ public class Home {
 		});
 
 
+		//Button boutonAffectation = new Button(menu, SWT.NONE);
 		Button boutonAffectation = new Button(menu, SWT.NONE);
+
+		System.out.println(boutonAffectation.getBounds());
+		//boutonAffectation.setImage();
 		boutonAffectation.setText("Affectations");
-		boutonAffectation.setBackground(Couleur.blanc);
+		System.out.println(boutonAffectation.getParent().getDisplay().getBounds());
 		boutonAffectation.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {

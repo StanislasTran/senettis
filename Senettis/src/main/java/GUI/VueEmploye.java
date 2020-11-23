@@ -858,7 +858,7 @@ public class VueEmploye {
 	 * @param composite : composite ou ajouter la table
 	 * @return la table contenant touts les employes publies
 	 */
-	public static Table getAllEmployer(Composite composite) {
+	public static Table getAllEmployerForAffectation(Composite composite) {
 
 		Table table = new Table(composite, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.FULL_SELECTION);
 		table.setLayoutData(new RowData(1047, 450));
@@ -866,18 +866,13 @@ public class VueEmploye {
 		table.setHeaderVisible(true);
 
 		//on met les noms des colonnes
-		String[] titles = { "Titre", "Nom", "Prenom", "Email", "Téléphone", "N° de matricule", "Pointure", "Taille",
-				"Date d'arrivée", "Ancienneté", "Nb d'heures", "Remb. Transport", "Remb. Telephone", "Salaire" };
+		String[] titles = { "Nom", "Prenom",  "N° de matricule","Id DB"};
 		for (String title : titles) {
 			TableColumn column = new TableColumn(table, SWT.NONE);
 			column.setText(title);
 		}
 
-		//je voulais cacher cette colonne mais ca ne fonctionne pas
-		TableColumn column = new TableColumn(table, SWT.NONE);
-		column.setText("Id DB");
-		column.setWidth(0);
-		column.setResizable(false);
+	
 
 		//on remplit la table
 		final TableColumn[] columns = table.getColumns();
@@ -886,59 +881,14 @@ public class VueEmploye {
 				// on verifie le status
 				if (e.getStatus().contentEquals("Publié")) {
 					TableItem item = new TableItem(table, SWT.NONE);
-					item.setText(0, e.getTitre());
-					item.setText(1, e.getNom());
-					item.setText(2, e.getPrenom());
-					item.setText(3, e.getMail());
-					item.setText(4, e.getTelephone());
-					item.setText(5, e.getNumeroMatricule());
-					item.setText(6, e.getPointure());
-					item.setText(7, e.getTaille());
+					
+					item.setText(0, e.getNom());
+					item.setText(1, e.getPrenom());
+					item.setText(2, e.getNumeroMatricule());
+					item.setText(3,""+e.getEmployeId());
 
-					// date et anciennete
-					if (e.getDateArrivee() != null) {
-						item.setText(8, e.getDateArrivee());
 
-						String date = e.getDateArrivee();
-						int j1 = Integer.parseInt(date.substring(0, 2));
-						int m1 = Integer.parseInt(date.substring(3, 5));
-						int a1 = Integer.parseInt(date.substring(6, 10));
-						LocalDate currentdate = LocalDate.now();
-						int j2 = currentdate.getDayOfMonth();
-						int m2 = currentdate.getMonthValue();
-						int a2 = currentdate.getYear();
-
-						if (a2 - a1 < 0) {
-							item.setText(9, "euuuh ... ");
-						} else if (a2 - a1 == 0) {
-							item.setText(9, "moins d'un an");
-						} else {
-							if ((m1 > m2) || (m1 == m2 && j1 > j2)) {
-								if (a2 - a1 - 1 == 0) {
-									item.setText(9, "");
-								} else if (a2 - a1 - 1 == 1) {
-									item.setText(9, Integer.toString(a2 - a1 - 1) + " an");
-								} else {
-									item.setText(9, Integer.toString(a2 - a1 - 1) + " ans");
-								}
-							} else {
-								if (a2 - a1 == 1) {
-									item.setText(9, Integer.toString(a2 - a1) + " an");
-								} else {
-									item.setText(9, Integer.toString(a2 - a1) + " ans");
-								}
-							}
-						}
-					} else {
-						item.setText(8, "");
-						item.setText(9, "");
-					}
-
-					item.setText(10, Double.toString(e.getNombreHeures()));
-					item.setText(11, Double.toString(e.getRemboursementTransport()));
-					item.setText(12, Double.toString(e.getRemboursementTelephone()));
-					item.setText(13, Double.toString(e.getSalaire()));
-					item.setText(14, Integer.toString(e.getEmployeId()));
+				
 				}
 			}
 		} catch (SQLException e) {

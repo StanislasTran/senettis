@@ -2,6 +2,7 @@ package GUI;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.Year;
@@ -19,6 +20,7 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Table;
@@ -953,26 +955,61 @@ public class ViewAffectation {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				Integer idEmploye = Integer.parseInt(table.getSelection()[0].getText(3));
-				Double nbHeure = Double.parseDouble(nbHeureTexte.getText());
-				Month month = Month.of(comboMonth.getSelectionIndex() + 1);
-				Year year = Year.of(Integer.parseInt(comboYear.getText()));
-				Status status = Status.PUBLISHED;
-				if (table.getSelection().length == 1) {
-					Affectation affectation = new Affectation(siteId, idEmploye, nbHeure, month, year, status);
-					try {
-						affectation.insertDatabase();
-						ajoutComposite.dispose();
+				String checkEmployeId = "";
+				String checkNbHours = "";
+				Integer checkMonth = -1;
+				String checkYear = "";
+				Boolean isChecked = false;
 
-						getVueAffectation().pack();
-						getVueAffectation().getParent().pack();
-						buildHome();
+				try {
 
-					} catch (SQLException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
+					checkEmployeId = table.getSelection()[0].getText(3);
+					checkNbHours = nbHeureTexte.getText();
+					checkMonth = comboMonth.getSelectionIndex() + 1;
+					checkYear = comboYear.getText();
+
+					isChecked = checkAffectation("" + siteId, checkEmployeId, checkNbHours, checkMonth, checkYear);
+				} catch (IllegalArgumentException | ArrayIndexOutOfBoundsException argException) {
+					MessageBox dialog = new MessageBox(affectationView.getShell(), SWT.ICON_ERROR | SWT.OK);
+					dialog.setText("Erreur Création :");
+					if (argException.getClass() == IllegalArgumentException.class)
+						dialog.setMessage("Une erreur est survenue lors de la création de l'affectation. " + '\n'
+								+ argException.getMessage());
+					if (argException.getClass() == ArrayIndexOutOfBoundsException.class)
+						dialog.setMessage("Veuillez sélectionner un employé");
+					dialog.open();
+				}
+
+				if (isChecked) {
+
+					Integer idEmploye = Integer.parseInt(checkEmployeId);
+					Double nbHeure = Double.parseDouble(checkNbHours);
+					Month month = Month.of(checkMonth);
+					Year year = Year.of(Integer.parseInt(checkYear));
+					Status status = Status.PUBLISHED;
+					if (table.getSelection().length == 1) {
+						Affectation affectation = new Affectation(siteId, idEmploye, nbHeure, month, year, status);
+						try {
+							affectation.insertDatabase();
+							ajoutComposite.dispose();
+
+							getVueAffectation().pack();
+							getVueAffectation().getParent().pack();
+							buildHome();
+
+							MessageBox dialog = new MessageBox(affectationView.getShell(), SWT.ICON_WORKING | SWT.OK);
+							dialog.setText("Succes");
+							dialog.setMessage("L'affectation a été crée a bien été enregistrée");
+							dialog.open();
+						} catch (SQLException sqlException) {
+							MessageBox dialog = new MessageBox(affectationView.getShell(), SWT.ICON_ERROR | SWT.OK);
+							dialog.setText("Erreur Création :");
+							dialog.setMessage("Une erreur est survenue lors de la création de l'affectation. " + '\n'
+									+ sqlException.getMessage());
+							dialog.open();
+						}
+
 					}
-
 				}
 			}
 
@@ -1085,16 +1122,38 @@ public class ViewAffectation {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if (table.getSelection().length > 0) {
-					Integer affectationId = Integer.parseInt(table.getSelection()[0].getText(3));
 
-					Integer siteId = Integer.parseInt(table.getSelection()[0].getText(3));
+				String checkNbHours = "";
+				Integer checkMonth = -1;
+				String checkYear = "";
+				String checkSiteId = "";
+				Boolean isChecked = false;
 
-					Double nbHeure = Double.parseDouble(nbHeureTexte.getText());
-					Month month = Month.of(comboMonth.getSelectionIndex() + 1);
-					System.out.println(month);
-					Year year = Year.of(Integer.parseInt(comboYear.getText()));
+				try {
 
+					checkSiteId = table.getSelection()[0].getText(3);
+					checkNbHours = nbHeureTexte.getText();
+					checkMonth = comboMonth.getSelectionIndex() + 1;
+					checkYear = comboYear.getText();
+
+					isChecked = checkAffectation(checkSiteId, "" + employeeId, checkNbHours, checkMonth, checkYear);
+				} catch (IllegalArgumentException | ArrayIndexOutOfBoundsException argException) {
+					MessageBox dialog = new MessageBox(affectationView.getShell(), SWT.ICON_ERROR | SWT.OK);
+					dialog.setText("Erreur Création :");
+					if (argException.getClass() == IllegalArgumentException.class)
+						dialog.setMessage("Une erreur est survenue lors de la création de l'afféctation. " + '\n'
+								+ argException.getMessage());
+					if (argException.getClass() == ArrayIndexOutOfBoundsException.class)
+						dialog.setMessage("Veuillez sélectionner un chantier");
+					dialog.open();
+				}
+
+				if (isChecked) {
+
+					Integer siteId = Integer.parseInt(checkSiteId);
+					Double nbHeure = Double.parseDouble(checkNbHours);
+					Month month = Month.of(checkMonth);
+					Year year = Year.of(Integer.parseInt(checkYear));
 					Status status = Status.PUBLISHED;
 					if (table.getSelection().length == 1) {
 						Affectation affectation = new Affectation(siteId, employeeId, nbHeure, month, year, status);
@@ -1106,13 +1165,21 @@ public class ViewAffectation {
 							getVueAffectation().getParent().pack();
 							buildHome();
 
-						} catch (SQLException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
+							MessageBox dialog = new MessageBox(affectationView.getShell(), SWT.ICON_WORKING | SWT.OK);
+							dialog.setText("Succes");
+							dialog.setMessage("L'affectation a été crée a bien été enregistrée");
+							dialog.open();
+						} catch (SQLException sqlException) {
+							MessageBox dialog = new MessageBox(affectationView.getShell(), SWT.ICON_ERROR | SWT.OK);
+							dialog.setText("Erreur Création :");
+							dialog.setMessage("Une erreur est survenue lors de la création de l'affectation. " + '\n'
+									+ sqlException.getMessage());
+							dialog.open();
 						}
 
 					}
 				}
+
 			}
 
 			@Override
@@ -1210,26 +1277,59 @@ public class ViewAffectation {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 
-				if (table.getSelection().length == 1) {
-					Affectation affectation;
-					try {
-						affectation = Affectation.getAffectation(affectationId);
+				String checkNbHours = "";
 
-						affectation.setIdChantier(Integer.parseInt(table.getSelection()[0].getText(3)));
-						affectation.setNombreHeures(Double.parseDouble(nbHeureTexte.getText()));
+				String checkSiteId = "";
+				boolean isChecked = false;
 
-						affectation.update();
-						modifComposite.dispose();
+				try {
 
-						getVueAffectation().pack();
-						getVueAffectation().getParent().pack();
-						buildHome();
-					} catch (SQLException e2) {
-						// TODO Auto-generated catch block
-						e2.printStackTrace();
+					checkSiteId = table.getSelection()[0].getText(3);
+					checkNbHours = nbHeureTexte.getText();
+					isChecked = checkAffectation(checkSiteId, "" + affectation.getIdEmploye(), checkNbHours,
+							affectation.getMonth().getValue(), "" + affectation.getYear().getValue());
+				} catch (IllegalArgumentException | ArrayIndexOutOfBoundsException argException) {
+					MessageBox dialog = new MessageBox(affectationView.getShell(), SWT.ICON_ERROR | SWT.OK);
+					dialog.setText("Erreur Création :");
+					if (argException.getClass() == IllegalArgumentException.class)
+						dialog.setMessage("Une erreur est survenue lors de la création de l'afféctation. " + '\n'
+								+ argException.getMessage());
+					if (argException.getClass() == ArrayIndexOutOfBoundsException.class)
+						dialog.setMessage("Veuillez sélectionner un chantier");
+					dialog.open();
+				}
+
+				if (isChecked) {
+
+					affectation.setIdChantier(Integer.parseInt(checkSiteId));
+					affectation.setNombreHeures(Double.parseDouble(checkNbHours));
+
+					if (table.getSelection().length == 1) {
+
+						try {
+							affectation.update();
+		
+							modifComposite.dispose();
+							getVueAffectation().pack();
+							getVueAffectation().getParent().pack();
+							buildHome();
+
+							MessageBox dialog = new MessageBox(affectationView.getShell(), SWT.ICON_WORKING | SWT.OK);
+							dialog.setText("Succes");
+							dialog.setMessage("L'affectation a été crée a bien été enregistrée");
+							dialog.open();
+						} catch (SQLException sqlException) {
+							MessageBox dialog = new MessageBox(affectationView.getShell(), SWT.ICON_ERROR | SWT.OK);
+							dialog.setText("Erreur Création :");
+							dialog.setMessage("Une erreur est survenue lors de la création de l'affectation. " + '\n'
+									+ sqlException.getMessage());
+							dialog.open();
+						}
+
 					}
 
 				}
+
 			}
 
 		});
@@ -1314,29 +1414,65 @@ public class ViewAffectation {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 
-				if (table.getSelection().length == 1) {
-					Affectation affectation;
-					try {
-						affectation = Affectation.getAffectation(affectationId);
+				
+				
+				String checkNbHours = "";
 
-						affectation.setIdEmploye(Integer.parseInt(table.getSelection()[0].getText(3)));
-						affectation.setNombreHeures(Double.parseDouble(nbHeureTexte.getText()));
+				String checkEmployeId = "";
+				boolean isChecked = false;
 
-						affectation.update();
-						modifComposite.dispose();
+				try {
 
-						getVueAffectation().pack();
-						getVueAffectation().getParent().pack();
-						buildHome();
-					} catch (SQLException e2) {
-						// TODO Auto-generated catch block
-						e2.printStackTrace();
+					checkEmployeId = table.getSelection()[0].getText(3);
+					checkNbHours = nbHeureTexte.getText();
+					isChecked = checkAffectation(affectation.getIdChantier()+"", checkEmployeId, checkNbHours,
+							affectation.getMonth().getValue(), "" + affectation.getYear().getValue());
+				} catch (IllegalArgumentException | ArrayIndexOutOfBoundsException argException) {
+					MessageBox dialog = new MessageBox(affectationView.getShell(), SWT.ICON_ERROR | SWT.OK);
+					dialog.setText("Erreur Création :");
+					if (argException.getClass() == IllegalArgumentException.class)
+						dialog.setMessage("Une erreur est survenue lors de la création de l'afféctation. " + '\n'
+								+ argException.getMessage());
+					if (argException.getClass() == ArrayIndexOutOfBoundsException.class)
+						dialog.setMessage("Veuillez sélectionner un employé");
+					dialog.open();
+				}
+
+				if (isChecked) {
+
+					affectation.setIdChantier(Integer.parseInt(checkEmployeId));
+					affectation.setNombreHeures(Double.parseDouble(checkNbHours));
+
+					if (table.getSelection().length == 1) {
+
+						try {
+							affectation.update();
+		
+							modifComposite.dispose();
+							getVueAffectation().pack();
+							getVueAffectation().getParent().pack();
+							buildHome();
+
+							MessageBox dialog = new MessageBox(affectationView.getShell(), SWT.ICON_WORKING | SWT.OK);
+							dialog.setText("Succes");
+							dialog.setMessage("L'affectation a été crée a bien été enregistrée");
+							dialog.open();
+						} catch (SQLException sqlException) {
+							MessageBox dialog = new MessageBox(affectationView.getShell(), SWT.ICON_ERROR | SWT.OK);
+							dialog.setText("Erreur Création :");
+							dialog.setMessage("Une erreur est survenue lors de la création de l'affectation. " + '\n'
+									+ sqlException.getMessage());
+							dialog.open();
+						}
+
 					}
 
-					System.out.println("faiiit");
-
 				}
+
 			}
+
+			
+				
 
 		});
 
@@ -1418,24 +1554,64 @@ public class ViewAffectation {
 
 	/**
 	 * Check if the number of hours is valid
+	 * 
 	 * @param nbHours
 	 * @return
 	 */
-	public boolean checkAffectation(String nbHours) {
+	public boolean checkAffectation(String siteId, String employeId, String nbHours, Integer month, String year) {
 
-		
+		if (Objects.isNull(siteId))
+			throw new IllegalArgumentException("Veuillez selectionner un chantier valide");
+		try {
+			Integer.parseInt(siteId);
+		} catch (NumberFormatException e) {
+			throw new IllegalArgumentException("Veuillez selectionner un chantier valide");
+		}
+
+		if (Objects.isNull(employeId))
+			throw new IllegalArgumentException("Veuillez selectionner un employé valide");
+		try {
+			Integer.parseInt(employeId);
+		} catch (NumberFormatException e) {
+			throw new IllegalArgumentException("Veuillez selectionner un employé valide");
+		}
 		if (Objects.isNull(nbHours))
-			throw new IllegalArgumentException("L'attribut price ne peut pas être null");
+			throw new IllegalArgumentException("L'attribut nombre d'heure ne peut pas être null");
 
 		try {
 			Double priceCheck = Double.parseDouble(nbHours);
-			
+
 			if (priceCheck <= 0)
-				throw new IllegalArgumentException("Le  prix doit être supérieur à 0");
+				throw new IllegalArgumentException("Le  nombre d'heures doit être supérieur à 0");
 		} catch (NumberFormatException parseDoubleException) {
-			throw new IllegalArgumentException("Le prix entré n'est pas valide, veuillez entrer une valeur numérique");
+			throw new IllegalArgumentException(
+					"Le nombre d'heure entré n'est pas valide, veuillez entrer une valeur numérique");
+		}
+
+		if (Objects.isNull(month))
+			throw new IllegalArgumentException("le champ mois ne peut pas être null");
+		else {
+			try {
+
+				Month.of(month);
+			} catch (DateTimeException dateTimeException) {
+				throw new IllegalArgumentException("la valeur entrée dans le champ mois est incorrecte");
+			}
+		}
+
+		if (Objects.isNull(year))
+			throw new IllegalArgumentException("le champ mois ne peut pas être null");
+		else {
+			try {
+
+				Year.of(Integer.parseInt(year));
+			} catch (DateTimeException | NumberFormatException exceptionYear) {
+				throw new IllegalArgumentException(
+						"la valeur entrée dans le champ Année est incorrecte, Veuillez selectionner une Année valide");
+			}
 		}
 
 		return true;
 	}
+
 }
