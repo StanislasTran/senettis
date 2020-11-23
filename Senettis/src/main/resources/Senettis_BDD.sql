@@ -63,10 +63,6 @@ Create table Employe (
     Pointure VARCHAR(10),
     Taille VARCHAR(10),
     Date_arrivee DATE,
-    Nombre_heures decimal,
-    Remboursement_transport decimal,
-    Remboursement_telephone decimal,
-    Salaire decimal,
 	"Status" VARCHAR (50) NOT NULL,
 	"Date_de_creation" DateTime  NOT NUll Default (GETDATE()), 
 	"Date_de_modification" DateTime  NOT NUll Default (GETDATE()), 
@@ -171,12 +167,20 @@ SET Date_de_modification = GETDATE()
  
 Create table CoutChantier (
     "CoutChantierId"  INT PRIMARY KEY IDENTITY (1, 1),
-    "Date" DATE NOT NULL,
+    mois int NOT NULL,
+	annee int NOT NULL,
 	Chantier int NOT NULL,
     FOREIGN KEY (Chantier) REFERENCES Chantier(ChantierId), 
 	CA decimal,
+	commission decimal,
 	cout_matériel decimal,
 	cout_livraison_total decimal, 
+	couts_ponctuels decimal, 
+	menage decimal,
+	vitrerie decimal,
+	fournitures_sanitaires decimal, 
+	mise_a_blanc decimal,
+	autres decimal,
 	"Status" VARCHAR (50) NOT NULL,
 	"Date_de_creation" DateTime  NOT NUll Default (GETDATE()), 
 	"Date_de_modification" DateTime  NOT NUll Default (GETDATE()), 
@@ -198,7 +202,8 @@ SET Date_de_modification = GETDATE()
 
 Create table CoutEmploye (
     "CoutEmployeId"  INT PRIMARY KEY IDENTITY (1, 1),
-    "Date" DATE NOT NULL,
+	mois int NOT NULL,
+	annee int NOT NULL,
 	Employe int NOT NULL,
     FOREIGN KEY (Employe) REFERENCES Employe(EmployeId), 
 	mutuelle decimal,
@@ -207,12 +212,21 @@ Create table CoutEmploye (
 	salaire_net decimal, 
 	cout_transport decimal, 
 	cout_telephone decimal, 
-	cout_prime_total decimal, 
-	cout_AM_total decimal,
+	charges_patronales decimal,
+	masse_salariale decimal, 
+	menage decimal, 
+	vitrerie decimal, 
+	mises_a_blanc decimal,
+	fournitures_sanitaires decimal, 
+	autres decimal, 
+	remboursement_prets decimal,
+	saisie_arret decimal,
+	nb_heures decimal,
 	"Status" VARCHAR (50) NOT NULL,
 	"Date_de_creation" DateTime  NOT NUll Default (GETDATE()), 
 	"Date_de_modification" DateTime  NOT NUll Default (GETDATE()), 
 	CONSTRAINT check_status_coutEmploye CHECK (("Status") IN ('Publié','Brouillon','Archivé')),
+	CONSTRAINT coutPeriode_unique UNIQUE (employe,mois,annee), 
 	
 );
 
@@ -228,56 +242,65 @@ SET Date_de_modification = GETDATE()
  WHERE CoutEmployeId IN (SELECT DISTINCT CoutEmployeId FROM Inserted);
  GO
 
-Create table Prime (
-    "PrimeId"  INT PRIMARY KEY IDENTITY (1, 1),
-    "Date" DATE ,
+ Create table AmmortissementEmploye (
+    "AmmortissementEmployeId"  INT PRIMARY KEY IDENTITY (1, 1),
+	moisDepart int NOT NULL,
+	anneeDepart int NOT NULL,
+	moisFin int NOT NULL,
+	anneeFin int NOT NULL,
 	Employe int NOT NULL,
     FOREIGN KEY (Employe) REFERENCES Employe(EmployeId), 
-    Type_de_prime VARCHAR (100) NOT NULL,
-	"montant" decimal,
+	duree int NOT NULL,
+	valeur decimal NOT NULL,
+	valeurParMois decimal,
+	type VARCHAR(100) NOT NULL,
+	description VARCHAR(200),
 	"Status" VARCHAR (50) NOT NULL,
 	"Date_de_creation" DateTime  NOT NUll Default (GETDATE()), 
 	"Date_de_modification" DateTime  NOT NUll Default (GETDATE()), 
-	CONSTRAINT check_status_Prime CHECK (("Status") IN ('Publié','Brouillon','Archivé')),
-	
+	CONSTRAINT check_status_ammortissementEmploye CHECK (("Status") IN ('Publié','Brouillon','Archivé'))
 );
 
 GO
 
-Create TRIGGER Prime_Update
-ON Prime
+Create TRIGGER AmmortissementEmploye_Update
+ON AmmortissementEmploye
 AFTER UPDATE
 AS
 UPDATE
-Prime
+AmmortissementEmploye
 SET Date_de_modification = GETDATE()
- WHERE PrimeId IN (SELECT DISTINCT PrimeId FROM Inserted);
+ WHERE AmmortissementEmployeId IN (SELECT DISTINCT AmmortissementEmployeId FROM Inserted);
  GO
 
 
- Create table ArretMaladie (
-    "AMId"  INT PRIMARY KEY IDENTITY (1, 1),
-    "Date_de_debut" DATE NOT NULL,
-	Employe int NOT NULL,
-    FOREIGN KEY (Employe) REFERENCES Employe(EmployeId), 
-    "Duree" VARCHAR (100),
-    "Motif" VARCHAR (500),
-	"cout" decimal,
+  Create table AmmortissementChantier (
+    AmmortissementChantierId  INT PRIMARY KEY IDENTITY (1, 1),
+	moisDepart int NOT NULL,
+	anneeDepart int NOT NULL,
+	moisFin int NOT NULL,
+	anneeFin int NOT NULL,
+	Chantier int NOT NULL,
+    FOREIGN KEY (Chantier) REFERENCES Chantier(ChantierId), 
+	duree int NOT NULL,
+	valeur decimal NOT NULL,
+	valeurParMois decimal,
+	type VARCHAR(100) NOT NULL,
+	description VARCHAR(200),
 	"Status" VARCHAR (50) NOT NULL,
 	"Date_de_creation" DateTime  NOT NUll Default (GETDATE()), 
 	"Date_de_modification" DateTime  NOT NUll Default (GETDATE()), 
-	CONSTRAINT check_status_AM CHECK (("Status") IN ('Publié','Brouillon','Archivé')),
-	
+	CONSTRAINT check_status_ammortissementChantier CHECK (("Status") IN ('Publié','Brouillon','Archivé'))
 );
 
 GO
 
-Create TRIGGER AM_Update
-ON ArretMaladie
+Create TRIGGER AmmortissementChantier_Update
+ON AmmortissementChantier
 AFTER UPDATE
 AS
 UPDATE
-ArretMaladie
+AmmortissementChantier
 SET Date_de_modification = GETDATE()
- WHERE AMId IN (SELECT DISTINCT AMId FROM Inserted);
+ WHERE AmmortissementChantierId IN (SELECT DISTINCT AmmortissementChantierId FROM Inserted);
  GO

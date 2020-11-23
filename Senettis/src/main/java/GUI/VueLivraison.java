@@ -25,6 +25,8 @@
 package GUI;
 
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -43,7 +45,12 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
 import classes.Site;
+import classes.AmmortissementChantier;
+import classes.AmmortissementEmploye;
+import classes.CoutsEmploye;
+import classes.AmmortissementChantier;
 import classes.Delivery;
+import classes.Employee;
 import classes.Product;
 import classes.ProductByDelivery;
 
@@ -51,10 +58,16 @@ public class VueLivraison {
 
 	private Display display;
 	private Composite vueLivraison;
+	private Composite vueAutres;
 	private Composite selection;
 	private Composite vue;
 	private Delivery selectedLivraison;
+	private Site selectedChantier;
+	private AmmortissementChantier selectedAmorti;
+	private TabFolder tabFolder;
 	private Menu menu ;
+	private Table tableChantier;
+	private Table tableAmorti;
 
 	//Creation VueLivraison --------------------------------------------------
 	/***
@@ -65,17 +78,699 @@ public class VueLivraison {
 	public VueLivraison (Composite composite,Display display) {
 		this.display=display;
 	 	Couleur.setDisplay(display); // pour utiliser les couleurs du fichier couleur
+	 	
+	 	tabFolder = new TabFolder(composite, SWT.BORDER);
+
+
+
+		TabItem tabLivraison = new TabItem(tabFolder, SWT.NULL);
+		tabLivraison.setText("Livraisons");
+
+		TabItem tabAutres = new TabItem(tabFolder, SWT.NULL);
+		tabAutres.setText("Autres coûts chantier");
 		
-	 	vueLivraison=new Composite(composite,SWT.NONE);
+		tabFolder.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(org.eclipse.swt.events.SelectionEvent event) {
+				if (tabFolder.getSelection()[0].equals(tabLivraison)) {
+					if (!Objects.isNull(vueLivraison) && !vueLivraison.isDisposed()) {
+						vueLivraison.dispose();
+					}
+					vueLivraison=new Composite(tabFolder,SWT.NONE);
+					RowLayout rowLayout = new RowLayout();
+					rowLayout.type = SWT.VERTICAL;
+					vueLivraison.setLayout(rowLayout);
+					vueLivraison.setBackground(Couleur.gris);
+
+					tabLivraison.setControl(vueLivraison);
+
+					compositeSelectionCreer();
+					vueLivraisonAfficher();
+					vueLivraison.pack();
+					tabFolder.pack();
+					tabFolder.getParent().pack();
+				}
+				else {
+					if (!Objects.isNull(vueAutres) && !vueAutres.isDisposed()) {
+						vueAutres.dispose();
+					}
+					RowLayout rowLayout = new RowLayout();
+					rowLayout.type = SWT.VERTICAL;
+					vueAutres=new Composite(tabFolder,SWT.NONE); vueAutres.setLayout(rowLayout);
+					vueAutres.setBackground(Couleur.gris);
+
+					tabAutres.setControl(vueAutres);
+
+					vueAmortissement();
+					vueAutres.pack();
+					tabFolder.pack();
+					tabFolder.getParent().pack();
+				}
+			}
+		});
+		
+		vueLivraison=new Composite(tabFolder,SWT.NONE);
 		RowLayout rowLayout = new RowLayout();
 		rowLayout.type = SWT.VERTICAL;
 		vueLivraison.setLayout(rowLayout);
-		
+		vueLivraison.setBackground(Couleur.gris);
+
+		tabLivraison.setControl(vueLivraison);
+
 		compositeSelectionCreer();
 		vueLivraisonAfficher();
-		
 		vueLivraison.pack();
-		vueLivraison.getParent().pack();
+
+		tabFolder.pack();
+		tabFolder.getParent().pack();
+	}
+
+	////////////////////////////////////// COUTS A AMORTIR  //////////////////////////////////////////////
+
+	public void amortiSelection() {
+		///SELECTION
+		if (!Objects.isNull(selection) && !selection.isDisposed()) {
+			selection.dispose();
+		}
+
+		selection = new Composite(vueAutres, SWT.NONE);
+		RowLayout rowLayout = new RowLayout();
+		rowLayout.marginWidth = 5;
+		rowLayout.marginTop = 6;
+		rowLayout.spacing = 10;
+		selection.setLayout(rowLayout);
+		selection.setBackground(Couleur.gris);
+
+		RowLayout rl = new RowLayout();
+		rl.type = SWT.HORIZONTAL;
+
+
+		Button boutonCreation = new Button(selection, SWT.CENTER);
+		boutonCreation.setText("Créer");
+		boutonCreation.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				selectedChantier = null; selectedAmorti = null;
+				vueCreationA();
+			}
+		});
+
+		if (selectedAmorti != null) {
+			Button boutonModif = new Button(selection, SWT.CENTER);
+			boutonModif.setText("Modifier");
+			boutonModif.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent arg0) {
+					vueCreationA();
+				}
+			});
+
+			Button boutonSupp = new Button(selection, SWT.CENTER);
+			boutonSupp.setText("Supprimer");
+			boutonSupp.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent arg0) {
+					try {
+						AmmortissementChantier ae = AmmortissementChantier.getAmmortissementChantierById(selectedAmorti.getAmmortissementChantierId());
+						MessageBox dialog = new MessageBox(vueAutres.getShell(), SWT.ICON_QUESTION | SWT.YES | SWT.NO);
+						dialog.setText("Suppression Amortissement Chantier");
+						dialog.setMessage("Voulez vous supprimer le coût à amortir du chantier " + Site.getChantierById(ae.getChantierId()).getNom() + " ?");
+						int buttonID = dialog.open();
+						switch (buttonID) {
+						case SWT.YES:
+							ae.setStatus("Archivé");
+							ae.updateDatabase();
+							updateTableAmorti();
+						}
+					} catch (Exception e) {
+						System.out.println("erreur pour supprimer l'element");
+						MessageBox dialog = new MessageBox(vueAutres.getShell(), SWT.ICON_ERROR | SWT.OK);
+						dialog.setText("Erreur");
+						dialog.setMessage("Une erreur est survenue. " + '\n' + e.getMessage());
+						dialog.open();
+					}
+				}
+			});
+		}
+
+		selection.pack();
+	}
+
+	public void vueAmortissement() {
+
+		amortiSelection();
+
+		///VUE
+
+		if (!Objects.isNull(vue) && !vue.isDisposed()) {
+			vue.dispose();
+		}
+
+		vue = new Composite(vueAutres, SWT.NONE);
+		RowLayout rowLayoutH = new RowLayout();
+		rowLayoutH.type = SWT.VERTICAL;
+		vue.setLayout(rowLayoutH);
+
+		Composite tables = new Composite(vue,SWT.NONE);
+		tables.setLayout(new RowLayout(SWT.HORIZONTAL));
+
+		//creation de la table des produits
+		Composite compoEmp = new Composite(tables,SWT.NONE);
+		compoEmp.setLayout(new RowLayout(SWT.VERTICAL));
+
+		Label emp = new Label(compoEmp,SWT.NONE);
+		emp.setText("Choisir un chantier :");
+
+		tableChantier = new Table (compoEmp, SWT.BORDER | SWT.MULTI| SWT.V_SCROLL | SWT.FULL_SELECTION);
+		tableChantier.setLayoutData(new RowData(300,300));
+		tableChantier.setLinesVisible (true);
+		tableChantier.setHeaderVisible (true);
+		tableChantier.layout(true,true);
+
+		//on met les noms des colonnes
+		String[] titles = {"Id", "Nom"};
+		for (String title : titles) {
+			TableColumn column = new TableColumn (tableChantier, SWT.NONE);
+			column.setText (title);
+		}
+
+		updateTableEmp();
+		compoEmp.pack();
+
+
+		//creation de la table amorti
+		Composite compoAmorti = new Composite(tables,SWT.NONE);
+		compoAmorti.setLayout(new RowLayout(SWT.VERTICAL));
+
+		Label amorti = new Label(compoAmorti,SWT.NONE);
+		amorti.setText("Coûts liés à cet chantier :");
+
+		tableAmorti = new Table (compoAmorti, SWT.BORDER | SWT.MULTI| SWT.V_SCROLL | SWT.FULL_SELECTION);
+		tableAmorti.setLayoutData(new RowData(500,380));
+		tableAmorti.setLinesVisible (true);
+		tableAmorti.setHeaderVisible (true);
+		tableAmorti.layout(true,true);
+
+		//on met les noms des colonnes
+		String[] titles2 = {"Id", "Début" ,"Fin","Montant par mois","Valeur totale", "Type", "Description"};
+		for (String title : titles2) {
+			TableColumn column = new TableColumn (tableAmorti, SWT.NONE);
+			column.setText (title);
+		}
+
+		if (selectedChantier != null) {
+
+			updateTableAmorti();
+			compoAmorti.pack();
+		}
+
+		vue.pack();
+		vueAutres.pack();
+		tabFolder.pack();
+		tabFolder.getParent().pack();
+	}
+
+	public void vueCreationA() {
+
+		vueFormulaireAmorti();
+
+		if (!Objects.isNull(selection) && !selection.isDisposed()) {
+			selection.dispose();
+		}
+		String s;int addSize;
+		if (selectedAmorti != null) {
+			s = "Modification d'un coût à amortir";
+			addSize = vue.getSize().x;
+			addSize = (addSize - 235)/2;
+		}
+		else {
+			s = "Création d'un coût à amortir";
+			addSize = vue.getSize().x;
+			addSize = (addSize - 210)/2;
+		}
+
+		selection = new Composite(vueAutres, SWT.CENTER);
+
+		FillLayout fillLayout = new FillLayout();
+		fillLayout.type = SWT.VERTICAL;
+		fillLayout.marginWidth = addSize;
+		selection.setLayout(fillLayout);
+
+		// juste pour creer un espace
+		Label l1 = new Label(selection, SWT.NONE);
+		l1.setText("");
+		l1.setBackground(Couleur.bleuFonce);
+
+		selection.setBackground(Couleur.bleuFonce);
+		Label HeadLabel = new Label(selection, SWT.TITLE);
+		HeadLabel.setText(s);
+		Font fontTitle = new Font(HeadLabel.getDisplay(), "Arial", 12, SWT.BOLD);
+		HeadLabel.setForeground(Couleur.bleuClair);
+		HeadLabel.setFont(fontTitle);
+		HeadLabel.setBackground(Couleur.bleuFonce);
+
+		// juste pour creer un espace
+		Label l2 = new Label(selection, SWT.NONE);
+		l2.setText("");
+		l2.setBackground(Couleur.bleuFonce);
+
+		selection.pack();
+
+		vueFormulaireAmorti();
+
+		vueAutres.pack();
+		tabFolder.pack();
+		tabFolder.getParent().pack();
+	}
+
+	public void vueFormulaireAmorti() {
+		if (!Objects.isNull(vue) && !vue.isDisposed()) {
+			vue.dispose();
+		}
+		vue = new Composite(vueAutres, SWT.NONE);
+		FillLayout fillLayoutH = new FillLayout();
+		fillLayoutH.type = SWT.HORIZONTAL;
+		vue.setLayout(fillLayoutH);
+
+
+		// on cree trois colonne pour repartir les champs
+		FillLayout fillLayoutV = new FillLayout();
+		fillLayoutV.type = SWT.VERTICAL;
+		fillLayoutV.marginWidth = 10;
+		Composite colonne1 = new Composite(vue, SWT.BORDER);
+		Composite colonne2 = new Composite(vue, SWT.BORDER);
+		colonne1.setBackground(Couleur.bleuClair);
+		colonne2.setBackground(Couleur.bleuClair);
+		colonne1.setLayout(fillLayoutV);
+		colonne2.setLayout(fillLayoutV);
+
+		// utilisé pour tous les composites des arguments
+		FillLayout fillLayoutH5 = new FillLayout();
+		fillLayoutH5.marginHeight = 30;
+		fillLayoutH5.spacing = 5;
+		fillLayoutH5.type = SWT.HORIZONTAL;
+
+
+		Composite compositeChantier = new Composite(colonne1, SWT.NONE);
+		compositeChantier.setBackground(Couleur.bleuClair);
+		compositeChantier.setLayout(fillLayoutH5);
+
+		Label labelChantier = new Label(compositeChantier, SWT.NONE);
+		labelChantier.setText("Chantier* : ");
+		labelChantier.setBackground(Couleur.bleuClair);
+		// Titre
+		Combo chantiers = new Combo(compositeChantier, SWT.BORDER);
+		if (selectedChantier != null){
+			try {
+				if (selectedChantier.getNom().length() > 25) {
+					chantiers.setText(selectedChantier.getNom().substring(0, 23)+"..."+";id:"+((Integer)selectedChantier.getChantierId()).toString());
+				}
+				else {
+					chantiers.setText(selectedChantier.getNom()+" ; id :"+((Integer)selectedChantier.getChantierId()).toString());
+				}
+			} catch (Exception e1) {
+				e1.printStackTrace(); 
+				System.out.println("erreur pour recuperer les chantiers");
+				MessageBox dialog = new MessageBox(vueAutres.getShell(), SWT.ICON_ERROR | SWT.OK);
+				dialog.setText("Erreur");
+				dialog.setMessage("Une erreur est survenue. "+'\n'+e1.getMessage());
+				dialog.open();
+			}
+		}
+		else {
+			chantiers.setText("Selectionner ...");
+		}
+		try {
+			for (Site e : Site.getAllChantier()) {
+				System.out.println("eee");
+				if (e.getStatus().equals("Publié")) {
+					if (e.getNom().length() > 25) {
+						System.out.println("e1");
+						chantiers.add(e.getNom().substring(0, 23)+"..."+";id:"+((Integer)e.getChantierId()).toString());
+					}
+					else {
+						System.out.println("e2");
+						chantiers.add(e.getNom()+" ; id :"+((Integer)e.getChantierId()).toString());
+					}
+				}
+			}
+		} catch (SQLException e1) {
+			e1.printStackTrace(); 
+			System.out.println("erreur pour recuperer les chantiers");
+			MessageBox dialog = new MessageBox(vueAutres.getShell(), SWT.ICON_ERROR | SWT.OK);
+			dialog.setText("Erreur");
+			dialog.setMessage("Une erreur est survenue. "+'\n'+e1.getMessage());
+			dialog.open();
+		}
+
+
+
+		Composite compositePeriode = new Composite(colonne1, SWT.NONE);
+		compositePeriode.setBackground(Couleur.bleuClair);
+		compositePeriode.setLayout(fillLayoutH5);
+
+		Label labelPeriode = new Label(compositePeriode, SWT.NONE);
+		labelPeriode.setText("Début* : ");
+		labelPeriode.setBackground(Couleur.bleuClair);
+
+		Combo periode = new Combo(compositePeriode, SWT.BORDER);
+		LocalDate currentdate = LocalDate.now();
+		Month month = currentdate.getMonth();
+		int year = currentdate.getYear();
+		if (selectedAmorti == null) {
+			periode.setText(month.toString()+" "+year);
+		}
+		else {
+			periode.setText(Month.of(selectedAmorti.getMoisD())+" "+selectedAmorti.getAnneeD().toString());
+		}
+
+		for(int i = 2020; i <= year+1 ; i++) {
+			for (int j =1 ; j <= 12 ; j++) {
+				periode.add(Month.of(j)+" "+i);
+			}
+		}
+
+
+		// duree
+		Composite compositeDuree = new Composite(colonne1, SWT.NONE);
+		compositeDuree.setBackground(Couleur.bleuClair);
+		compositeDuree.setLayout(fillLayoutH5);
+
+		Label labelDuree = new Label(compositeDuree, SWT.NONE);
+		labelDuree.setBackground(Couleur.bleuClair);
+		labelDuree.setText("Durée (en mois)* : ");
+
+		final Text textDuree = new Text(compositeDuree, SWT.BORDER);
+		if (selectedAmorti != null) {
+			textDuree.setText(selectedAmorti.getDuree().toString());
+		}
+		else {
+			textDuree.setText("");
+		}
+
+
+		//pour creer un espace
+		Composite compoTest = new Composite(colonne1, SWT.NONE);
+		compoTest.setBackground(Couleur.bleuClair);
+		compoTest.setLayout(fillLayoutH5);
+
+		Label labelTest = new Label(compoTest, SWT.NONE);
+		labelTest.setBackground(Couleur.bleuClair);
+		labelTest.setText("");
+
+
+		// valeur
+		Composite compositeValeur = new Composite(colonne2, SWT.NONE);
+		compositeValeur.setBackground(Couleur.bleuClair);
+		compositeValeur.setLayout(fillLayoutH5);
+
+		Label labelValeur = new Label(compositeValeur, SWT.NONE);
+		labelValeur.setBackground(Couleur.bleuClair);
+		labelValeur.setText("Montant total* : ");
+
+		final Text textValeur = new Text(compositeValeur, SWT.BORDER);
+		if (selectedAmorti != null) {
+			textValeur.setText(selectedAmorti.getValeur().toString());
+		}
+		else {
+			textValeur.setText("");
+		}
+
+
+		Composite compositeType = new Composite(colonne2, SWT.NONE);
+		compositeType.setBackground(Couleur.bleuClair);
+		compositeType.setLayout(fillLayoutH5);
+
+		Label labelType = new Label(compositeType, SWT.NONE);
+		labelType.setText("Type* : ");
+		labelType.setBackground(Couleur.bleuClair);
+		// Titre
+		Combo type = new Combo(compositeType, SWT.BORDER);
+		if (selectedAmorti != null) {
+			type.setText(selectedAmorti.getType());
+		}
+		else {
+			type.setText("Ammortissement matériel");
+		}
+		type.add("Ammortissement matériel");
+		type.add("Coût ponctuel");
+		
+		type.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				if (type.getText().equals("Coût ponctuel")) {
+					textDuree.setText("1");
+				}
+			}
+		});
+		
+		
+		
+		// valeur
+		Composite compositeDesc = new Composite(colonne2, SWT.NONE);
+		compositeDesc.setBackground(Couleur.bleuClair);
+		compositeDesc.setLayout(fillLayoutH5);
+
+		Label labelDesc = new Label(compositeDesc, SWT.NONE);
+		labelDesc.setBackground(Couleur.bleuClair);
+		labelDesc.setText("Description : ");
+
+		final Text textDesc = new Text(compositeDesc, SWT.BORDER);
+		if (selectedAmorti != null) {
+			textDesc.setText(selectedAmorti.getDescription());
+		}
+		else {
+			textDesc.setText("");
+		}
+
+
+		// Boutons
+		Composite compositeBoutons = new Composite(colonne2, SWT.CENTER);
+		compositeBoutons.setBackground(Couleur.bleuClair);
+		compositeBoutons.setLayout(fillLayoutH5);
+
+		Button buttonAnnulation = new Button(compositeBoutons, SWT.BACKGROUND);
+		buttonAnnulation.setText("Annuler");
+		buttonAnnulation.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				selectedAmorti = null; selectedChantier = null;
+				vueAmortissement();
+			}
+		});
+
+		Button buttonValidation = new Button(compositeBoutons, SWT.BACKGROUND);
+		buttonValidation.setText("Valider");
+
+		//creation
+
+		buttonValidation.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+
+				try {
+					String id;
+					try {
+					id = chantiers.getText().split(";")[1].replace(" ",""); 
+					} catch (Exception e) {
+						throw new Error ("Merci d'indiquer un chantier.");
+					}
+					Integer chantierId = Integer.parseInt(id.substring(3,id.length()));
+
+					String[] debut = periode.getText().split(" ");
+					System.out.println(debut[0]+" "+debut[1]);
+
+					int moisD = Month.valueOf(debut[0]).getValue();
+					int anneeD = Integer.parseInt(debut[1]);
+
+					int duree;
+					try {
+						duree = Integer.parseInt(textDuree.getText());
+					} catch (Exception e) {
+						throw new Error ("Merci d'indiquer une durée.");
+					}
+
+					int moisF; int anneeF;
+
+					if (duree < 12) {
+						moisF = moisD + duree;  anneeF = anneeD;
+					}
+					else if (duree == 12) {
+						moisF = moisD;  anneeF = anneeD+1;
+					}
+					else {
+						anneeF = anneeD + duree / 12;
+						moisF = moisD + (duree % 12);
+					}
+
+					Double valeurTotale;
+					try {
+						valeurTotale = Double.parseDouble(textValeur.getText());
+					} catch (Exception e) {
+						throw new Error ("Merci d'indiquer le montant total.");
+					}
+
+					if (selectedAmorti != null) {
+						AmmortissementChantier ae = new AmmortissementChantier(selectedAmorti.getAmmortissementChantierId(), chantierId, moisD, anneeD, moisF, anneeF, textDesc.getText(), valeurTotale/duree, duree, valeurTotale, type.getText(), "Publié");
+						ae.updateDatabase();
+						MessageBox dialog = new MessageBox(vueAutres.getShell(), SWT.ICON_INFORMATION | SWT.OK);
+						dialog.setText("Modification réussie");
+						dialog.setMessage("Ce cout a bien été modifié dans la base de données.");
+						dialog.open();
+					}
+					else {
+						AmmortissementChantier ae = new AmmortissementChantier(0,chantierId, moisD, anneeD, moisF, anneeF, textDesc.getText(), valeurTotale/duree, duree, valeurTotale, type.getText(), "Publié");
+						ae.insertDatabase();
+						MessageBox dialog = new MessageBox(vueAutres.getShell(), SWT.ICON_INFORMATION | SWT.OK);
+						dialog.setText("Création réussie");
+						dialog.setMessage("Ce cout a bien été ajouté dans la base de données.");
+						dialog.open();
+					}
+					vueAmortissement();
+				} catch (Throwable e) {
+					e.printStackTrace();
+					System.out.println("erreur dans la creation");
+					MessageBox dialog = new MessageBox(vueAutres.getShell(), SWT.ICON_ERROR | SWT.OK);
+					dialog.setText("Erreur Création");
+					dialog.setMessage(
+							"Une erreur est survenue lors de la création du cout à amortir. " + '\n' + e.getMessage());
+					dialog.open();
+				}
+			}
+		});
+
+		vue.pack();
+	}
+
+	public void updateTableEmp() {
+		if(!Objects.isNull(tableChantier)) {
+			tableChantier.removeAll();
+		}
+
+		//on remplit la table
+		final TableColumn [] columns = tableChantier.getColumns();
+
+		try {
+			for (Site e : Site.getAllChantier()) {
+				//on verifie le status
+				if (e.getStatus().equals("Publié")) {
+					TableItem item = new TableItem (tableChantier, SWT.NONE);
+					item.setText(0,((Integer)e.getChantierId()).toString());
+					item.setText(1,e.getNom());
+				}
+			}
+		} catch (SQLException e1) {
+			System.out.println("erreur dans la table des couts chantiers");
+			MessageBox dialog = new MessageBox(vueAutres.getShell(), SWT.ICON_ERROR | SWT.OK);
+			dialog.setText("Erreur");
+			dialog.setMessage("Une erreur est survenue. "+'\n'+e1.getMessage());
+			dialog.open();
+		}
+
+		//on pack les colonnes
+		for (TableColumn col : columns)
+			col.pack ();
+
+		tableChantier.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				if (tableChantier.getSelectionIndex() != -1) {
+
+					try {
+						selectedChantier = Site
+								.getChantierById(Integer.parseInt(tableChantier.getSelection()[0].getText(0)));
+					} catch (NumberFormatException | SQLException e1) {
+						System.out.println("erreur pour recuperer l'chantier selectionne");
+						MessageBox dialog = new MessageBox(vueAutres.getShell(), SWT.ICON_ERROR | SWT.OK);
+						dialog.setText("Erreur");
+						dialog.setMessage("Une erreur est survenue. " + '\n' + e1.getMessage());
+						dialog.open();
+					}
+
+					updateTableAmorti();
+
+				} else { 
+
+					selectedChantier = null;selectedAmorti = null;
+					updateTableEmp();
+					updateTableAmorti();
+
+				}
+			}
+		});
+
+		vue.pack();
+	}
+
+	public void updateTableAmorti() {
+		if(!Objects.isNull(tableAmorti)) {
+			tableAmorti.removeAll();
+		}
+		if (selectedChantier == null) {
+			return;
+		}
+
+		//on remplit la table
+		final TableColumn [] columns = tableAmorti.getColumns();
+
+		try {
+			for (AmmortissementChantier a : AmmortissementChantier.getAllAmmortissementChantier()) {
+				//on verifie le status
+				if (a.getStatus().equals("Publié") && selectedChantier.getChantierId()==a.getChantierId()) {
+					TableItem item = new TableItem (tableAmorti, SWT.NONE);
+					item.setText(0,a.getAmmortissementChantierId().toString());
+					item.setText(1,a.getMoisD().toString()+'/'+a.getAnneeD().toString());
+					item.setText(2,a.getMoisF().toString()+'/'+a.getAnneeF().toString());
+					item.setText(3,a.getMontantParMois().toString());
+					item.setText(4,a.getValeur().toString());
+					item.setText(5,a.getType());
+					item.setText(6,a.getDescription());
+				}
+			}
+		} catch (SQLException e1) {
+			System.out.println("erreur dans la table des couts amorti chantiers");
+			MessageBox dialog = new MessageBox(vueAutres.getShell(), SWT.ICON_ERROR | SWT.OK);
+			dialog.setText("Erreur");
+			dialog.setMessage("Une erreur est survenue. "+'\n'+e1.getMessage());
+			dialog.open();
+		}
+
+		//on pack les colonnes
+		for (TableColumn col : columns)
+			col.pack ();
+
+		tableAmorti.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				if (tableAmorti.getSelectionIndex() != -1) {
+
+					try {
+						selectedAmorti = AmmortissementChantier.getAmmortissementChantierById(Integer.parseInt(tableAmorti.getSelection()[0].getText(0)));
+					} catch (NumberFormatException | SQLException e1) {
+						System.out.println("erreur pour recuperer l'amorti selectionne");
+						MessageBox dialog = new MessageBox(vueAutres.getShell(), SWT.ICON_ERROR | SWT.OK);
+						dialog.setText("Erreur");
+						dialog.setMessage("Une erreur est survenue. " + '\n' + e1.getMessage());
+						dialog.open();
+					}
+
+					amortiSelection();
+					doMenu(tableAmorti);
+				} else { 
+
+					selectedAmorti = null;
+					amortiSelection();
+
+					menu.dispose();
+					menu = new Menu(vueAutres.getShell(), SWT.POP_UP);
+					tableAmorti.setMenu(menu);
+				}
+			}
+		});
+
+
+		tableAmorti.pack();
+		vue.pack();
+		vue.layout(true,true);
 	}
 	
 	/***
@@ -88,8 +783,11 @@ public class VueLivraison {
 		vueLivraisonAfficher();
 		
 		vueLivraison.pack();
-		vueLivraison.getParent().pack();
+		tabFolder.pack();
+		tabFolder.getParent().pack();
 	}
+	
+	///////////////////////////////////////////////////////////////////////////////////////////////////////
 	
 	//Modification de la partie Selection --------------------------------------------------
 	/***
@@ -235,7 +933,8 @@ public class VueLivraison {
 		formulaireModification();
 		
 		vueLivraison.pack();
-		vueLivraison.getParent().pack();
+		tabFolder.pack();
+		tabFolder.getParent().pack();
 		
 	}
 	
@@ -711,7 +1410,8 @@ public class VueLivraison {
 		formulaireCreation();
 		
 		vueLivraison.pack();
-		vueLivraison.getParent().pack();
+		tabFolder.pack();
+		tabFolder.getParent().pack();
 		
 	}
 	
@@ -1217,36 +1917,74 @@ public class VueLivraison {
 	/***
 	 * cree un menu sur la selection de la table des livraisons lors d'un clic droit
 	 * @param table
-	 */
+	 */	
 	public void doMenu(Table table) {
-		menu = new Menu (vueLivraison.getShell(), SWT.POP_UP);
-		table.setMenu (menu);
+		menu = new Menu(tabFolder.getShell(), SWT.POP_UP);
+		table.setMenu(menu);
 
-		//pour modifier
-		MenuItem update = new MenuItem (menu, SWT.PUSH);
-		update.setText ("Modifier l'element");
-		update.addSelectionListener(new SelectionAdapter() {	
+		if (selectedAmorti != null || selectedLivraison != null) {
+			// pour modifier
+			MenuItem update = new MenuItem(menu, SWT.PUSH);
+			update.setText("Modifier l'element");
+			update.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent arg0) {
+					if (table.getSelection().length != 0) {
+						if (selectedAmorti!=null) {
+							vueCreationA();
+						}
+						else {
+							vueLivraisonModifier();
+						}
+					}
+				}
+			});
+		}
+
+		// pour supprimer
+		MenuItem delete = new MenuItem(menu, SWT.PUSH);
+		delete.setText("Supprimer l'element");
+		delete.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				if (table.getSelection().length != 0) {
-					vueLivraisonModifier();
+				try {
+					if (selectedAmorti!=null) {
+						AmmortissementChantier ae = AmmortissementChantier.getAmmortissementChantierById(selectedAmorti.getAmmortissementChantierId());
+						MessageBox dialog = new MessageBox(tabFolder.getShell(), SWT.ICON_QUESTION | SWT.YES | SWT.NO);
+						dialog.setText("Suppression Amortissement Chantier");
+						dialog.setMessage("Voulez vous supprimer le coût à amortir du chantier " + Site.getChantierById(ae.getChantierId()).getNom() + " ?");
+						int buttonID = dialog.open();
+						switch (buttonID) {
+						case SWT.YES:
+							ae.setStatus("Archivé");
+							ae.updateDatabase();
+							updateTableAmorti();
+						}
+						selectedAmorti = null;
+						amortiSelection();
+					}
+					else {
+						suppLivraison(table);
+					}
+					selectedChantier = null; selectedAmorti = null;
+					menu.dispose();
+					menu = new Menu(tabFolder.getShell(), SWT.POP_UP);
+					table.setMenu(menu);
+				} catch (Exception e) {
+					System.out.println("erreur pour supprimer l'element");
+					MessageBox dialog = new MessageBox(tabFolder.getShell(), SWT.ICON_ERROR | SWT.OK);
+					dialog.setText("Erreur");
+					dialog.setMessage("Une erreur est survenue. " + '\n' + e.getMessage());
+					dialog.open();
 				}
 			}
 		});
-		
-		//pour supprimer
-		MenuItem delete = new MenuItem (menu, SWT.PUSH);
-		delete.setText ("Supprimer l'element");
-		delete.addSelectionListener(new SelectionAdapter() {	
-			@Override
-			public void widgetSelected(SelectionEvent arg0) {
-				suppLivraison(table);
-			}
-		});
+
 	}
 	
+	
 	public Composite getComposite() {
-		return this.vueLivraison;
+		return this.tabFolder;
 	}
 	
 }

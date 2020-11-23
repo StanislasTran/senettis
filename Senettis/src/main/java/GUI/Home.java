@@ -288,7 +288,8 @@ public class Home {
 		Image image = new Image(display, "images\\moyenLogo.jpg");
 		logo.setImage(image);
 
-		logo.addMouseListener(new MouseListener() {
+		//TODO on peut essayer de remettre le fait que en cliquant sur le logo on revient a l'accueil
+		/*logo.addMouseListener(new MouseListener() {
 
 			@Override
 			public void mouseDoubleClick(MouseEvent e) {}
@@ -305,7 +306,7 @@ public class Home {
 					e1.printStackTrace();
 				}
 			}
-		});
+		});*/
 
 		logo.pack();
 	}
@@ -336,25 +337,7 @@ public class Home {
 
 			}
 		});
-		
-		
-		Button boutonChantier = new Button(menu, SWT.NONE);
-		boutonChantier.setText("Chantiers");
 
-		boutonChantier.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent arg0) {
-				if (!contenuColonneDroite.isDisposed()) {
-					contenuColonneDroite.dispose();
-				}
-				contenuColonneDroite = new VueChantier(colonneDroite,display).getComposite();
-				contenuColonneDroite.pack();
-				colonneDroite.pack();
-			}
-		});
-
-
-		//Button boutonAffectation = new Button(menu, SWT.NONE);
 		Button boutonAffectation = new Button(menu, SWT.NONE);
 
 		System.out.println(boutonAffectation.getBounds());
@@ -383,6 +366,37 @@ public class Home {
 			}
 
 		});
+		
+		Button boutonChantier = new Button(menu, SWT.NONE);
+		boutonChantier.setText("Chantiers");
+
+		boutonChantier.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				if (!contenuColonneDroite.isDisposed()) {
+					contenuColonneDroite.dispose();
+				}
+				contenuColonneDroite = new VueChantier(colonneDroite,display).getComposite();
+				contenuColonneDroite.pack();
+				colonneDroite.pack();
+			}
+		});
+		
+		Button boutonLivraison = new Button(menu, SWT.NONE);
+		boutonLivraison.setText("Coûts Chantiers");
+		boutonLivraison.setBackground(Couleur.blanc);
+
+		boutonLivraison.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				if (!contenuColonneDroite.isDisposed()) {
+					contenuColonneDroite.dispose();
+				}
+				contenuColonneDroite = new VueLivraison(colonneDroite,display).getComposite();
+				contenuColonneDroite.pack();
+				colonneDroite.pack();
+			}
+		});
 
 		Button boutonProduit = new Button(menu, SWT.NONE);
 		boutonProduit.setText("Produits");
@@ -409,21 +423,6 @@ public class Home {
 			}
 		});
 
-		Button boutonLivraison = new Button(menu, SWT.NONE);
-		boutonLivraison.setText("Livraisons");
-		boutonLivraison.setBackground(Couleur.blanc);
-
-		boutonLivraison.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent arg0) {
-				if (!contenuColonneDroite.isDisposed()) {
-					contenuColonneDroite.dispose();
-				}
-				contenuColonneDroite = new VueLivraison(colonneDroite,display).getComposite();
-				contenuColonneDroite.pack();
-				colonneDroite.pack();
-			}
-		});
 		menu.pack();
 	}
 
