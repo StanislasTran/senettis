@@ -334,22 +334,6 @@ public class Home {
 			}
 		});
 
-		Button boutonChantier = new Button(menu, SWT.NONE);
-		boutonChantier.setText("Chantiers");
-
-		boutonChantier.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent arg0) {
-				if (!contenuColonneDroite.isDisposed()) {
-					contenuColonneDroite.dispose();
-				}
-				contenuColonneDroite = new VueChantier(colonneDroite,display).getComposite();
-				contenuColonneDroite.pack();
-				colonneDroite.pack();
-			}
-		});
-
-
 		Button boutonAffectation = new Button(menu, SWT.NONE);
 		boutonAffectation.setText("Affectations");
 		boutonAffectation.setBackground(Couleur.blanc);
@@ -374,6 +358,37 @@ public class Home {
 				//System.out.println("done");
 			}
 
+		});
+		
+		Button boutonChantier = new Button(menu, SWT.NONE);
+		boutonChantier.setText("Chantiers");
+
+		boutonChantier.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				if (!contenuColonneDroite.isDisposed()) {
+					contenuColonneDroite.dispose();
+				}
+				contenuColonneDroite = new VueChantier(colonneDroite,display).getComposite();
+				contenuColonneDroite.pack();
+				colonneDroite.pack();
+			}
+		});
+		
+		Button boutonLivraison = new Button(menu, SWT.NONE);
+		boutonLivraison.setText("Coûts Chantiers");
+		boutonLivraison.setBackground(Couleur.blanc);
+
+		boutonLivraison.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				if (!contenuColonneDroite.isDisposed()) {
+					contenuColonneDroite.dispose();
+				}
+				contenuColonneDroite = new VueLivraison(colonneDroite,display).getComposite();
+				contenuColonneDroite.pack();
+				colonneDroite.pack();
+			}
 		});
 
 		Button boutonProduit = new Button(menu, SWT.NONE);
@@ -401,21 +416,6 @@ public class Home {
 			}
 		});
 
-		Button boutonLivraison = new Button(menu, SWT.NONE);
-		boutonLivraison.setText("Livraisons");
-		boutonLivraison.setBackground(Couleur.blanc);
-
-		boutonLivraison.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent arg0) {
-				if (!contenuColonneDroite.isDisposed()) {
-					contenuColonneDroite.dispose();
-				}
-				contenuColonneDroite = new VueLivraison(colonneDroite,display).getComposite();
-				contenuColonneDroite.pack();
-				colonneDroite.pack();
-			}
-		});
 		menu.pack();
 	}
 

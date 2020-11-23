@@ -272,3 +272,35 @@ AmmortissementEmploye
 SET Date_de_modification = GETDATE()
  WHERE AmmortissementEmployeId IN (SELECT DISTINCT AmmortissementEmployeId FROM Inserted);
  GO
+
+
+  Create table AmmortissementChantier (
+    AmmortissementChantierId  INT PRIMARY KEY IDENTITY (1, 1),
+	moisDepart int NOT NULL,
+	anneeDepart int NOT NULL,
+	moisFin int NOT NULL,
+	anneeFin int NOT NULL,
+	Chantier int NOT NULL,
+    FOREIGN KEY (Chantier) REFERENCES Chantier(ChantierId), 
+	duree int NOT NULL,
+	valeur decimal NOT NULL,
+	valeurParMois decimal,
+	type VARCHAR(100) NOT NULL,
+	description VARCHAR(200),
+	"Status" VARCHAR (50) NOT NULL,
+	"Date_de_creation" DateTime  NOT NUll Default (GETDATE()), 
+	"Date_de_modification" DateTime  NOT NUll Default (GETDATE()), 
+	CONSTRAINT check_status_ammortissementChantier CHECK (("Status") IN ('Publié','Brouillon','Archivé'))
+);
+
+GO
+
+Create TRIGGER AmmortissementChantier_Update
+ON AmmortissementChantier
+AFTER UPDATE
+AS
+UPDATE
+AmmortissementChantier
+SET Date_de_modification = GETDATE()
+ WHERE AmmortissementChantierId IN (SELECT DISTINCT AmmortissementChantierId FROM Inserted);
+ GO
