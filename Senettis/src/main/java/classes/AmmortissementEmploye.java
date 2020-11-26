@@ -183,6 +183,48 @@ public class AmmortissementEmploye {
 	}
 
 
+
+
+	public static List<AmmortissementEmploye> getAmmortissementEmployeByEmployeId(int employeId) throws SQLException {
+		String reqSql = "SELECT AmmortissementEmployeId,moisDepart,anneeDepart,employe,duree,valeur,type,status,moisFin,anneeFin,valeurParMois,description FROM AmmortissementEmploye WHERE Employe=?";
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		PreparedStatement statement = connection.prepareStatement(reqSql);
+		statement.setObject(1, employeId, Types.INTEGER);
+		statement.executeQuery();
+		List<AmmortissementEmploye> allCoutEmploye = new ArrayList<AmmortissementEmploye>();
+		
+		ResultSet result = statement.getResultSet();
+
+		while (result.next()) {
+			int ammortissementEmployeId = result.getInt("AmmortissementEmployeId");
+			Integer moisD = result.getInt("moisDepart");
+			Integer anneeD = result.getInt("anneeDepart");
+			Integer moisF = result.getInt("moisFin");
+			Integer anneeF = result.getInt("anneeFin");
+			employeId = result.getInt("Employe");
+
+			Integer duree = result.getInt("duree");
+			
+			Double valeur = 0.0;
+			if (result.getString("valeur") != null) {
+				valeur = Double.parseDouble(result.getString("valeur"));
+			}
+			
+			Double montantParMois = 0.0;
+			if (result.getString("valeurParMois") != null) {
+				montantParMois = Double.parseDouble(result.getString("valeurParMois"));
+			}
+			
+			String type = result.getString("type");
+			String status = result.getString("status");
+			String description = result.getString("description");
+
+			allCoutEmploye.add(new AmmortissementEmploye(ammortissementEmployeId, employeId,moisD, anneeD,moisF,anneeF,description,montantParMois,duree,valeur,type, status));
+		}
+
+		return allCoutEmploye;
+	}
+	
 	public static AmmortissementEmploye getAmmortissementEmployeById(int ammortissementEmployeId) throws SQLException {
 		String reqSql = "SELECT AmmortissementEmployeId,moisDepart,anneeDepart,employe,duree,valeur,type,status,moisFin,anneeFin,valeurParMois,description FROM AmmortissementEmploye WHERE AmmortissementEmployeId=?";
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());

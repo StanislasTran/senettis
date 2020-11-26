@@ -63,6 +63,7 @@ Create table Employe (
     Pointure VARCHAR(10),
     Taille VARCHAR(10),
     Date_arrivee DATE,
+	anciennete INT,
 	"Status" VARCHAR (50) NOT NULL,
 	"Date_de_creation" DateTime  NOT NUll Default (GETDATE()), 
 	"Date_de_modification" DateTime  NOT NUll Default (GETDATE()), 

@@ -164,6 +164,30 @@ public class CoutsEmploye {
 
 		return statement.executeUpdate();
 	}
+	
+	
+	public int updateDatabaseFromEmployeId() throws SQLException {
+		String reqSql = "UPDATE CoutEmploye SET mutuelle=?, indemnite_panier=?, salaire_brut=?, salaire_net=?, cout_transport=?, cout_telephone=?, charges_patronales=?, masse_salariale=?, remboursement_prets=?, saisie_arret=?, nb_heures=?, status=? WHERE Employe=? AND mois=? AND annee=?";
+				
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		PreparedStatement statement = connection.prepareStatement(reqSql);
+		statement.setObject(1, this.mutuelle, Types.DECIMAL);
+		statement.setObject(2, this.paniers, Types.DECIMAL);
+		statement.setObject(3, this.salaireBrut, Types.DECIMAL);
+		statement.setObject(4, this.salaireNet, Types.DECIMAL);
+		statement.setObject(5, this.remboursementTransport, Types.DECIMAL);
+		statement.setObject(6, this.remboursementTelephone, Types.DECIMAL);
+		statement.setObject(7, this.chargesP, Types.DECIMAL);
+		statement.setObject(8, this.masseS, Types.DECIMAL);
+		statement.setObject(9, this.prets, Types.DECIMAL);
+		statement.setObject(10, this.saisieArret, Types.DECIMAL);
+		statement.setObject(11, this.nombreHeures, Types.DECIMAL);
+		statement.setObject(12, this.status, Types.VARCHAR);
+		statement.setObject(13, this.employeId, Types.INTEGER);
+		statement.setObject(14, this.mois, Types.INTEGER);
+		statement.setObject(15, this.annee, Types.INTEGER);
+		return statement.executeUpdate();
+	}
 
 
 	private static Statement selectAllCoutEmploye() throws SQLException {
@@ -190,7 +214,92 @@ public class CoutsEmploye {
 		return 0;
 	}
 
+	public static CoutsEmploye getCoutEmployeByEmployeId(int employeId, int mois, int annee) throws SQLException {
+		String reqSql = "SELECT CoutEmployeId,employe,mois,annee,mutuelle,indemnite_panier,salaire_brut,salaire_net,cout_transport,cout_telephone,charges_patronales,masse_salariale,remboursement_prets,saisie_arret,nb_heures,status FROM CoutEmploye WHERE Employe=? AND mois=? AND annee=?";
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		PreparedStatement statement = connection.prepareStatement(reqSql);
+		statement.setObject(1, employeId, Types.INTEGER);
+		statement.setObject(2, mois, Types.INTEGER);
+		statement.setObject(3, annee, Types.INTEGER);
+		statement.executeQuery();
 
+		ResultSet result = statement.getResultSet();
+
+		if (result.next()) {
+			int coutEmployeId = result.getInt("CoutEmployeId");
+			mois = result.getInt("mois");
+			annee = result.getInt("annee");
+			employeId = result.getInt("Employe");
+			
+			
+			
+			Double mutuelle = 0.0;
+			if (result.getString("mutuelle") != null) {
+				mutuelle = Double.parseDouble(result.getString("mutuelle"));
+			}
+			
+			Double paniers = 0.0;
+			if (result.getString("indemnite_panier") != null) {
+				paniers = Double.parseDouble(result.getString("indemnite_panier"));
+			}
+			
+			Double salaireBrut = 0.0;
+			if (result.getString("salaire_brut") != null) {
+				salaireBrut = Double.parseDouble(result.getString("salaire_brut"));
+			}
+			
+			Double salaireNet = 0.0;
+			if (result.getString("salaire_net") != null) {
+				salaireNet = Double.parseDouble(result.getString("salaire_net"));
+			}
+			
+			
+			Double remboursementTransport = 0.0;
+			if (result.getString("cout_transport") != null) {
+				remboursementTransport = Double.parseDouble(result.getString("cout_transport"));
+			}
+			
+			Double remboursementTelephone = 0.0;
+			if (result.getString("cout_telephone") != null) {
+				remboursementTelephone = Double.parseDouble(result.getString("cout_telephone"));
+			}
+			
+			Double chargesP = 0.0;
+			if (result.getString("charges_patronales") != null) {
+				chargesP = Double.parseDouble(result.getString("charges_patronales"));
+			}
+			
+			Double masseS = 0.0;
+			if (result.getString("masse_salariale") != null) {
+				masseS = Double.parseDouble(result.getString("masse_salariale"));
+			}
+			
+			Double prets = 0.0;
+			if (result.getString("remboursement_prets") != null) {
+				prets = Double.parseDouble(result.getString("remboursement_prets"));
+			}
+			
+			Double saisieArret = 0.0;
+			if (result.getString("saisie_arret") != null) {
+				saisieArret = Double.parseDouble(result.getString("saisie_arret"));
+			}
+			
+			Double nombreHeures = 0.0;
+			if (result.getString("nb_heures") != null) {
+				nombreHeures = Double.parseDouble(result.getString("nb_heures"));
+			}
+
+			String status = result.getString("status");
+
+			return new CoutsEmploye(coutEmployeId, employeId,mois, annee,remboursementTransport,remboursementTelephone, salaireNet,salaireBrut,chargesP,masseS,mutuelle,paniers, 
+					prets,saisieArret,nombreHeures, status);
+
+		} else {
+			throw new SQLException("Data not found");
+		}
+	}
+	
+	
 	public static CoutsEmploye getCoutEmployeById(int coutEmployeId) throws SQLException {
 		String reqSql = "SELECT CoutEmployeId,mois,annee,employe,mutuelle,indemnite_panier,salaire_brut,salaire_net,cout_transport,cout_telephone,charges_patronales,masse_salariale,remboursement_prets,saisie_arret,nb_heures,status FROM CoutEmploye WHERE CoutEmployeId=?";
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());

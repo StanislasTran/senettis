@@ -81,13 +81,11 @@ public class VueLivraison {
 	 	
 	 	tabFolder = new TabFolder(composite, SWT.BORDER);
 
-
-
 		TabItem tabLivraison = new TabItem(tabFolder, SWT.NULL);
-		tabLivraison.setText("Livraisons");
+		tabLivraison.setText("     Livraisons     ");
 
 		TabItem tabAutres = new TabItem(tabFolder, SWT.NULL);
-		tabAutres.setText("Autres coûts chantier");
+		tabAutres.setText("     Autres coûts chantier     ");
 		
 		tabFolder.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(org.eclipse.swt.events.SelectionEvent event) {
@@ -1153,7 +1151,7 @@ public class VueLivraison {
 		editor.grabHorizontal = true;
 		
 		//on met les noms des colonnes
-		String[] titles = {"Id","Nom","Prix", "Commentaires", "Quantité"};
+		String[] titles = {"Id","Nom","Prix","Marque", "Commentaires", "Quantité"};
 		for (String title : titles) {
 			TableColumn column = new TableColumn (tableProduit, SWT.NONE);
 			column.setText (title);
@@ -1171,8 +1169,9 @@ public class VueLivraison {
 					item.setText(0,((Integer)p.getProduitId()).toString());
 					item.setText(1,p.getName());
 					item.setText(2,p.getPrice().toString());
-					item.setText(3,p.getComment());
-					item.setText(4,"0");
+					item.setText(3,p.getBrand());
+					item.setText(4,p.getComment());
+					item.setText(5,"0");
 				}
 			}
 		} catch (SQLException e1) {
@@ -1191,7 +1190,7 @@ public class VueLivraison {
 					if (p.getStatus().contentEquals("Publié")) {
 						for (TableItem i : tableProduit.getItems()) {
 							if (Integer.parseInt(i.getText(0)) == p.getIdProduit() ) {
-								i.setText(4, p.getQuantite().toString());
+								i.setText(5, p.getQuantite().toString());
 							}
 						}
 					}
@@ -1226,16 +1225,16 @@ public class VueLivraison {
 
 				//on ajoute l'editor sur la ligne
 				Text newEditor = new Text(tableProduit, SWT.NONE);
-				newEditor.setText(item.getText(4));
+				newEditor.setText(item.getText(5));
 				newEditor.addModifyListener(new ModifyListener() { 
 					public void modifyText(ModifyEvent me) { 
 						if (!(newEditor.getText().isEmpty())) {//pour ne pas tester quand l'utilisateur est en train de modifier
 							try {
 								if (Integer.parseInt(newEditor.getText()) <0) {//on ne peut pas mettre de quantite negative
-									item.setText(4,"0"); 
+									item.setText(5,"0"); 
 								}
 								else {
-									item.setText(4,newEditor.getText()); //on modifie la ligne avec la nouvelle quantite
+									item.setText(5,newEditor.getText()); //on modifie la ligne avec la nouvelle quantite
 								}
 							} catch(Exception e) {
 								System.out.println("erreur dans la modif"); MessageBox dialog = new
@@ -1248,7 +1247,7 @@ public class VueLivraison {
 					}
 				});
 				newEditor.selectAll(); newEditor.setFocus();
-				editor.setEditor(newEditor, item, 4);
+				editor.setEditor(newEditor, item, 5);
 			}
 		});
 		
@@ -1271,7 +1270,7 @@ public class VueLivraison {
 			@Override public void widgetSelected(SelectionEvent arg0) {
 					Double somme = 0.0;
 					for (TableItem i : tableProduit.getItems()) {
-						Integer quantite = Integer.parseInt(i.getText(4));
+						Integer quantite = Integer.parseInt(i.getText(5));
 						Double prix = Double.parseDouble(i.getText(2));
 						somme += quantite * prix;
 					}
@@ -1287,7 +1286,7 @@ public class VueLivraison {
 				//d'abord, on recalcule le prix pour etre sur
 				  Double somme = 0.0;
 					for (TableItem i : tableProduit.getItems()) {
-						Integer quantite = Integer.parseInt(i.getText(4));
+						Integer quantite = Integer.parseInt(i.getText(5));
 						Double prix = Double.parseDouble(i.getText(2));
 						somme += quantite * prix;
 					}
@@ -1316,7 +1315,7 @@ public class VueLivraison {
 
 							for(TableItem i : tableProduit.getItems()) {
 								produits.add(Integer.parseInt(i.getText(0)));
-								quantites.add(Integer.parseInt(i.getText(4)));
+								quantites.add(Integer.parseInt(i.getText(5)));
 							}
 							
 							// on met a jour la livraison selectionnee
@@ -1597,7 +1596,7 @@ public class VueLivraison {
 		editor.grabHorizontal = true;
 		
 		//on met les noms des colonnes
-		String[] titles = {"Id","Nom","Prix", "Commentaires", "Quantité"};
+		String[] titles = {"Id","Nom","Prix","Marque", "Commentaires", "Quantité"};
 		for (String title : titles) {
 			TableColumn column = new TableColumn (tableProduit, SWT.NONE);
 			column.setText (title);
@@ -1611,8 +1610,9 @@ public class VueLivraison {
 					item.setText(0,((Integer)p.getProduitId()).toString());
 					item.setText(1,p.getName());
 					item.setText(2,p.getPrice().toString());
-					item.setText(3,p.getComment());
-					item.setText(4,"0");
+					item.setText(3,p.getBrand());
+					item.setText(4,p.getComment());
+					item.setText(5,"0");
 				}
 			}
 		} catch (SQLException e1) {
@@ -1638,16 +1638,16 @@ public class VueLivraison {
 				if (item == null) { return; }
 
 				Text newEditor = new Text(tableProduit, SWT.NONE);
-				newEditor.setText(item.getText(4));
+				newEditor.setText(item.getText(5));
 				newEditor.addModifyListener(new ModifyListener() { 
 					public void modifyText(ModifyEvent me) { 
 						if (!(newEditor.getText().isEmpty())) {
 							try {
 								if (Integer.parseInt(newEditor.getText()) <0) {
-									item.setText(4,"0"); 
+									item.setText(5,"0"); 
 								}
 								else {
-									item.setText(4,newEditor.getText()); 
+									item.setText(5,newEditor.getText()); 
 								}
 							} catch(Exception e) {
 								System.out.println("erreur dans la modif"); MessageBox dialog = new
@@ -1660,7 +1660,7 @@ public class VueLivraison {
 					} 
 				});
 				newEditor.selectAll(); newEditor.setFocus();
-				editor.setEditor(newEditor, item, 4);
+				editor.setEditor(newEditor, item, 5);
 			}
 		});
 		
@@ -1683,7 +1683,7 @@ public class VueLivraison {
 			@Override public void widgetSelected(SelectionEvent arg0) {
 					Double somme = 0.0;
 					for (TableItem i : tableProduit.getItems()) {
-						Integer quantite = Integer.parseInt(i.getText(4));
+						Integer quantite = Integer.parseInt(i.getText(5));
 						Double prix = Double.parseDouble(i.getText(2));
 						somme += quantite * prix;
 					}
@@ -1698,7 +1698,7 @@ public class VueLivraison {
 				  //d'abord, on calcul le prix pour etre sur
 				  Double somme = 0.0;
 					for (TableItem i : tableProduit.getItems()) {
-						Integer quantite = Integer.parseInt(i.getText(4));
+						Integer quantite = Integer.parseInt(i.getText(5));
 						Double prix = Double.parseDouble(i.getText(2));
 						somme += quantite * prix;
 					}
@@ -1724,7 +1724,7 @@ public class VueLivraison {
 
 							for(TableItem i : tableProduit.getItems()) {
 								produits.add(Integer.parseInt(i.getText(0)));
-								quantites.add(Integer.parseInt(i.getText(4)));
+								quantites.add(Integer.parseInt(i.getText(5)));
 							}
 							validerCreation(idChantier, produits, quantites, prix.getText(), date.getText());
 						}

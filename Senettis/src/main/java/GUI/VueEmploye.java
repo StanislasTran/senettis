@@ -3,6 +3,7 @@ package GUI;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.Month;
+import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -29,21 +30,22 @@ public class VueEmploye {
 
 	private Display display;
 
-	private Composite vueEmploye;
-	private Composite selection;
-	private Composite vue;
+	private static Composite vueEmploye;
+	private static Composite selection;
+	private static Composite vue;
+	private static Composite validation;
 
-	private Menu menu;
+	private static Menu menu;
 
-	private Employee selectedEmploye;
-	private AmmortissementEmploye selectedAmorti;
+	private static Employee selectedEmploye;
+	private static AmmortissementEmploye selectedAmorti;
 
-	private Table tableGlobaleEmploye;
-	private Table tableCouts;
-	private Table tableEmp;
-	private Table tableAmorti;
+	private static Table tableGlobaleEmploye;
+	private static Table tableCouts;
+	private static Table tableEmp;
+	private static Table tableAmorti;
 
-	private ArrayList<TableEditor> editors;
+	private static ArrayList<TableEditor> editors;
 
 	////////////////////////////////////////////////////////////////////////////////////
 	/***
@@ -75,7 +77,7 @@ public class VueEmploye {
 	 * 
 	 * @param composite : composite vueEmploye
 	 */
-	public void newVueEmploye() {
+	public static void newVueEmploye() {
 		// Label test=new Label(vueEmploye,SWT.NONE);test.pack();
 
 		compositeSelectionBoutons();
@@ -88,17 +90,7 @@ public class VueEmploye {
 	////////////////////////////////////// COUTS A AMORTIR
 	////////////////////////////////////// //////////////////////////////////////////////
 
-	public void vueCompleteCouts() {
-
-		selectionCouts();
-		vueCouts();
-
-		vueEmploye.pack();
-		vueEmploye.getParent().pack();
-
-	}
-
-	public void amortiSelection() {
+	public static void amortiSelection() {
 		/// SELECTION
 		if (!Objects.isNull(selection) && !selection.isDisposed()) {
 			selection.dispose();
@@ -181,7 +173,7 @@ public class VueEmploye {
 		selection.pack();
 	}
 
-	public void vueAmortissement() {
+	public static void vueAmortissement() {
 
 		amortiSelection();
 
@@ -253,7 +245,7 @@ public class VueEmploye {
 		vueEmploye.getParent().pack();
 	}
 
-	public void vueCreationA() {
+	public static void vueCreationA() {
 
 		vueFormulaireAmorti();
 
@@ -305,7 +297,7 @@ public class VueEmploye {
 		vueEmploye.getParent().pack();
 	}
 
-	public void vueFormulaireAmorti() {
+	public static void vueFormulaireAmorti() {
 		if (!Objects.isNull(vue) && !vue.isDisposed()) {
 			vue.dispose();
 		}
@@ -498,8 +490,6 @@ public class VueEmploye {
 		Button buttonValidation = new Button(compositeBoutons, SWT.BACKGROUND);
 		buttonValidation.setText("Valider");
 
-		// creation
-
 		buttonValidation.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -517,32 +507,28 @@ public class VueEmploye {
 
 					int duree = Integer.parseInt(textDuree.getText());
 
-					int moisF;
-					int anneeF;
+					int moisF = moisD + duree;
+					int anneeF = anneeD;
 
-					if (duree < 12) {
-						moisF = moisD + duree;
-						anneeF = anneeD;
-					} else if (duree == 12) {
-						moisF = moisD;
-						anneeF = anneeD + 1;
-					} else {
-						anneeF = anneeD + duree / 12;
-						moisF = moisD + (duree % 12);
+					while (moisF>12) {
+						moisF -= 12;
+						anneeF += 1;
 					}
 
 					Double valeurTotale = Double.parseDouble(textValeur.getText());
 
-					AmmortissementEmploye ae = new AmmortissementEmploye(selectedAmorti.getAmmortissementEmployeId(),
-							employeId, moisD, anneeD, moisF, anneeF, textDesc.getText(), valeurTotale / duree, duree,
-							valeurTotale, type.getText(), "Publié");
+					AmmortissementEmploye ae;
 					if (selectedAmorti != null) {
+						ae = new AmmortissementEmploye(selectedAmorti.getAmmortissementEmployeId(),
+								employeId, moisD, anneeD, moisF, anneeF, textDesc.getText(), valeurTotale / duree, duree,
+								valeurTotale, type.getText(), "Publié");
 						ae.updateDatabase();
 						MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_INFORMATION | SWT.OK);
 						dialog.setText("Modification réussie");
 						dialog.setMessage("Ce cout a bien été modifié dans la base de données.");
 						dialog.open();
 					} else {
+						ae = new AmmortissementEmploye(employeId, moisD, anneeD, moisF, anneeF,  valeurTotale / duree, 						textDesc.getText(),	duree, valeurTotale, type.getText(), "Publié");
 						ae.insertDatabase();
 						MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_INFORMATION | SWT.OK);
 						dialog.setText("Création réussie");
@@ -565,7 +551,7 @@ public class VueEmploye {
 		vue.pack();
 	}
 
-	public void updateTableEmp() {
+	public static void updateTableEmp() {
 		if (!Objects.isNull(tableEmp)) {
 			tableEmp.removeAll();
 		}
@@ -627,7 +613,7 @@ public class VueEmploye {
 		vue.pack();
 	}
 
-	public void updateTableAmorti() {
+	public static void updateTableAmorti() {
 		if (!Objects.isNull(tableAmorti)) {
 			tableAmorti.removeAll();
 		}
@@ -701,7 +687,17 @@ public class VueEmploye {
 	////////////////////////////////////// COUT EMPLOYE
 	////////////////////////////////////// //////////////////////////////////////////////
 
-	public void selectionCouts() {
+	public static void vueCompleteCouts() {
+
+		selectionCouts();
+		vueCouts();
+
+		vueEmploye.pack();
+		vueEmploye.getParent().pack();
+
+	}
+	
+	public static void selectionCouts() {
 		if (!Objects.isNull(selection) && !selection.isDisposed()) {
 			selection.dispose();
 		}
@@ -739,6 +735,7 @@ public class VueEmploye {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				updateCoutsTable(periode.getText());
+				vue.pack();
 			}
 		});
 
@@ -783,7 +780,7 @@ public class VueEmploye {
 					dialog.open();
 				}
 				updateCoutsTable(periode.getText());
-
+				vue.pack();
 			}
 		});
 
@@ -801,7 +798,7 @@ public class VueEmploye {
 		selection.pack();
 	}
 
-	public void vueCouts() {
+	public static void vueCouts() {
 		if (!Objects.isNull(vue) && !vue.isDisposed()) {
 			vue.dispose();
 		}
@@ -815,25 +812,17 @@ public class VueEmploye {
 		Month month = currentdate.getMonth();
 		int year = currentdate.getYear();
 
-		// creation de la table des produits
-		tableCouts = new Table(vue, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.FULL_SELECTION);
-		tableCouts.setLayoutData(new RowData(1045, 530));
-		tableCouts.setLinesVisible(true);
-		tableCouts.setHeaderVisible(true);
-
-		// on met les noms des colonnes
-		String[] titles = { "Id", "Nom", "Prenom", "Matricule", "Période", "salaire Net", "salaire Brut",
-				"nombreHeures", "charges patronales", "masse salariale", "Transport", "Telephone", "mutuelle",
-				"paniers", "prets", "saisie arret" };
-		for (String title : titles) {
-			TableColumn column = new TableColumn(tableCouts, SWT.NONE);
-			column.setText(title);
-		}
-
+		compoValidation();
 		updateCoutsTable(month.toString() + " " + year);
-
+		vue.pack();
+	}
+	
+	public static void compoValidation() {
+		if (!Objects.isNull(validation) && !validation.isDisposed()) {
+			validation.dispose();
+		}
 		// validation
-		Composite validation = new Composite(vue, SWT.NONE);
+		validation = new Composite(vue, SWT.NONE);
 		RowLayout rowLayout = new RowLayout();
 		rowLayout.marginWidth = 22;
 		rowLayout.marginTop = 6;
@@ -859,23 +848,121 @@ public class VueEmploye {
 			public void widgetSelected(SelectionEvent arg0) {
 
 				for (int ligne = 0; ligne < tableCouts.getItems().length; ligne++) {
-					System.out.println(tableCouts.getItem(ligne).getText(0));
-					Integer id = Integer.parseInt(tableCouts.getItem(ligne).getText(0));
-					CoutsEmploye ce;
+					System.out.println(ligne+"-----------------------------");
+					Integer employeId = Integer.parseInt(tableCouts.getItem(ligne).getText(0));
+					Boolean empty = true;
 					try {
-						ce = CoutsEmploye.getCoutEmployeById(id);
-						ce.setSalaireNet(Double.parseDouble(tableCouts.getItem(ligne).getText(5)));
-						ce.setSalaireBrut(Double.parseDouble(tableCouts.getItem(ligne).getText(6)));
-						ce.setNombreHeures(Double.parseDouble(tableCouts.getItem(ligne).getText(7)));
-						ce.setChargesP(Double.parseDouble(tableCouts.getItem(ligne).getText(8)));
-						ce.setMasseS(Double.parseDouble(tableCouts.getItem(ligne).getText(9)));
-						ce.setRemboursementTransport(Double.parseDouble(tableCouts.getItem(ligne).getText(10)));
-						ce.setRemboursementTelephone(Double.parseDouble(tableCouts.getItem(ligne).getText(11)));
-						ce.setMutuelle(Double.parseDouble(tableCouts.getItem(ligne).getText(12)));
-						ce.setPaniers(Double.parseDouble(tableCouts.getItem(ligne).getText(13)));
-						ce.setPrets(Double.parseDouble(tableCouts.getItem(ligne).getText(14)));
-						ce.setSaisieArret(Double.parseDouble(tableCouts.getItem(ligne).getText(15)));
-						ce.updateDatabase();
+						System.out.println("dans le try ");
+						String[] periode = tableCouts.getItem(ligne).getText(4).split("/");
+						System.out.println(periode[0]);
+						System.out.println(periode[1]);
+						int mois = Integer.parseInt(periode[0]);
+						int annee = Integer.parseInt(periode[1]);
+
+						CoutsEmploye ce = new CoutsEmploye(employeId,mois,annee,"Publié");
+						System.out.println("on a cree ");
+
+						if (!tableCouts.getItem(ligne).getText(5).isBlank()) {
+							ce.setSalaireNet(Double.parseDouble(tableCouts.getItem(ligne).getText(5)));
+							empty = false;
+						}
+						else {
+							ce.setSalaireNet(0.0);
+						}
+
+						if (!tableCouts.getItem(ligne).getText(6).isBlank()) {
+							ce.setSalaireBrut(Double.parseDouble(tableCouts.getItem(ligne).getText(6)));
+							empty = false;
+						}
+						else {
+							ce.setSalaireBrut(0.0);
+						}
+
+						if (!tableCouts.getItem(ligne).getText(7).isBlank()) {
+							ce.setNombreHeures(Double.parseDouble(tableCouts.getItem(ligne).getText(7)));
+							empty = false;
+						}
+						else {
+							ce.setNombreHeures(0.0);
+						}
+
+						if (!tableCouts.getItem(ligne).getText(8).isBlank()) {
+							ce.setChargesP(Double.parseDouble(tableCouts.getItem(ligne).getText(8)));
+							empty = false;
+						}
+						else {
+							ce.setChargesP(0.0);
+						}
+
+						if (!tableCouts.getItem(ligne).getText(9).isBlank()) {
+							ce.setMasseS(Double.parseDouble(tableCouts.getItem(ligne).getText(9)));
+							empty = false;
+						}
+						else {
+							ce.setMasseS(0.0);
+						}
+
+						if (!tableCouts.getItem(ligne).getText(10).isBlank()) {
+							ce.setRemboursementTransport(Double.parseDouble(tableCouts.getItem(ligne).getText(10)));
+							empty = false;
+						}
+						else {
+							ce.setRemboursementTransport(0.0);
+						}
+
+						if (!tableCouts.getItem(ligne).getText(11).isBlank()) {
+							ce.setRemboursementTelephone(Double.parseDouble(tableCouts.getItem(ligne).getText(11)));
+							empty = false;
+						}
+						else {
+							ce.setRemboursementTelephone(0.0);
+						}
+
+						if (!tableCouts.getItem(ligne).getText(12).isBlank()) {
+							ce.setMutuelle(Double.parseDouble(tableCouts.getItem(ligne).getText(12)));
+							empty = false;
+						}
+						else {
+							ce.setMutuelle(0.0);
+						}
+
+						if (!tableCouts.getItem(ligne).getText(13).isBlank()) {
+							ce.setPaniers(Double.parseDouble(tableCouts.getItem(ligne).getText(13)));
+							empty = false;
+						}
+						else {
+							ce.setPaniers(0.0);
+						}
+
+						if (!tableCouts.getItem(ligne).getText(14).isBlank()) {
+							ce.setPrets(Double.parseDouble(tableCouts.getItem(ligne).getText(14)));
+							empty = false;
+						}
+						else {
+							ce.setPrets(0.0);
+						}
+
+						if (!tableCouts.getItem(ligne).getText(15).isBlank()) {
+							ce.setSaisieArret(Double.parseDouble(tableCouts.getItem(ligne).getText(15)));
+							empty = false;
+						}
+						else {
+							ce.setSaisieArret(0.0);
+						}
+
+						System.out.println("on a tout rempli");
+
+						if (!empty) {//si au moins un champs est renseigné
+							try {
+								System.out.println(employeId+","+mois+","+annee);
+								if(ce.updateDatabaseFromEmployeId()==0) {
+									ce.insertDatabase();
+								}
+							} catch(Exception e) {
+								System.out.println("creation");
+								ce.insertDatabase();
+							}
+						}
 					} catch (SQLException e) {
 						System.out.println("erreur dans la table des couts employes");
 						MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_ERROR | SWT.OK);
@@ -895,6 +982,7 @@ public class VueEmploye {
 					dialog.setMessage("Les couts employé ont bien été modifiés dans la base de données.");
 					dialog.open();
 					updateCoutsTable(periode);
+					vue.pack();
 				} catch (Exception e) {
 					System.out.println("erreur dans la table des couts employes");
 					MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_ERROR | SWT.OK);
@@ -904,14 +992,31 @@ public class VueEmploye {
 				}
 			}
 		});
-
 		validation.pack();
-		vue.pack();
 	}
 
-	public void updateCoutsTable(String periode) {
-		if (!Objects.isNull(tableCouts)) {
-			tableCouts.removeAll();
+	public static void updateCoutsTable(String periode) {
+		//if (!Objects.isNull(tableCouts)) {
+		//	tableCouts.removeAll();
+		//}
+		
+		if (!Objects.isNull(tableCouts) && !tableCouts.isDisposed()) {
+			tableCouts.dispose();
+		}
+		
+		// creation de la table des produits
+		tableCouts = new Table(vue, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.FULL_SELECTION);
+		tableCouts.setLayoutData(new RowData(1045, 530));
+		tableCouts.setLinesVisible(true);
+		tableCouts.setHeaderVisible(true);
+
+		// on met les noms des colonnes
+		String[] titles = { "Id", "Nom", "Prenom", "Matricule", "Période", "salaire Net", "salaire Brut",
+				"nombreHeures", "charges patronales", "masse salariale", "Transport", "Telephone", "mutuelle",
+				"paniers", "prets", "saisie arret" };
+		for (String title : titles) {
+			TableColumn column = new TableColumn(tableCouts, SWT.NONE);
+			column.setText(title);
 		}
 
 		// on remplit la table
@@ -923,30 +1028,68 @@ public class VueEmploye {
 		Month moisInt = Month.valueOf(mois);
 
 		try {
-			for (CoutsEmploye ce : CoutsEmploye.getAllCoutEmploye()) {
-				// on verifie le status
-				if (ce.getStatus().equals("Publié") && ce.getAnnee() == Integer.parseInt(annee)
-						&& ce.getMois() == moisInt.getValue()) {
+			for (Employee e : Employee.getAllEmploye()) {
+				if (e.getStatus().equals("Publié")) {
 					TableItem item = new TableItem(tableCouts, SWT.NONE);
-					item.setText(0, ce.getCoutEmployeId().toString());
-					item.setText(1, Employee.getEmployeById(ce.getEmployeId()).getNom());
-					item.setText(2, Employee.getEmployeById(ce.getEmployeId()).getPrenom());
-					item.setText(3, Employee.getEmployeById(ce.getEmployeId()).getNumeroMatricule());
-					String p = ce.getMois().toString() + '/' + ce.getAnnee().toString();
-					item.setText(4, p);
-					item.setText(5, ce.getSalaireNet().toString());
-					item.setText(6, ce.getSalaireBrut().toString());
-					item.setText(7, ce.getNombreHeures().toString());
-					item.setText(8, ce.getChargesP().toString());
-					item.setText(9, ce.getMasseS().toString());
-					item.setText(10, ce.getRemboursementTransport().toString());
-					item.setText(11, ce.getRemboursementTelephone().toString());
-					item.setText(12, ce.getMutuelle().toString());
-					item.setText(13, ce.getPaniers().toString());
-					item.setText(14, ce.getPrets().toString());
-					item.setText(15, ce.getSaisieArret().toString());
+					item.setText(0, Integer.toString(e.getEmployeId()));
+					item.setText(1, e.getNom());
+					item.setText(2, e.getPrenom());
+					item.setText(3, e.getNumeroMatricule());
+					item.setText(4, Integer.toString(moisInt.getValue())+'/'+annee);
+					
+					try {
+						System.out.println("ici");
+						CoutsEmploye ce = CoutsEmploye.getCoutEmployeByEmployeId(e.getEmployeId(),moisInt.getValue(),Integer.parseInt(annee));
+						if (ce.getStatus().equals("Publié")) {
+							item.setText(5, ce.getSalaireNet().toString());
+							item.setText(6, ce.getSalaireBrut().toString());
+							item.setText(7, ce.getNombreHeures().toString());
+							item.setText(8, ce.getChargesP().toString());
+							item.setText(9, ce.getMasseS().toString());
+							item.setText(10, ce.getRemboursementTransport().toString());
+							item.setText(11, ce.getRemboursementTelephone().toString());
+							item.setText(12, ce.getMutuelle().toString());
+							item.setText(13, ce.getPaniers().toString());
+							System.out.println("Nouvel employe --------------------------------------");
+							
+							Double pret = 0.0; Double saisie = 0.0;
+							for (AmmortissementEmploye ae : AmmortissementEmploye.getAmmortissementEmployeByEmployeId(e.getEmployeId())) {
+								System.out.println("dans la boucle");
+								if (ae.getStatus().equals("Publié")) {
+									System.out.println("c'est publie");
+									System.out.println("debut : "+ae.getAnneeD()+" "+ae.getMoisD());
+									System.out.println("fin : "+ae.getAnneeF()+" "+ae.getMoisF());
+									System.out.println("now : "+Integer.parseInt(annee)+" "+moisInt.getValue());
+									YearMonth debut = YearMonth.of(ae.getAnneeD(),ae.getMoisD());
+									YearMonth fin = YearMonth.of(ae.getAnneeF(),ae.getMoisF());
+									YearMonth now = YearMonth.of(Integer.parseInt(annee),moisInt.getValue());
+									System.out.println("debut : "+debut.toString());
+									System.out.println("fin : "+fin.toString());
+									System.out.println("now : "+now.toString());
+									if (debut.equals(now) || fin.equals(now) || (debut.isBefore(now) && fin.isAfter(now))) {
+										System.out.println("date ok");
+										if (ae.getType().equals("Prêt")) {
+											pret += ae.getMontantParMois();
+										}
+										else {
+											saisie += ae.getMontantParMois();
+										}
+									}
+								}
+							}
+							item.setText(14, pret.toString());
+							item.setText(15, saisie.toString());
+						}
+					}catch (Exception e2) {
+						//si on n'a pas de couts associes a cet employe pour l'instant
+					}
 				}
+				
 			}
+			
+			tableCouts.layout(true,true);
+			vue.layout(true,true);
+			
 		} catch (SQLException e1) {
 			System.out.println("erreur dans la table des couts employes");
 			MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_ERROR | SWT.OK);
@@ -970,7 +1113,7 @@ public class VueEmploye {
 		vue.pack();
 	}
 
-	public SelectionAdapter getListener() {
+	public static SelectionAdapter getListener() {
 		editors = new ArrayList<TableEditor>();
 
 		// CREATION DES EDITOR POUR CHAQUE COLONNE
@@ -993,11 +1136,6 @@ public class VueEmploye {
 		editorCP.horizontalAlignment = SWT.LEFT;
 		editorCP.grabHorizontal = true;
 		editors.add(editorCP);
-
-		final TableEditor editorMS = new TableEditor(tableCouts);
-		editorMS.horizontalAlignment = SWT.LEFT;
-		editorMS.grabHorizontal = true;
-		editors.add(editorMS);
 
 		final TableEditor editorTr = new TableEditor(tableCouts);
 		editorTr.horizontalAlignment = SWT.LEFT;
@@ -1033,9 +1171,6 @@ public class VueEmploye {
 				}
 				if (editorCP.getEditor() != null) {
 					editorCP.getEditor().dispose();
-				}
-				if (editorMS.getEditor() != null) {
-					editorMS.getEditor().dispose();
 				}
 				if (editorTr.getEditor() != null) {
 					editorTr.getEditor().dispose();
@@ -1086,6 +1221,24 @@ public class VueEmploye {
 																	// de modifier
 							try {
 								item.setText(6, newEditorSB.getText());
+								
+								Double cp;
+								if (!item.getText(8).isBlank()) {
+									cp = Double.parseDouble(item.getText(8));
+								}
+								else {
+									cp = 0.0;
+								}
+								
+								Double sb;
+								if (!newEditorSB.getText().isBlank()) {
+									sb = Double.parseDouble(newEditorSB.getText());
+								}
+								else {
+									sb = 0.0;
+								}
+								
+								item.setText(9,Double.toString(sb+cp));
 							} catch (Exception e) {
 								System.out.println("erreur dans la modif");
 								MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_ERROR | SWT.OK);
@@ -1126,6 +1279,25 @@ public class VueEmploye {
 																	// de modifier
 							try {
 								item.setText(8, newEditorCP.getText());
+								
+								Double sb;
+								if (!item.getText(6).isBlank()) {
+									sb = Double.parseDouble(item.getText(6));
+								}
+								else {
+									sb = 0.0;
+								}
+								
+								Double cp;
+								if (!newEditorCP.getText().isBlank()) {
+									cp = Double.parseDouble(newEditorCP.getText());
+								}
+								else {
+									cp = 0.0;
+								}
+								
+								item.setText(9,Double.toString(sb+cp));
+								
 							} catch (Exception e) {
 								System.out.println("erreur dans la modif");
 								MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_ERROR | SWT.OK);
@@ -1138,26 +1310,6 @@ public class VueEmploye {
 				});
 				editorCP.setEditor(newEditorCP, item, 8);
 
-				Text newEditorMS = new Text(tableCouts, SWT.NONE);
-				newEditorMS.setText(item.getText(9));
-				newEditorMS.addModifyListener(new ModifyListener() {
-					public void modifyText(ModifyEvent me) {
-						if (!(newEditorMS.getText().isEmpty())) {// pour ne pas tester quand l'utilisateur est en train
-																	// de modifier
-							try {
-								item.setText(9, newEditorMS.getText());
-							} catch (Exception e) {
-								System.out.println("erreur dans la modif");
-								MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_ERROR | SWT.OK);
-								dialog.setText("Erreur Editor");
-								dialog.setMessage("Saisie invalide." + '\n' + e.getMessage());
-								dialog.open();
-							}
-						}
-					}
-				});
-				editorMS.setEditor(newEditorMS, item, 9);
-
 				Text newEditorTr = new Text(tableCouts, SWT.NONE);
 				newEditorTr.setText(item.getText(10));
 				newEditorTr.addModifyListener(new ModifyListener() {
@@ -1165,7 +1317,7 @@ public class VueEmploye {
 						if (!(newEditorTr.getText().isEmpty())) {// pour ne pas tester quand l'utilisateur est en train
 																	// de modifier
 							try {
-								item.setText(14, newEditorTr.getText());
+								item.setText(10, newEditorTr.getText());
 							} catch (Exception e) {
 								System.out.println("erreur dans la modif");
 								MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_ERROR | SWT.OK);
@@ -1185,7 +1337,7 @@ public class VueEmploye {
 						if (!(newEditorTe.getText().isEmpty())) {// pour ne pas tester quand l'utilisateur est en train
 																	// de modifier
 							try {
-								item.setText(15, newEditorTe.getText());
+								item.setText(11, newEditorTe.getText());
 							} catch (Exception e) {
 								System.out.println("erreur dans la modif");
 								MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_ERROR | SWT.OK);
@@ -1205,7 +1357,7 @@ public class VueEmploye {
 						if (!(newEditorMu.getText().isEmpty())) {// pour ne pas tester quand l'utilisateur est en train
 																	// de modifier
 							try {
-								item.setText(16, newEditorMu.getText());
+								item.setText(12, newEditorMu.getText());
 							} catch (Exception e) {
 								System.out.println("erreur dans la modif");
 								MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_ERROR | SWT.OK);
@@ -1225,7 +1377,7 @@ public class VueEmploye {
 						if (!(newEditorPa.getText().isEmpty())) {// pour ne pas tester quand l'utilisateur est en train
 																	// de modifier
 							try {
-								item.setText(17, newEditorPa.getText());
+								item.setText(13, newEditorPa.getText());
 							} catch (Exception e) {
 								System.out.println("erreur dans la modif");
 								MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_ERROR | SWT.OK);
@@ -1257,7 +1409,7 @@ public class VueEmploye {
 	////////////////////////////////////// RECUPERER UN EMPLOYE
 	////////////////////////////////////// //////////////////////////////////////////////
 
-	public void vueRecupEmploye() {
+	public static void vueRecupEmploye() {
 		if (!Objects.isNull(selection) && !selection.isDisposed()) {
 			selection.dispose();
 		}
@@ -1420,7 +1572,7 @@ public class VueEmploye {
 	 * afin d'afficher le formulaire de création appelle titreCreation et
 	 * formulaireCreation
 	 */
-	public void vueEmployeFormulaire() {
+	public static void vueEmployeFormulaire() {
 		formulaireEmploye();
 		titreEmploye();
 		formulaireEmploye();
@@ -1434,7 +1586,7 @@ public class VueEmploye {
 	 * modifie la partie selection (partie superieur droite) en ajoutant un titre de
 	 * creation
 	 */
-	public void titreEmploye() {
+	public static void titreEmploye() {
 		if (!Objects.isNull(selection) && !selection.isDisposed()) {
 			selection.dispose();
 		}
@@ -1483,7 +1635,7 @@ public class VueEmploye {
 	 * cree la vue de modification et fait appel a showFormulaire pour afficher le
 	 * formulaire de modification
 	 */
-	public void formulaireEmploye() {
+	public static void formulaireEmploye() {
 		if (!Objects.isNull(vue) && !vue.isDisposed()) {
 			vue.dispose();
 		}
@@ -1514,7 +1666,7 @@ public class VueEmploye {
 	 * @param taille
 	 * @param dateArrivee
 	 */
-	public void showFormulaire() {
+	public static void showFormulaire() {
 		String titre, nom, prenom, mail, telephone, numeroMatricule, pointure, taille, dateArrivee;
 		if (selectedEmploye == null) {
 			titre = "";
@@ -1744,7 +1896,7 @@ public class VueEmploye {
 	 * @param textRemboursementTelephone
 	 * @param textSalaire
 	 */
-	public void validerEmploye(String titre, String textNom, String textPrenom, String textNumeroMatricule,
+	public static void validerEmploye(String titre, String textNom, String textPrenom, String textNumeroMatricule,
 			String textMail, String textTelephone, String textPointure, String textTaille, String textDateArrivee) {
 
 		if (textNom.isEmpty() || textPrenom.isEmpty() || textNumeroMatricule.isEmpty()) {
@@ -1772,8 +1924,34 @@ public class VueEmploye {
 		// date
 		if (!(textDateArrivee.isEmpty())) {
 			employe.setDateArrivee(textDateArrivee);
-		}
+			String date = textDateArrivee;
+			int j1 = Integer.parseInt(date.substring(0, 2));
+			int m1 = Integer.parseInt(date.substring(3, 5));
+			int a1 = Integer.parseInt(date.substring(6, 10));
+			LocalDate currentdate = LocalDate.now();
+			int j2 = currentdate.getDayOfMonth();
+			int m2 = currentdate.getMonthValue();
+			int a2 = currentdate.getYear();
 
+			if (a2 - a1 == 0) {
+				employe.setAnciennetePC(2);
+			} else {
+				if ((m1 > m2) || (m1 == m2 && j1 > j2)) {
+					if (a2 - a1 - 1 == 0) { employe.setAnciennetePC(2); } 
+					else if (a2 - a1 - 1 == 1) { employe.setAnciennetePC(2); } 
+					else { if ((m1 == m2) && (a2 - a1 - 1 >= 3)) {employe.setAnciennetePC(a2 - a1 - 2);}
+						     else {employe.setAnciennetePC(2);}
+					}
+				} else {
+					if (a2 - a1 == 1) { employe.setAnciennetePC(2); } 
+					else { if ((m1 == m2) && (a2 - a1 >= 3)) { employe.setAnciennetePC(a2 - a1 - 1); }
+						else { employe.setAnciennetePC(2); }
+					}
+				}
+			}
+			System.out.println("ancienete creation : "+employe.getAnciennetePC());
+		} 
+		
 		// on insert dans la base de données
 		try {
 			String t, texte;
@@ -1785,10 +1963,6 @@ public class VueEmploye {
 				texte = "L'employé a bien été modifié dans la base de données.";
 			} else {
 				employe.insertDatabase();
-				LocalDate currentDate = LocalDate.now();
-				CoutsEmploye ce = new CoutsEmploye(Employee.getIdByMatricule(employe.getNumeroMatricule()),
-						currentDate.getMonthValue(), currentDate.getYear(), "Publié");
-				ce.insertDatabase();
 				t = "Création réussie";
 				texte = "L'employé a bien été ajouté à la base de données.";
 			}
@@ -1816,7 +1990,7 @@ public class VueEmploye {
 	 * le bouton Creer
 	 * 
 	 */
-	public void compositeSelectionBoutons() {
+	public static void compositeSelectionBoutons() {
 		if (!Objects.isNull(selection) && !selection.isDisposed()) {
 			selection.dispose();
 		}
@@ -1865,7 +2039,7 @@ public class VueEmploye {
 						MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_QUESTION | SWT.YES | SWT.NO);
 						dialog.setText("Suppression Employe");
 						dialog.setMessage("Voulez vous supprimer l'employé " + e.getNom() + " " + e.getPrenom()
-								+ " ?\nToutes les affectations et les couts liés à cet employé seront supprimés.");
+						+ " ?\nToutes les affectations et les couts liés à cet employé seront supprimés.");
 						int buttonID = dialog.open();
 
 						switch (buttonID) {
@@ -1886,6 +2060,29 @@ public class VueEmploye {
 				}
 			});
 
+			if (!tableGlobaleEmploye.isDisposed()) {
+				if (tableGlobaleEmploye.getSelection()[0].getForeground(9).equals(Couleur.rouge)) {
+					// Bouton Supprimer
+					Button boutonAnciennete = new Button(selection, SWT.CENTER);
+					boutonAnciennete.setText("Ancienneté prise en compte");
+					boutonAnciennete.addSelectionListener(new SelectionAdapter() {
+						@Override
+						public void widgetSelected(SelectionEvent arg0) {
+							if (selectedEmploye == null) {
+								throw new Error("selectedEmploye est vide");
+							}
+							tableGlobaleEmploye.getSelection()[0].setForeground(9, Couleur.noir);
+							try {
+								System.out.println("on update :"+(selectedEmploye.getAnciennetePC()+1));
+								Employee.updateAnciennete(selectedEmploye.getAnciennetePC()+1, selectedEmploye.getEmployeId());
+							} catch (SQLException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						}
+					});
+				}
+			}
 		}
 
 		Button boutonCouts = new Button(selection, SWT.CENTER);
@@ -1914,7 +2111,7 @@ public class VueEmploye {
 	 * affiche le tableau avec tous les employes dans la base de donnees dont le
 	 * status est publie
 	 */
-	public void vueEmployeAfficher() {
+	public static void vueEmployeAfficher() {
 		if (!Objects.isNull(vue) && !vue.isDisposed()) {
 			vue.dispose();
 		}
@@ -1934,8 +2131,8 @@ public class VueEmploye {
 
 		// on met les noms des colonnes //espaces dans les titres pour changer la taille
 		// des colonnes
-		String[] titles = { "Titre  ", "Nom        ", "Prenom     ", "Email             ", "Téléphone",
-				"N° de matricule", "Pointure", "Taille", "Date d'ancienneté", "Ancienneté", "Id DB" };
+		String[] titles = { "Titre  ", "Nom          ", "Prenom       ", "Email                                    ", "Téléphone    ",
+				"Matricule", "Pointure", "Taille", "Date d'ancienneté", "Ancienneté", "Id DB" };
 		for (String title : titles) {
 			TableColumn column = new TableColumn(tableGlobaleEmploye, SWT.NONE);
 			column.setText(title);
@@ -1992,7 +2189,7 @@ public class VueEmploye {
 	 * 
 	 * @param table
 	 */
-	public void updateTable() {
+	public static void updateTable() {
 
 		tableGlobaleEmploye.removeAll();
 
@@ -2035,9 +2232,9 @@ public class VueEmploye {
 								} else if (a2 - a1 - 1 == 1) {
 									item.setText(9, Integer.toString(a2 - a1 - 1) + " an");
 								} else {
-									if ((m1 == m2) && (a2 - a1 - 1 == 5)) {
-										// item.setForeground(Couleur.rouge);
-										item.setForeground(9, Couleur.rouge);
+									System.out.println("on met le rouge ? "+e.getAnciennetePC());
+									if ((m1 == m2) && (a2 - a1 - 1 >= 3) && (e.getAnciennetePC()!=(a2 - a1 - 1))) {
+											item.setForeground(9, Couleur.rouge);
 									}
 									item.setText(9, Integer.toString(a2 - a1 - 1) + " ans");
 								}
@@ -2045,7 +2242,8 @@ public class VueEmploye {
 								if (a2 - a1 == 1) {
 									item.setText(9, Integer.toString(a2 - a1) + " an");
 								} else {
-									if ((m1 == m2) && (a2 - a1 == 5)) {
+									System.out.println("on met le rouge ? "+e.getAnciennetePC());
+									if ((m1 == m2) && (a2 - a1 >= 3) && (e.getAnciennetePC()!=(a2 - a1))) {
 										item.setForeground(9, Couleur.rouge);
 									}
 									item.setText(9, Integer.toString(a2 - a1) + " ans");
@@ -2077,7 +2275,7 @@ public class VueEmploye {
 	 * @param table
 	 * @throws SQLException
 	 */
-	public void suppEmploye() throws SQLException {
+	public static void suppEmploye() throws SQLException {
 		if (selectedEmploye == null) {
 			throw new Error("selectedEmploye est vide");
 		}
@@ -2109,7 +2307,7 @@ public class VueEmploye {
 		compositeSelectionBoutons();
 	}
 
-	////////////////////////////////////// METHODES GENRIQUES
+	////////////////////////////////////// METHODES GENERIQUES
 	////////////////////////////////////// //////////////////////////////////////////////
 
 	/***
@@ -2118,7 +2316,7 @@ public class VueEmploye {
 	 * @param table
 	 */
 
-	public void doMenu(Table table) {
+	public static void doMenu(Table table) {
 		menu = new Menu(vueEmploye.getShell(), SWT.POP_UP);
 		table.setMenu(menu);
 
@@ -2192,6 +2390,7 @@ public class VueEmploye {
 							String periode = Month.of(Integer.parseInt(moisAnnee[0])).toString() + " "
 									+ ((Integer) Integer.parseInt(moisAnnee[1])).toString();
 							updateCoutsTable(periode);
+							vue.pack();
 						}
 					}
 					selectedEmploye = null;

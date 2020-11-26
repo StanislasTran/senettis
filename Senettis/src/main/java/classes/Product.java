@@ -168,7 +168,7 @@ public class Product {
 			String name = result.getString("Nom");
 			Double price = result.getDouble("Prix");
 			String comment = result.getString("Commentaires");
-			String brand = result.getString("brand");
+			String brand = result.getString("Marque");
 			Status status = Status.getStatus(result.getString("Status"));
 			allProduct.add(new Product(produitId, brand,name, price, comment,  status));
 

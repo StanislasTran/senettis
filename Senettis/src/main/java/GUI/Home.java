@@ -63,12 +63,6 @@ public class Home {
 
 		MenuItem employeeItem = new MenuItem(employeeMenu, SWT.CASCADE);
 		employeeItem.setText("&Gérer les employés");
-		employeeItem.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent arg0) {
-				
-			}
-		});
 		
 		final Menu subMenuEmployee = new Menu(shell, SWT.DROP_DOWN);
 		employeeItem.setMenu(subMenuEmployee);
@@ -78,7 +72,14 @@ public class Home {
 		employeeCreation.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				
+				if (!contenuColonneDroite.isDisposed()) {
+					contenuColonneDroite.dispose();
+				}
+				contenuColonneDroite = new VueEmploye(colonneDroite,display).getComposite();
+				VueEmploye.titreEmploye();
+				VueEmploye.vueEmployeFormulaire();
+				contenuColonneDroite.pack();
+				colonneDroite.pack();
 			}
 		});
 		MenuItem employeeTable = new MenuItem(subMenuEmployee, SWT.PUSH);
@@ -86,44 +87,77 @@ public class Home {
 		employeeTable.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				
+				if (!contenuColonneDroite.isDisposed()) {
+					contenuColonneDroite.dispose();
+				}
+				contenuColonneDroite = new VueEmploye(colonneDroite,display).getComposite();
+				contenuColonneDroite.pack();
+				colonneDroite.pack();
 			}
 		});
 		MenuItem employeeGlobalCost = new MenuItem(subMenuEmployee, SWT.PUSH);
-		employeeGlobalCost.setText("&Gérer les couts des employés");
+		employeeGlobalCost.setText("&Récupérer un ancien employé");
 		employeeGlobalCost.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				
+				if (!contenuColonneDroite.isDisposed()) {
+					contenuColonneDroite.dispose();
+				}
+				contenuColonneDroite = new VueEmploye(colonneDroite,display).getComposite();
+				VueEmploye.vueRecupEmploye();
+				contenuColonneDroite.pack();
+				colonneDroite.pack();
 			}
 		});
 		
-		//Sick leave
+		//couts
 		MenuItem SLItem = new MenuItem(employeeMenu, SWT.CASCADE);
-		SLItem.setText("&Gérer les arrêts maladies");
-		SLItem.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent arg0) {
-				
-			}
-		});
+		SLItem.setText("&Gérer les coûts");
+
 		final Menu subMenuSickLeave = new Menu(shell, SWT.DROP_DOWN);
 		SLItem.setMenu(subMenuSickLeave);
 		
 		MenuItem sickLeaveCreation = new MenuItem(subMenuSickLeave, SWT.PUSH);
-		sickLeaveCreation.setText("&Créer un arrêt maladie");
+		sickLeaveCreation.setText("&Modifier les coûts des employés");
 		sickLeaveCreation.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				
+				if (!contenuColonneDroite.isDisposed()) {
+					contenuColonneDroite.dispose();
+				}
+				contenuColonneDroite = new VueEmploye(colonneDroite,display).getComposite();
+				VueEmploye.vueCompleteCouts();
+				contenuColonneDroite.pack();
+				colonneDroite.pack();
 			}
 		});
 		MenuItem sickLeaveTable = new MenuItem(subMenuSickLeave, SWT.PUSH);
-		sickLeaveTable.setText("&Afficher les arrêts maladies");
+		sickLeaveTable.setText("&Afficher les couts à amortir");
 		sickLeaveTable.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				
+				if (!contenuColonneDroite.isDisposed()) {
+					contenuColonneDroite.dispose();
+				}
+				contenuColonneDroite = new VueEmploye(colonneDroite,display).getComposite();
+				VueEmploye.vueAmortissement();
+				contenuColonneDroite.pack();
+				colonneDroite.pack();
+			}
+		});
+		
+		MenuItem sickLeaveTable2 = new MenuItem(subMenuSickLeave, SWT.PUSH);
+		sickLeaveTable2.setText("&Créer un cout à amortir");
+		sickLeaveTable2.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				if (!contenuColonneDroite.isDisposed()) {
+					contenuColonneDroite.dispose();
+				}
+				contenuColonneDroite = new VueEmploye(colonneDroite,display).getComposite();
+				VueEmploye.vueCreationA();
+				contenuColonneDroite.pack();
+				colonneDroite.pack();
 			}
 		});
 		
@@ -170,7 +204,7 @@ public class Home {
 		
 		contenuCompositeMain = new Composite(compositeMain, SWT.NONE);
 			
-		String backgroundLocation=this.getClass().getClassLoader().getResource("backgroundGradiant1.jpg").getPath();
+		String backgroundLocation=this.getClass().getClassLoader().getResource("test4.png").getPath();
 
 		Image background=new Image(display,backgroundLocation);
 
@@ -383,7 +417,7 @@ public class Home {
 		});
 		
 		Button boutonLivraison = new Button(menu, SWT.NONE);
-		boutonLivraison.setText("Coûts Chantiers");
+		boutonLivraison.setText("Livraisons et autres coûts");
 		boutonLivraison.setBackground(Couleur.blanc);
 
 		boutonLivraison.addSelectionListener(new SelectionAdapter() {

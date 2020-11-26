@@ -34,6 +34,7 @@ public class Employee {
 	private String taille;
 	private String dateArrivee;
 	private String status;
+	private int anciennetePC ; //derniere annee prise en compte
 
 	// Constructeurs-----------------------------------------------
 	/***
@@ -67,6 +68,18 @@ public class Employee {
 			this.employeId = employeId;
 		} else {
 			throw new Error("L'employeId est vide, merci de spécifier un id ou d'utiliser un autre constructeur.");
+		}
+	}
+	
+	public Employee(int employeId, String t, String nom, String prenom, String mail, String telephone,
+			String numeroMatricule, String pointure, String taille, String dateArrivee, int anciennete, String status) {
+		this(employeId,t, nom, prenom, mail, telephone, numeroMatricule, pointure, taille, dateArrivee, status);
+
+		// id
+		if ((Integer) anciennete != null) {
+			this.anciennetePC = anciennete;
+		} else {
+			throw new Error("L'anciennete est vide, merci de spécifier un id ou d'utiliser un autre constructeur.");
 		}
 	}
 
@@ -117,6 +130,8 @@ public class Employee {
 		
 		// taille
 		this.taille = taille;
+		
+		
 	}
 
 	/***
@@ -224,6 +239,7 @@ public class Employee {
 		} else {
 			throw new Error("Le numéro de matricule indiqué est vide.");
 		}
+		this.anciennetePC = 2;
 	}
 
 	// Liens avec la BDD-----------------------------------------------
@@ -234,7 +250,7 @@ public class Employee {
 	 * @throws SQLException
 	 */
 	public int insertDatabase() throws SQLException {
-		String reqSql = "INSERT INTO Employe(titre,nom,prenom,mail,telephone,numero_matricule,pointure,taille,date_arrivee,status) VALUES (?,?,?,?,?,?,?,?,?,?)";
+		String reqSql = "INSERT INTO Employe(titre,nom,prenom,mail,telephone,numero_matricule,pointure,taille,date_arrivee,anciennete,status) VALUES (?,?,?,?,?,?,?,?,?,?,?)";
 
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
@@ -247,7 +263,8 @@ public class Employee {
 		statement.setObject(7, this.pointure, Types.VARCHAR);
 		statement.setObject(8, this.taille, Types.VARCHAR);
 		statement.setObject(9, this.dateArrivee, Types.DATE);
-		statement.setObject(10, this.status, Types.VARCHAR);
+		statement.setObject(10, this.anciennetePC, Types.INTEGER);
+		statement.setObject(11, this.status, Types.VARCHAR);
 
 		return statement.executeUpdate();
 	}
@@ -263,7 +280,7 @@ public class Employee {
 	 * @throws SQLException
 	 */
 	public int updateDatabase() throws SQLException {
-		String reqSql = "UPDATE Employe SET titre=?, nom=?, prenom=?, mail=?, telephone=?, numero_matricule=?, pointure=?, taille=?, date_arrivee=?, status=? WHERE EmployeId=?;";
+		String reqSql = "UPDATE Employe SET titre=?, nom=?, prenom=?, mail=?, telephone=?, numero_matricule=?, pointure=?, taille=?, date_arrivee=?, status=?, anciennete=? WHERE EmployeId=?;";
 
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
@@ -277,7 +294,19 @@ public class Employee {
 		statement.setObject(8, this.taille, Types.VARCHAR);
 		statement.setObject(9, this.dateArrivee, Types.DATE);
 		statement.setObject(10, this.status, Types.VARCHAR);
-		statement.setObject(11, this.employeId, Types.INTEGER);
+		statement.setObject(11, this.anciennetePC, Types.VARCHAR);
+		statement.setObject(12, this.employeId, Types.INTEGER);
+
+		return statement.executeUpdate();
+	}
+	
+	public static int updateAnciennete(int anciennetePC, int employeId) throws SQLException {
+		String reqSql = "UPDATE Employe SET anciennete=? WHERE EmployeId=?;";
+
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		PreparedStatement statement = connection.prepareStatement(reqSql);
+		statement.setObject(1, anciennetePC, Types.INTEGER);
+		statement.setObject(2, employeId, Types.INTEGER);
 
 		return statement.executeUpdate();
 	}
@@ -325,7 +354,7 @@ public class Employee {
 	 * @throws SQLException
 	 */
 	public static Employee getEmployeById(int employeId) throws SQLException {
-		String reqSql = "SELECT EmployeId,titre,nom,prenom,mail,telephone,numero_matricule,pointure,taille,date_arrivee,Status FROM Employe WHERE EmployeId=?;";
+		String reqSql = "SELECT EmployeId,titre,nom,prenom,mail,telephone,numero_matricule,pointure,taille,date_arrivee,anciennete,Status FROM Employe WHERE EmployeId=?;";
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
 		statement.setObject(1, employeId, Types.INTEGER);
@@ -344,11 +373,11 @@ public class Employee {
 			String pointure = result.getString("Pointure");
 			String taille = result.getString("Taille");
 			String dateArrivee = result.getString("Date_arrivee");
-
+			int anciennete = result.getInt("anciennete");
 			String status = result.getString("status");
 
 			return new Employee(employeId, titre, nom, prenom, mail, telephone, numeroMatricule, pointure, taille,
-					dateArrivee, status);
+					dateArrivee, anciennete, status);
 
 		} else {
 			throw new SQLException("Data not found");
@@ -448,7 +477,7 @@ public class Employee {
 			String numeroMatricule = result.getString("Numero_matricule");
 			String pointure = result.getString("Pointure");
 			String taille = result.getString("Taille");
-
+			int anciennete = result.getInt("anciennete");
 			String dateArrivee;
 			if (result.getString("Date_arrivee") == null) {
 				dateArrivee = null;
@@ -461,7 +490,7 @@ public class Employee {
 			String status = result.getString("Status");
 
 			allEmploye.add(new Employee(employeId, titre, nom, prenom, mail, telephone, numeroMatricule, pointure,
-					taille, dateArrivee, status));
+					taille, dateArrivee,anciennete, status));
 
 		}
 
@@ -694,6 +723,14 @@ public class Employee {
 			throw new Error("setEmployeId : le employeId indique est vide");
 		}
 		this.employeId = employeId;
+	}
+
+	public int getAnciennetePC() {
+		return anciennetePC;
+	}
+
+	public void setAnciennetePC(int anciennetePC) {
+		this.anciennetePC = anciennetePC;
 	}
 	
 	
