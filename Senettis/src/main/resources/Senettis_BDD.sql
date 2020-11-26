@@ -166,17 +166,13 @@ SET Date_de_modification = GETDATE()
  GO
 
  
-Create table CoutChantier (
-    "CoutChantierId"  INT PRIMARY KEY IDENTITY (1, 1),
+Create table ChiffreAffaire (
+    "ChiffreAffajreId"  INT IDENTITY  (1, 1),
     mois int NOT NULL,
 	annee int NOT NULL,
 	Chantier int NOT NULL,
     FOREIGN KEY (Chantier) REFERENCES Chantier(ChantierId), 
-	CA decimal,
-	commission decimal,
-	cout_matériel decimal,
-	cout_livraison_total decimal, 
-	couts_ponctuels decimal, 
+	CA decimal, 
 	menage decimal,
 	vitrerie decimal,
 	fournitures_sanitaires decimal, 
@@ -185,9 +181,11 @@ Create table CoutChantier (
 	"Status" VARCHAR (50) NOT NULL,
 	"Date_de_creation" DateTime  NOT NUll Default (GETDATE()), 
 	"Date_de_modification" DateTime  NOT NUll Default (GETDATE()), 
-	CONSTRAINT check_status_coutChantier CHECK (("Status") IN ('Publié','Brouillon','Archivé')),
+	CONSTRAINT check_status_ChiffreAffaire CHECK (("Status") IN ('Publié','Brouillon','Archivé')),
+	Primary Key (mois,annee,chantier)
 	
 );
+
 
 GO
 
