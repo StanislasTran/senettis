@@ -392,7 +392,7 @@ public class Home {
 				if (!contenuColonneDroite.isDisposed()) {
 					contenuColonneDroite.dispose();
 				}
-				contenuColonneDroite = new VueLivraison(colonneDroite,display).getComposite();
+				contenuColonneDroite = new ViewTurnOver(colonneDroite,display).getComposite();
 				contenuColonneDroite.pack();
 				colonneDroite.pack();
 			}
@@ -422,6 +422,32 @@ public class Home {
 				//System.out.println("done");
 			}
 		});
+		
+		Button boutonTMP = new Button(menu, SWT.NONE);
+		boutonTMP.setText("temporaire");
+		boutonTMP.setBackground(Couleur.blanc);
+		boutonTMP.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				if (!contenuColonneDroite.isDisposed()) {
+					for (Control c :contenuColonneDroite.getChildren()) {
+						if(!c.isDisposed()) { c.dispose(); }
+					}
+					contenuColonneDroite.dispose();
+				}
+				try {
+					contenuColonneDroite = new turnOverView(getColonneDroite()).getRecurringCostView();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+				contenuColonneDroite.pack();
+				colonneDroite.pack();
+				//System.out.println("done");
+			}
+		});
+
 
 		menu.pack();
 	}

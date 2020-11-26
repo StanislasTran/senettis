@@ -54,7 +54,7 @@ import classes.Employee;
 import classes.Product;
 import classes.ProductByDelivery;
 
-public class VueLivraison {
+public class ViewTurnOver {
 
 	private Display display;
 	private Composite vueLivraison;
@@ -75,7 +75,7 @@ public class VueLivraison {
 	 * @param composite : le composite vueLivraison
 	 * @param display
 	 */
-	public VueLivraison (Composite composite,Display display) {
+	public ViewTurnOver (Composite composite,Display display) {
 		this.display=display;
 	 	Couleur.setDisplay(display); // pour utiliser les couleurs du fichier couleur
 	 	

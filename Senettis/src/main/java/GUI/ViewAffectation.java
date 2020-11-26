@@ -150,7 +150,7 @@ public class ViewAffectation {
 		createTableEmployeStats(tabEmploye, month, year);
 		createTableChantierStats(tabChantier, month, year);
 
-		System.out.println(selection.isDisposed());
+	
 		mainComposite.pack();
 		tabFolder.pack();
 		this.selection.pack();
@@ -1308,7 +1308,7 @@ public class ViewAffectation {
 
 						try {
 							affectation.update();
-		
+
 							modifComposite.dispose();
 							getVueAffectation().pack();
 							getVueAffectation().getParent().pack();
@@ -1414,8 +1414,6 @@ public class ViewAffectation {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 
-				
-				
 				String checkNbHours = "";
 
 				String checkEmployeId = "";
@@ -1425,7 +1423,7 @@ public class ViewAffectation {
 
 					checkEmployeId = table.getSelection()[0].getText(3);
 					checkNbHours = nbHeureTexte.getText();
-					isChecked = checkAffectation(affectation.getIdChantier()+"", checkEmployeId, checkNbHours,
+					isChecked = checkAffectation(affectation.getIdChantier() + "", checkEmployeId, checkNbHours,
 							affectation.getMonth().getValue(), "" + affectation.getYear().getValue());
 				} catch (IllegalArgumentException | ArrayIndexOutOfBoundsException argException) {
 					MessageBox dialog = new MessageBox(affectationView.getShell(), SWT.ICON_ERROR | SWT.OK);
@@ -1447,7 +1445,7 @@ public class ViewAffectation {
 
 						try {
 							affectation.update();
-		
+
 							modifComposite.dispose();
 							getVueAffectation().pack();
 							getVueAffectation().getParent().pack();
@@ -1470,9 +1468,6 @@ public class ViewAffectation {
 				}
 
 			}
-
-			
-				
 
 		});
 
