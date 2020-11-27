@@ -2,7 +2,7 @@ package testsConnexion;
 
 import java.sql.SQLException;
 
-import classes.Affectation;
+import classes.AffectationMiseABlanc;
 
 public class TestAffectation {
 	public static void main (String[]args) throws SQLException {

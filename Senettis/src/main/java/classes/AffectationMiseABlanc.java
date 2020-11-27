@@ -17,7 +17,7 @@ import java.util.Objects;
 
 import connexion.SQLDatabaseConnection;
 
-public class Affectation {
+public class AffectationMiseABlanc {
 
 	private Integer affectationId;
 	private Integer idChantier;
@@ -41,7 +41,7 @@ public class Affectation {
 	 * @param idEmploye
 	 * @param status
 	 */
-	public Affectation(Integer idChantier, Integer idEmploye, Month month, Year year, Status status) {
+	public AffectationMiseABlanc(Integer idChantier, Integer idEmploye, Month month, Year year, Status status) {
 		super();
 		this.idChantier = idChantier;
 		this.idEmploye = idEmploye;
@@ -60,7 +60,7 @@ public class Affectation {
 	 * @param nombreHeures
 	 * @param status
 	 */
-	public Affectation(Integer idChantier, Integer idEmploye, Double nombreHeures, Month month, Year year,
+	public AffectationMiseABlanc(Integer idChantier, Integer idEmploye, Double nombreHeures, Month month, Year year,
 			Status status) {
 		this(idChantier, idEmploye, month, year, status);
 		this.nbHours = nombreHeures;
@@ -75,8 +75,8 @@ public class Affectation {
 	 * @param nombreHeures
 	 * @param status
 	 */
-	public Affectation(Integer affectationId, Integer idChantier, Integer idEmploye, Double nombreHeures, Month month,
-			Year year, Status status) {
+	public AffectationMiseABlanc(Integer affectationId, Integer idChantier, Integer idEmploye, Double nombreHeures,
+			Month month, Year year, Status status) {
 		this(idChantier, idEmploye, nombreHeures, month, year, status);
 		this.affectationId = affectationId;
 	}
@@ -97,7 +97,7 @@ public class Affectation {
 	 */
 
 	public int insertDatabase() throws SQLException {
-		String reqSql = "INSERT INTO Affectation(chantier,employe,nombre_heures,Mois,Annee,status) VALUES (?,?,?,?,?,?)";
+		String reqSql = "INSERT INTO AffectationMAB(chantier,employe,nombre_heures,Mois,Annee,status) VALUES (?,?,?,?,?,?)";
 
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
@@ -119,7 +119,7 @@ public class Affectation {
 	 * @throws SQLException
 	 */
 	public int updateDatabase() throws SQLException {
-		String reqSql = "UPDATE Affectation SET Employe=?, Chantier=?, nombre_heures=?,Mois=?,Annee=?, status=? WHERE AffectationId=?;";
+		String reqSql = "UPDATE AffectationMAB SET Employe=?, Chantier=?, nombre_heures=?,Mois=?,Annee=?, status=? WHERE AffectationId=?;";
 
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
@@ -142,7 +142,7 @@ public class Affectation {
 	 * @throws SQLException
 	 */
 	private static Statement selectAllAffectation() throws SQLException {
-		String reqSql = "SELECT * FROM Affectation";
+		String reqSql = "SELECT * FROM AffectationMAB";
 
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		Statement statement = connection.createStatement();
@@ -158,10 +158,10 @@ public class Affectation {
 	 *         database
 	 * @throws SQLException
 	 */
-	public static List<Affectation> getAllAffectation() throws SQLException {
+	public static List<AffectationMiseABlanc> getAllAffectation() throws SQLException {
 
 		ResultSet result = selectAllAffectation().getResultSet();
-		List<Affectation> allAffectation = new ArrayList<Affectation>();
+		List<AffectationMiseABlanc> allAffectation = new ArrayList<AffectationMiseABlanc>();
 
 		while (result.next()) {
 			Integer affectationId = result.getInt("AffectationId");
@@ -171,8 +171,8 @@ public class Affectation {
 			Month month = Month.of(result.getInt("Mois"));
 			Year year = Year.of(result.getInt("Annee"));
 			Status status = Status.getStatus(result.getString("Status"));
-			allAffectation
-					.add(new Affectation(affectationId, employeId, chantierId, nombreHeures, month, year, status));
+			allAffectation.add(
+					new AffectationMiseABlanc(affectationId, employeId, chantierId, nombreHeures, month, year, status));
 
 		}
 
@@ -188,10 +188,9 @@ public class Affectation {
 	 * @throws SQLException
 	 */
 	public static ResultSet getEmployeStatsPublished() throws SQLException {
-		String selection = "emplData.EmployeId AS 'EmployeId',emplData.Nom,EmplData.prenom,count(DISTINCT Affectation.chantier) as 'nb_chantier',SUM(Affectation.Nombre_heures) as 'nb_heure'";
-		String source = "(Select * FROM Affectation WHERE Status='Published' as Affectation  RIGHT JOIN (Select distinct EmployeId,Nom,Prenom FROM Employe WHERE Status='Published') AS emplData ON emplData.EmployeId=Affectation.Employe";
+		String selection = "emplData.EmployeId AS 'EmployeId',emplData.Nom,EmplData.prenom,count(DISTINCT AffectationMAB.chantier) as 'nb_chantier',SUM(AffectationMAB.Nombre_heures) as 'nb_heure'";
+		String source = "(Select * FROM AffectationMAB WHERE Status='Published' as AffectationMAB  RIGHT JOIN (Select distinct EmployeId,Nom,Prenom FROM Employe WHERE Status='Published') AS emplData ON emplData.EmployeId=AffectationMAB.Employe";
 		String group = "emplData.EmployeId,emplData.Nom,EmplData.prenom";
-		
 
 		String reqSql = "SELECT " + selection + " FROM " + source + " GROUP BY " + group;
 		System.out.println(reqSql);
@@ -213,9 +212,10 @@ public class Affectation {
 	 * @throws SQLException
 	 */
 	public static ResultSet getEmployeStats(Month month, Year year) throws SQLException {
-		String selection = "emplData.EmployeId AS 'EmployeId',emplData.Nom,EmplData.prenom,count(DISTINCT Affectation.chantier) as 'nb_chantier',SUM(Affectation.Nombre_heures) as 'nb_heure'";
-		String source = "(select * FROM Affectation WHERE Mois='" + month.getValue() + "' AND Annee='" + year.getValue()
-				+ "' ) AS Affectation  RIGHT JOIN (Select distinct EmployeId,Nom,Prenom FROM Employe) AS emplData ON emplData.EmployeId=Affectation.Employe";
+		String selection = "emplData.EmployeId AS 'EmployeId',emplData.Nom,EmplData.prenom,count(DISTINCT AffectationMAB.chantier) as 'nb_chantier',SUM(AffectationMAB.Nombre_heures) as 'nb_heure'";
+		String source = "(select * FROM AffectationMAB WHERE Mois='" + month.getValue() + "' AND Annee='"
+				+ year.getValue()
+				+ "' ) AS AffectationMAB  RIGHT JOIN (Select distinct EmployeId,Nom,Prenom FROM Employe) AS emplData ON emplData.EmployeId=AffectationMAB.Employe";
 		String group = "emplData.EmployeId,emplData.Nom,EmplData.prenom";
 
 		String reqSql = "SELECT " + selection + " FROM " + source + " GROUP BY " + group;
@@ -237,8 +237,8 @@ public class Affectation {
 	 * @throws SQLException
 	 */
 	public static ResultSet getChantierStats() throws SQLException {
-		String selection = "chantData.ChantierId AS 'ChantierId',ChantData.Nom,ChantData.CA,count(DISTINCT Affectation.Employe) as 'nb_Employe',SUM(Affectation.Nombre_heures) as 'nb_heure' ";
-		String source = "Affectation RIGHT JOIN (Select DISTINCT ChantierId,Nom,CA FROM Chantier) AS chantData ON chantData.ChantierId=Affectation.Chantier";
+		String selection = "chantData.ChantierId AS 'ChantierId',ChantData.Nom,ChantData.CA,count(DISTINCT AffectationMAB.Employe) as 'nb_Employe',SUM(AffectationMAB.Nombre_heures) as 'nb_heure' ";
+		String source = "AffectationMAB RIGHT JOIN (Select DISTINCT ChantierId,Nom,CA FROM Chantier) AS chantData ON chantData.ChantierId=AffectationMAB.Chantier";
 		String group = "chantData.ChantierId,chantData.Nom,chantData.CA";
 
 		String reqSql = "SELECT " + selection + " FROM " + source + " GROUP BY " + group;
@@ -261,8 +261,8 @@ public class Affectation {
 	 * @throws SQLException
 	 */
 	public static ResultSet getChantierStats(Month month, Year year) throws SQLException {
-		String selection = "chantData.ChantierId AS 'ChantierId',ChantData.Nom,ChantData.CA,count(DISTINCT Affectation.Employe) as 'nb_Employe',SUM(Affectation.Nombre_heures) as 'nb_heure' ";
-		String source = "( Select * FROM Affectation WHERE Mois=? AND Annee=?) AS Affectation RIGHT JOIN (Select DISTINCT ChantierId,Nom,CA FROM Chantier) AS chantData ON chantData.ChantierId=Affectation.Chantier";
+		String selection = "chantData.ChantierId AS 'ChantierId',ChantData.Nom,ChantData.CA,count(DISTINCT AffectationMAB.Employe) as 'nb_Employe',SUM(AffectationMAB.Nombre_heures) as 'nb_heure' ";
+		String source = "( Select * FROM AffectationMAB WHERE Mois=? AND Annee=?) AS AffectationMAB RIGHT JOIN (Select DISTINCT ChantierId,Nom,CA FROM Chantier) AS chantData ON chantData.ChantierId=AffectationMAB.Chantier";
 		String group = "chantData.ChantierId,chantData.Nom,chantData.CA";
 
 		String reqSql = "SELECT " + selection + " FROM " + source + " GROUP BY " + group;
@@ -286,9 +286,9 @@ public class Affectation {
 	 * @throws SQLException
 	 */
 	public static ResultSet getSiteAffectationPublished(int siteId, Month month, Year year) throws SQLException {
-		String selection = "AffectationId,Nom,Prenom,Affectation.Nombre_heures,Affectation.AffectationId,Numero_matricule";
-		String source = "(Select * From Employe WHERE Employe.Status='Publié') as Employe INNER JOIN (Select * FROM Affectation  WHERE Affectation.Status='Publié') as Affectation ON Employe.EmployeId=Affectation.Employe ";
-		String condition = "Affectation.Chantier=? AND Mois=? AND Annee=?";
+		String selection = "AffectationId,Nom,Prenom,AffectationMAB.Nombre_heures,AffectationMAB.AffectationId,Numero_matricule";
+		String source = "(Select * From Employe WHERE Employe.Status='Publié') as Employe INNER JOIN (Select * FROM AffectationMAB WHERE AffectationMAB.Status='Publié') as AffectationMAB ON Employe.EmployeId=AffectationMAB.Employe ";
+		String condition = "AffectationMAB.Chantier=? AND Mois=? AND Annee=?";
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		String reqSql = "SELECT " + selection + " FROM " + source + " WHERE " + condition;
 
@@ -302,17 +302,16 @@ public class Affectation {
 
 	/**
 	 * Execute a query and return the list of all employee affected to the siteId
-	 * entered in parameter
-	 * Only where Status ='Publié'
+	 * entered in parameter Only where Status ='Publié'
 	 * 
 	 * @param employeId
 	 * @return
 	 * @throws SQLException
 	 */
 	public static ResultSet getSiteAffectationPublished(int siteId) throws SQLException {
-		String selection = "AffectationId,Nom,Prenom,Affectation.Nombre_heures,Affectation.AffectationId,Numero_matricule";
-		String source = "(Select * from Employe WHERE Employe.Status='Publié' as Employe INNER JOIN (Select * from Affectation WHERE Affectation.Status='Publié') as Affectation ON Employe.EmployeId=Affectation.Employe  ";
-		String condition = "Affectation.Chantier=?";
+		String selection = "AffectationId,Nom,Prenom,AffectationMAB.Nombre_heures,AffectationMAB.AffectationId,Numero_matricule";
+		String source = "(Select * from Employe WHERE Employe.Status='Publié' as Employe INNER JOIN (Select * from AffectationMAB WHERE AffectationMAB.Status='Publié') as AffectationMAB ON Employe.EmployeId=AffectationMAB.Employe  ";
+		String condition = "AffectationMAB.Chantier=?";
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		String reqSql = "SELECT " + selection + " FROM " + source + " WHERE " + condition;
 
@@ -331,9 +330,9 @@ public class Affectation {
 	 * @throws SQLException
 	 */
 	public static ResultSet getEmployeAffectationPubished(int employeId) throws SQLException {
-		String selection = "ChantierId,nom,adresse,Nombre_heures,Affectation.AffectationId";
-		String source = " (Select * from Chantier where Chantier.Status='Publié') as Chantier INNER JOIN (Select * FROM Affectation WHERE Affectation.Status='Publié') as Affectation ON Chantier.ChantierId=Affectation.Chantier ";
-		String condition = "Affectation.Employe=?";
+		String selection = "ChantierId,nom,adresse,Nombre_heures,AffectationMAB.AffectationId";
+		String source = " (Select * from Chantier where Chantier.Status='Publié') as Chantier INNER JOIN (Select * FROM AffectationMAB WHERE AffectationMAB.Status='Publié') as AffectationMAB ON Chantier.ChantierId=AffectationMAB.Chantier ";
+		String condition = "AffectationMAB.Employe=?";
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		String reqSql = "SELECT " + selection + " FROM " + source + " WHERE " + condition;
 
@@ -344,7 +343,7 @@ public class Affectation {
 	}
 
 	/**
-	 * Execute a query and return the list of all site affected to the employeId 
+	 * Execute a query and return the list of all site affected to the employeId
 	 * entered in parameter where the affectation is Published
 	 * 
 	 * @param employeId
@@ -352,9 +351,9 @@ public class Affectation {
 	 * @throws SQLException
 	 */
 	public static ResultSet getEmployeAffectationPublished(int employeId, Month month, Year year) throws SQLException {
-		String selection = "ChantierId,nom,adresse,Nombre_heures,Affectation.AffectationId";
-		String source = "chantier INNER JOIN Affectation ON Chantier.ChantierId=Affectation.Chantier ";
-		String condition = "Affectation.Employe=? AND Mois=? AND Annee=? AND Affectation.Status='Publié' AND Chantier.Status='Publié'";
+		String selection = "ChantierId,nom,adresse,Nombre_heures,AffectationMAB.AffectationId";
+		String source = "chantier INNER JOIN AffectationMAB ON Chantier.ChantierId=AffectationMAB.Chantier ";
+		String condition = "AffectationMAB.Employe=? AND Mois=? AND Annee=? AND AffectationMAB.Status='Publié' AND Chantier.Status='Publié'";
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		String reqSql = "SELECT " + selection + " FROM " + source + " WHERE " + condition;
 
@@ -378,9 +377,9 @@ public class Affectation {
 	public static ResultSet getAffectationResultSet(Integer affectationId) throws SQLException {
 
 		String selection = "AffectationId,Chantier,Employe,Nombre_heures,Mois,Annee,Status";
-		String source = "Affectation";
+		String source = "AffectationMAB";
 
-		String condition = "Affectation.AffectationId=?";
+		String condition = "AffectationMAB.AffectationId=?";
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		String reqSql = "SELECT " + selection + " FROM " + source + " WHERE " + condition;
 
@@ -400,7 +399,7 @@ public class Affectation {
 	 * @return <type> Affectation</type>
 	 * @throws SQLException
 	 */
-	public static Affectation getAffectation(int affectationId) throws SQLException {
+	public static AffectationMiseABlanc getAffectation(int affectationId) throws SQLException {
 		ResultSet result = getAffectationResultSet(affectationId);
 		System.out.println(affectationId + "affectationId");
 		if (result.next()) {
@@ -416,7 +415,7 @@ public class Affectation {
 			Year year = Year.of(result.getInt("Annee"));
 			Status status = Status.getStatus(result.getString("status"));
 
-			return new Affectation(affectationId, chantier, employe, nombre_heures, month, year, status);
+			return new AffectationMiseABlanc(affectationId, chantier, employe, nombre_heures, month, year, status);
 		}
 
 		throw new SQLException("data not found");
@@ -429,7 +428,7 @@ public class Affectation {
 	 * @throws SQLException
 	 */
 	public int update() throws SQLException {
-		String reqSql = "UPDATE Affectation SET Chantier=? , Employe=?,Nombre_heures=?, Mois=?,Annee=? WHERE affectationId=?";
+		String reqSql = "UPDATE AffectationMAB SET Chantier=? , Employe=?,Nombre_heures=?, Mois=?,Annee=? WHERE affectationId=?";
 
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
@@ -452,7 +451,7 @@ public class Affectation {
 	 * @throws SQLException
 	 */
 	public int remove() throws SQLException {
-		String reqSql = "UPDATE Affectation SET Status='Archivé' WHERE affectationId=?";
+		String reqSql = "UPDATE AffectationMAB SET Status='Archivé' WHERE affectationId=?";
 
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
@@ -627,9 +626,9 @@ public class Affectation {
 
 	public static void printAllAffectation() throws SQLException {
 
-		List<Affectation> allAffectation = getAllAffectation();
+		List<AffectationMiseABlanc> allAffectation = getAllAffectation();
 
-		for (Affectation affectation : allAffectation)
+		for (AffectationMiseABlanc affectation : allAffectation)
 			System.out.println(affectation);
 	}
 

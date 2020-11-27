@@ -125,7 +125,6 @@ Create table Affectation (
 	CONSTRAINT check_status_affectation CHECK (("Status") IN ('Publié','Brouillon','Archivé')),
 	 
 );
-
 GO
 
 Create TRIGGER Affectation_Update
@@ -137,6 +136,38 @@ Affectation
 SET Date_de_modification = GETDATE()
  WHERE AffectationId IN (SELECT DISTINCT AffectationId FROM Inserted);
  GO
+
+
+Create table AffectationMAB (
+ AffectationId INT  IDENTITY (1, 1),
+    Chantier int NOT NULL,
+    Employe int NOT NULL,
+    FOREIGN KEY (Chantier) REFERENCES Chantier(ChantierId), 
+    FOREIGN KEY (Employe) REFERENCES Employe(EmployeId),
+	Mois int,
+	Annee int,
+    Nombre_heures decimal,
+	"Status" VARCHAR (50) NOT NULL,
+	"Date_de_creation" DateTime  NOT NUll Default (GETDATE()), 
+	"Date_de_modification" DateTime  NOT NUll Default (GETDATE()), 
+	CONSTRAINT check_status_affectationMAB CHECK (("Status") IN ('Publié','Brouillon','Archivé')),
+	CONSTRAINT check_moonthMAB CHECK (("Mois")>=0 and ("Mois")<=12),
+	PRIMARY KEY(Chantier,Employe,Mois,Annee)
+);
+
+GO
+
+
+Create TRIGGER AffectationMAB_Update
+ON AffectationMAB
+AFTER UPDATE
+AS
+UPDATE
+Affectation
+SET Date_de_modification = GETDATE()
+ WHERE AffectationId IN (SELECT DISTINCT AffectationId FROM Inserted);
+ GO
+
 
 Create table ProduitParLivraison(
  ProduitParLivraisonId INT PRIMARY KEY IDENTITY (1, 1),
@@ -167,7 +198,7 @@ SET Date_de_modification = GETDATE()
 
  
 Create table ChiffreAffaire (
-    "ChiffreAffajreId"  INT IDENTITY  (1, 1),
+    ChiffreAffaireId  INT IDENTITY  (1, 1),
     mois int NOT NULL,
 	annee int NOT NULL,
 	Chantier int NOT NULL,
@@ -189,15 +220,16 @@ Create table ChiffreAffaire (
 
 GO
 
-Create TRIGGER CoutChantier_Update
-ON CoutChantier
+Create TRIGGER ChiffreAffaire_Update
+ON ChiffreAffaire
 AFTER UPDATE
 AS
 UPDATE
-CoutChantier
+ChiffreAffaire
 SET Date_de_modification = GETDATE()
- WHERE CoutChantierId IN (SELECT DISTINCT CoutChantierId FROM Inserted);
- GO
+WHERE ChiffreAffaireId IN (SELECT DISTINCT ChiffreAffaireId FROM Inserted);
+
+GO
 
 Create table CoutEmploye (
     "CoutEmployeId"  INT PRIMARY KEY IDENTITY (1, 1),

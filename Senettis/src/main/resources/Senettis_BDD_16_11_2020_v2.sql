@@ -122,6 +122,23 @@ SET Date_de_modification = GETDATE()
  GO
 
 
+ Create table AffectationMAB (
+ AffectationId INT  IDENTITY (1, 1),
+    Chantier int NOT NULL,
+    Employe int NOT NULL,
+    FOREIGN KEY (Chantier) REFERENCES Chantier(ChantierId), 
+    FOREIGN KEY (Employe) REFERENCES Employe(EmployeId),
+	Mois int,
+	Annee int,
+    Nombre_heures decimal,
+	"Status" VARCHAR (50) NOT NULL,
+	"Date_de_creation" DateTime  NOT NUll Default (GETDATE()), 
+	"Date_de_modification" DateTime  NOT NUll Default (GETDATE()), 
+	CONSTRAINT check_status_affectationMAB CHECK (("Status") IN ('Publié','Brouillon','Archivé')),
+	CONSTRAINT check_moonthMAB CHECK (("Mois")>=0 and ("Mois")<=12),
+	PRIMARY KEY(Chantier,Employe,Mois,Annee)
+);
+
 Create table Affectation (
  AffectationId INT PRIMARY KEY IDENTITY (1, 1),
     Chantier int NOT NULL,
