@@ -17,7 +17,7 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
-import classes.Affectation;
+import classes.AffectationMiseABlanc;
 import classes.AmmortissementEmploye;
 import classes.CoutsEmploye;
 import classes.Employee;
@@ -2281,7 +2281,7 @@ public class VueEmploye {
 		e.setStatus("Archivé");
 		e.updateDatabase();
 
-		for (Affectation a : Affectation.getAllAffectation()) {
+		for (AffectationMiseABlanc a : AffectationMiseABlanc.getAllAffectation()) {
 			if (a.getIdEmploye() == e.getEmployeId()) {
 				a.setStatus(Status.ARCHIVED);
 				a.updateDatabase();

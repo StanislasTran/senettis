@@ -28,12 +28,12 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 
-import classes.Affectation;
+import classes.AffectationMiseABlanc;
 import classes.Employee;
 import classes.Site;
 import classes.Status;
 
-public class ViewAffectation {
+public class ViewAffectationMAB {
 
 	private Composite affectationView;
 	private Composite selection;
@@ -55,7 +55,7 @@ public class ViewAffectation {
 	 * @param composite
 	 * @throws SQLException
 	 */
-	public ViewAffectation(Composite composite) throws SQLException {
+	public ViewAffectationMAB(Composite composite) throws SQLException {
 		Couleur.setDisplay(composite.getDisplay());
 		this.affectationView = new Composite(composite, SWT.NONE);
 		this.affectationView.setLayout(new RowLayout(SWT.VERTICAL));
@@ -190,7 +190,7 @@ public class ViewAffectation {
 			column.setText(title);
 		}
 
-		ResultSet result = Affectation.getEmployeStats(month, year);
+		ResultSet result = AffectationMiseABlanc.getEmployeStats(month, year);
 		final TableColumn[] columns = table.getColumns();
 		while (result.next()) {
 			TableItem item = new TableItem(table, SWT.NONE);
@@ -270,7 +270,7 @@ public class ViewAffectation {
 			column.setText(title);
 		}
 
-		ResultSet result = Affectation.getChantierStats(month, year);
+		ResultSet result = AffectationMiseABlanc.getChantierStats(month, year);
 		final TableColumn[] columns = table.getColumns();
 		while (result.next()) {
 			TableItem item = new TableItem(table, SWT.NONE);
@@ -342,7 +342,7 @@ public class ViewAffectation {
 		this.cleanRightComposite();
 		Month month = Month.of(this.monthFilter.getSelectionIndex() + 1);
 		Year year = Year.of(Integer.parseInt(this.yearFilter.getText()));
-		ResultSet result = Affectation.getEmployeAffectationPublished(employeId, month, year);
+		ResultSet result = AffectationMiseABlanc.getEmployeAffectationPublished(employeId, month, year);
 
 		final Table table = new Table(this.rightComposite, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.FULL_SELECTION);
 		table.setLayoutData(new RowData(900, 800));
@@ -410,7 +410,7 @@ public class ViewAffectation {
 		cleanRightComposite();
 		Month month = Month.of(this.monthFilter.getSelectionIndex() + 1);
 		Year year = Year.of(Integer.parseInt(this.yearFilter.getText()));
-		ResultSet result = Affectation.getSiteAffectationPublished(siteId, month, year);
+		ResultSet result = AffectationMiseABlanc.getSiteAffectationPublished(siteId, month, year);
 		disposeAllChildren(this.rightComposite);
 
 		final Table table = new Table(this.rightComposite, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.FULL_SELECTION);
@@ -828,7 +828,7 @@ public class ViewAffectation {
 	}
 
 	protected void remove(int affectationId) throws SQLException {
-		Affectation.getAffectation(affectationId).remove();
+		AffectationMiseABlanc.getAffectation(affectationId).remove();
 
 	}
 
@@ -988,7 +988,7 @@ public class ViewAffectation {
 					Year year = Year.of(Integer.parseInt(checkYear));
 					Status status = Status.PUBLISHED;
 					if (table.getSelection().length == 1) {
-						Affectation affectation = new Affectation(siteId, idEmploye, nbHeure, month, year, status);
+						AffectationMiseABlanc affectation = new AffectationMiseABlanc(siteId, idEmploye, nbHeure, month, year, status);
 						try {
 							affectation.insertDatabase();
 							ajoutComposite.dispose();
@@ -1156,7 +1156,7 @@ public class ViewAffectation {
 					Year year = Year.of(Integer.parseInt(checkYear));
 					Status status = Status.PUBLISHED;
 					if (table.getSelection().length == 1) {
-						Affectation affectation = new Affectation(siteId, employeeId, nbHeure, month, year, status);
+						AffectationMiseABlanc affectation = new AffectationMiseABlanc(siteId, employeeId, nbHeure, month, year, status);
 						try {
 							affectation.insertDatabase();
 							ajoutComposite.dispose();
@@ -1238,7 +1238,7 @@ public class ViewAffectation {
 	 */
 	private void modifyEmployeeAffectation(int affectationId) throws SQLException {
 
-		Affectation affectation = Affectation.getAffectation(affectationId);
+		AffectationMiseABlanc affectation = AffectationMiseABlanc.getAffectation(affectationId);
 		this.mainComposite.dispose();
 		this.selection.dispose();
 
@@ -1376,7 +1376,7 @@ public class ViewAffectation {
 	 */
 	private void modifySiteAffectation(int affectationId) throws SQLException {
 
-		Affectation affectation = Affectation.getAffectation(affectationId);
+		AffectationMiseABlanc affectation = AffectationMiseABlanc.getAffectation(affectationId);
 		this.mainComposite.dispose();
 		this.selection.dispose();
 

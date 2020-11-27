@@ -12,7 +12,7 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
-import classes.Affectation;
+import classes.AffectationMiseABlanc;
 import classes.Delivery;
 import classes.Site;
 import classes.Status;
@@ -185,7 +185,7 @@ public class VueChantier {
 			}
 		}
 		
-		for (Affectation a : Affectation.getAllAffectation()) {
+		for (AffectationMiseABlanc a : AffectationMiseABlanc.getAllAffectation()) {
 			if (a.getIdChantier() == c.getChantierId()) {
 				a.setStatus(Status.ARCHIVED);
 				a.updateDatabase();
