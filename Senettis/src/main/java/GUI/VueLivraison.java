@@ -51,6 +51,7 @@ import classes.CoutsEmploye;
 import classes.AmmortissementChantier;
 import classes.Delivery;
 import classes.Employee;
+import classes.FournitureSanitaire;
 import classes.Product;
 import classes.ProductByDelivery;
 
@@ -59,15 +60,18 @@ public class VueLivraison {
 	private Display display;
 	private Composite vueLivraison;
 	private Composite vueAutres;
+	private Composite vueFS;
 	private Composite selection;
 	private Composite vue;
 	private Delivery selectedLivraison;
 	private Site selectedChantier;
+	private FournitureSanitaire selectedFS;
 	private AmmortissementChantier selectedAmorti;
 	private TabFolder tabFolder;
 	private Menu menu ;
 	private Table tableChantier;
 	private Table tableAmorti;
+	private Table tableFS;
 
 	//Creation VueLivraison --------------------------------------------------
 	/***
@@ -83,9 +87,12 @@ public class VueLivraison {
 
 		TabItem tabLivraison = new TabItem(tabFolder, SWT.NULL);
 		tabLivraison.setText("     Livraisons     ");
+		
+		TabItem tabFS = new TabItem(tabFolder, SWT.NULL);
+		tabFS.setText("     Fournitures Sanitaires     ");
 
 		TabItem tabAutres = new TabItem(tabFolder, SWT.NULL);
-		tabAutres.setText("     Autres coûts chantier     ");
+		tabAutres.setText("     Matériel et autres couts     ");
 		
 		tabFolder.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(org.eclipse.swt.events.SelectionEvent event) {
@@ -104,6 +111,24 @@ public class VueLivraison {
 					compositeSelectionCreer();
 					vueLivraisonAfficher();
 					vueLivraison.pack();
+					tabFolder.pack();
+					tabFolder.getParent().pack();
+				}
+				else if (tabFolder.getSelection()[0].equals(tabFS)) {
+					if (!Objects.isNull(vueFS) && !vueFS.isDisposed()) {
+						vueFS.dispose();
+					}
+					vueFS=new Composite(tabFolder,SWT.NONE);
+					RowLayout rowLayout = new RowLayout();
+					rowLayout.type = SWT.VERTICAL;
+					vueFS.setLayout(rowLayout);
+					vueFS.setBackground(Couleur.gris);
+
+					tabFS.setControl(vueFS);
+
+					vueFS();
+					
+					vueFS.pack();
 					tabFolder.pack();
 					tabFolder.getParent().pack();
 				}
@@ -142,6 +167,568 @@ public class VueLivraison {
 		tabFolder.getParent().pack();
 	}
 
+	////////////////////////////////////// FS //////////////////////////////////////////////
+	
+	public void vueFS() {
+
+		fsSelection();
+
+		///VUE
+
+		if (!Objects.isNull(vue) && !vue.isDisposed()) {
+			vue.dispose();
+		}
+
+		vue = new Composite(vueAutres, SWT.NONE);
+		RowLayout rowLayoutH = new RowLayout();
+		rowLayoutH.type = SWT.VERTICAL;
+		vue.setLayout(rowLayoutH);
+
+		Composite tables = new Composite(vue,SWT.NONE);
+		tables.setLayout(new RowLayout(SWT.HORIZONTAL));
+
+		//creation de la table des produits
+		Composite compoChantier = new Composite(tables,SWT.NONE);
+		compoChantier.setLayout(new RowLayout(SWT.VERTICAL));
+
+		Label chantier = new Label(compoChantier,SWT.NONE);
+		chantier.setText("Choisir un chantier :");
+
+		tableChantier = new Table (compoChantier, SWT.BORDER | SWT.MULTI| SWT.V_SCROLL | SWT.FULL_SELECTION);
+		tableChantier.setLayoutData(new RowData(300,300));
+		tableChantier.setLinesVisible (true);
+		tableChantier.setHeaderVisible (true);
+		tableChantier.layout(true,true);
+
+		//on met les noms des colonnes
+		String[] titles = {"Id", "Nom"};
+		for (String title : titles) {
+			TableColumn column = new TableColumn (tableChantier, SWT.NONE);
+			column.setText (title);
+		}
+
+		updateTableChantierFS();
+		compoChantier.pack();
+
+
+		//creation de la table amorti
+		Composite compoFS = new Composite(tables,SWT.NONE);
+		compoFS.setLayout(new RowLayout(SWT.VERTICAL));
+
+		Label fs = new Label(compoFS,SWT.NONE);
+		fs.setText("Coûts liés à cet chantier :");
+
+		tableFS = new Table (compoFS, SWT.BORDER | SWT.MULTI| SWT.V_SCROLL | SWT.FULL_SELECTION);
+		tableFS.setLayoutData(new RowData(500,380));
+		tableFS.setLinesVisible (true);
+		tableFS.setHeaderVisible (true);
+		tableFS.layout(true,true);
+
+		//on met les noms des colonnes
+		String[] titles2 = {"Id", "Début" ,"Montant par mois","Sous Traitant", "Description"};
+		for (String title : titles2) {
+			TableColumn column = new TableColumn (tableAmorti, SWT.NONE);
+			column.setText (title);
+		}
+
+		if (selectedChantier != null) {
+
+			updateTableFS();
+			compoFS.pack();
+		}
+
+		vue.pack();
+		vueAutres.pack();
+		tabFolder.pack();
+		tabFolder.getParent().pack();
+	}
+
+	public void fsSelection() {
+		///SELECTION
+		if (!Objects.isNull(selection) && !selection.isDisposed()) {
+			selection.dispose();
+		}
+
+		selection = new Composite(vueFS, SWT.NONE);
+		RowLayout rowLayout = new RowLayout();
+		rowLayout.marginWidth = 5;
+		rowLayout.marginTop = 6;
+		rowLayout.spacing = 10;
+		selection.setLayout(rowLayout);
+		selection.setBackground(Couleur.gris);
+
+		RowLayout rl = new RowLayout();
+		rl.type = SWT.HORIZONTAL;
+
+
+		Button boutonCreation = new Button(selection, SWT.CENTER);
+		boutonCreation.setText("Créer");
+		boutonCreation.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				selectedChantier = null; selectedAmorti = null;
+				vueCreationA();
+			}
+		});
+
+		if (selectedFS != null) {
+			Button boutonModif = new Button(selection, SWT.CENTER);
+			boutonModif.setText("Modifier");
+			boutonModif.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent arg0) {
+					vueCreationFS();
+				}
+			});
+
+			Button boutonSupp = new Button(selection, SWT.CENTER);
+			boutonSupp.setText("Supprimer");
+			boutonSupp.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent arg0) {
+					try {
+						FournitureSanitaire fs = FournitureSanitaire.getFournitureSanitaireById(selectedFS.getFournitureSanitaireId());
+						MessageBox dialog = new MessageBox(vueAutres.getShell(), SWT.ICON_QUESTION | SWT.YES | SWT.NO);
+						dialog.setText("Suppression Fourniture Sanitaire");
+						dialog.setMessage("Voulez vous supprimer le coût de fourniture sanitaire du chantier " + Site.getChantierById(fs.getChantierId()).getNom() + " ?");
+						int buttonID = dialog.open();
+						switch (buttonID) {
+						case SWT.YES:
+							fs.setStatus("Archivé");
+							fs.updateDatabase();
+							updateTableFS();
+						}
+					} catch (Exception e) {
+						System.out.println("erreur pour supprimer l'element");
+						MessageBox dialog = new MessageBox(vueAutres.getShell(), SWT.ICON_ERROR | SWT.OK);
+						dialog.setText("Erreur");
+						dialog.setMessage("Une erreur est survenue. " + '\n' + e.getMessage());
+						dialog.open();
+					}
+				}
+			});
+		}
+
+		selection.pack();
+	}
+
+	public void vueCreationFS() {
+
+		vueFormulaireFS();
+
+		if (!Objects.isNull(selection) && !selection.isDisposed()) {
+			selection.dispose();
+		}
+		String s;int addSize;
+		if (selectedFS != null) {
+			s = "Modification d'un coût de fourniture sanitaire";
+			addSize = vue.getSize().x;
+			addSize = (addSize - 255)/2;
+		}
+		else {
+			s = "Création d'un coût de fourniture sanitaire";
+			addSize = vue.getSize().x;
+			addSize = (addSize - 240)/2;
+		}
+
+		selection = new Composite(vueAutres, SWT.CENTER);
+
+		FillLayout fillLayout = new FillLayout();
+		fillLayout.type = SWT.VERTICAL;
+		fillLayout.marginWidth = addSize;
+		selection.setLayout(fillLayout);
+
+		// juste pour creer un espace
+		Label l1 = new Label(selection, SWT.NONE);
+		l1.setText("");
+		l1.setBackground(Couleur.bleuFonce);
+
+		selection.setBackground(Couleur.bleuFonce);
+		Label HeadLabel = new Label(selection, SWT.TITLE);
+		HeadLabel.setText(s);
+		Font fontTitle = new Font(HeadLabel.getDisplay(), "Arial", 12, SWT.BOLD);
+		HeadLabel.setForeground(Couleur.bleuClair);
+		HeadLabel.setFont(fontTitle);
+		HeadLabel.setBackground(Couleur.bleuFonce);
+
+		// juste pour creer un espace
+		Label l2 = new Label(selection, SWT.NONE);
+		l2.setText("");
+		l2.setBackground(Couleur.bleuFonce);
+
+		selection.pack();
+
+		vueFormulaireFS();
+
+		vueFS.pack();
+		tabFolder.pack();
+		tabFolder.getParent().pack();
+	}
+
+	public void vueFormulaireFS() {
+		if (!Objects.isNull(vue) && !vue.isDisposed()) {
+			vue.dispose();
+		}
+		vue = new Composite(vueAutres, SWT.NONE);
+		FillLayout fillLayoutH = new FillLayout();
+		fillLayoutH.type = SWT.HORIZONTAL;
+		vue.setLayout(fillLayoutH);
+
+		FillLayout fillLayoutV = new FillLayout();
+		fillLayoutV.type = SWT.VERTICAL;
+		fillLayoutV.marginWidth = 10;
+		Composite colonne1 = new Composite(vue, SWT.BORDER);
+		Composite colonne2 = new Composite(vue, SWT.BORDER);
+		colonne1.setBackground(Couleur.bleuClair);
+		colonne2.setBackground(Couleur.bleuClair);
+		colonne1.setLayout(fillLayoutV);
+		colonne2.setLayout(fillLayoutV);
+
+		// utilisé pour tous les composites des arguments
+		FillLayout fillLayoutH5 = new FillLayout();
+		fillLayoutH5.marginHeight = 30;
+		fillLayoutH5.spacing = 5;
+		fillLayoutH5.type = SWT.HORIZONTAL;
+
+
+		Composite compositeChantier = new Composite(colonne1, SWT.NONE);
+		compositeChantier.setBackground(Couleur.bleuClair);
+		compositeChantier.setLayout(fillLayoutH5);
+
+		Label labelChantier = new Label(compositeChantier, SWT.NONE);
+		labelChantier.setText("Chantier* : ");
+		labelChantier.setBackground(Couleur.bleuClair);
+		// Titre
+		Combo chantiers = new Combo(compositeChantier, SWT.BORDER);
+		if (selectedChantier != null){
+			try {
+				if (selectedChantier.getNom().length() > 25) {
+					chantiers.setText(selectedChantier.getNom().substring(0, 23)+"..."+";id:"+((Integer)selectedChantier.getChantierId()).toString());
+				}
+				else {
+					chantiers.setText(selectedChantier.getNom()+" ; id :"+((Integer)selectedChantier.getChantierId()).toString());
+				}
+			} catch (Exception e1) {
+				e1.printStackTrace(); 
+				System.out.println("erreur pour recuperer les chantiers");
+				MessageBox dialog = new MessageBox(vueAutres.getShell(), SWT.ICON_ERROR | SWT.OK);
+				dialog.setText("Erreur");
+				dialog.setMessage("Une erreur est survenue. "+'\n'+e1.getMessage());
+				dialog.open();
+			}
+		}
+		else {
+			chantiers.setText("Selectionner ...");
+		}
+		try {
+			for (Site e : Site.getAllChantier()) {
+				if (e.getStatus().equals("Publié")) {
+					if (e.getNom().length() > 25) {
+						chantiers.add(e.getNom().substring(0, 23)+"..."+";id:"+((Integer)e.getChantierId()).toString());
+					}
+					else {
+						chantiers.add(e.getNom()+" ; id :"+((Integer)e.getChantierId()).toString());
+					}
+				}
+			}
+		} catch (SQLException e1) {
+			e1.printStackTrace(); 
+			System.out.println("erreur pour recuperer les chantiers");
+			MessageBox dialog = new MessageBox(vueAutres.getShell(), SWT.ICON_ERROR | SWT.OK);
+			dialog.setText("Erreur");
+			dialog.setMessage("Une erreur est survenue. "+'\n'+e1.getMessage());
+			dialog.open();
+		}
+
+
+
+		Composite compositePeriode = new Composite(colonne1, SWT.NONE);
+		compositePeriode.setBackground(Couleur.bleuClair);
+		compositePeriode.setLayout(fillLayoutH5);
+
+		Label labelPeriode = new Label(compositePeriode, SWT.NONE);
+		labelPeriode.setText("Début : ");
+		labelPeriode.setBackground(Couleur.bleuClair);
+
+		Combo periode = new Combo(compositePeriode, SWT.BORDER);
+		LocalDate currentdate = LocalDate.now();
+		Month month = currentdate.getMonth();
+		int year = currentdate.getYear();
+		if (selectedFS == null) {
+			periode.setText(month.toString()+" "+year);
+		}
+		else {
+			periode.setText(Month.of(selectedFS.getMoisD())+" "+selectedFS.getAnneeD().toString());
+		}
+
+		for(int i = 2020; i <= year+1 ; i++) {
+			for (int j =1 ; j <= 12 ; j++) {
+				periode.add(Month.of(j)+" "+i);
+			}
+		}
+
+		// valeur
+		Composite compositeValeur = new Composite(colonne2, SWT.NONE);
+		compositeValeur.setBackground(Couleur.bleuClair);
+		compositeValeur.setLayout(fillLayoutH5);
+
+		Label labelValeur = new Label(compositeValeur, SWT.NONE);
+		labelValeur.setBackground(Couleur.bleuClair);
+		labelValeur.setText("Montant par mois* : ");
+
+		final Text textValeur = new Text(compositeValeur, SWT.BORDER);
+		if (selectedFS != null) {
+			textValeur.setText(selectedFS.getMontantParMois().toString());
+		}
+		else {
+			textValeur.setText("");
+		}
+		
+		// sous traitant
+		Composite compositeST = new Composite(colonne2, SWT.NONE);
+		compositeST.setBackground(Couleur.bleuClair);
+		compositeST.setLayout(fillLayoutH5);
+
+		Label labelST = new Label(compositeST, SWT.NONE);
+		labelST.setBackground(Couleur.bleuClair);
+		labelST.setText("Sous Traitant : ");
+
+		final Text textST = new Text(compositeST, SWT.BORDER);
+		if (selectedFS != null) {
+			textST.setText(selectedFS.getSousTraitant());
+		}
+		else {
+			textST.setText("");
+		}
+		
+		// desc
+		Composite compositeDesc = new Composite(colonne2, SWT.NONE);
+		compositeDesc.setBackground(Couleur.bleuClair);
+		compositeDesc.setLayout(fillLayoutH5);
+
+		Label labelDesc = new Label(compositeDesc, SWT.NONE);
+		labelDesc.setBackground(Couleur.bleuClair);
+		labelDesc.setText("Description : ");
+
+		final Text textDesc = new Text(compositeDesc, SWT.BORDER);
+		if (selectedFS != null) {
+			textDesc.setText(selectedFS.getDescription());
+		}
+		else {
+			textDesc.setText("");
+		}
+
+
+		// Boutons
+		Composite compositeBoutons = new Composite(colonne2, SWT.CENTER);
+		compositeBoutons.setBackground(Couleur.bleuClair);
+		compositeBoutons.setLayout(fillLayoutH5);
+
+		Button buttonAnnulation = new Button(compositeBoutons, SWT.BACKGROUND);
+		buttonAnnulation.setText("Annuler");
+		buttonAnnulation.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				selectedFS = null; selectedChantier = null;
+				vueFS();
+			}
+		});
+
+		Button buttonValidation = new Button(compositeBoutons, SWT.BACKGROUND);
+		buttonValidation.setText("Valider");
+
+		//creation
+
+		buttonValidation.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+
+				try {
+					String id;
+					try {
+					id = chantiers.getText().split(";")[1].replace(" ",""); 
+					} catch (Exception e) {
+						throw new Error ("Merci d'indiquer un chantier.");
+					}
+					Integer chantierId = Integer.parseInt(id.substring(3,id.length()));
+
+					String[] debut = periode.getText().split(" ");
+					System.out.println(debut[0]+" "+debut[1]);
+
+					int moisD = Month.valueOf(debut[0]).getValue();
+					int anneeD = Integer.parseInt(debut[1]);
+
+					Double montantParMois;
+					try {
+						montantParMois = Double.parseDouble(textValeur.getText());
+					} catch (Exception e) {
+						throw new Error ("Merci d'indiquer le montant.");
+					}
+
+					if (selectedFS != null) {
+						FournitureSanitaire fs = new FournitureSanitaire(selectedFS.getFournitureSanitaireId(), chantierId, moisD, anneeD, textDesc.getText(), montantParMois,textST.getText(), "Publié");
+						fs.updateDatabase();
+						MessageBox dialog = new MessageBox(vueAutres.getShell(), SWT.ICON_INFORMATION | SWT.OK);
+						dialog.setText("Modification réussie");
+						dialog.setMessage("Ce cout de fourniture sanitaire a bien été modifié dans la base de données.");
+						dialog.open();
+					}
+					else {
+						FournitureSanitaire fs = new FournitureSanitaire(chantierId, moisD, anneeD,montantParMois, textDesc.getText(),textST.getText(), "Publié");
+						fs.insertDatabase();
+						MessageBox dialog = new MessageBox(vueAutres.getShell(), SWT.ICON_INFORMATION | SWT.OK);
+						dialog.setText("Création réussie");
+						dialog.setMessage("Ce cout de fourniture sanitaire a bien été ajouté dans la base de données.");
+						dialog.open();
+					}
+					vueFS();
+				} catch (Throwable e) {
+					e.printStackTrace();
+					System.out.println("erreur dans la creation");
+					MessageBox dialog = new MessageBox(vueAutres.getShell(), SWT.ICON_ERROR | SWT.OK);
+					dialog.setText("Erreur Création");
+					dialog.setMessage(
+							"Une erreur est survenue lors de la création du cout de fourniture sanitaire. " + '\n' + e.getMessage());
+					dialog.open();
+				}
+			}
+		});
+
+		vue.pack();
+	}
+
+	public void updateTableChantierFS() {
+		if(!Objects.isNull(tableChantier)) {
+			tableChantier.removeAll();
+		}
+
+		//on remplit la table
+		final TableColumn [] columns = tableChantier.getColumns();
+
+		try {
+			for (Site e : Site.getAllChantier()) {
+				//on verifie le status
+				if (e.getStatus().equals("Publié")) {
+					TableItem item = new TableItem (tableChantier, SWT.NONE);
+					item.setText(0,((Integer)e.getChantierId()).toString());
+					item.setText(1,e.getNom());
+				}
+			}
+		} catch (SQLException e1) {
+			System.out.println("erreur dans la table des couts chantiers");
+			MessageBox dialog = new MessageBox(vueAutres.getShell(), SWT.ICON_ERROR | SWT.OK);
+			dialog.setText("Erreur");
+			dialog.setMessage("Une erreur est survenue. "+'\n'+e1.getMessage());
+			dialog.open();
+		}
+
+		//on pack les colonnes
+		for (TableColumn col : columns)
+			col.pack ();
+
+		tableChantier.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				if (tableChantier.getSelectionIndex() != -1) {
+
+					try {
+						selectedChantier = Site
+								.getChantierById(Integer.parseInt(tableChantier.getSelection()[0].getText(0)));
+					} catch (NumberFormatException | SQLException e1) {
+						System.out.println("erreur pour recuperer l'chantier selectionne");
+						MessageBox dialog = new MessageBox(vueAutres.getShell(), SWT.ICON_ERROR | SWT.OK);
+						dialog.setText("Erreur");
+						dialog.setMessage("Une erreur est survenue. " + '\n' + e1.getMessage());
+						dialog.open();
+					}
+
+					updateTableFS();
+
+				} else { 
+
+					selectedChantier = null;selectedFS = null;
+					updateTableChantierFS();
+					updateTableFS();
+				}
+			}
+		});
+
+		vue.pack();
+	}
+
+	public void updateTableFS() {
+		if(!Objects.isNull(tableFS)) {
+			tableFS.removeAll();
+		}
+		if (selectedChantier == null) {
+			return;
+		}
+
+		//on remplit la table
+		final TableColumn [] columns = tableFS.getColumns();
+
+		try {
+			for (FournitureSanitaire fs : FournitureSanitaire.getAllFournitureSanitaire()) {
+				//on verifie le status
+				if (fs.getStatus().equals("Publié") && selectedChantier.getChantierId()==fs.getChantierId()) {
+					TableItem item = new TableItem (tableFS, SWT.NONE);
+					item.setText(0,fs.getFournitureSanitaireId().toString());
+					item.setText(1,fs.getMoisD().toString()+'/'+fs.getAnneeD().toString());
+					item.setText(2,fs.getMontantParMois().toString());
+					item.setText(3,fs.getSousTraitant());
+					item.setText(4,fs.getDescription());
+				}
+			}
+		} catch (SQLException e1) {
+			System.out.println("erreur dans la table des couts fs");
+			MessageBox dialog = new MessageBox(vueAutres.getShell(), SWT.ICON_ERROR | SWT.OK);
+			dialog.setText("Erreur");
+			dialog.setMessage("Une erreur est survenue. "+'\n'+e1.getMessage());
+			dialog.open();
+		}
+
+		//on pack les colonnes
+		for (TableColumn col : columns)
+			col.pack ();
+
+		tableFS.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				if (tableFS.getSelectionIndex() != -1) {
+
+					try {
+						selectedFS = FournitureSanitaire.getFournitureSanitaireById(Integer.parseInt(tableFS.getSelection()[0].getText(0)));
+					} catch (NumberFormatException | SQLException e1) {
+						System.out.println("erreur pour recuperer le fs selectionne");
+						MessageBox dialog = new MessageBox(vueAutres.getShell(), SWT.ICON_ERROR | SWT.OK);
+						dialog.setText("Erreur");
+						dialog.setMessage("Une erreur est survenue. " + '\n' + e1.getMessage());
+						dialog.open();
+					}
+
+					fsSelection();
+					doMenu(tableFS);
+				} else { 
+
+					selectedFS = null;
+					fsSelection();
+
+					menu.dispose();
+					menu = new Menu(vueAutres.getShell(), SWT.POP_UP);
+					tableFS.setMenu(menu);
+				}
+			}
+		});
+
+
+		tableFS.pack();
+		vue.pack();
+		vue.layout(true,true);
+	}
+	
+	
+	
+	
 	////////////////////////////////////// COUTS A AMORTIR  //////////////////////////////////////////////
 
 	public void amortiSelection() {
@@ -399,14 +986,11 @@ public class VueLivraison {
 		}
 		try {
 			for (Site e : Site.getAllChantier()) {
-				System.out.println("eee");
 				if (e.getStatus().equals("Publié")) {
 					if (e.getNom().length() > 25) {
-						System.out.println("e1");
 						chantiers.add(e.getNom().substring(0, 23)+"..."+";id:"+((Integer)e.getChantierId()).toString());
 					}
 					else {
-						System.out.println("e2");
 						chantiers.add(e.getNom()+" ; id :"+((Integer)e.getChantierId()).toString());
 					}
 				}
@@ -1933,6 +2517,9 @@ public class VueLivraison {
 						if (selectedAmorti!=null) {
 							vueCreationA();
 						}
+						else if (selectedFS!=null) {
+							vueCreationFS();
+						}
 						else {
 							vueLivraisonModifier();
 						}
@@ -1963,10 +2550,25 @@ public class VueLivraison {
 						selectedAmorti = null;
 						amortiSelection();
 					}
+					else if (selectedFS!=null) {
+						FournitureSanitaire fs = FournitureSanitaire.getFournitureSanitaireById(selectedFS.getFournitureSanitaireId());
+						MessageBox dialog = new MessageBox(tabFolder.getShell(), SWT.ICON_QUESTION | SWT.YES | SWT.NO);
+						dialog.setText("Suppression Founiture Sanitaire");
+						dialog.setMessage("Voulez vous supprimer le coût de fourniture sanitaire du chantier " + Site.getChantierById(fs.getChantierId()).getNom() + " ?");
+						int buttonID = dialog.open();
+						switch (buttonID) {
+						case SWT.YES:
+							fs.setStatus("Archivé");
+							fs.updateDatabase();
+							updateTableFS();
+						}
+						selectedFS = null;
+						fsSelection();
+					}
 					else {
 						suppLivraison(table);
 					}
-					selectedChantier = null; selectedAmorti = null;
+					selectedChantier = null; selectedAmorti = null;selectedFS=null;
 					menu.dispose();
 					menu = new Menu(tabFolder.getShell(), SWT.POP_UP);
 					table.setMenu(menu);

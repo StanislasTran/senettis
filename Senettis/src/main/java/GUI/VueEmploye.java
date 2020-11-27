@@ -2073,7 +2073,6 @@ public class VueEmploye {
 							}
 							tableGlobaleEmploye.getSelection()[0].setForeground(9, Couleur.noir);
 							try {
-								System.out.println("on update :"+(selectedEmploye.getAnciennetePC()+1));
 								Employee.updateAnciennete(selectedEmploye.getAnciennetePC()+1, selectedEmploye.getEmployeId());
 							} catch (SQLException e) {
 								// TODO Auto-generated catch block
@@ -2232,7 +2231,6 @@ public class VueEmploye {
 								} else if (a2 - a1 - 1 == 1) {
 									item.setText(9, Integer.toString(a2 - a1 - 1) + " an");
 								} else {
-									System.out.println("on met le rouge ? "+e.getAnciennetePC());
 									if ((m1 == m2) && (a2 - a1 - 1 >= 3) && (e.getAnciennetePC()!=(a2 - a1 - 1))) {
 											item.setForeground(9, Couleur.rouge);
 									}
@@ -2242,7 +2240,6 @@ public class VueEmploye {
 								if (a2 - a1 == 1) {
 									item.setText(9, Integer.toString(a2 - a1) + " an");
 								} else {
-									System.out.println("on met le rouge ? "+e.getAnciennetePC());
 									if ((m1 == m2) && (a2 - a1 >= 3) && (e.getAnciennetePC()!=(a2 - a1))) {
 										item.setForeground(9, Couleur.rouge);
 									}
