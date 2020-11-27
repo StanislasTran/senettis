@@ -36,7 +36,7 @@ public class EmployeTest
      laetitia.setMail("l@l.fr"); //ok
      
     }
-   
+   /*
     @Test
     public void testGet() 
     {
@@ -52,7 +52,7 @@ public class EmployeTest
 	     
 	     System.out.println(laetitia.toString());
     }
-    
+    */
     @Test
     public void test() 
     {
