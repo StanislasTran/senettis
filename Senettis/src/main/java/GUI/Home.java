@@ -400,12 +400,12 @@ public class Home {
 
 		});
 
-		Button boutonAffectation = new Button(menu, SWT.NONE);
+		Button boutonAffectationSite = new Button(menu, SWT.NONE);
 
 		// boutonAffectation.setImage();
-		boutonAffectation.setText("Affectations à un chantier");
+		boutonAffectationSite.setText("Affectations à un chantier");
 
-		boutonAffectation.addSelectionListener(new SelectionAdapter() {
+		boutonAffectationSite.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				if (!contenuColonneDroite.isDisposed()) {
@@ -417,7 +417,7 @@ public class Home {
 					contenuColonneDroite.dispose();
 				}
 				try {
-					contenuColonneDroite = new ViewAffectationMAB(getColonneDroite()).getVueAffectation();
+					contenuColonneDroite = new ViewAffectationChantier(getColonneDroite()).getVueAffectation();
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

@@ -28,7 +28,7 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 
-import classes.AffectationMiseABlanc;
+import classes.AffectationChantier;
 import classes.Employee;
 import classes.Site;
 import classes.Status;
@@ -41,11 +41,9 @@ public class ViewAffectationChantier {
 	private Composite rightComposite;
 	private Composite leftComposite;
 	private Composite rightColumn;
-	private Combo monthFilter;
-	private Combo yearFilter;
+
 	private Button createButton;
 	private Button modifyButton;
-	private Composite filterComposite;
 	private Composite buttons;
 	private Button removeButton;
 
@@ -74,8 +72,7 @@ public class ViewAffectationChantier {
 		// selection part
 
 		selection(this.affectationView);
-		createMonthFilter();
-		createYearFilter();
+
 
 		this.mainComposite = new Composite(this.affectationView, SWT.NONE);
 		this.mainComposite.setLayout(new RowLayout(SWT.HORIZONTAL));
@@ -102,53 +99,9 @@ public class ViewAffectationChantier {
 		TabItem tabChantier = new TabItem(tabFolder, SWT.NULL);
 		tabChantier.setText("Affectation par Chantier");
 
-		this.monthFilter.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				Month month = Month.of(monthFilter.getSelectionIndex() + 1);
-				Year year = Year.of(Integer.parseInt(yearFilter.getText()));
-				try {
-
-					cleanButtons();
-					cleanRightComposite();
-					createTableEmployeStats(tabEmploye, month, year);
-					createTableChantierStats(tabChantier, month, year);
-					disposeAllChildren(rightComposite);
-					mainComposite.layout(true, true);
-				} catch (SQLException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-			}
-
-		});
-
-		this.yearFilter.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				Month month = Month.of(monthFilter.getSelectionIndex() + 1);
-				Year year = Year.of(Integer.parseInt(yearFilter.getText()));
-				try {
-					cleanButtons();
-					cleanRightComposite();
-					createTableEmployeStats(tabEmploye, month, year);
-					createTableChantierStats(tabChantier, month, year);
-					disposeAllChildren(rightComposite);
-					mainComposite.layout(true, true);
-				} catch (SQLException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-			}
-
-		});
-
-		Month month = Month.of(monthFilter.getSelectionIndex() + 1);
-		Year year = Year.of(Integer.parseInt(yearFilter.getText()));
-		createTableEmployeStats(tabEmploye, month, year);
-		createTableChantierStats(tabChantier, month, year);
+		
+		createTableEmployeStats(tabEmploye );
+		createTableChantierStats(tabChantier );
 
 	
 		mainComposite.pack();
@@ -175,7 +128,7 @@ public class ViewAffectationChantier {
 	 * @param tabEmploye
 	 * @throws SQLException
 	 */
-	private void createTableEmployeStats(TabItem tabEmploye, Month month, Year year) throws SQLException {
+	private void createTableEmployeStats(TabItem tabEmploye) throws SQLException {
 
 		final Table table = new Table(tabEmploye.getParent(),
 				SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.FULL_SELECTION);
@@ -190,7 +143,7 @@ public class ViewAffectationChantier {
 			column.setText(title);
 		}
 
-		ResultSet result = AffectationMiseABlanc.getEmployeStats(month, year);
+		ResultSet result = AffectationChantier.getEmployeStats( );
 		final TableColumn[] columns = table.getColumns();
 		while (result.next()) {
 			TableItem item = new TableItem(table, SWT.NONE);
@@ -254,7 +207,7 @@ public class ViewAffectationChantier {
 	 *
 	 * @throws SQLException
 	 */
-	private void createTableChantierStats(TabItem tabChantier, Month month, Year year) throws SQLException {
+	private void createTableChantierStats(TabItem tabChantier) throws SQLException {
 
 		final Table table = new Table(tabChantier.getParent(),
 				SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.FULL_SELECTION);
@@ -270,7 +223,7 @@ public class ViewAffectationChantier {
 			column.setText(title);
 		}
 
-		ResultSet result = AffectationMiseABlanc.getChantierStats(month, year);
+		ResultSet result = AffectationChantier.getChantierStats();
 		final TableColumn[] columns = table.getColumns();
 		while (result.next()) {
 			TableItem item = new TableItem(table, SWT.NONE);
@@ -340,9 +293,8 @@ public class ViewAffectationChantier {
 	public void EmployeAffectationDisplay(int employeId) throws SQLException {
 
 		this.cleanRightComposite();
-		Month month = Month.of(this.monthFilter.getSelectionIndex() + 1);
-		Year year = Year.of(Integer.parseInt(this.yearFilter.getText()));
-		ResultSet result = AffectationMiseABlanc.getEmployeAffectationPublished(employeId, month, year);
+	
+		ResultSet result = AffectationChantier.getEmployeAffectationPublished(employeId);
 
 		final Table table = new Table(this.rightComposite, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.FULL_SELECTION);
 		table.setLayoutData(new RowData(900, 800));
@@ -408,9 +360,8 @@ public class ViewAffectationChantier {
 	 */
 	public void siteAffectationDisplay(int siteId) throws SQLException {
 		cleanRightComposite();
-		Month month = Month.of(this.monthFilter.getSelectionIndex() + 1);
-		Year year = Year.of(Integer.parseInt(this.yearFilter.getText()));
-		ResultSet result = AffectationMiseABlanc.getSiteAffectationPublished(siteId, month, year);
+	
+		ResultSet result = AffectationChantier.getSiteAffectationPublished(siteId);
 		disposeAllChildren(this.rightComposite);
 
 		final Table table = new Table(this.rightComposite, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.FULL_SELECTION);
@@ -536,14 +487,13 @@ public class ViewAffectationChantier {
 		RowLayout rowLayout = new RowLayout(SWT.VERTICAL);
 		this.selection.setLayout(rowLayout);
 
-		this.filterComposite = new Composite(this.selection, SWT.NONE);
-		this.filterComposite.setLayout(new RowLayout(SWT.HORIZONTAL));
+		
 
 		this.buttons = new Composite(this.selection, SWT.NONE);
 		this.buttons.setLayout(new RowLayout(SWT.HORIZONTAL));
 
 		this.selection.pack();
-		this.filterComposite.pack();
+		
 		this.buttons.pack();
 		composite.pack();
 	}
@@ -828,53 +778,11 @@ public class ViewAffectationChantier {
 	}
 
 	protected void remove(int affectationId) throws SQLException {
-		AffectationMiseABlanc.getAffectation(affectationId).remove();
+		AffectationChantier.getAffectation(affectationId).remove();
 
 	}
 
-	/**
-	 * Create the filter on Month
-	 */
-	private void createMonthFilter() {
-		if (Objects.isNull(monthFilter) || monthFilter.isDisposed()) {
-			Composite monthComposite = new Composite(this.filterComposite, SWT.NONE);
-			monthComposite.setLayout(new RowLayout(SWT.HORIZONTAL));
-			Label monthLabel = new Label(monthComposite, SWT.NONE);
-			monthLabel.setText("Mois");
-			this.monthFilter = new Combo(monthComposite, SWT.NONE);
-
-			String[] frenchMonth = { "Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août",
-					"Septembre", "Octobre", "Novembre", "Décembre" };
-
-			for (String m : frenchMonth)
-				this.monthFilter.add(m);
-			int currentMonth = LocalDate.now().getMonth().getValue();
-			this.monthFilter.select(currentMonth - 1);
-			this.monthFilter.pack();
-			this.buttons.pack();
-			this.selection.pack();
-
-		}
-
-	}
-
-	// Year part
-	private void createYearFilter() {
-		if (Objects.isNull(yearFilter) || yearFilter.isDisposed()) {
-			Composite yearComposite = new Composite(this.filterComposite, SWT.NONE);
-			yearComposite.setLayout(new RowLayout(SWT.HORIZONTAL));
-			Label yearLabel = new Label(yearComposite, SWT.NONE);
-			yearLabel.setText("Année");
-			this.yearFilter = new Combo(yearComposite, SWT.NONE);
-
-			int currentYear = Year.now().getValue();
-			for (int i = currentYear - 2; i < currentYear + 3; i++)
-				this.yearFilter.add("" + i);
-			this.yearFilter.select(2);
-			this.yearFilter.pack();
-		}
-
-	}
+	
 
 	/***
 	 * 
@@ -988,7 +896,7 @@ public class ViewAffectationChantier {
 					Year year = Year.of(Integer.parseInt(checkYear));
 					Status status = Status.PUBLISHED;
 					if (table.getSelection().length == 1) {
-						AffectationMiseABlanc affectation = new AffectationMiseABlanc(siteId, idEmploye, nbHeure, month, year, status);
+						AffectationChantier affectation = new AffectationChantier(siteId, idEmploye, nbHeure, month, year, status);
 						try {
 							affectation.insertDatabase();
 							ajoutComposite.dispose();
@@ -1087,7 +995,7 @@ public class ViewAffectationChantier {
 		Composite monthComposite = new Composite(ajoutComposite, SWT.NONE);
 		monthComposite.setLayout(new RowLayout(SWT.HORIZONTAL));
 		Label monthLabel = new Label(monthComposite, SWT.NONE);
-		monthLabel.setText("Mois");
+		monthLabel.setText("Moi début");
 		Combo comboMonth = new Combo(monthComposite, SWT.NONE);
 
 		String[] frenchMonth = { "Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre",
@@ -1103,7 +1011,7 @@ public class ViewAffectationChantier {
 		Composite yearComposite = new Composite(ajoutComposite, SWT.NONE);
 		yearComposite.setLayout(new RowLayout(SWT.HORIZONTAL));
 		Label yearLabel = new Label(yearComposite, SWT.NONE);
-		yearLabel.setText("Année");
+		yearLabel.setText("Année début");
 		Combo comboYear = new Combo(yearComposite, SWT.NONE);
 
 		int currentYear = Year.now().getValue();
@@ -1152,11 +1060,11 @@ public class ViewAffectationChantier {
 
 					Integer siteId = Integer.parseInt(checkSiteId);
 					Double nbHeure = Double.parseDouble(checkNbHours);
-					Month month = Month.of(checkMonth);
-					Year year = Year.of(Integer.parseInt(checkYear));
+					Month startMonth = Month.of(checkMonth);
+					Year startYear = Year.of(Integer.parseInt(checkYear));
 					Status status = Status.PUBLISHED;
 					if (table.getSelection().length == 1) {
-						AffectationMiseABlanc affectation = new AffectationMiseABlanc(siteId, employeeId, nbHeure, month, year, status);
+						AffectationChantier affectation = new AffectationChantier(siteId, employeeId, nbHeure, startMonth, startYear, status);
 						try {
 							affectation.insertDatabase();
 							ajoutComposite.dispose();
@@ -1238,7 +1146,7 @@ public class ViewAffectationChantier {
 	 */
 	private void modifyEmployeeAffectation(int affectationId) throws SQLException {
 
-		AffectationMiseABlanc affectation = AffectationMiseABlanc.getAffectation(affectationId);
+		AffectationChantier affectation = AffectationChantier.getAffectation(affectationId);
 		this.mainComposite.dispose();
 		this.selection.dispose();
 
@@ -1287,7 +1195,7 @@ public class ViewAffectationChantier {
 					checkSiteId = table.getSelection()[0].getText(3);
 					checkNbHours = nbHeureTexte.getText();
 					isChecked = checkAffectation(checkSiteId, "" + affectation.getIdEmploye(), checkNbHours,
-							affectation.getMonth().getValue(), "" + affectation.getYear().getValue());
+							affectation.getStartMonth().getValue(), "" + affectation.getStartYear().getValue());
 				} catch (IllegalArgumentException | ArrayIndexOutOfBoundsException argException) {
 					MessageBox dialog = new MessageBox(affectationView.getShell(), SWT.ICON_ERROR | SWT.OK);
 					dialog.setText("Erreur Création :");
@@ -1376,7 +1284,7 @@ public class ViewAffectationChantier {
 	 */
 	private void modifySiteAffectation(int affectationId) throws SQLException {
 
-		AffectationMiseABlanc affectation = AffectationMiseABlanc.getAffectation(affectationId);
+		AffectationChantier affectation = AffectationChantier.getAffectation(affectationId);
 		this.mainComposite.dispose();
 		this.selection.dispose();
 
@@ -1424,7 +1332,7 @@ public class ViewAffectationChantier {
 					checkEmployeId = table.getSelection()[0].getText(3);
 					checkNbHours = nbHeureTexte.getText();
 					isChecked = checkAffectation(affectation.getIdChantier() + "", checkEmployeId, checkNbHours,
-							affectation.getMonth().getValue(), "" + affectation.getYear().getValue());
+							affectation.getStartMonth().getValue(), "" + affectation.getStartYear().getValue());
 				} catch (IllegalArgumentException | ArrayIndexOutOfBoundsException argException) {
 					MessageBox dialog = new MessageBox(affectationView.getShell(), SWT.ICON_ERROR | SWT.OK);
 					dialog.setText("Erreur Création :");

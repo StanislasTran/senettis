@@ -112,7 +112,7 @@ SET Date_de_modification = GETDATE()
  GO
 
 
-Create table Affectation (
+Create table AffectationChantier (
  AffectationId INT PRIMARY KEY IDENTITY (1, 1),
     Chantier int NOT NULL,
     Employe int NOT NULL,
@@ -120,19 +120,23 @@ Create table Affectation (
     FOREIGN KEY (Employe) REFERENCES Employe(EmployeId),
     Nombre_heures decimal,
 	"Status" VARCHAR (50) NOT NULL,
+	MoisDebut int NOT NULL,
+	AnneeDebut int NOT NULL,
 	"Date_de_creation" DateTime  NOT NUll Default (GETDATE()), 
 	"Date_de_modification" DateTime  NOT NUll Default (GETDATE()), 
-	CONSTRAINT check_status_affectation CHECK (("Status") IN ('Publié','Brouillon','Archivé')),
+	CONSTRAINT check_status_affectationChantier CHECK (("Status") IN ('Publié','Brouillon','Archivé')),
+	
+	CONSTRAINT check_moonthAffectationChantier CHECK (("MoisDebut")>=0 and ("MoisDebut")<=12),
 	 
 );
 GO
 
-Create TRIGGER Affectation_Update
-ON Affectation
+Create TRIGGER AffectationChantier_Update
+ON AffectationChantier
 AFTER UPDATE
 AS
 UPDATE
-Affectation
+AffectationChantier
 SET Date_de_modification = GETDATE()
  WHERE AffectationId IN (SELECT DISTINCT AffectationId FROM Inserted);
  GO
