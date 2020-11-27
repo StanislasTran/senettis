@@ -126,7 +126,12 @@ public class VueLivraison {
 					tabLivraison.setControl(vueOnglet);
 
 					compositeSelectionCreer();
-					vueLivraisonAfficher();
+					
+					LocalDate currentdate = LocalDate.now();
+					Month month = currentdate.getMonth();
+					int year = currentdate.getYear();
+					vueLivraisonAfficher(month.toString()+" "+year);
+					
 					vueLivraison.pack();
 				}
 				else if (tabFolder.getSelection()[0].equals(tabFS)) {
@@ -167,7 +172,11 @@ public class VueLivraison {
 		vueLivraison.setBackground(Couleur.gris);
 
 		compositeSelectionCreer();
-		vueLivraisonAfficher();
+		
+		LocalDate currentdate = LocalDate.now();
+		Month month = currentdate.getMonth();
+		int year = currentdate.getYear();
+		vueLivraisonAfficher(month.toString()+" "+year);
 
 		vueLivraison.pack();
 		vueOnglet.pack();
@@ -1184,17 +1193,12 @@ public class VueLivraison {
 						throw new Error ("Merci d'indiquer une durée.");
 					}
 
-					int moisF; int anneeF;
+					int moisF = moisD + duree;
+					int anneeF = anneeD;
 
-					if (duree < 12) {
-						moisF = moisD + duree;  anneeF = anneeD;
-					}
-					else if (duree == 12) {
-						moisF = moisD;  anneeF = anneeD+1;
-					}
-					else {
-						anneeF = anneeD + duree / 12;
-						moisF = moisD + (duree % 12);
+					while (moisF>12) {
+						moisF -= 12;
+						anneeF += 1;
 					}
 
 					Double valeurTotale;
@@ -1373,7 +1377,11 @@ public class VueLivraison {
 	public void newVueLivraison () {
 
 		compositeSelectionCreer();
-		vueLivraisonAfficher();
+		
+		LocalDate currentdate = LocalDate.now();
+		Month month = currentdate.getMonth();
+		int year = currentdate.getYear();
+		vueLivraisonAfficher(month.toString()+" "+year);
 
 		vueLivraison.pack();
 		tabFolder.pack();
@@ -1392,23 +1400,14 @@ public class VueLivraison {
 		}
 		selection = new Composite(vueLivraison, SWT.NONE);
 		RowLayout rowLayout = new RowLayout();
-		rowLayout.marginWidth = 20;
+		rowLayout.spacing = 30;
 		selection.setLayout(rowLayout);
 		selection.setBackground(Couleur.gris);
 
-		Composite compositePeriode = new Composite(selection, SWT.NONE);
-		compositePeriode.setBackground(Couleur.bleuClair);
-		FillLayout fillLayoutH5 = new FillLayout();
-		fillLayoutH5.marginHeight = 30;
-		fillLayoutH5.spacing = 5;
-		fillLayoutH5.type = SWT.HORIZONTAL;
-		compositePeriode.setLayout(fillLayoutH5);
+		Label labelPeriode = new Label(selection, SWT.NONE);
+		labelPeriode.setText("Période : ");
 
-		Label labelPeriode = new Label(compositePeriode, SWT.NONE);
-		labelPeriode.setText("Début* : ");
-		labelPeriode.setBackground(Couleur.bleuClair);
-
-		Combo periode = new Combo(compositePeriode, SWT.BORDER);
+		Combo periode = new Combo(selection, SWT.BORDER);
 		LocalDate currentdate = LocalDate.now();
 		Month month = currentdate.getMonth();
 		int year = currentdate.getYear();
@@ -1420,7 +1419,13 @@ public class VueLivraison {
 			}
 		}
 
-		//TODO SELEcTED
+		periode.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				updateTable(periode.getText());
+				vue.pack();
+			}
+		});
 
 
 		Button boutonCreer = new Button(selection, SWT.CENTER);
@@ -1449,7 +1454,7 @@ public class VueLivraison {
 			boutonSupprimer.addSelectionListener(new SelectionAdapter() {	
 				@Override
 				public void widgetSelected(SelectionEvent arg0) {
-					suppLivraison();
+					suppLivraison(periode.getText());
 				}
 			});
 		}
@@ -1463,7 +1468,7 @@ public class VueLivraison {
 	 * fonction utilisee pour supprimer une livraison
 	 * cette fonction demande confirmation puis passe en archivé la livraison selectionne et les produits par livraison associes 
 	 */
-	public void suppLivraison() {
+	public void suppLivraison(String periode) {
 		try {
 			//on recupere la livraison selectionnee
 			Delivery l = Delivery.getLivraisonById(selectedLivraison.getLivraisonId());
@@ -1502,8 +1507,7 @@ public class VueLivraison {
 
 				compositeSelectionCreer();
 
-
-				updateTable(tableLivraison);
+				updateTable(periode);
 			}
 
 		} catch (NumberFormatException | SQLException e) {
@@ -2406,7 +2410,7 @@ public class VueLivraison {
 	/***
 	 * affiche le tableau avec tous les livraisons dans la base de donnees dont le status est publie
 	 */
-	public void vueLivraisonAfficher() {
+	public void vueLivraisonAfficher(String periode) {
 		if (!Objects.isNull(vue) && !vue.isDisposed()) {
 			vue.dispose();
 		}
@@ -2439,7 +2443,7 @@ public class VueLivraison {
 		//on remplit la table
 		final TableColumn [] columns = tableLivraison.getColumns ();
 
-		updateTable(tableLivraison);
+		updateTable(periode);
 
 		//on pack les colonnes
 		for (TableColumn col : columns)
@@ -2484,23 +2488,36 @@ public class VueLivraison {
 	 * remplit la table de toutes les livraisons publiees
 	 * @param table
 	 */
-	public void updateTable(Table table) {
-		table.removeAll();
+	public void updateTable(String periode) {
+		tableLivraison.removeAll();
 		try {
 			for (Delivery l : Delivery.getAllLivraison()) {
 				//on verifie le status
 				if (l.getStatus().contentEquals("Publié")) {
-					TableItem item = new TableItem (table, SWT.NONE);
-					item.setText(0,Site.getChantierById(l.getIdChantier()).getNom());
-					//item.setText(1,Produit.getProductById(l.getIdProduit()).getNom());
-					if (l.getDate() == null) {
-						item.setText(1,"");
+					if (l.getDate() != null) {
+						String[] d1 = l.getDate().split("/");
+						Integer mois1 = Integer.parseInt(d1[1]);
+						Integer annee1 = Integer.parseInt(d1[2]);
+
+						String[] d2 = periode.split(" ");
+						Integer mois2 = Month.valueOf(d2[0]).getValue();
+						Integer annee2 = Integer.parseInt(d2[1]);
+
+						if (Integer.compare(mois1, mois2)==0 && Integer.compare(annee1, annee2)==0 ) {
+							TableItem item = new TableItem (tableLivraison, SWT.NONE);
+							item.setText(0,Site.getChantierById(l.getIdChantier()).getNom());
+							item.setText(1,l.getDate());
+							item.setText(2,l.getPrixTotal().toString());
+							item.setText(3,Integer.toString(l.getLivraisonId()));
+						}
 					}
 					else {
-						item.setText(1,l.getDate());
+						TableItem item = new TableItem (tableLivraison, SWT.NONE);
+						item.setText(0,Site.getChantierById(l.getIdChantier()).getNom());
+						item.setText(1,"");
+						item.setText(2,l.getPrixTotal().toString());
+						item.setText(3,Integer.toString(l.getLivraisonId()));
 					}
-					item.setText(2,l.getPrixTotal().toString());
-					item.setText(3,Integer.toString(l.getLivraisonId()));
 				}
 			}
 		} catch (SQLException e) {
@@ -2580,7 +2597,11 @@ public class VueLivraison {
 						fsSelection();
 					}
 					else {
-						suppLivraison();
+						LocalDate currentdate = LocalDate.now();
+						Month month = currentdate.getMonth();
+						int year = currentdate.getYear();
+
+						suppLivraison(month.toString()+" "+year);
 					}
 					selectedChantier = null; selectedAmorti = null;selectedFS=null;
 					menu.dispose();

@@ -145,6 +145,44 @@ public class TurnOver {
 
 		return allCA;
 	}
+	
+	
+	
+	public static TurnOver getTurnOverByDateAndSite(int chantierId, int mois, int annee) throws SQLException {
+		String reqSql = "SELECT Mois, Annee,Chantier,Menage,Vitrerie,Mise_a_blanc,Fournitures_sanitaires,Autres,CA,Status FROM ChiffreAffaire WHERE chantier=? and mois=? and annee=?";
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		PreparedStatement statement = connection.prepareStatement(reqSql);
+		statement.setObject(1, chantierId, Types.INTEGER);
+		statement.setObject(2, mois, Types.INTEGER);
+		statement.setObject(3, annee, Types.INTEGER);
+		statement.executeQuery();
+
+		ResultSet result = statement.getResultSet();
+
+		if (result.next()) {
+			Double menage = result.getDouble("Menage");
+			Double vitrerie = result.getDouble("Vitrerie");
+			Double fournituresSanitaires = result.getDouble("Fournitures_sanitaires");
+			Double misesBlanc = result.getDouble("Mise_a_blanc");
+			Double autres = result.getDouble("autres");
+
+			Double CA = result.getDouble("CA");
+
+			Status status = Status.DRAFT;
+			if (!Objects.isNull(result.getString("status"))) {
+				status = Status.getStatus(result.getString("status"));
+			}
+
+			String siteName = result.getString("nom");
+			return new TurnOver(chantierId, Month.of(mois), Year.of(annee), menage, vitrerie, fournituresSanitaires, misesBlanc, autres,
+					CA, status, siteName);
+		} else {
+			throw new SQLException("Data not found");
+		}
+	}
+	
+	
+	
 
 	public String getSiteName() {
 		return this.siteName;

@@ -1057,17 +1057,10 @@ public class VueEmploye {
 								System.out.println("dans la boucle");
 								if (ae.getStatus().equals("Publié")) {
 									System.out.println("c'est publie");
-									System.out.println("debut : "+ae.getAnneeD()+" "+ae.getMoisD());
-									System.out.println("fin : "+ae.getAnneeF()+" "+ae.getMoisF());
-									System.out.println("now : "+Integer.parseInt(annee)+" "+moisInt.getValue());
 									YearMonth debut = YearMonth.of(ae.getAnneeD(),ae.getMoisD());
 									YearMonth fin = YearMonth.of(ae.getAnneeF(),ae.getMoisF());
 									YearMonth now = YearMonth.of(Integer.parseInt(annee),moisInt.getValue());
-									System.out.println("debut : "+debut.toString());
-									System.out.println("fin : "+fin.toString());
-									System.out.println("now : "+now.toString());
 									if (debut.equals(now) || fin.equals(now) || (debut.isBefore(now) && fin.isAfter(now))) {
-										System.out.println("date ok");
 										if (ae.getType().equals("Prêt")) {
 											pret += ae.getMontantParMois();
 										}

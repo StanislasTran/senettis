@@ -514,6 +514,27 @@ public class Home {
 				// System.out.println("done");
 			}
 		});
+		
+		
+		Button buttonRent = new Button(menu, SWT.NONE);
+		buttonRent.setText("Rentabilité");
+		buttonRent.setBackground(Couleur.blanc);
+		buttonRent.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				if (!contenuColonneDroite.isDisposed()) {
+					for (Control c : contenuColonneDroite.getChildren()) {
+						if (!c.isDisposed()) {
+							c.dispose();
+						}
+					}
+					contenuColonneDroite.dispose();
+				}
+				contenuColonneDroite = new VueRentabilité(colonneDroite, display).getComposite();
+				contenuColonneDroite.pack();
+				colonneDroite.pack();
+			}
+		});
 
 		menu.pack();
 	}
