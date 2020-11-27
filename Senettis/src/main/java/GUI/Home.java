@@ -417,7 +417,7 @@ public class Home {
 		});
 		
 		Button boutonLivraison = new Button(menu, SWT.NONE);
-		boutonLivraison.setText("Livraisons et autres coûts");
+		boutonLivraison.setText("Livraison / Fourniture / Matériel");
 		boutonLivraison.setBackground(Couleur.blanc);
 
 		boutonLivraison.addSelectionListener(new SelectionAdapter() {

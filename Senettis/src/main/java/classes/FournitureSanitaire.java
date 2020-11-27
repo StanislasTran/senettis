@@ -94,7 +94,7 @@ public class FournitureSanitaire {
 
 	// Liens avec la BDD-----------------------------------------------
 	public int insertDatabase() throws SQLException {
-		String reqSql = "INSERT INTO FournitureSanitaire(moisDepart, anneeDepart,chantier,valeur,duree,type,status,moisFin,anneeFin,valeurParMois,description) VALUES (?,?,?,?,?,?,?)";
+		String reqSql = "INSERT INTO FournitureSanitaire(moisDepart,anneeDepart,chantier,sousTraitant,status,valeurParMois,description) VALUES (?,?,?,?,?,?,?)";
 
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
