@@ -455,9 +455,7 @@ public class Home {
 				if (!contenuColonneDroite.isDisposed()) {
 					contenuColonneDroite.dispose();
 				}
-
 				contenuColonneDroite = new VueLivraison(colonneDroite, display).getComposite();
-
 				contenuColonneDroite.pack();
 				colonneDroite.pack();
 			}
