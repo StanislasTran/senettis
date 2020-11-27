@@ -9,6 +9,6 @@ public class TestAffectation {
 		//Affectation a=new Affectation(1,1,"Publié");
 		//a.insertDatabase();
 		
-		Affectation.printAllAffectation();
+		//Affectation.printAllAffectation();
 	}
 }
