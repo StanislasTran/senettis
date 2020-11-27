@@ -38,12 +38,8 @@ public class EmployeTest
     {
         laetitia.setDateArrivee("10/02/2020");
         laetitia.setMail("l@l.fr");
-        laetitia.setNombreHeures(12.0);
         laetitia.setPointure("38");
         laetitia.setTaille("2m20");
-        laetitia.setRemboursementTelephone(0.0);
-        laetitia.setRemboursementTransport(0.0);
-        laetitia.setSalaire(300000.0);
         laetitia.setTelephone("01.23.45.67.89");
 	     
 	     System.out.println(laetitia.toString());

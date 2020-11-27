@@ -374,7 +374,7 @@ public class Home {
 
 		// boutonAffectation.setImage();
 		boutonAffectationMAB.setText("Affectations mise à blanc");
-		
+
 		boutonAffectationMAB.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
@@ -399,13 +399,12 @@ public class Home {
 			}
 
 		});
-		
-		
+
 		Button boutonAffectation = new Button(menu, SWT.NONE);
 
 		// boutonAffectation.setImage();
 		boutonAffectation.setText("Affectations à un chantier");
-		
+
 		boutonAffectation.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
@@ -456,7 +455,9 @@ public class Home {
 				if (!contenuColonneDroite.isDisposed()) {
 					contenuColonneDroite.dispose();
 				}
-				contenuColonneDroite = new ViewTurnOver(colonneDroite, display).getComposite();
+
+				contenuColonneDroite = new VueLivraison(colonneDroite, display).getComposite();
+
 				contenuColonneDroite.pack();
 				colonneDroite.pack();
 			}
