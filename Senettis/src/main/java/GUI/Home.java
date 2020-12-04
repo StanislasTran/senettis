@@ -446,7 +446,7 @@ public class Home {
 		});
 
 		Button boutonLivraison = new Button(menu, SWT.NONE);
-		boutonLivraison.setText("Livraisons et autres coûts");
+		boutonLivraison.setText("Livraison / Fourniture / Matériel");
 		boutonLivraison.setBackground(Couleur.blanc);
 
 		boutonLivraison.addSelectionListener(new SelectionAdapter() {
@@ -512,6 +512,27 @@ public class Home {
 				contenuColonneDroite.pack();
 				colonneDroite.pack();
 				// System.out.println("done");
+			}
+		});
+		
+		
+		Button buttonRent = new Button(menu, SWT.NONE);
+		buttonRent.setText("Rentabilité");
+		buttonRent.setBackground(Couleur.blanc);
+		buttonRent.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				if (!contenuColonneDroite.isDisposed()) {
+					for (Control c : contenuColonneDroite.getChildren()) {
+						if (!c.isDisposed()) {
+							c.dispose();
+						}
+					}
+					contenuColonneDroite.dispose();
+				}
+				contenuColonneDroite = new VueRentabilité(colonneDroite, display).getComposite();
+				contenuColonneDroite.pack();
+				colonneDroite.pack();
 			}
 		});
 
