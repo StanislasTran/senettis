@@ -112,7 +112,7 @@ public class ProductByDelivery {
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
 		statement.setObject(1, livraisonId, Types.INTEGER);
-		statement.setObject(1, livraisonId, Types.INTEGER);
+		statement.setObject(2, produitId, Types.INTEGER);
 		statement.executeQuery();
 		ResultSet result = statement.getResultSet();
 

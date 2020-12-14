@@ -367,3 +367,120 @@ FournitureSanitaire
 SET Date_de_modification = GETDATE()
  WHERE FournitureSanitaireId IN (SELECT DISTINCT FournitureSanitaireId FROM Inserted);
  GO
+
+Create view  
+ACjoinCE_View 
+as 
+SELECT 
+AffectationChantier.Chantier,AffectationChantier.Employe,
+AffectationChantier.Nombre_heures as AC_nb_heures,
+AffectationChantier.MoisDebut,
+AffectationChantier.AnneeDebut,
+AffectationChantier.status as ACStatus,
+CoutEmploye.mois,CoutEmploye.annee,
+CoutEmploye.mutuelle,CoutEmploye.indemnite_panier,
+CoutEmploye.masse_salariale,CoutEmploye.cout_transport,
+CoutEmploye.cout_telephone,CoutEmploye.remboursement_prets,
+CoutEmploye.saisie_arret,CoutEmploye.nb_heures as CE_nb_heures,
+CoutEmploye.status as CEStatus
+
+
+FROM 
+AffectationChantier 
+JOIN CoutEmploye
+ON
+AffectationChantier.Employe=CoutEmploye.Employe
+
+
+
+
+GO
+
+Create view  
+ACjoinCEMAB_View 
+as 
+SELECT 
+AffectationMAB.Chantier,AffectationMAB.Employe,
+AffectationMAB.Nombre_heures as AC_nb_heures,
+AffectationMAB.status as ACStatus,
+CoutEmploye.mois,CoutEmploye.annee,
+CoutEmploye.mutuelle,CoutEmploye.indemnite_panier,
+CoutEmploye.masse_salariale,CoutEmploye.cout_transport,
+CoutEmploye.cout_telephone,CoutEmploye.remboursement_prets,
+CoutEmploye.saisie_arret,CoutEmploye.nb_heures as CE_nb_heures,
+CoutEmploye.status as CEStatus
+
+
+FROM 
+AffectationMAB 
+JOIN CoutEmploye
+ON
+AffectationMAB.Employe=CoutEmploye.Employe
+AND
+AffectationMAB.Mois=CoutEmploye.Mois
+AND
+AffectationMAB.Annee=CoutEmploye.Annee
+
+GO
+Create table Comission (
+ comissionId INT PRIMARY KEY IDENTITY (1, 1),
+ comission decimal NOT NULL,
+Chantier int NOT NULL,
+    FOREIGN KEY (Chantier) REFERENCES Chantier(ChantierId), 
+   	"Status" VARCHAR (50) NOT NULL,
+	MoisDebut int NOT NULL,
+	AnneeDebut int NOT NULL,
+	"Date_de_creation" DateTime  NOT NUll Default (GETDATE()), 
+	"Date_de_modification" DateTime  NOT NUll Default (GETDATE()), 
+	CONSTRAINT check_status_Comission CHECK (("Status") IN ('Publié','Brouillon','Archivé')),
+	
+	CONSTRAINT check_moonth_Comission CHECK (("MoisDebut")>=0 and ("MoisDebut")<=12),
+	 
+);
+GO
+
+
+
+
+
+Create table Rentabilite (
+ RentabiliteId INT PRIMARY KEY IDENTITY (1, 1),
+  	Chantier int NOT NULL,
+	Mois int NOT NULL,
+	Annee int NOT NULL,
+	"Status" VARCHAR (50) NOT NULL,
+
+    FOREIGN KEY (Chantier) REFERENCES Chantier(ChantierId), 
+   	CoutsEmploye decimal,
+	CoutsLivraison decimal,
+	CoutMateriel decimal,
+	CoutFournituresSanitaires decimal,
+	Comission decimal,
+	CoutDeRevient decimal,
+	MargeBrut decimal,
+	ChiffreAffaire decimal,
+	
+	"Date_de_creation" DateTime  NOT NUll Default (GETDATE()), 
+	"Date_de_modification" DateTime  NOT NUll Default (GETDATE()), 
+
+	CONSTRAINT check_status_Rentabilite CHECK (("Status") IN ('Publié','Brouillon','Archivé')),
+	
+	CONSTRAINT check_moonth_Rentabilite CHECK (("Mois")>=0 and ("Mois")<=12))
+	 
+;
+
+
+GO
+
+
+Create view
+ChantierSalaireCost_view
+as
+Select ChantierId,v1.employe,v1.mois,v1.annee,Cost,costMAB,(ISNULL(cost, 0 )+ISNULL(costMAB, 0 )) as totalCost from Chantier
+left join
+(select Chantier,employe,mois,annee,(mutuelle+indemnite_panier+masse_salariale+cout_transport+cout_telephone+remboursement_prets+saisie_arret)*(AC_nb_heures/CE_nb_heures) as Cost from ACjoinCE_View) as v1
+On v1.chantier=ChantierId
+
+left join
+(select Chantier,employe,mois,annee,(mutuelle+indemnite_panier+masse_salariale+cout_transport+cout_telephone+remboursement_prets+saisie_arret)*(AC_nb_heures/CE_nb_heures) as CostMAB from ACjoinCEMAB_View )as v2
+on v1.Chantier=v2.Chantier AND v1.annee=v2.annee AND v1.mois=v2.mois AND v1.employe=v2.employe;

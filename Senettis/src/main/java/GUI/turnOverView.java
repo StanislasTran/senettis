@@ -21,6 +21,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
@@ -58,8 +59,7 @@ public class turnOverView {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				Month month = Month.of(monthFilter.getSelectionIndex() + 1);
-				Year year = Year.of(Integer.parseInt(yearFilter.getText()));
+				
 				try {
 					compositeTable();
 				} catch (SQLException e1) {
@@ -130,20 +130,22 @@ public class turnOverView {
 					turnOvers.get(i).setFournituresSanitaires(checkStringDouble(item.getText(FOURNITURESCOLUMN)));
 					turnOvers.get(i).setAutres(checkStringDouble(item.getText(AUTRESCOLUMN)));
 					turnOvers.get(i).setCA(checkStringDouble(item.getText(CACOLUMN)));
-					
-					System.out.println(turnOvers.get(i).getCa());
-					
-					System.out.println(i);
+			
 					
 					try {
 						
 						System.out.println(turnOvers.get(i).exist());
 						turnOvers.get(i).inserOrUpdateRow();
-						//compositeTable();
+						MessageBox dialog = new MessageBox(turnOverView.getShell(), SWT.ICON_WORKING| SWT.OK);
+						dialog.setText("Succès");
+						dialog.setMessage("Données enregistrée avec succès");
+						dialog.open();
 						
 					} catch (SQLException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
+						MessageBox dialog = new MessageBox(turnOverView.getShell(), SWT.ICON_WORKING| SWT.OK);
+						dialog.setText("erreur");
+						dialog.setMessage("Erreur : "+e1.getMessage());
+						dialog.open();
 					}
 					i++;
 					

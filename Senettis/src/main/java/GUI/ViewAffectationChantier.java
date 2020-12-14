@@ -985,6 +985,8 @@ public class ViewAffectationChantier {
 		nbHeureLabel.setText("Nombre d'heures");
 		Text nbHeureTexte = new Text(nbHeureComposite, SWT.NONE);
 
+		
+		//Table pert
 		Composite tableComposite = new Composite(ajoutComposite, SWT.NONE);
 		Table table = VueChantier.getTableAllChantier(ajoutComposite);
 
@@ -1019,6 +1021,8 @@ public class ViewAffectationChantier {
 			comboYear.add("" + i);
 		comboYear.select(2);
 
+		
+		
 		Composite buttonComposite = new Composite(ajoutComposite, SWT.NONE);
 
 		buttonComposite.setLayout(new RowLayout(SWT.HORIZONTAL));

@@ -173,9 +173,9 @@ public class TurnOver {
 				status = Status.getStatus(result.getString("status"));
 			}
 
-			String siteName = result.getString("nom");
+			
 			return new TurnOver(chantierId, Month.of(mois), Year.of(annee), menage, vitrerie, fournituresSanitaires, misesBlanc, autres,
-					CA, status, siteName);
+					CA, status);
 		} else {
 			throw new SQLException("Data not found");
 		}
