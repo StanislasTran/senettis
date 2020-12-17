@@ -56,6 +56,7 @@ public class Home {
 		Menu menuBar = new Menu(shell, SWT.BAR);
 
 		// employee
+		/*
 		MenuItem menuHeaderEmployee = new MenuItem(menuBar, SWT.CASCADE);
 		menuHeaderEmployee.setText("&Employés");
 		Menu employeeMenu = new Menu(shell, SWT.DROP_DOWN);
@@ -160,6 +161,8 @@ public class Home {
 				colonneDroite.pack();
 			}
 		});
+		*/
+
 
 		// help
 		MenuItem menuHeader = new MenuItem(menuBar, SWT.CASCADE);
