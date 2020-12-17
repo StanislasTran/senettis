@@ -1,131 +1,192 @@
 package classes;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLTimeoutException;
 import java.sql.Statement;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import connexion.SQLDatabaseConnection;
 
 public class Site {
 
-	private String nom;
-	private String adresse;
-	private Double CA;
-	private String status;
-	private int chantierId;
+	private String name;
+	private String adress;
 
-	public Site(int chantierId, String nom, String adresse, Double CA,String status) {
-		this(nom,adresse,CA,status);
-		
-		this.chantierId = chantierId;
-	}
-	
-	public Site(String nom, String adresse, Double CA,String status) {	
-		this(nom,status);
+	private Status status;
+	private Integer siteId;
 
-		this.adresse = adresse;
-		this.CA = CA;
+	/***************************
+	 * 
+	 * Constructors
+	 * 
+	 **************************/
+
+	/**
+	 * Constructor
+	 * 
+	 * @param <type>Integer</type>siteId
+	 * @param <type>String</type>name    Not Null
+	 * @param <type>String</type>adress
+	 * @param <type>Status</type>status  Not Null
+	 */
+	public Site(Integer siteId, String name, String adress, Status status) {
+		this(name, adress, status);
+
+		this.siteId = siteId;
 	}
 
-	public Site(String nom,String status) {
-		super();	
-		this.nom = nom;
-		this.status=status;
+	/**
+	 * Constructor
+	 * 
+	 * @param <type>String</type>name   Not Null
+	 * @param <type>String</type>adress
+	 * @param <type>Status</type>status Not Null
+	 */
+
+	public Site(String name, String adress, Status status) {
+		this(name, status);
+		this.adress = adress;
+
 	}
+
+	/**
+	 * Constructor
+	 * 
+	 * @param <type>String</type>name   Not Null
+	 * @param <type>Status</type>status Not Null
+	 */
+	public Site(String name, Status status) {
+		super();
+		this.name = name;
+		this.status = status;
+	}
+
+	/**
+	 * Insert the Site in the database
+	 * 
+	 * @return <type> int </type> either (1) the row count for SQL Data Manipulation
+	 *         Language (DML) statementsor (2) 0 for SQL statements that return
+	 *         nothing
+	 * @throws SQLException
+	 */
 	public int insertDatabase() throws SQLException {
-		String reqSql = "INSERT INTO Chantier(nom,adresse,CA,status) VALUES (?,?,?,?)";
-		
+		String reqSql = "INSERT INTO Chantier(nom,adresse,status) VALUES (?,?,?)";
+
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
-		statement.setObject(1,this.nom,Types.VARCHAR);
-		statement.setObject(2,this.adresse,Types.VARCHAR);
-		statement.setObject(3,this.CA,Types.DECIMAL);
-		statement.setObject(4,this.status,Types.VARCHAR);
-		
+		statement.setObject(1, this.name, Types.VARCHAR);
+		statement.setObject(2, this.adress, Types.VARCHAR);
+
+		statement.setObject(3, this.status.getValue(), Types.VARCHAR);
+
 		return statement.executeUpdate();
 	}
-	
+
+	/**
+	 * execute and return the query "Select * FROM Chantier Where Status='Publié'"
+	 * 
+	 * @return <type>Statement </type> the statement returned from the query
+	 * @throws SQLException
+	 */
 	private static Statement selectAllChantier() throws SQLException {
-		String reqSql = "SELECT * FROM Chantier";
-		
+		String reqSql = "SELECT * FROM Chantier Where Status='Publié'";
+
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		Statement statement = connection.createStatement();
 		statement.executeQuery(reqSql);
 		return statement;
 	}
-	
+
+	/**
+	 * Execute an query to get All site in the database where the Status='Publié' in
+	 * a <type>List</type>
+	 * 
+	 * @return <type>List<Site> </type> list which contain all Site in the database
+	 * @throws SQLException
+	 */
 	public static List<Site> getAllChantier() throws SQLException {
 
-		ResultSet result=selectAllChantier().getResultSet();
-		List<Site> allChantier=new ArrayList<Site>();
-		//System.out.println("Id|Nom|Adresse|CA|Status");
-		while(result.next()) {
-			int chantierId=result.getInt("ChantierId");
-			String nom=result.getString("Nom");
-			
-			String adresse;
+		ResultSet result = selectAllChantier().getResultSet();
+		List<Site> allChantier = new ArrayList<Site>();
+		while (result.next()) {
+			int chantierId = result.getInt("ChantierId");
+			String nom = result.getString("Nom");
+
+			String adress;
 			if (result.getString("Adresse") != null) {
-				adresse = result.getString("Adresse");
+				adress = result.getString("Adresse");
+			} else {
+				adress = "";
 			}
-			else {
-				adresse = "";
-			}
-			
-			Double CA = 0.0;
-			if (result.getString("CA") != null) {
-				CA = Double.parseDouble(result.getString("CA"));
-			}
-			
-		    String status=result.getString("Status");
-		   allChantier.add(new Site(chantierId, nom, adresse, CA, status));
+
+			Status status = Status.getStatus(result.getString("Status"));
+			allChantier.add(new Site(chantierId, nom, adress, status));
 		}
 		return allChantier;
 	}
-	
-	public static void printAllChantier() throws SQLException {
-		
-		List<Site> allChantier=getAllChantier();
-	
-		for (Site chantier : allChantier)	
-			System.out.println(chantier);
-	}
-	
-	@Override
-	public String toString() {
-		
-		return ""+this.chantierId+"|"+this.nom+"|"+this.adresse+"|"+this.CA+"|"+this.status;
+
+	/**
+	 * Print all site where status='Publié'
+	 * 
+	 * @throws SQLException
+	 */
+	public static void printAllSite() throws SQLException {
+
+		List<Site> allSite = getAllChantier();
+
+		for (Site site : allSite)
+			System.out.println(site);
 	}
 
-	
-	public int updateDatabase() throws SQLException {
-		String reqSql = "UPDATE Chantier SET nom=?, adresse=?, CA=?, status=? WHERE ChantierId=?;";
-		
+	@Override
+	public String toString() {
+
+		return "" + this.siteId + "|" + this.name + "|" + this.adress + "|" + this.status;
+	}
+
+	/**
+	 * Update the site in database
+	 * 
+	 * @return either (1) the row count for SQL Data Manipulation Language (DML)
+	 *         statementsor (2) 0 for SQL statements that return nothing
+	 * @throws SQLExceptionSQLException - if a database access error occurs;this
+	 *                                  method is called on a closed
+	 *                                  PreparedStatementor the SQL statement
+	 *                                  returns a ResultSet
+	 *                                  objectSQLTimeoutException - when the driver
+	 *                                  has determined that thetimeout value that
+	 *                                  was specified by the setQueryTimeoutmethod
+	 *                                  has been exceeded and has at least attempted
+	 *                                  to cancelthe currently running Statement
+	 */
+	public int updateDatabase() throws SQLException, SQLTimeoutException {
+		String reqSql = "UPDATE Chantier SET nom=?, adresse=?, status=? WHERE ChantierId=?;";
+
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
-		statement.setObject(1,this.nom.toString(),Types.VARCHAR);
-		statement.setObject(2,this.adresse,Types.VARCHAR);
-		statement.setObject(3,this.CA,Types.DECIMAL);
-		statement.setObject(4,this.status,Types.VARCHAR);
-		statement.setObject(5,this.chantierId,Types.INTEGER);
-		
+		statement.setObject(1, this.name.toString(), Types.VARCHAR);
+		statement.setObject(2, this.adress, Types.VARCHAR);
+		statement.setObject(3, this.status.getValue(), Types.VARCHAR);
+		statement.setObject(4, this.siteId, Types.INTEGER);
+
 		return statement.executeUpdate();
 	}
-	
+
 	/**
-	 * Retourne le nombre de chantier dans la base de données
+	 * Return the number of site in the database where status="Publié"
 	 * 
-	 * @return
+	 * @return <type>int</type> the number of Site
 	 * @throws SQLException
 	 */
 	public static int getCountChantier() throws SQLException {
-		String reqSql = "SELECT count(*) as count FROM Chantier";
+		String reqSql = "SELECT count(*) as count FROM Chantier Where Status='Publié'";
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		Statement statement = connection.createStatement();
 		statement.executeQuery(reqSql);
@@ -137,15 +198,14 @@ public class Site {
 		}
 		return 0;
 	}
-	
-	
+
 	/***
-	 * @param chantierId
-	 * @return le chantier correspondant à l'id indique en argument
+	 * @param <type>Integer</type>chantierId
+	 * @return <type>Site</type> the site from database
 	 * @throws SQLException
 	 */
-	public static Site getChantierById(int chantierId) throws SQLException {
-		String reqSql = "SELECT ChantierId,nom,adresse,CA,Status FROM Chantier WHERE ChantierId=?;";
+	public static Site getSiteById(int chantierId) throws SQLException {
+		String reqSql = "SELECT ChantierId,nom,adresse,Status FROM Chantier WHERE ChantierId=?;";
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
 		statement.setObject(1, chantierId, Types.INTEGER);
@@ -156,94 +216,85 @@ public class Site {
 		if (result.next()) {
 			chantierId = result.getInt("ChantierId");
 			String nom = result.getString("Nom");
-			
-			String adresse;
+
+			String adress;
 			if (result.getString("Adresse") != null) {
-				adresse = result.getString("Adresse");
-			}
-			else {
-				adresse = "";
-			}
-			
-			Double CA = 0.0;
-			if (result.getString("CA") != null) {
-				CA = Double.parseDouble(result.getString("CA"));
+				adress = result.getString("Adresse");
+			} else {
+				adress = "";
 			}
 
-			String status = result.getString("status");
+			Status status = Status.getStatus(result.getString("status"));
 
-			return new Site(chantierId, nom, adresse, CA, status);
+			return new Site(chantierId, nom, adress, status);
 
 		} else {
 			throw new SQLException("Data not found");
 		}
 	}
 
-	
-	
-	
-	
-	
-
-	
-	
 	/**
 	 * getter and setter
 	 */
-	
 
-
-	public String getStatus() {
+	/**
+	 * getter for the attribute status
+	 * 
+	 * @return <type>Status </type> status
+	 */
+	public Status getStatus() {
 		return status;
 	}
 
-	public void setStatus(String status) {
-		if (status == null) {
+	public void setStatus(Status status) {
+		if (Objects.isNull(status)) {
 			throw new Error("setStatus : le status indique est vide");
 		}
 		this.status = status;
 	}
 
-	public String getNom() {
-		return nom;
+	public String getName() {
+		return name;
 	}
 
-	public void setNom(String nom) {
-		if (nom == null) {
+	public void setNom(String name) {
+		if (name == null) {
 			throw new Error("setNom : le nom indique est vide");
 		}
-		this.nom = nom;
+		this.name = name;
 	}
 
+	/**
+	 * getter for the attribute adress
+	 * 
+	 * @return <type> String </type> adresse
+	 */
 	public String getAdresse() {
-		return adresse;
+		return adress;
 	}
 
-	public void setAdresse(String adresse) {
-		if (adresse == null) {
+	
+	/**
+	 * setter for the attribute adress
+	 * @param <type>String</type>adress
+	 */
+	public void setAdress(String adress) {
+		if (adress == null) {
 			throw new Error("setAdresse : le adresse indique est vide");
 		}
-		this.adresse = adresse;
+		this.adress = adress;
 	}
 
-	public Double getCA() {
-		return CA;
+	public Integer getSiteId() {
+		return siteId;
 	}
 
-	public void setCA(Double CA) {
-		if (CA == null) {
-			throw new Error("setCA : le CA indique est vide");
-		}
-		this.CA = CA;
-	}
-	
-	public int getChantierId() {
-		return chantierId;
+	/**
+	 * Setter for the attribute <type>Integer</type>siteId
+	 * @param siteId
+	 */
+	public void setSiteId(Integer siteId) {
+		this.siteId = siteId;
 	}
 
-	public void setChantierId(int chantierId) {
-		this.chantierId = chantierId;
-	}
-
-	
 }

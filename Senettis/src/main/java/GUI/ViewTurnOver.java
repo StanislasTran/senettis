@@ -20,8 +20,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
 package GUI;
 
 import java.sql.SQLException;
@@ -48,7 +46,7 @@ import classes.Site;
 import classes.AmmortissementChantier;
 import classes.AmmortissementEmploye;
 import classes.CoutsEmploye;
-import classes.AmmortissementChantier;
+
 import classes.Delivery;
 import classes.Employee;
 import classes.Product;
@@ -56,7 +54,6 @@ import classes.ProductByDelivery;
 
 public class ViewTurnOver {
 
-	private Display display;
 	private Composite vueLivraison;
 	private Composite vueAutres;
 	private Composite selection;
@@ -65,37 +62,36 @@ public class ViewTurnOver {
 	private Site selectedChantier;
 	private AmmortissementChantier selectedAmorti;
 	private TabFolder tabFolder;
-	private Menu menu ;
+	private Menu menu;
 	private Table tableChantier;
 	private Table tableAmorti;
 
-	//Creation VueLivraison --------------------------------------------------
+	// Creation VueLivraison --------------------------------------------------
 	/***
 	 * Utilisé depuis Home pour créer une vueLivraison
+	 * 
 	 * @param composite : le composite vueLivraison
 	 * @param display
 	 */
-	public ViewTurnOver (Composite composite,Display display) {
-		this.display=display;
-	 	Couleur.setDisplay(display); // pour utiliser les couleurs du fichier couleur
-	 	
-	 	tabFolder = new TabFolder(composite, SWT.BORDER);
+	public ViewTurnOver(Composite composite, Display display) {
 
+		Couleur.setDisplay(display); // pour utiliser les couleurs du fichier couleur
 
+		tabFolder = new TabFolder(composite, SWT.BORDER);
 
 		TabItem tabLivraison = new TabItem(tabFolder, SWT.NULL);
 		tabLivraison.setText("Livraisons");
 
 		TabItem tabAutres = new TabItem(tabFolder, SWT.NULL);
 		tabAutres.setText("Autres coûts chantier");
-		
+
 		tabFolder.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(org.eclipse.swt.events.SelectionEvent event) {
 				if (tabFolder.getSelection()[0].equals(tabLivraison)) {
 					if (!Objects.isNull(vueLivraison) && !vueLivraison.isDisposed()) {
 						vueLivraison.dispose();
 					}
-					vueLivraison=new Composite(tabFolder,SWT.NONE);
+					vueLivraison = new Composite(tabFolder, SWT.NONE);
 					RowLayout rowLayout = new RowLayout();
 					rowLayout.type = SWT.VERTICAL;
 					vueLivraison.setLayout(rowLayout);
@@ -108,14 +104,14 @@ public class ViewTurnOver {
 					vueLivraison.pack();
 					tabFolder.pack();
 					tabFolder.getParent().pack();
-				}
-				else {
+				} else {
 					if (!Objects.isNull(vueAutres) && !vueAutres.isDisposed()) {
 						vueAutres.dispose();
 					}
 					RowLayout rowLayout = new RowLayout();
 					rowLayout.type = SWT.VERTICAL;
-					vueAutres=new Composite(tabFolder,SWT.NONE); vueAutres.setLayout(rowLayout);
+					vueAutres = new Composite(tabFolder, SWT.NONE);
+					vueAutres.setLayout(rowLayout);
 					vueAutres.setBackground(Couleur.gris);
 
 					tabAutres.setControl(vueAutres);
@@ -127,8 +123,8 @@ public class ViewTurnOver {
 				}
 			}
 		});
-		
-		vueLivraison=new Composite(tabFolder,SWT.NONE);
+
+		vueLivraison = new Composite(tabFolder, SWT.NONE);
 		RowLayout rowLayout = new RowLayout();
 		rowLayout.type = SWT.VERTICAL;
 		vueLivraison.setLayout(rowLayout);
@@ -144,10 +140,11 @@ public class ViewTurnOver {
 		tabFolder.getParent().pack();
 	}
 
-	////////////////////////////////////// COUTS A AMORTIR  //////////////////////////////////////////////
+	////////////////////////////////////// COUTS A AMORTIR
+	////////////////////////////////////// //////////////////////////////////////////////
 
 	public void amortiSelection() {
-		///SELECTION
+		/// SELECTION
 		if (!Objects.isNull(selection) && !selection.isDisposed()) {
 			selection.dispose();
 		}
@@ -163,13 +160,13 @@ public class ViewTurnOver {
 		RowLayout rl = new RowLayout();
 		rl.type = SWT.HORIZONTAL;
 
-
 		Button boutonCreation = new Button(selection, SWT.CENTER);
 		boutonCreation.setText("Créer");
 		boutonCreation.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				selectedChantier = null; selectedAmorti = null;
+				selectedChantier = null;
+				selectedAmorti = null;
 				vueCreationA();
 			}
 		});
@@ -190,10 +187,12 @@ public class ViewTurnOver {
 				@Override
 				public void widgetSelected(SelectionEvent arg0) {
 					try {
-						AmmortissementChantier ae = AmmortissementChantier.getAmmortissementChantierById(selectedAmorti.getAmmortissementChantierId());
+						AmmortissementChantier ae = AmmortissementChantier
+								.getAmmortissementChantierById(selectedAmorti.getAmmortissementChantierId());
 						MessageBox dialog = new MessageBox(vueAutres.getShell(), SWT.ICON_QUESTION | SWT.YES | SWT.NO);
 						dialog.setText("Suppression Amortissement Chantier");
-						dialog.setMessage("Voulez vous supprimer le coût à amortir du chantier " + Site.getChantierById(ae.getChantierId()).getNom() + " ?");
+						dialog.setMessage("Voulez vous supprimer le coût à amortir du chantier "
+								+ Site.getSiteById(ae.getChantierId()).getName() + " ?");
 						int buttonID = dialog.open();
 						switch (buttonID) {
 						case SWT.YES:
@@ -219,7 +218,7 @@ public class ViewTurnOver {
 
 		amortiSelection();
 
-		///VUE
+		/// VUE
 
 		if (!Objects.isNull(vue) && !vue.isDisposed()) {
 			vue.dispose();
@@ -230,51 +229,50 @@ public class ViewTurnOver {
 		rowLayoutH.type = SWT.VERTICAL;
 		vue.setLayout(rowLayoutH);
 
-		Composite tables = new Composite(vue,SWT.NONE);
+		Composite tables = new Composite(vue, SWT.NONE);
 		tables.setLayout(new RowLayout(SWT.HORIZONTAL));
 
-		//creation de la table des produits
-		Composite compoEmp = new Composite(tables,SWT.NONE);
+		// creation de la table des produits
+		Composite compoEmp = new Composite(tables, SWT.NONE);
 		compoEmp.setLayout(new RowLayout(SWT.VERTICAL));
 
-		Label emp = new Label(compoEmp,SWT.NONE);
+		Label emp = new Label(compoEmp, SWT.NONE);
 		emp.setText("Choisir un chantier :");
 
-		tableChantier = new Table (compoEmp, SWT.BORDER | SWT.MULTI| SWT.V_SCROLL | SWT.FULL_SELECTION);
-		tableChantier.setLayoutData(new RowData(300,300));
-		tableChantier.setLinesVisible (true);
-		tableChantier.setHeaderVisible (true);
-		tableChantier.layout(true,true);
+		tableChantier = new Table(compoEmp, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.FULL_SELECTION);
+		tableChantier.setLayoutData(new RowData(300, 300));
+		tableChantier.setLinesVisible(true);
+		tableChantier.setHeaderVisible(true);
+		tableChantier.layout(true, true);
 
-		//on met les noms des colonnes
-		String[] titles = {"Id", "Nom"};
+		// on met les noms des colonnes
+		String[] titles = { "Id", "Nom" };
 		for (String title : titles) {
-			TableColumn column = new TableColumn (tableChantier, SWT.NONE);
-			column.setText (title);
+			TableColumn column = new TableColumn(tableChantier, SWT.NONE);
+			column.setText(title);
 		}
 
 		updateTableEmp();
 		compoEmp.pack();
 
-
-		//creation de la table amorti
-		Composite compoAmorti = new Composite(tables,SWT.NONE);
+		// creation de la table amorti
+		Composite compoAmorti = new Composite(tables, SWT.NONE);
 		compoAmorti.setLayout(new RowLayout(SWT.VERTICAL));
 
-		Label amorti = new Label(compoAmorti,SWT.NONE);
+		Label amorti = new Label(compoAmorti, SWT.NONE);
 		amorti.setText("Coûts liés à cet chantier :");
 
-		tableAmorti = new Table (compoAmorti, SWT.BORDER | SWT.MULTI| SWT.V_SCROLL | SWT.FULL_SELECTION);
-		tableAmorti.setLayoutData(new RowData(500,380));
-		tableAmorti.setLinesVisible (true);
-		tableAmorti.setHeaderVisible (true);
-		tableAmorti.layout(true,true);
+		tableAmorti = new Table(compoAmorti, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.FULL_SELECTION);
+		tableAmorti.setLayoutData(new RowData(500, 380));
+		tableAmorti.setLinesVisible(true);
+		tableAmorti.setHeaderVisible(true);
+		tableAmorti.layout(true, true);
 
-		//on met les noms des colonnes
-		String[] titles2 = {"Id", "Début" ,"Fin","Montant par mois","Valeur totale", "Type", "Description"};
+		// on met les noms des colonnes
+		String[] titles2 = { "Id", "Début", "Fin", "Montant par mois", "Valeur totale", "Type", "Description" };
 		for (String title : titles2) {
-			TableColumn column = new TableColumn (tableAmorti, SWT.NONE);
-			column.setText (title);
+			TableColumn column = new TableColumn(tableAmorti, SWT.NONE);
+			column.setText(title);
 		}
 
 		if (selectedChantier != null) {
@@ -296,16 +294,16 @@ public class ViewTurnOver {
 		if (!Objects.isNull(selection) && !selection.isDisposed()) {
 			selection.dispose();
 		}
-		String s;int addSize;
+		String s;
+		int addSize;
 		if (selectedAmorti != null) {
 			s = "Modification d'un coût à amortir";
 			addSize = vue.getSize().x;
-			addSize = (addSize - 235)/2;
-		}
-		else {
+			addSize = (addSize - 235) / 2;
+		} else {
 			s = "Création d'un coût à amortir";
 			addSize = vue.getSize().x;
-			addSize = (addSize - 210)/2;
+			addSize = (addSize - 210) / 2;
 		}
 
 		selection = new Composite(vueAutres, SWT.CENTER);
@@ -351,7 +349,6 @@ public class ViewTurnOver {
 		fillLayoutH.type = SWT.HORIZONTAL;
 		vue.setLayout(fillLayoutH);
 
-
 		// on cree trois colonne pour repartir les champs
 		FillLayout fillLayoutV = new FillLayout();
 		fillLayoutV.type = SWT.VERTICAL;
@@ -369,7 +366,6 @@ public class ViewTurnOver {
 		fillLayoutH5.spacing = 5;
 		fillLayoutH5.type = SWT.HORIZONTAL;
 
-
 		Composite compositeChantier = new Composite(colonne1, SWT.NONE);
 		compositeChantier.setBackground(Couleur.bleuClair);
 		compositeChantier.setLayout(fillLayoutH5);
@@ -379,50 +375,48 @@ public class ViewTurnOver {
 		labelChantier.setBackground(Couleur.bleuClair);
 		// Titre
 		Combo chantiers = new Combo(compositeChantier, SWT.BORDER);
-		if (selectedChantier != null){
+		if (selectedChantier != null) {
 			try {
-				if (selectedChantier.getNom().length() > 25) {
-					chantiers.setText(selectedChantier.getNom().substring(0, 23)+"..."+";id:"+((Integer)selectedChantier.getChantierId()).toString());
-				}
-				else {
-					chantiers.setText(selectedChantier.getNom()+" ; id :"+((Integer)selectedChantier.getChantierId()).toString());
+				if (selectedChantier.getName().length() > 25) {
+					chantiers.setText(selectedChantier.getName().substring(0, 23) + "..." + ";id:"
+							+ ((Integer) selectedChantier.getSiteId()).toString());
+				} else {
+					chantiers.setText(selectedChantier.getName() + " ; id :"
+							+ ((Integer) selectedChantier.getSiteId()).toString());
 				}
 			} catch (Exception e1) {
-				e1.printStackTrace(); 
+				e1.printStackTrace();
 				System.out.println("erreur pour recuperer les chantiers");
 				MessageBox dialog = new MessageBox(vueAutres.getShell(), SWT.ICON_ERROR | SWT.OK);
 				dialog.setText("Erreur");
-				dialog.setMessage("Une erreur est survenue. "+'\n'+e1.getMessage());
+				dialog.setMessage("Une erreur est survenue. " + '\n' + e1.getMessage());
 				dialog.open();
 			}
-		}
-		else {
+		} else {
 			chantiers.setText("Selectionner ...");
 		}
 		try {
 			for (Site e : Site.getAllChantier()) {
 				System.out.println("eee");
-				if (e.getStatus().equals("Publié")) {
-					if (e.getNom().length() > 25) {
+				if (e.getStatus().getValue().equals("Publié")) {
+					if (e.getName().length() > 25) {
 						System.out.println("e1");
-						chantiers.add(e.getNom().substring(0, 23)+"..."+";id:"+((Integer)e.getChantierId()).toString());
-					}
-					else {
+						chantiers.add(
+								e.getName().substring(0, 23) + "..." + ";id:" + ((Integer) e.getSiteId()).toString());
+					} else {
 						System.out.println("e2");
-						chantiers.add(e.getNom()+" ; id :"+((Integer)e.getChantierId()).toString());
+						chantiers.add(e.getName() + " ; id :" + ((Integer) e.getSiteId()).toString());
 					}
 				}
 			}
 		} catch (SQLException e1) {
-			e1.printStackTrace(); 
+			e1.printStackTrace();
 			System.out.println("erreur pour recuperer les chantiers");
 			MessageBox dialog = new MessageBox(vueAutres.getShell(), SWT.ICON_ERROR | SWT.OK);
 			dialog.setText("Erreur");
-			dialog.setMessage("Une erreur est survenue. "+'\n'+e1.getMessage());
+			dialog.setMessage("Une erreur est survenue. " + '\n' + e1.getMessage());
 			dialog.open();
 		}
-
-
 
 		Composite compositePeriode = new Composite(colonne1, SWT.NONE);
 		compositePeriode.setBackground(Couleur.bleuClair);
@@ -437,18 +431,16 @@ public class ViewTurnOver {
 		Month month = currentdate.getMonth();
 		int year = currentdate.getYear();
 		if (selectedAmorti == null) {
-			periode.setText(month.toString()+" "+year);
-		}
-		else {
-			periode.setText(Month.of(selectedAmorti.getMoisD())+" "+selectedAmorti.getAnneeD().toString());
+			periode.setText(month.toString() + " " + year);
+		} else {
+			periode.setText(Month.of(selectedAmorti.getMoisD()) + " " + selectedAmorti.getAnneeD().toString());
 		}
 
-		for(int i = 2020; i <= year+1 ; i++) {
-			for (int j =1 ; j <= 12 ; j++) {
-				periode.add(Month.of(j)+" "+i);
+		for (int i = 2020; i <= year + 1; i++) {
+			for (int j = 1; j <= 12; j++) {
+				periode.add(Month.of(j) + " " + i);
 			}
 		}
-
 
 		// duree
 		Composite compositeDuree = new Composite(colonne1, SWT.NONE);
@@ -462,13 +454,11 @@ public class ViewTurnOver {
 		final Text textDuree = new Text(compositeDuree, SWT.BORDER);
 		if (selectedAmorti != null) {
 			textDuree.setText(selectedAmorti.getDuree().toString());
-		}
-		else {
+		} else {
 			textDuree.setText("");
 		}
 
-
-		//pour creer un espace
+		// pour creer un espace
 		Composite compoTest = new Composite(colonne1, SWT.NONE);
 		compoTest.setBackground(Couleur.bleuClair);
 		compoTest.setLayout(fillLayoutH5);
@@ -476,7 +466,6 @@ public class ViewTurnOver {
 		Label labelTest = new Label(compoTest, SWT.NONE);
 		labelTest.setBackground(Couleur.bleuClair);
 		labelTest.setText("");
-
 
 		// valeur
 		Composite compositeValeur = new Composite(colonne2, SWT.NONE);
@@ -490,11 +479,9 @@ public class ViewTurnOver {
 		final Text textValeur = new Text(compositeValeur, SWT.BORDER);
 		if (selectedAmorti != null) {
 			textValeur.setText(selectedAmorti.getValeur().toString());
-		}
-		else {
+		} else {
 			textValeur.setText("");
 		}
-
 
 		Composite compositeType = new Composite(colonne2, SWT.NONE);
 		compositeType.setBackground(Couleur.bleuClair);
@@ -507,13 +494,12 @@ public class ViewTurnOver {
 		Combo type = new Combo(compositeType, SWT.BORDER);
 		if (selectedAmorti != null) {
 			type.setText(selectedAmorti.getType());
-		}
-		else {
+		} else {
 			type.setText("Ammortissement matériel");
 		}
 		type.add("Ammortissement matériel");
 		type.add("Coût ponctuel");
-		
+
 		type.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
@@ -522,9 +508,7 @@ public class ViewTurnOver {
 				}
 			}
 		});
-		
-		
-		
+
 		// valeur
 		Composite compositeDesc = new Composite(colonne2, SWT.NONE);
 		compositeDesc.setBackground(Couleur.bleuClair);
@@ -537,11 +521,9 @@ public class ViewTurnOver {
 		final Text textDesc = new Text(compositeDesc, SWT.BORDER);
 		if (selectedAmorti != null) {
 			textDesc.setText(selectedAmorti.getDescription());
-		}
-		else {
+		} else {
 			textDesc.setText("");
 		}
-
 
 		// Boutons
 		Composite compositeBoutons = new Composite(colonne2, SWT.CENTER);
@@ -554,7 +536,8 @@ public class ViewTurnOver {
 
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				selectedAmorti = null; selectedChantier = null;
+				selectedAmorti = null;
+				selectedChantier = null;
 				vueAmortissement();
 			}
 		});
@@ -562,7 +545,7 @@ public class ViewTurnOver {
 		Button buttonValidation = new Button(compositeBoutons, SWT.BACKGROUND);
 		buttonValidation.setText("Valider");
 
-		//creation
+		// creation
 
 		buttonValidation.addSelectionListener(new SelectionAdapter() {
 
@@ -572,14 +555,14 @@ public class ViewTurnOver {
 				try {
 					String id;
 					try {
-					id = chantiers.getText().split(";")[1].replace(" ",""); 
+						id = chantiers.getText().split(";")[1].replace(" ", "");
 					} catch (Exception e) {
-						throw new Error ("Merci d'indiquer un chantier.");
+						throw new Error("Merci d'indiquer un chantier.");
 					}
-					Integer chantierId = Integer.parseInt(id.substring(3,id.length()));
+					Integer chantierId = Integer.parseInt(id.substring(3, id.length()));
 
 					String[] debut = periode.getText().split(" ");
-					System.out.println(debut[0]+" "+debut[1]);
+					System.out.println(debut[0] + " " + debut[1]);
 
 					int moisD = Month.valueOf(debut[0]).getValue();
 					int anneeD = Integer.parseInt(debut[1]);
@@ -588,18 +571,19 @@ public class ViewTurnOver {
 					try {
 						duree = Integer.parseInt(textDuree.getText());
 					} catch (Exception e) {
-						throw new Error ("Merci d'indiquer une durée.");
+						throw new Error("Merci d'indiquer une durée.");
 					}
 
-					int moisF; int anneeF;
+					int moisF;
+					int anneeF;
 
 					if (duree < 12) {
-						moisF = moisD + duree;  anneeF = anneeD;
-					}
-					else if (duree == 12) {
-						moisF = moisD;  anneeF = anneeD+1;
-					}
-					else {
+						moisF = moisD + duree;
+						anneeF = anneeD;
+					} else if (duree == 12) {
+						moisF = moisD;
+						anneeF = anneeD + 1;
+					} else {
 						anneeF = anneeD + duree / 12;
 						moisF = moisD + (duree % 12);
 					}
@@ -608,19 +592,23 @@ public class ViewTurnOver {
 					try {
 						valeurTotale = Double.parseDouble(textValeur.getText());
 					} catch (Exception e) {
-						throw new Error ("Merci d'indiquer le montant total.");
+						throw new Error("Merci d'indiquer le montant total.");
 					}
 
 					if (selectedAmorti != null) {
-						AmmortissementChantier ae = new AmmortissementChantier(selectedAmorti.getAmmortissementChantierId(), chantierId, moisD, anneeD, moisF, anneeF, textDesc.getText(), valeurTotale/duree, duree, valeurTotale, type.getText(), "Publié");
+						AmmortissementChantier ae = new AmmortissementChantier(
+								selectedAmorti.getAmmortissementChantierId(), chantierId, moisD, anneeD, moisF, anneeF,
+								textDesc.getText(), valeurTotale / duree, duree, valeurTotale, type.getText(),
+								"Publié");
 						ae.updateDatabase();
 						MessageBox dialog = new MessageBox(vueAutres.getShell(), SWT.ICON_INFORMATION | SWT.OK);
 						dialog.setText("Modification réussie");
 						dialog.setMessage("Ce cout a bien été modifié dans la base de données.");
 						dialog.open();
-					}
-					else {
-						AmmortissementChantier ae = new AmmortissementChantier(0,chantierId, moisD, anneeD, moisF, anneeF, textDesc.getText(), valeurTotale/duree, duree, valeurTotale, type.getText(), "Publié");
+					} else {
+						AmmortissementChantier ae = new AmmortissementChantier(0, chantierId, moisD, anneeD, moisF,
+								anneeF, textDesc.getText(), valeurTotale / duree, duree, valeurTotale, type.getText(),
+								"Publié");
 						ae.insertDatabase();
 						MessageBox dialog = new MessageBox(vueAutres.getShell(), SWT.ICON_INFORMATION | SWT.OK);
 						dialog.setText("Création réussie");
@@ -644,33 +632,33 @@ public class ViewTurnOver {
 	}
 
 	public void updateTableEmp() {
-		if(!Objects.isNull(tableChantier)) {
+		if (!Objects.isNull(tableChantier)) {
 			tableChantier.removeAll();
 		}
 
-		//on remplit la table
-		final TableColumn [] columns = tableChantier.getColumns();
+		// on remplit la table
+		final TableColumn[] columns = tableChantier.getColumns();
 
 		try {
 			for (Site e : Site.getAllChantier()) {
-				//on verifie le status
-				if (e.getStatus().equals("Publié")) {
-					TableItem item = new TableItem (tableChantier, SWT.NONE);
-					item.setText(0,((Integer)e.getChantierId()).toString());
-					item.setText(1,e.getNom());
+				// on verifie le status
+				if (e.getStatus().getValue().equals("Publié")) {
+					TableItem item = new TableItem(tableChantier, SWT.NONE);
+					item.setText(0, ((Integer) e.getSiteId()).toString());
+					item.setText(1, e.getName());
 				}
 			}
 		} catch (SQLException e1) {
 			System.out.println("erreur dans la table des couts chantiers");
 			MessageBox dialog = new MessageBox(vueAutres.getShell(), SWT.ICON_ERROR | SWT.OK);
 			dialog.setText("Erreur");
-			dialog.setMessage("Une erreur est survenue. "+'\n'+e1.getMessage());
+			dialog.setMessage("Une erreur est survenue. " + '\n' + e1.getMessage());
 			dialog.open();
 		}
 
-		//on pack les colonnes
+		// on pack les colonnes
 		for (TableColumn col : columns)
-			col.pack ();
+			col.pack();
 
 		tableChantier.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -678,7 +666,7 @@ public class ViewTurnOver {
 
 					try {
 						selectedChantier = Site
-								.getChantierById(Integer.parseInt(tableChantier.getSelection()[0].getText(0)));
+								.getSiteById(Integer.parseInt(tableChantier.getSelection()[0].getText(0)));
 					} catch (NumberFormatException | SQLException e1) {
 						System.out.println("erreur pour recuperer l'chantier selectionne");
 						MessageBox dialog = new MessageBox(vueAutres.getShell(), SWT.ICON_ERROR | SWT.OK);
@@ -689,9 +677,10 @@ public class ViewTurnOver {
 
 					updateTableAmorti();
 
-				} else { 
+				} else {
 
-					selectedChantier = null;selectedAmorti = null;
+					selectedChantier = null;
+					selectedAmorti = null;
 					updateTableEmp();
 					updateTableAmorti();
 
@@ -703,48 +692,49 @@ public class ViewTurnOver {
 	}
 
 	public void updateTableAmorti() {
-		if(!Objects.isNull(tableAmorti)) {
+		if (!Objects.isNull(tableAmorti)) {
 			tableAmorti.removeAll();
 		}
 		if (selectedChantier == null) {
 			return;
 		}
 
-		//on remplit la table
-		final TableColumn [] columns = tableAmorti.getColumns();
+		// on remplit la table
+		final TableColumn[] columns = tableAmorti.getColumns();
 
 		try {
 			for (AmmortissementChantier a : AmmortissementChantier.getAllAmmortissementChantier()) {
-				//on verifie le status
-				if (a.getStatus().equals("Publié") && selectedChantier.getChantierId()==a.getChantierId()) {
-					TableItem item = new TableItem (tableAmorti, SWT.NONE);
-					item.setText(0,a.getAmmortissementChantierId().toString());
-					item.setText(1,a.getMoisD().toString()+'/'+a.getAnneeD().toString());
-					item.setText(2,a.getMoisF().toString()+'/'+a.getAnneeF().toString());
-					item.setText(3,a.getMontantParMois().toString());
-					item.setText(4,a.getValeur().toString());
-					item.setText(5,a.getType());
-					item.setText(6,a.getDescription());
+				// on verifie le status
+				if (a.getStatus().equals("Publié") && selectedChantier.getSiteId() == a.getChantierId()) {
+					TableItem item = new TableItem(tableAmorti, SWT.NONE);
+					item.setText(0, a.getAmmortissementChantierId().toString());
+					item.setText(1, a.getMoisD().toString() + '/' + a.getAnneeD().toString());
+					item.setText(2, a.getMoisF().toString() + '/' + a.getAnneeF().toString());
+					item.setText(3, a.getMontantParMois().toString());
+					item.setText(4, a.getValeur().toString());
+					item.setText(5, a.getType());
+					item.setText(6, a.getDescription());
 				}
 			}
 		} catch (SQLException e1) {
 			System.out.println("erreur dans la table des couts amorti chantiers");
 			MessageBox dialog = new MessageBox(vueAutres.getShell(), SWT.ICON_ERROR | SWT.OK);
 			dialog.setText("Erreur");
-			dialog.setMessage("Une erreur est survenue. "+'\n'+e1.getMessage());
+			dialog.setMessage("Une erreur est survenue. " + '\n' + e1.getMessage());
 			dialog.open();
 		}
 
-		//on pack les colonnes
+		// on pack les colonnes
 		for (TableColumn col : columns)
-			col.pack ();
+			col.pack();
 
 		tableAmorti.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (tableAmorti.getSelectionIndex() != -1) {
 
 					try {
-						selectedAmorti = AmmortissementChantier.getAmmortissementChantierById(Integer.parseInt(tableAmorti.getSelection()[0].getText(0)));
+						selectedAmorti = AmmortissementChantier.getAmmortissementChantierById(
+								Integer.parseInt(tableAmorti.getSelection()[0].getText(0)));
 					} catch (NumberFormatException | SQLException e1) {
 						System.out.println("erreur pour recuperer l'amorti selectionne");
 						MessageBox dialog = new MessageBox(vueAutres.getShell(), SWT.ICON_ERROR | SWT.OK);
@@ -755,7 +745,7 @@ public class ViewTurnOver {
 
 					amortiSelection();
 					doMenu(tableAmorti);
-				} else { 
+				} else {
 
 					selectedAmorti = null;
 					amortiSelection();
@@ -767,31 +757,32 @@ public class ViewTurnOver {
 			}
 		});
 
-
 		tableAmorti.pack();
 		vue.pack();
-		vue.layout(true,true);
+		vue.layout(true, true);
 	}
-	
+
 	/***
-	 * Pour créer une vueLivraison : 
-	 * Appelle ensuite les fonctions compositeSelectionCreer et vueLivraisonAfficher
+	 * Pour créer une vueLivraison : Appelle ensuite les fonctions
+	 * compositeSelectionCreer et vueLivraisonAfficher
 	 */
-	public void newVueLivraison () {
-		
+	public void newVueLivraison() {
+
 		compositeSelectionCreer();
 		vueLivraisonAfficher();
-		
+
 		vueLivraison.pack();
 		tabFolder.pack();
 		tabFolder.getParent().pack();
 	}
-	
+
 	///////////////////////////////////////////////////////////////////////////////////////////////////////
-	
-	//Modification de la partie Selection --------------------------------------------------
+
+	// Modification de la partie Selection
+	// --------------------------------------------------
 	/***
-	 * Creation de la partie Selection (la partie superieure droite) avec uniquement le bouton Creer 
+	 * Creation de la partie Selection (la partie superieure droite) avec uniquement
+	 * le bouton Creer
 	 */
 	public void compositeSelectionCreer() {
 		if (!Objects.isNull(selection) && !selection.isDisposed()) {
@@ -802,10 +793,10 @@ public class ViewTurnOver {
 		rowLayout.marginWidth = 20;
 		selection.setLayout(rowLayout);
 		selection.setBackground(Couleur.gris);
-		
+
 		Button boutonCreer = new Button(selection, SWT.CENTER);
 		boutonCreer.setText("Créer");
-		boutonCreer.addSelectionListener(new SelectionAdapter() {	
+		boutonCreer.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				vueLivraisonCreer();
@@ -813,9 +804,11 @@ public class ViewTurnOver {
 		});
 		selection.pack();
 	}
-	
+
 	/***
-	 * Creation de la partie Selection (la partie superieure droite) avec les boutons Creer, Modifier et Supprimer
+	 * Creation de la partie Selection (la partie superieure droite) avec les
+	 * boutons Creer, Modifier et Supprimer
+	 * 
 	 * @param table : table de toutes les livraisons
 	 */
 	public void compositeSelectionModifier(Table table) {
@@ -828,31 +821,31 @@ public class ViewTurnOver {
 		rowLayout.marginTop = 6;
 		selection.setLayout(rowLayout);
 		selection.setBackground(Couleur.gris);
-		
-		//Bouton Creer 
+
+		// Bouton Creer
 		Button boutonCreer = new Button(selection, SWT.CENTER);
 		boutonCreer.setText("Créer");
-		boutonCreer.addSelectionListener(new SelectionAdapter() {	
+		boutonCreer.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				vueLivraisonCreer();
 			}
 		});
-		
-		//Bouton Modifier
+
+		// Bouton Modifier
 		Button boutonModifier = new Button(selection, SWT.CENTER);
 		boutonModifier.setText("Modifier");
-		boutonModifier.addSelectionListener(new SelectionAdapter() {	
+		boutonModifier.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				vueLivraisonModifier();
 			}
 		});
-		
-		//Bouton Supprimer
+
+		// Bouton Supprimer
 		Button boutonSupprimer = new Button(selection, SWT.CENTER);
 		boutonSupprimer.setText("Supprimer");
-		boutonSupprimer.addSelectionListener(new SelectionAdapter() {	
+		boutonSupprimer.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				suppLivraison(table);
@@ -860,124 +853,130 @@ public class ViewTurnOver {
 		});
 		selection.pack();
 	}
-	
-	
-	//Suppression d'une livraison ---------------------------------------------------
+
+	// Suppression d'une livraison
+	// ---------------------------------------------------
 	/***
-	 * fonction utilisee pour supprimer une livraison
-	 * cette fonction demande confirmation puis passe en archivé la livraison selectionne et les produits par livraison associes 
+	 * fonction utilisee pour supprimer une livraison cette fonction demande
+	 * confirmation puis passe en archivé la livraison selectionne et les produits
+	 * par livraison associes
 	 */
 	public void suppLivraison(Table table) {
 		try {
-			//on recupere la livraison selectionnee
+			// on recupere la livraison selectionnee
 			Delivery l = Delivery.getLivraisonById(selectedLivraison.getLivraisonId());
-			
-			//on demande une confirmation
+
+			// on demande une confirmation
 			MessageBox dialog = new MessageBox(vueLivraison.getShell(), SWT.ICON_QUESTION | SWT.YES | SWT.NO);
-	    	dialog.setText("Suppression Livraison");
-	    	if (l.getDate() != null) {
-	    		dialog.setMessage("Voulez vous supprimer le livraison du "+l.getDate()+" sur le chantier "+Site.getChantierById(l.getIdChantier()).getNom()+" ?");
-	    	}
-	    	else {
-	    		dialog.setMessage("Voulez vous supprimer le livraison de "+l.getPrixTotal()+" euros sur le chantier "+Site.getChantierById(l.getIdChantier()).getNom()+" ?");
-	    	}
-	    	int buttonID = dialog.open();
-	    	
-	        switch(buttonID) {
-	          case SWT.YES:
-	        	  	//on archive la livraison
-					l.setStatus("Archivé");
-					l.updateDatabase();
-					
-					//on archive les produits associes
-					//on doit mettre dans un try car s'il n'y a pas de produits associes cela provoque une erreur
-					try {
-						for (ProductByDelivery p : ProductByDelivery.getProductByLivraisonByLivraisonId(l.getLivraisonId())) {
-							p.setStatus("Archivé");
-							p.updateDatabase();
-						}
-					}catch (Exception e) {}
-					
-					//on change d'affichage
-					//newVueLivraison(vueLivraison);
-					
-					selectedLivraison = null;
-					
-		
-					compositeSelectionCreer();
-					
-					
-					updateTable(table);
-	        }
+			dialog.setText("Suppression Livraison");
+			if (l.getDate() != null) {
+				dialog.setMessage("Voulez vous supprimer le livraison du " + l.getDate() + " sur le chantier "
+						+ Site.getSiteById(l.getIdChantier()).getName() + " ?");
+			} else {
+				dialog.setMessage("Voulez vous supprimer le livraison de " + l.getPrixTotal()
+						+ " euros sur le chantier " + Site.getSiteById(l.getIdChantier()).getName() + " ?");
+			}
+			int buttonID = dialog.open();
+
+			switch (buttonID) {
+			case SWT.YES:
+				// on archive la livraison
+				l.setStatus("Archivé");
+				l.updateDatabase();
+
+				// on archive les produits associes
+				// on doit mettre dans un try car s'il n'y a pas de produits associes cela
+				// provoque une erreur
+				try {
+					for (ProductByDelivery p : ProductByDelivery
+							.getProductByLivraisonByLivraisonId(l.getLivraisonId())) {
+						p.setStatus("Archivé");
+						p.updateDatabase();
+					}
+				} catch (Exception e) {
+				}
+
+				// on change d'affichage
+				// newVueLivraison(vueLivraison);
+
+				selectedLivraison = null;
+
+				compositeSelectionCreer();
+
+				updateTable(table);
+			}
 
 		} catch (NumberFormatException | SQLException e) {
 			System.out.println("erreur pour supprimer la livraison");
-	    	MessageBox dialog = new MessageBox(vueLivraison.getShell(), SWT.ICON_ERROR | SWT.OK);
-	    	dialog.setText("Erreur");
-	    	dialog.setMessage("Une erreur est survenue. "+'\n'+e.getMessage());
-	    	dialog.open();
+			MessageBox dialog = new MessageBox(vueLivraison.getShell(), SWT.ICON_ERROR | SWT.OK);
+			dialog.setText("Erreur");
+			dialog.setMessage("Une erreur est survenue. " + '\n' + e.getMessage());
+			dialog.open();
 		}
 	}
-	
-	
 
-	//Modification d'une livraison --------------------------------------------------
+	// Modification d'une livraison
+	// --------------------------------------------------
 	/***
-	 * Regroupe les fonctions a appeler pour faire une modification
-	 * La fonction va appeler les fonctions titreModification et formulaireModification
+	 * Regroupe les fonctions a appeler pour faire une modification La fonction va
+	 * appeler les fonctions titreModification et formulaireModification
 	 */
 	public void vueLivraisonModifier() {
 
-		formulaireModification();//on l'appelle d'abord une fois pour pouvoir recuperer sa taille dans titre modification et faire un titre a la bonne taille
-		titreModification();	
+		formulaireModification();// on l'appelle d'abord une fois pour pouvoir recuperer sa taille dans titre
+									// modification et faire un titre a la bonne taille
+		titreModification();
 		formulaireModification();
-		
+
 		vueLivraison.pack();
 		tabFolder.pack();
 		tabFolder.getParent().pack();
-		
+
 	}
-	
+
 	/***
-	 * va modifier la partie selection (partie superieure droite) en y mettant un titre pour la modification
+	 * va modifier la partie selection (partie superieure droite) en y mettant un
+	 * titre pour la modification
 	 */
 	public void titreModification() {
 		if (!Objects.isNull(selection) && !selection.isDisposed()) {
 			selection.dispose();
 		}
 		selection = new Composite(vueLivraison, SWT.CENTER);
-		
+
 		FillLayout fillLayout = new FillLayout();
 		fillLayout.type = SWT.VERTICAL;
-		
+
 		int addSize = vue.getSize().x;
-		addSize = (addSize - 215)/2;//on recupere l'ecart entre la taille du titre de base (215) et le formulaire de modif
+		addSize = (addSize - 215) / 2;// on recupere l'ecart entre la taille du titre de base (215) et le formulaire
+										// de modif
 		fillLayout.marginWidth = addSize;
 		selection.setLayout(fillLayout);
-		
-		//juste pour creer un espace 
+
+		// juste pour creer un espace
 		Label l1 = new Label(selection, SWT.NONE);
 		l1.setText("");
 		l1.setBackground(Couleur.bleuFonce);
-		
+
 		selection.setBackground(Couleur.bleuFonce);
-		Label HeadLabel =new Label(selection,SWT.TITLE);
+		Label HeadLabel = new Label(selection, SWT.TITLE);
 		HeadLabel.setText("Modification d'une Livraison");
 		Font fontTitle = new Font(HeadLabel.getDisplay(), "Arial", 12, SWT.BOLD);
 		HeadLabel.setForeground(Couleur.bleuClair);
 		HeadLabel.setFont(fontTitle);
 		HeadLabel.setBackground(Couleur.bleuFonce);
-		
-		//juste pour creer un espace 
+
+		// juste pour creer un espace
 		Label l2 = new Label(selection, SWT.NONE);
 		l2.setText("");
 		l2.setBackground(Couleur.bleuFonce);
-		
+
 		selection.pack();
 	}
 
 	/***
-	 * Va modifier la partie Vue (partie inferieure droite) et y ajoutant le formulaire de modification d'un livraison
+	 * Va modifier la partie Vue (partie inferieure droite) et y ajoutant le
+	 * formulaire de modification d'un livraison
 	 */
 	public void formulaireModification() {
 		if (!Objects.isNull(vue) && !vue.isDisposed()) {
@@ -986,95 +985,100 @@ public class ViewTurnOver {
 		if (selectedLivraison == null) {
 			throw new Error("selectedLivraison est vide");
 		}
-		
-		//creation de la vue
+
+		// creation de la vue
 		vue = new Composite(vueLivraison, SWT.NONE);
 		RowLayout rowLayoutH = new RowLayout();
 		rowLayoutH.type = SWT.HORIZONTAL;
 		vue.setLayout(rowLayoutH);
-		
-		//creation de 2 colonnes afin de repartir les champs du formulaire 
+
+		// creation de 2 colonnes afin de repartir les champs du formulaire
 		FillLayout fillLayoutV = new FillLayout();
 		fillLayoutV.type = SWT.VERTICAL;
 		fillLayoutV.marginWidth = 10;
 		fillLayoutV.marginHeight = 15;
 		fillLayoutV.spacing = 20;
-		
+
 		Composite colonne1 = new Composite(vue, SWT.BORDER);
 		colonne1.setBackground(Couleur.bleuClair);
 		colonne1.setLayout(fillLayoutV);
-		
+
 		RowLayout rowLayoutV = new RowLayout();
 		rowLayoutV.type = SWT.VERTICAL;
 		rowLayoutV.marginWidth = 10;
-		
+
 		Composite colonne2 = new Composite(vue, SWT.BORDER);
 		colonne2.setBackground(Couleur.bleuClair);
 		colonne2.setLayout(rowLayoutV);
-		
-		//utiliser pour tous les composites des attributs du formulaire
+
+		// utiliser pour tous les composites des attributs du formulaire
 		FillLayout fillLayoutH5 = new FillLayout();
 		fillLayoutH5.marginHeight = 30;
 		fillLayoutH5.spacing = 5;
 		fillLayoutH5.type = SWT.HORIZONTAL;
-		
-		//Chantier
+
+		// Chantier
 		Composite compositeChantier = new Composite(colonne1, SWT.NONE);
 		compositeChantier.setBackground(Couleur.bleuClair);
 		compositeChantier.setLayout(fillLayoutH5);
-		
+
 		Label labelChantier = new Label(compositeChantier, SWT.NONE);
 		labelChantier.setBackground(Couleur.bleuClair);
-		labelChantier.setText("Chantier* :                                                  ");//espaces pour que la barre de texte soit plus grande
-		
-		//on affiche le chantier selectionne
+		labelChantier.setText("Chantier* :                                                  ");// espaces pour que la
+																								// barre de texte soit
+																								// plus grande
+
+		// on affiche le chantier selectionne
 		Combo chantier = new Combo(compositeChantier, SWT.BORDER);
 		try {
-			if (Site.getChantierById(selectedLivraison.getIdChantier()).getStatus().equals("Publié")) {
-				String stringChantier = Site.getChantierById(selectedLivraison.getIdChantier()).getNom()+"; id :"+selectedLivraison.getIdChantier().toString();
+			if (Site.getSiteById(selectedLivraison.getIdChantier()).getStatus().getValue().equals("Publié")) {
+				String stringChantier = Site.getSiteById(selectedLivraison.getIdChantier()).getName() + "; id :"
+						+ selectedLivraison.getIdChantier().toString();
 				if (stringChantier.length() > 30) {
-					chantier.setText(stringChantier.substring(0, 23)+"..."+";id:"+((Integer)selectedLivraison.getIdChantier()).toString());
-					labelChantier.setText("Chantier* :");//pour pas que ca fasse un trop grand espace et que ca decale le titre
-				}
-				else {
+					chantier.setText(stringChantier.substring(0, 23) + "..." + ";id:"
+							+ ((Integer) selectedLivraison.getIdChantier()).toString());
+					labelChantier.setText("Chantier* :");// pour pas que ca fasse un trop grand espace et que ca decale
+															// le titre
+				} else {
 					chantier.setText(stringChantier);
 				}
-			}
-			else {
+			} else {
 				chantier.setText("Selectionner ...");
 			}
 		} catch (SQLException e1) {
-			e1.printStackTrace(); 
+			e1.printStackTrace();
 			System.out.println("erreur pour recuperer les chantiers");
 			MessageBox dialog = new MessageBox(vueLivraison.getShell(), SWT.ICON_ERROR | SWT.OK);
 			dialog.setText("Erreur");
-			dialog.setMessage("Une erreur est survenue. "+'\n'+e1.getMessage());
+			dialog.setMessage("Une erreur est survenue. " + '\n' + e1.getMessage());
 			dialog.open();
 		}
-		//on recupere les autres chantiers pour les afficher aussi et pouvoir modifier le chantier actuel
+		// on recupere les autres chantiers pour les afficher aussi et pouvoir modifier
+		// le chantier actuel
 		try {
 			for (Site c : Site.getAllChantier()) {
-				if (c.getNom() != Site.getChantierById(selectedLivraison.getIdChantier()).getNom() && c.getStatus().equals("Publié")) {
-					String stringChantier =  c.getNom()+"; id :"+((Integer)c.getChantierId()).toString();
+				if (c.getName() != Site.getSiteById(selectedLivraison.getIdChantier()).getName()
+						&& c.getStatus().getValue().equals("Publié")) {
+					String stringChantier = c.getName() + "; id :" + ((Integer) c.getSiteId()).toString();
 					if (stringChantier.length() > 30) {
-						chantier.add(stringChantier.substring(0, 23)+"..."+";id:"+((Integer)c.getChantierId()).toString());
+						chantier.add(stringChantier.substring(0, 23) + "..." + ";id:"
+								+ ((Integer) c.getSiteId()).toString());
 						labelChantier.setText("Chantier* :");
-					}
-					else {
+					} else {
 						chantier.add(stringChantier);
 					}
 				}
 			}
 		} catch (SQLException e1) {
-			e1.printStackTrace(); 
+			e1.printStackTrace();
 			System.out.println("erreur pour recuperer les chantiers");
-	    	MessageBox dialog = new MessageBox(vueLivraison.getShell(), SWT.ICON_ERROR | SWT.OK);
-	    	dialog.setText("Erreur");
-	    	dialog.setMessage("Une erreur est survenue. "+'\n'+e1.getMessage());
-	    	dialog.open();
+			MessageBox dialog = new MessageBox(vueLivraison.getShell(), SWT.ICON_ERROR | SWT.OK);
+			dialog.setText("Erreur");
+			dialog.setMessage("Une erreur est survenue. " + '\n' + e1.getMessage());
+			dialog.open();
 		}
 
-		//Date
+		// Date
 		Composite compositeDate = new Composite(colonne1, SWT.NONE);
 		compositeDate.setBackground(Couleur.bleuClair);
 		compositeDate.setLayout(fillLayoutH5);
@@ -1084,22 +1088,27 @@ public class ViewTurnOver {
 		labelDate.setText("Date : ");
 
 		final Text date = new Text(compositeDate, SWT.BORDER);
-		if (selectedLivraison.getDate() == null) { date.setText(""); }
-		else { date.setText(selectedLivraison.getDate()); }
-		
-		//pour ajouter les barres / automatiquement
-		date.addModifyListener(new ModifyListener() { 
-			public void modifyText(ModifyEvent me) { 
-				if (!(date.getText().isEmpty())) {//pour ne pas tester quand l'utilisateur est en train de modifier
-					if (date.getText().length() == 2) {date.append("/");}
-					if (date.getText().length() == 5) {date.append("/");}
+		if (selectedLivraison.getDate() == null) {
+			date.setText("");
+		} else {
+			date.setText(selectedLivraison.getDate());
+		}
+
+		// pour ajouter les barres / automatiquement
+		date.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent me) {
+				if (!(date.getText().isEmpty())) {// pour ne pas tester quand l'utilisateur est en train de modifier
+					if (date.getText().length() == 2) {
+						date.append("/");
+					}
+					if (date.getText().length() == 5) {
+						date.append("/");
+					}
 				}
 			}
 		});
-		
-		
-		
-		//Prix
+
+		// Prix
 		Composite compositePrix = new Composite(colonne1, SWT.NONE);
 		compositePrix.setBackground(Couleur.bleuClair);
 		compositePrix.setLayout(fillLayoutH5);
@@ -1110,25 +1119,26 @@ public class ViewTurnOver {
 
 		final Text prix = new Text(compositePrix, SWT.BORDER);
 		prix.setText(selectedLivraison.getPrixTotal().toString());
-		
-		//Boutons
+
+		// Boutons
 		Composite compositeBoutons = new Composite(colonne1, SWT.CENTER);
 		compositeBoutons.setBackground(Couleur.bleuClair);
 		compositeBoutons.setLayout(fillLayoutH5);
-		
+
 		Button buttonAnnulation = new Button(compositeBoutons, SWT.BACKGROUND);
 		buttonAnnulation.setText("Annuler");
 		buttonAnnulation.addSelectionListener(new SelectionAdapter() {
 
-			@Override public void widgetSelected(SelectionEvent arg0) {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
 				newVueLivraison();
 			}
 		});
 
 		Button buttonValidation = new Button(compositeBoutons, SWT.BACKGROUND);
 		buttonValidation.setText("Valider");
-		
-		//Produit
+
+		// Produit
 		Composite compositeProduit = new Composite(colonne2, SWT.NONE);
 		compositeProduit.setBackground(Couleur.bleuClair);
 		compositeProduit.setLayout(fillLayoutH5);
@@ -1136,61 +1146,63 @@ public class ViewTurnOver {
 		Label labelProduit = new Label(compositeProduit, SWT.NONE);
 		labelProduit.setBackground(Couleur.bleuClair);
 		labelProduit.setText("Produits : ");
-		
-	    Composite table = new Composite(colonne2, SWT.NONE);
-	    table.setLayout(rowLayoutV);
-	    table.setBackground(Couleur.bleuClair);
-	    
-		//creation de la table des produits
-	    final Table tableProduit = new Table (table, SWT.BORDER | SWT.MULTI| SWT.V_SCROLL | SWT.FULL_SELECTION);
-	    tableProduit.setLayoutData(new RowData(400,230));
-	    tableProduit.setLinesVisible (true);
-	    tableProduit.setHeaderVisible (true);
-	    
-	    //pour pouvoir modifier les quantites
-	    final TableEditor editor = new TableEditor (tableProduit);
+
+		Composite table = new Composite(colonne2, SWT.NONE);
+		table.setLayout(rowLayoutV);
+		table.setBackground(Couleur.bleuClair);
+
+		// creation de la table des produits
+		final Table tableProduit = new Table(table, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.FULL_SELECTION);
+		tableProduit.setLayoutData(new RowData(400, 230));
+		tableProduit.setLinesVisible(true);
+		tableProduit.setHeaderVisible(true);
+
+		// pour pouvoir modifier les quantites
+		final TableEditor editor = new TableEditor(tableProduit);
 		editor.horizontalAlignment = SWT.LEFT;
 		editor.grabHorizontal = true;
-		
-		//on met les noms des colonnes
-		String[] titles = {"Id","Nom","Prix", "Commentaires", "Quantité"};
+
+		// on met les noms des colonnes
+		String[] titles = { "Id", "Nom", "Prix", "Commentaires", "Quantité" };
 		for (String title : titles) {
-			TableColumn column = new TableColumn (tableProduit, SWT.NONE);
-			column.setText (title);
+			TableColumn column = new TableColumn(tableProduit, SWT.NONE);
+			column.setText(title);
 		}
-		
-		//on remplit la table
-		final TableColumn [] columns = tableProduit.getColumns ();
-		
-		//on remplit d'abord avec les quantites a 0 et on modifiera apres
+
+		// on remplit la table
+		final TableColumn[] columns = tableProduit.getColumns();
+
+		// on remplit d'abord avec les quantites a 0 et on modifiera apres
 		try {
 			for (Product p : Product.getAllProduct()) {
-				//on verifie le status
+				// on verifie le status
 				if (p.getStatus().getValue().contentEquals("Publié")) {
-					TableItem item = new TableItem (tableProduit, SWT.NONE);
-					item.setText(0,((Integer)p.getProduitId()).toString());
-					item.setText(1,p.getName());
-					item.setText(2,p.getPrice().toString());
-					item.setText(3,p.getComment());
-					item.setText(4,"0");
+					TableItem item = new TableItem(tableProduit, SWT.NONE);
+					item.setText(0, ((Integer) p.getProduitId()).toString());
+					item.setText(1, p.getName());
+					item.setText(2, p.getPrice().toString());
+					item.setText(3, p.getComment());
+					item.setText(4, "0");
 				}
 			}
 		} catch (SQLException e1) {
-	    	System.out.println("erreur dans la table des produits de livraison");
-	    	MessageBox dialog = new MessageBox(vueLivraison.getShell(), SWT.ICON_ERROR | SWT.OK);
-	    	dialog.setText("Erreur");
-	    	dialog.setMessage("Une erreur est survenue. "+'\n'+e1.getMessage());
-	    	dialog.open();
+			System.out.println("erreur dans la table des produits de livraison");
+			MessageBox dialog = new MessageBox(vueLivraison.getShell(), SWT.ICON_ERROR | SWT.OK);
+			dialog.setText("Erreur");
+			dialog.setMessage("Une erreur est survenue. " + '\n' + e1.getMessage());
+			dialog.open();
 		}
-		
-		//on modifie les quantites du tableau en y mettant celles des produits par livraison de la base de donnees
+
+		// on modifie les quantites du tableau en y mettant celles des produits par
+		// livraison de la base de donnees
 		try {
 			if (selectedLivraison.getPrixTotal() > 0) {
-				for (ProductByDelivery p : ProductByDelivery.getProductByLivraisonByLivraisonId(selectedLivraison.getLivraisonId())) {
-					//on verifie le status
+				for (ProductByDelivery p : ProductByDelivery
+						.getProductByLivraisonByLivraisonId(selectedLivraison.getLivraisonId())) {
+					// on verifie le status
 					if (p.getStatus().contentEquals("Publié")) {
 						for (TableItem i : tableProduit.getItems()) {
-							if (Integer.parseInt(i.getText(0)) == p.getIdProduit() ) {
+							if (Integer.parseInt(i.getText(0)) == p.getIdProduit()) {
 								i.setText(4, p.getQuantite().toString());
 							}
 						}
@@ -1202,145 +1214,155 @@ public class ViewTurnOver {
 			e1.printStackTrace();
 			MessageBox dialog = new MessageBox(vueLivraison.getShell(), SWT.ICON_ERROR | SWT.OK);
 			dialog.setText("Erreur");
-			dialog.setMessage("Une erreur est survenue. "+'\n'+e1.getMessage());
+			dialog.setMessage("Une erreur est survenue. " + '\n' + e1.getMessage());
 			dialog.open();
 		}
 
-		tableProduit.pack();table.pack();
-		
-		//on pack les colonnes
+		tableProduit.pack();
+		table.pack();
+
+		// on pack les colonnes
 		for (TableColumn col : columns)
-			col.pack ();
-		
-		//quand on clique sur une ligne on peut modifier la quantite de la ligne
-		//pour modifier les quantites 
+			col.pack();
+
+		// quand on clique sur une ligne on peut modifier la quantite de la ligne
+		// pour modifier les quantites
 		tableProduit.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				//on dispose l'ancien editor
+				// on dispose l'ancien editor
 				Control oldEditor = editor.getEditor();
-				if (oldEditor != null) { oldEditor.dispose();}
+				if (oldEditor != null) {
+					oldEditor.dispose();
+				}
 
-				//on recupere la ligne selectionne
+				// on recupere la ligne selectionne
 				TableItem item = (TableItem) e.item;
-				if (item == null) { return; }
+				if (item == null) {
+					return;
+				}
 
-				//on ajoute l'editor sur la ligne
+				// on ajoute l'editor sur la ligne
 				Text newEditor = new Text(tableProduit, SWT.NONE);
 				newEditor.setText(item.getText(4));
-				newEditor.addModifyListener(new ModifyListener() { 
-					public void modifyText(ModifyEvent me) { 
-						if (!(newEditor.getText().isEmpty())) {//pour ne pas tester quand l'utilisateur est en train de modifier
+				newEditor.addModifyListener(new ModifyListener() {
+					public void modifyText(ModifyEvent me) {
+						if (!(newEditor.getText().isEmpty())) {// pour ne pas tester quand l'utilisateur est en train de
+																// modifier
 							try {
-								if (Integer.parseInt(newEditor.getText()) <0) {//on ne peut pas mettre de quantite negative
-									item.setText(4,"0"); 
+								if (Integer.parseInt(newEditor.getText()) < 0) {// on ne peut pas mettre de quantite
+																				// negative
+									item.setText(4, "0");
+								} else {
+									item.setText(4, newEditor.getText()); // on modifie la ligne avec la nouvelle
+																			// quantite
 								}
-								else {
-									item.setText(4,newEditor.getText()); //on modifie la ligne avec la nouvelle quantite
-								}
-							} catch(Exception e) {
-								System.out.println("erreur dans la modif"); MessageBox dialog = new
-										MessageBox(vueLivraison.getShell(), SWT.ICON_ERROR | SWT.OK);
-								dialog.setText("Erreur Editor"); dialog.
-								setMessage("La quantite saisie n'est pas valide. "
-										+'\n'+e.getMessage()); dialog.open(); 
+							} catch (Exception e) {
+								System.out.println("erreur dans la modif");
+								MessageBox dialog = new MessageBox(vueLivraison.getShell(), SWT.ICON_ERROR | SWT.OK);
+								dialog.setText("Erreur Editor");
+								dialog.setMessage("La quantite saisie n'est pas valide. " + '\n' + e.getMessage());
+								dialog.open();
 							}
 						}
 					}
 				});
-				newEditor.selectAll(); newEditor.setFocus();
+				newEditor.selectAll();
+				newEditor.setFocus();
 				editor.setEditor(newEditor, item, 4);
 			}
 		});
-		
-		//Bouton calculPrix
+
+		// Bouton calculPrix
 		Composite calculPrix = new Composite(colonne2, SWT.CENTER);
 		calculPrix.setBackground(Couleur.bleuClair);
 		calculPrix.setLayout(fillLayoutH5);
-		
-		//juste pour decaler le bouton a droite
+
+		// juste pour decaler le bouton a droite
 		Label l = new Label(calculPrix, SWT.NONE);
 		l.setBackground(Couleur.bleuClair);
 		l.setText("");
-		
+
 		Button buttonCalculPrix = new Button(calculPrix, SWT.BACKGROUND);
 		buttonCalculPrix.setText("Afficher le prix total");
-		//buttonCalculPrix.setBounds(10, 60, 200, 30); // -> ne focntionne pas en fillLayout
-		
+		// buttonCalculPrix.setBounds(10, 60, 200, 30); // -> ne focntionne pas en
+		// fillLayout
+
 		buttonCalculPrix.addSelectionListener(new SelectionAdapter() {
-			//on calcule le prix total
-			@Override public void widgetSelected(SelectionEvent arg0) {
-					Double somme = 0.0;
-					for (TableItem i : tableProduit.getItems()) {
-						Integer quantite = Integer.parseInt(i.getText(4));
-						Double prix = Double.parseDouble(i.getText(2));
-						somme += quantite * prix;
-					}
-					prix.setText(somme.toString());
+			// on calcule le prix total
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				Double somme = 0.0;
+				for (TableItem i : tableProduit.getItems()) {
+					Integer quantite = Integer.parseInt(i.getText(4));
+					Double prix = Double.parseDouble(i.getText(2));
+					somme += quantite * prix;
 				}
-			});
-		
-		
-		
+				prix.setText(somme.toString());
+			}
+		});
+
 		buttonValidation.addSelectionListener(new SelectionAdapter() {
-			  
-			  @Override public void widgetSelected(SelectionEvent arg0) {
-				//d'abord, on recalcule le prix pour etre sur
-				  Double somme = 0.0;
-					for (TableItem i : tableProduit.getItems()) {
-						Integer quantite = Integer.parseInt(i.getText(4));
-						Double prix = Double.parseDouble(i.getText(2));
-						somme += quantite * prix;
-					}
-					prix.setText(somme.toString());
 
-					Integer idChantier = 0;
-					//on verifie si un chantier est saisi
-					try { 
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				// d'abord, on recalcule le prix pour etre sur
+				Double somme = 0.0;
+				for (TableItem i : tableProduit.getItems()) {
+					Integer quantite = Integer.parseInt(i.getText(4));
+					Double prix = Double.parseDouble(i.getText(2));
+					somme += quantite * prix;
+				}
+				prix.setText(somme.toString());
 
-						String c = chantier.getText().split(";")[1].replace(" ",""); 
-						idChantier = Integer.parseInt(c.substring(3,c.length()));
-					} catch (Throwable e) { 
-						e.printStackTrace();
-						System.out.println("erreur dans la modif"); 
-						MessageBox dialog = new MessageBox(vueLivraison.getShell(), SWT.ICON_ERROR | SWT.OK);
-						dialog.setText("Erreur Modification"); 
-						dialog.setMessage("Merci d'indiquer un chantier."); 
-						dialog.open(); 
-					}	
+				Integer idChantier = 0;
+				// on verifie si un chantier est saisi
+				try {
 
-					// on recupere les produits et quantites 
-					try { 
-						if (idChantier != 0) {
-							ArrayList<Integer> produits = new ArrayList<Integer>();
-							ArrayList<Integer> quantites = new ArrayList<Integer>();
+					String c = chantier.getText().split(";")[1].replace(" ", "");
+					idChantier = Integer.parseInt(c.substring(3, c.length()));
+				} catch (Throwable e) {
+					e.printStackTrace();
+					System.out.println("erreur dans la modif");
+					MessageBox dialog = new MessageBox(vueLivraison.getShell(), SWT.ICON_ERROR | SWT.OK);
+					dialog.setText("Erreur Modification");
+					dialog.setMessage("Merci d'indiquer un chantier.");
+					dialog.open();
+				}
 
-							for(TableItem i : tableProduit.getItems()) {
-								produits.add(Integer.parseInt(i.getText(0)));
-								quantites.add(Integer.parseInt(i.getText(4)));
-							}
-							
-							// on met a jour la livraison selectionnee
-							selectedLivraison.setIdChantier(idChantier);
-							if (!(date.getText().isEmpty())) {
-								selectedLivraison.setDate(date.getText());
-							}
-							selectedLivraison.setPrixTotal(Double.parseDouble(prix.getText()));
-							
-							validerModification(produits, quantites);
+				// on recupere les produits et quantites
+				try {
+					if (idChantier != 0) {
+						ArrayList<Integer> produits = new ArrayList<Integer>();
+						ArrayList<Integer> quantites = new ArrayList<Integer>();
+
+						for (TableItem i : tableProduit.getItems()) {
+							produits.add(Integer.parseInt(i.getText(0)));
+							quantites.add(Integer.parseInt(i.getText(4)));
 						}
-					} catch (Throwable e) { e.printStackTrace();
-						System.out.println("erreur dans la modif"); 
-						MessageBox dialog = new MessageBox(vueLivraison.getShell(), SWT.ICON_ERROR | SWT.OK);
-						dialog.setText("Erreur Modification"); 
-						dialog.setMessage("Une erreur est survenue. "+e.getMessage()); 
-						dialog.open(); 
-					}	
-			  }
-		}); 
+
+						// on met a jour la livraison selectionnee
+						selectedLivraison.setIdChantier(idChantier);
+						if (!(date.getText().isEmpty())) {
+							selectedLivraison.setDate(date.getText());
+						}
+						selectedLivraison.setPrixTotal(Double.parseDouble(prix.getText()));
+
+						validerModification(produits, quantites);
+					}
+				} catch (Throwable e) {
+					e.printStackTrace();
+					System.out.println("erreur dans la modif");
+					MessageBox dialog = new MessageBox(vueLivraison.getShell(), SWT.ICON_ERROR | SWT.OK);
+					dialog.setText("Erreur Modification");
+					dialog.setMessage("Une erreur est survenue. " + e.getMessage());
+					dialog.open();
+				}
+			}
+		});
 		vue.pack();
 
 	}
-	
+
 	/***
 	 * modifie la livraison dans la base de données
 	 */
@@ -1349,107 +1371,115 @@ public class ViewTurnOver {
 			throw new Error("selectedLivraison est vide");
 		}
 
-		boolean toutVaBien = true ;//utiliser pour s'assurer que quand une erreur a lieu on n'affiche pas la pop de reussite 
-		//on modifie la livraison dans la base de données
-		try { 
-			selectedLivraison.updateDatabase(); 
+		boolean toutVaBien = true;// utiliser pour s'assurer que quand une erreur a lieu on n'affiche pas la pop
+									// de reussite
+		// on modifie la livraison dans la base de données
+		try {
+			selectedLivraison.updateDatabase();
 			System.out.println("on a modifie la livraison !!");
-		} catch (SQLException e) { 
+		} catch (SQLException e) {
 			toutVaBien = false;
-			e.printStackTrace(); 
+			e.printStackTrace();
 			System.out.println("erreur dans la modif");
 			MessageBox dialog = new MessageBox(vueLivraison.getShell(), SWT.ICON_ERROR | SWT.OK);
 			dialog.setText("Erreur Modification");
-			dialog.setMessage("Une erreur est survenue lors de la modification de la livraison. "+e.getMessage());
+			dialog.setMessage("Une erreur est survenue lors de la modification de la livraison. " + e.getMessage());
 			dialog.open();
-		} 
-		
-		//on modifie les produits associes à la livraison
-	    for(int i = 0 ; i<produits.size() ; i++) {
-	    	try {//si le produit est deja associe a la livraison, on le modifie
-	    		ProductByDelivery p = ProductByDelivery.getProductByLivraisonByLivraisonIdAndProductId(selectedLivraison.getLivraisonId(), produits.get(i));
-	    		p.setQuantite(quantites.get(i));
-	    		p.updateDatabase();
-	    	}catch (Exception e) {//si le produit n'est pas encore associe a la livraison on l'associe si la quantite n'est pas de 0
-	    		if (quantites.get(i) != 0) {
-		    		ProductByDelivery p = new ProductByDelivery(selectedLivraison.getLivraisonId(),  produits.get(i), quantites.get(i), "Publié");
-		    		try {
+		}
+
+		// on modifie les produits associes à la livraison
+		for (int i = 0; i < produits.size(); i++) {
+			try {// si le produit est deja associe a la livraison, on le modifie
+				ProductByDelivery p = ProductByDelivery.getProductByLivraisonByLivraisonIdAndProductId(
+						selectedLivraison.getLivraisonId(), produits.get(i));
+				p.setQuantite(quantites.get(i));
+				p.updateDatabase();
+			} catch (Exception e) {// si le produit n'est pas encore associe a la livraison on l'associe si la
+									// quantite n'est pas de 0
+				if (quantites.get(i) != 0) {
+					ProductByDelivery p = new ProductByDelivery(selectedLivraison.getLivraisonId(), produits.get(i),
+							quantites.get(i), "Publié");
+					try {
 						p.insertDatabase();
 					} catch (SQLException e1) {
 						toutVaBien = false;
 						System.out.println("erreur dans la création");
-				    	MessageBox dialog = new MessageBox(vueLivraison.getShell(), SWT.ICON_ERROR | SWT.OK);
-				    	dialog.setText("Erreur Création");
-				    	dialog.setMessage("Une erreur est survenue lors de la création de la livraison. "+'\n'+e1.getMessage());
-				    	dialog.open();
+						MessageBox dialog = new MessageBox(vueLivraison.getShell(), SWT.ICON_ERROR | SWT.OK);
+						dialog.setText("Erreur Création");
+						dialog.setMessage("Une erreur est survenue lors de la création de la livraison. " + '\n'
+								+ e1.getMessage());
+						dialog.open();
 					}
-		    	}
-	    	}
-	    }
+				}
+			}
+		}
 
-	    if (toutVaBien) { //s'il n'y a pas eu d'erreur on affiche la pop up de validation
-	    	MessageBox dialog = new MessageBox(vueLivraison.getShell(), SWT.ICON_INFORMATION | SWT.OK);
-	    	dialog.setText("Création réussie");
-	    	dialog.setMessage("La livraison a bien été modifiée dans la base de données.");
-	    	dialog.open();
-	    	
-	    	selectedLivraison = null;
-	    	newVueLivraison();
-	    }
+		if (toutVaBien) { // s'il n'y a pas eu d'erreur on affiche la pop up de validation
+			MessageBox dialog = new MessageBox(vueLivraison.getShell(), SWT.ICON_INFORMATION | SWT.OK);
+			dialog.setText("Création réussie");
+			dialog.setMessage("La livraison a bien été modifiée dans la base de données.");
+			dialog.open();
+
+			selectedLivraison = null;
+			newVueLivraison();
+		}
 	}
-	
-	//Création d'une livraison --------------------------------------------------
+
+	// Création d'une livraison --------------------------------------------------
 	/***
-	 * va appeler les fonctions qui modifient la partie vue et la partie selection afin d'afficher le formulaire de création 
-	 * appelle titreCreation et formulaireCreation
-	 */	
+	 * va appeler les fonctions qui modifient la partie vue et la partie selection
+	 * afin d'afficher le formulaire de création appelle titreCreation et
+	 * formulaireCreation
+	 */
 	public void vueLivraisonCreer() {
 
 		formulaireCreation();
-		titreCreation();		
+		titreCreation();
 		formulaireCreation();
-		
+
 		vueLivraison.pack();
 		tabFolder.pack();
 		tabFolder.getParent().pack();
-		
+
 	}
-	
+
 	/***
-	 * modifie la partie selection (partie superieur droite) en ajoutant un titre de creation
+	 * modifie la partie selection (partie superieur droite) en ajoutant un titre de
+	 * creation
 	 */
 	public void titreCreation() {
 		if (!Objects.isNull(selection) && !selection.isDisposed()) {
 			selection.dispose();
 		}
 		selection = new Composite(vueLivraison, SWT.CENTER);
-		
+
 		FillLayout fillLayout = new FillLayout();
 		fillLayout.type = SWT.VERTICAL;
-		
+
 		int addSize = vue.getSize().x;
-		addSize = (addSize - 187)/2;//on recupere l'ecart entre la taille du titre de base (187) et le formulaire de modif
+		addSize = (addSize - 187) / 2;// on recupere l'ecart entre la taille du titre de base (187) et le formulaire
+										// de modif
 		fillLayout.marginWidth = addSize;
 		selection.setLayout(fillLayout);
-		
-		//juste pour creer un espace 
+
+		// juste pour creer un espace
 		Label l1 = new Label(selection, SWT.NONE);
 		l1.setText("");
 		l1.setBackground(Couleur.bleuFonce);
-		
+
 		selection.setBackground(Couleur.bleuFonce);
-		Label HeadLabel =new Label(selection,SWT.TITLE);
+		Label HeadLabel = new Label(selection, SWT.TITLE);
 		HeadLabel.setText("Creation d'une Livraison");
 		Font fontTitle = new Font(HeadLabel.getDisplay(), "Arial", 12, SWT.BOLD);
 		HeadLabel.setForeground(Couleur.bleuClair);
 		HeadLabel.setFont(fontTitle);
 		HeadLabel.setBackground(Couleur.bleuFonce);
-		
-		//juste pour creer un espace 
+
+		// juste pour creer un espace
 		Label l2 = new Label(selection, SWT.NONE);
 		l2.setText("");
 		l2.setBackground(Couleur.bleuFonce);
-		
+
 		selection.pack();
 	}
 
@@ -1464,66 +1494,66 @@ public class ViewTurnOver {
 		RowLayout rowLayoutH = new RowLayout();
 		rowLayoutH.type = SWT.HORIZONTAL;
 		vue.setLayout(rowLayoutH);
-		
-		//creation de 2 colonnes afin de repartir les champs du formulaire 
+
+		// creation de 2 colonnes afin de repartir les champs du formulaire
 		FillLayout fillLayoutV = new FillLayout();
 		fillLayoutV.type = SWT.VERTICAL;
 		fillLayoutV.marginWidth = 10;
 		fillLayoutV.marginHeight = 15;
 		fillLayoutV.spacing = 20;
-		
+
 		RowLayout rowLayoutV = new RowLayout();
 		rowLayoutV.type = SWT.VERTICAL;
 		rowLayoutV.marginWidth = 10;
-		
+
 		Composite colonne1 = new Composite(vue, SWT.BORDER);
 		colonne1.setBackground(Couleur.bleuClair);
 		colonne1.setLayout(fillLayoutV);
-		
+
 		Composite colonne2 = new Composite(vue, SWT.BORDER);
 		colonne2.setBackground(Couleur.bleuClair);
 		colonne2.setLayout(rowLayoutV);
-		
-		//utiliser pour tous les composites des attributs du formulaire
+
+		// utiliser pour tous les composites des attributs du formulaire
 		FillLayout fillLayoutH5 = new FillLayout();
 		fillLayoutH5.marginHeight = 30;
 		fillLayoutH5.spacing = 5;
 		fillLayoutH5.type = SWT.HORIZONTAL;
-		
-		//Chantier
+
+		// Chantier
 		Composite compositeChantier = new Composite(colonne1, SWT.NONE);
 		compositeChantier.setBackground(Couleur.bleuClair);
 		compositeChantier.setLayout(fillLayoutH5);
-		
+
 		Label labelChantier = new Label(compositeChantier, SWT.NONE);
 		labelChantier.setBackground(Couleur.bleuClair);
 		labelChantier.setText("Chantier* :                                                  ");
-		
+
 		Combo chantier = new Combo(compositeChantier, SWT.BORDER);
 		chantier.setText("Selectionner ...");
 		try {
 			for (Site c : Site.getAllChantier()) {
-				if (c.getStatus().equals("Publié")) {
-					String stringChantier =  c.getNom();
+				if (c.getStatus().getValue().equals("Publié")) {
+					String stringChantier = c.getName();
 					if (stringChantier.length() > 21) {
-						chantier.add(stringChantier.substring(0, 21)+"..."+";id:"+((Integer)c.getChantierId()).toString());
+						chantier.add(stringChantier.substring(0, 21) + "..." + ";id:"
+								+ ((Integer) c.getSiteId()).toString());
 						labelChantier.setText("Chantier* :");
-					}
-					else {
-						chantier.add(c.getNom()+"; id :"+((Integer)c.getChantierId()).toString());
+					} else {
+						chantier.add(c.getName() + "; id :" + ((Integer) c.getSiteId()).toString());
 					}
 				}
 			}
 		} catch (SQLException e1) {
-			e1.printStackTrace(); 
-	    	System.out.println("erreur pour recuperer les chantiers");
-	    	MessageBox dialog = new MessageBox(vueLivraison.getShell(), SWT.ICON_ERROR | SWT.OK);
-	    	dialog.setText("Erreur");
-	    	dialog.setMessage("Une erreur est survenue. "+'\n'+e1.getMessage());
-	    	dialog.open();
+			e1.printStackTrace();
+			System.out.println("erreur pour recuperer les chantiers");
+			MessageBox dialog = new MessageBox(vueLivraison.getShell(), SWT.ICON_ERROR | SWT.OK);
+			dialog.setText("Erreur");
+			dialog.setMessage("Une erreur est survenue. " + '\n' + e1.getMessage());
+			dialog.open();
 		}
 
-		//Date
+		// Date
 		Composite compositeDate = new Composite(colonne1, SWT.NONE);
 		compositeDate.setBackground(Couleur.bleuClair);
 		compositeDate.setLayout(fillLayoutH5);
@@ -1534,17 +1564,21 @@ public class ViewTurnOver {
 
 		final Text date = new Text(compositeDate, SWT.BORDER);
 		date.setText("");
-		//pour ajouter les barres / automatiquement
-		date.addModifyListener(new ModifyListener() { 
-			public void modifyText(ModifyEvent me) { 
-				if (!(date.getText().isEmpty())) {//pour ne pas tester quand l'utilisateur est en train de modifier
-					if (date.getText().length() == 2) {date.append("/");}
-					if (date.getText().length() == 5) {date.append("/");}
+		// pour ajouter les barres / automatiquement
+		date.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent me) {
+				if (!(date.getText().isEmpty())) {// pour ne pas tester quand l'utilisateur est en train de modifier
+					if (date.getText().length() == 2) {
+						date.append("/");
+					}
+					if (date.getText().length() == 5) {
+						date.append("/");
+					}
 				}
 			}
 		});
 
-		//Prix
+		// Prix
 		Composite compositePrix = new Composite(colonne1, SWT.NONE);
 		compositePrix.setBackground(Couleur.bleuClair);
 		compositePrix.setLayout(fillLayoutH5);
@@ -1555,25 +1589,26 @@ public class ViewTurnOver {
 
 		final Text prix = new Text(compositePrix, SWT.BORDER);
 		prix.setText("");
-		
-		//Boutons
+
+		// Boutons
 		Composite compositeBoutons = new Composite(colonne1, SWT.CENTER);
 		compositeBoutons.setBackground(Couleur.bleuClair);
 		compositeBoutons.setLayout(fillLayoutH5);
-		
+
 		Button buttonAnnulation = new Button(compositeBoutons, SWT.BACKGROUND);
 		buttonAnnulation.setText("Annuler");
 		buttonAnnulation.addSelectionListener(new SelectionAdapter() {
 
-			@Override public void widgetSelected(SelectionEvent arg0) {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
 				newVueLivraison();
 			}
 		});
-		
+
 		Button buttonValidation = new Button(compositeBoutons, SWT.BACKGROUND);
 		buttonValidation.setText("Valider");
 
-		//Produit
+		// Produit
 		Composite compositeProduit = new Composite(colonne2, SWT.NONE);
 		compositeProduit.setBackground(Couleur.bleuClair);
 		compositeProduit.setLayout(fillLayoutH5);
@@ -1581,161 +1616,168 @@ public class ViewTurnOver {
 		Label labelProduit = new Label(compositeProduit, SWT.NONE);
 		labelProduit.setBackground(Couleur.bleuClair);
 		labelProduit.setText("Produits : ");
-		
-	    Composite table = new Composite(colonne2, SWT.NONE);
-	    table.setLayout(rowLayoutV);
-	    table.setBackground(Couleur.bleuClair);
-	    
-		//creation de la table
-	    final Table tableProduit = new Table (table, SWT.BORDER | SWT.MULTI| SWT.V_SCROLL | SWT.FULL_SELECTION);
-	    tableProduit.setLayoutData(new RowData(400, 230));
-	    tableProduit.setLinesVisible (true);
-	    tableProduit.setHeaderVisible (true);
-	    
-	    final TableEditor editor = new TableEditor (tableProduit);
+
+		Composite table = new Composite(colonne2, SWT.NONE);
+		table.setLayout(rowLayoutV);
+		table.setBackground(Couleur.bleuClair);
+
+		// creation de la table
+		final Table tableProduit = new Table(table, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.FULL_SELECTION);
+		tableProduit.setLayoutData(new RowData(400, 230));
+		tableProduit.setLinesVisible(true);
+		tableProduit.setHeaderVisible(true);
+
+		final TableEditor editor = new TableEditor(tableProduit);
 		editor.horizontalAlignment = SWT.LEFT;
 		editor.grabHorizontal = true;
-		
-		//on met les noms des colonnes
-		String[] titles = {"Id","Nom","Prix", "Commentaires", "Quantité"};
+
+		// on met les noms des colonnes
+		String[] titles = { "Id", "Nom", "Prix", "Commentaires", "Quantité" };
 		for (String title : titles) {
-			TableColumn column = new TableColumn (tableProduit, SWT.NONE);
-			column.setText (title);
+			TableColumn column = new TableColumn(tableProduit, SWT.NONE);
+			column.setText(title);
 		}
-		
-		//on remplit la table
+
+		// on remplit la table
 		try {
 			for (Product p : Product.getAllProduct()) {
 				if (p.getStatus().getValue().contentEquals("Publié")) {
-					TableItem item = new TableItem (tableProduit, SWT.NONE);
-					item.setText(0,((Integer)p.getProduitId()).toString());
-					item.setText(1,p.getName());
-					item.setText(2,p.getPrice().toString());
-					item.setText(3,p.getComment());
-					item.setText(4,"0");
+					TableItem item = new TableItem(tableProduit, SWT.NONE);
+					item.setText(0, ((Integer) p.getProduitId()).toString());
+					item.setText(1, p.getName());
+					item.setText(2, p.getPrice().toString());
+					item.setText(3, p.getComment());
+					item.setText(4, "0");
 				}
 			}
 		} catch (SQLException e1) {
 			System.out.println("erreur dans la table des produits de livraison");
 			MessageBox dialog = new MessageBox(vueLivraison.getShell(), SWT.ICON_ERROR | SWT.OK);
 			dialog.setText("Erreur");
-			dialog.setMessage("Une erreur est survenue. "+'\n'+e1.getMessage());
+			dialog.setMessage("Une erreur est survenue. " + '\n' + e1.getMessage());
 			dialog.open();
 		}
 
-		tableProduit.pack();table.pack();
+		tableProduit.pack();
+		table.pack();
 
-		final TableColumn [] columns = tableProduit.getColumns (); 
-		for (TableColumn col : columns) { col.pack ();}
-        
-		//pour modifier les quantites 
+		final TableColumn[] columns = tableProduit.getColumns();
+		for (TableColumn col : columns) {
+			col.pack();
+		}
+
+		// pour modifier les quantites
 		tableProduit.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				Control oldEditor = editor.getEditor();
-				if (oldEditor != null) { oldEditor.dispose();}
+				if (oldEditor != null) {
+					oldEditor.dispose();
+				}
 
 				TableItem item = (TableItem) e.item;
-				if (item == null) { return; }
+				if (item == null) {
+					return;
+				}
 
 				Text newEditor = new Text(tableProduit, SWT.NONE);
 				newEditor.setText(item.getText(4));
-				newEditor.addModifyListener(new ModifyListener() { 
-					public void modifyText(ModifyEvent me) { 
+				newEditor.addModifyListener(new ModifyListener() {
+					public void modifyText(ModifyEvent me) {
 						if (!(newEditor.getText().isEmpty())) {
 							try {
-								if (Integer.parseInt(newEditor.getText()) <0) {
-									item.setText(4,"0"); 
+								if (Integer.parseInt(newEditor.getText()) < 0) {
+									item.setText(4, "0");
+								} else {
+									item.setText(4, newEditor.getText());
 								}
-								else {
-									item.setText(4,newEditor.getText()); 
-								}
-							} catch(Exception e) {
-								System.out.println("erreur dans la modif"); MessageBox dialog = new
-										MessageBox(vueLivraison.getShell(), SWT.ICON_ERROR | SWT.OK);
-								dialog.setText("Erreur Editor"); dialog.
-								setMessage("La quantite saisie n'est pas valide. "
-										+'\n'+e.getMessage()); dialog.open(); 
+							} catch (Exception e) {
+								System.out.println("erreur dans la modif");
+								MessageBox dialog = new MessageBox(vueLivraison.getShell(), SWT.ICON_ERROR | SWT.OK);
+								dialog.setText("Erreur Editor");
+								dialog.setMessage("La quantite saisie n'est pas valide. " + '\n' + e.getMessage());
+								dialog.open();
 							}
 						}
-					} 
+					}
 				});
-				newEditor.selectAll(); newEditor.setFocus();
+				newEditor.selectAll();
+				newEditor.setFocus();
 				editor.setEditor(newEditor, item, 4);
 			}
 		});
-		
-		
-		//Bouton calculPrix
+
+		// Bouton calculPrix
 		Composite calculPrix = new Composite(colonne2, SWT.CENTER);
 		calculPrix.setBackground(Couleur.bleuClair);
 		calculPrix.setLayout(fillLayoutH5);
-		
-		//juste pour decaler le bouton a droite
+
+		// juste pour decaler le bouton a droite
 		Label l = new Label(calculPrix, SWT.NONE);
 		l.setBackground(Couleur.bleuClair);
 		l.setText("");
-		
+
 		Button buttonCalculPrix = new Button(calculPrix, SWT.BACKGROUND);
 		buttonCalculPrix.setText("Afficher le prix total");
 		buttonCalculPrix.setBounds(10, 60, 200, 30);
-		
+
 		buttonCalculPrix.addSelectionListener(new SelectionAdapter() {
-			@Override public void widgetSelected(SelectionEvent arg0) {
-					Double somme = 0.0;
-					for (TableItem i : tableProduit.getItems()) {
-						Integer quantite = Integer.parseInt(i.getText(4));
-						Double prix = Double.parseDouble(i.getText(2));
-						somme += quantite * prix;
-					}
-					prix.setText(somme.toString());
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				Double somme = 0.0;
+				for (TableItem i : tableProduit.getItems()) {
+					Integer quantite = Integer.parseInt(i.getText(4));
+					Double prix = Double.parseDouble(i.getText(2));
+					somme += quantite * prix;
 				}
-			});
-		
-		
-		
+				prix.setText(somme.toString());
+			}
+		});
+
 		buttonValidation.addSelectionListener(new SelectionAdapter() {
-			  @Override public void widgetSelected(SelectionEvent arg0) {
-				  //d'abord, on calcul le prix pour etre sur
-				  Double somme = 0.0;
-					for (TableItem i : tableProduit.getItems()) {
-						Integer quantite = Integer.parseInt(i.getText(4));
-						Double prix = Double.parseDouble(i.getText(2));
-						somme += quantite * prix;
-					}
-					prix.setText(somme.toString());
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				// d'abord, on calcul le prix pour etre sur
+				Double somme = 0.0;
+				for (TableItem i : tableProduit.getItems()) {
+					Integer quantite = Integer.parseInt(i.getText(4));
+					Double prix = Double.parseDouble(i.getText(2));
+					somme += quantite * prix;
+				}
+				prix.setText(somme.toString());
 
-					Integer idChantier = 0;
-					try { 
-						String c = chantier.getText().split(";")[1].replace(" ",""); 
-						idChantier = Integer.parseInt(c.substring(3,c.length()));
-					} catch (Throwable e) { 
-						e.printStackTrace();
-						System.out.println("erreur dans la modif"); 
-						MessageBox dialog = new MessageBox(vueLivraison.getShell(), SWT.ICON_ERROR | SWT.OK);
-						dialog.setText("Erreur Modification"); 
-						dialog.setMessage("Merci d'indiquer un chantier."); 
-						dialog.open(); 
-					}	
+				Integer idChantier = 0;
+				try {
+					String c = chantier.getText().split(";")[1].replace(" ", "");
+					idChantier = Integer.parseInt(c.substring(3, c.length()));
+				} catch (Throwable e) {
+					e.printStackTrace();
+					System.out.println("erreur dans la modif");
+					MessageBox dialog = new MessageBox(vueLivraison.getShell(), SWT.ICON_ERROR | SWT.OK);
+					dialog.setText("Erreur Modification");
+					dialog.setMessage("Merci d'indiquer un chantier.");
+					dialog.open();
+				}
 
-					try { 
-						if (idChantier != 0) {
-							ArrayList<Integer> produits = new ArrayList<Integer>();
-							ArrayList<Integer> quantites = new ArrayList<Integer>();
+				try {
+					if (idChantier != 0) {
+						ArrayList<Integer> produits = new ArrayList<Integer>();
+						ArrayList<Integer> quantites = new ArrayList<Integer>();
 
-							for(TableItem i : tableProduit.getItems()) {
-								produits.add(Integer.parseInt(i.getText(0)));
-								quantites.add(Integer.parseInt(i.getText(4)));
-							}
-							validerCreation(idChantier, produits, quantites, prix.getText(), date.getText());
+						for (TableItem i : tableProduit.getItems()) {
+							produits.add(Integer.parseInt(i.getText(0)));
+							quantites.add(Integer.parseInt(i.getText(4)));
 						}
-					} catch (Throwable e) { e.printStackTrace();
-						System.out.println("erreur dans la modif"); 
-						MessageBox dialog = new MessageBox(vueLivraison.getShell(), SWT.ICON_ERROR | SWT.OK);
-						dialog.setText("Erreur Modification"); 
-						dialog.setMessage("Une erreur est survenue. "+e.getMessage()); 
-						dialog.open(); 
-					}	
-			  }
+						validerCreation(idChantier, produits, quantites, prix.getText(), date.getText());
+					}
+				} catch (Throwable e) {
+					e.printStackTrace();
+					System.out.println("erreur dans la modif");
+					MessageBox dialog = new MessageBox(vueLivraison.getShell(), SWT.ICON_ERROR | SWT.OK);
+					dialog.setText("Erreur Modification");
+					dialog.setMessage("Une erreur est survenue. " + e.getMessage());
+					dialog.open();
+				}
+			}
 		});
 		vue.pack();
 	}
@@ -1743,181 +1785,187 @@ public class ViewTurnOver {
 	/***
 	 * cree une livraison a partir du formulaire et l'insere dans la base de donnees
 	 */
-	public void validerCreation(Integer idChantier, ArrayList<Integer> produits, ArrayList<Integer> quantites, String prix, String date) {
+	public void validerCreation(Integer idChantier, ArrayList<Integer> produits, ArrayList<Integer> quantites,
+			String prix, String date) {
 
-		//champs obligatoires
+		// champs obligatoires
 		Delivery livraison = new Delivery(idChantier);
 		livraison.setStatus("Publié");
-		  
-		//champs optionels
+
+		// champs optionels
 		if (prix != null) {
 			if (prix != "" && prix.contains(".")) {
-		    	livraison.setPrixTotal(Double.parseDouble(prix));
-		    }
-		    else if (prix != "" && prix.matches(".*\\d.*")) {
-		    	livraison.setPrixTotal(Double.parseDouble(prix+".0"));
-		    }
+				livraison.setPrixTotal(Double.parseDouble(prix));
+			} else if (prix != "" && prix.matches(".*\\d.*")) {
+				livraison.setPrixTotal(Double.parseDouble(prix + ".0"));
+			}
 		}
-		
+
 		if (!(date.isEmpty())) {
 			livraison.setDate(date);
 		}
-	    
-	    //on insert dans la base de données
+
+		// on insert dans la base de données
 		int idLivraison = 0;
-		boolean toutVaBien = true ;
-	    try { 
-	    	idLivraison = livraison.insertDatabase(); 
-	    	System.out.println("on a insere la livraison !!");
-	    } catch (SQLException e) { 
-	    	toutVaBien = false;
-	    	System.out.println("erreur dans la création");
-	    	MessageBox dialog = new MessageBox(vueLivraison.getShell(), SWT.ICON_ERROR | SWT.OK);
-	    	dialog.setText("Erreur Création");
-	    	dialog.setMessage("Une erreur est survenue lors de la création de la livraison. "+'\n'+e.getMessage());
-	    	dialog.open();
-	    } 
-	    
-	    for(int i = 0 ; i<produits.size() ; i++) {
-	    	if (quantites.get(i) != 0) {
-	    		ProductByDelivery p = new ProductByDelivery(idLivraison,  produits.get(i), quantites.get(i), "Publié");
-	    		try {
+		boolean toutVaBien = true;
+		try {
+			idLivraison = livraison.insertDatabase();
+			System.out.println("on a insere la livraison !!");
+		} catch (SQLException e) {
+			toutVaBien = false;
+			System.out.println("erreur dans la création");
+			MessageBox dialog = new MessageBox(vueLivraison.getShell(), SWT.ICON_ERROR | SWT.OK);
+			dialog.setText("Erreur Création");
+			dialog.setMessage("Une erreur est survenue lors de la création de la livraison. " + '\n' + e.getMessage());
+			dialog.open();
+		}
+
+		for (int i = 0; i < produits.size(); i++) {
+			if (quantites.get(i) != 0) {
+				ProductByDelivery p = new ProductByDelivery(idLivraison, produits.get(i), quantites.get(i), "Publié");
+				try {
 					p.insertDatabase();
 				} catch (SQLException e) {
 					toutVaBien = false;
 					System.out.println("erreur dans la création");
-			    	MessageBox dialog = new MessageBox(vueLivraison.getShell(), SWT.ICON_ERROR | SWT.OK);
-			    	dialog.setText("Erreur Création");
-			    	dialog.setMessage("Une erreur est survenue lors de la création de la livraison. "+'\n'+e.getMessage());
-			    	dialog.open();
+					MessageBox dialog = new MessageBox(vueLivraison.getShell(), SWT.ICON_ERROR | SWT.OK);
+					dialog.setText("Erreur Création");
+					dialog.setMessage(
+							"Une erreur est survenue lors de la création de la livraison. " + '\n' + e.getMessage());
+					dialog.open();
 				}
-	    	}
-	    }
+			}
+		}
 
-	    if (toutVaBien) {
-	    	MessageBox dialog = new MessageBox(vueLivraison.getShell(), SWT.ICON_INFORMATION | SWT.OK);
-	    	dialog.setText("Création réussie");
-	    	dialog.setMessage("La livraison a bien été ajoutée à la base de données.");
-	    	dialog.open();
-	    	newVueLivraison();
-	    }
-	    
+		if (toutVaBien) {
+			MessageBox dialog = new MessageBox(vueLivraison.getShell(), SWT.ICON_INFORMATION | SWT.OK);
+			dialog.setText("Création réussie");
+			dialog.setMessage("La livraison a bien été ajoutée à la base de données.");
+			dialog.open();
+			newVueLivraison();
+		}
+
 	}
-	
-    //--------------------------------------------------------------------------
+
+	// --------------------------------------------------------------------------
 	/***
-	 * affiche le tableau avec tous les livraisons dans la base de donnees dont le status est publie
+	 * affiche le tableau avec tous les livraisons dans la base de donnees dont le
+	 * status est publie
 	 */
 	public void vueLivraisonAfficher() {
 		if (!Objects.isNull(vue) && !vue.isDisposed()) {
 			vue.dispose();
 		}
 		RowLayout rowLayoutV = new RowLayout();
-	    rowLayoutV.type = SWT.VERTICAL;
-		
-	    vue = new Composite(vueLivraison, SWT.NONE);
+		rowLayoutV.type = SWT.VERTICAL;
+
+		vue = new Composite(vueLivraison, SWT.NONE);
 		vue.setLayout(rowLayoutV);
 		vue.setBackground(Couleur.gris);
-		
-		//creation de la table
-	    final Table table = new Table (vue, SWT.BORDER | SWT.MULTI| SWT.V_SCROLL | SWT.FULL_SELECTION);
-	    table.setLayoutData(new RowData(450, 390));
-	    table.setLinesVisible (true);
-		table.setHeaderVisible (true);
-		
-		//on met les noms des colonnes
-		String[] titles = {"Chantier","Date", "Prix Total"};
+
+		// creation de la table
+		final Table table = new Table(vue, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.FULL_SELECTION);
+		table.setLayoutData(new RowData(450, 390));
+		table.setLinesVisible(true);
+		table.setHeaderVisible(true);
+
+		// on met les noms des colonnes
+		String[] titles = { "Chantier", "Date", "Prix Total" };
 		for (String title : titles) {
-			TableColumn column = new TableColumn (table, SWT.NONE);
-			column.setText (title);
+			TableColumn column = new TableColumn(table, SWT.NONE);
+			column.setText(title);
 		}
-		
-		//je voulais cacher cette colonne mais ca ne fonctionne pas
-		TableColumn column = new TableColumn (table, SWT.NONE);
-		column.setText ("Id DB");
+
+		// je voulais cacher cette colonne mais ca ne fonctionne pas
+		TableColumn column = new TableColumn(table, SWT.NONE);
+		column.setText("Id DB");
 		column.setWidth(0);
 		column.setResizable(false);
-		
-		//on remplit la table
-		final TableColumn [] columns = table.getColumns ();
-		
+
+		// on remplit la table
+		final TableColumn[] columns = table.getColumns();
+
 		updateTable(table);
-		
-		//on pack les colonnes
+
+		// on pack les colonnes
 		for (TableColumn col : columns)
-			col.pack ();
-		
-		//on ajoute un listener pour modifier l'interface si l'utilisateur clique sur une ligne
+			col.pack();
+
+		// on ajoute un listener pour modifier l'interface si l'utilisateur clique sur
+		// une ligne
 		table.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (table.getSelectionIndex() != -1) {
-					
+
 					try {
 						System.out.println(Integer.parseInt(table.getSelection()[0].getText(3)));
-						selectedLivraison = Delivery.getLivraisonById(Integer.parseInt(table.getSelection()[0].getText(3)));
+						selectedLivraison = Delivery
+								.getLivraisonById(Integer.parseInt(table.getSelection()[0].getText(3)));
 					} catch (NumberFormatException | SQLException e1) {
 						System.out.println("erreur pour recuperer la livraison selectionnée");
-				    	MessageBox dialog = new MessageBox(vueLivraison.getShell(), SWT.ICON_ERROR | SWT.OK);
-				    	dialog.setText("Erreur");
-				    	dialog.setMessage("Une erreur est survenue. "+'\n'+e1.getMessage());
-				    	dialog.open();
+						MessageBox dialog = new MessageBox(vueLivraison.getShell(), SWT.ICON_ERROR | SWT.OK);
+						dialog.setText("Erreur");
+						dialog.setMessage("Une erreur est survenue. " + '\n' + e1.getMessage());
+						dialog.open();
 					}
 					compositeSelectionModifier(table);
-					
-					//on ajoute un menu lorsque l'on fait clique droit sur une ligne
+
+					// on ajoute un menu lorsque l'on fait clique droit sur une ligne
 					doMenu(table);
-				}
-				else { // si plus rien n'est selectionner on passe selectedLivraison a null et on enleve le menu du clic droit et on enleve les boutons pour modifier et supprimer
-					
+				} else { // si plus rien n'est selectionner on passe selectedLivraison a null et on
+							// enleve le menu du clic droit et on enleve les boutons pour modifier et
+							// supprimer
+
 					selectedLivraison = null;
-					
+
 					menu.dispose();
-					menu = new Menu (vueLivraison.getShell(), SWT.POP_UP);
-					table.setMenu (menu);
-					
+					menu = new Menu(vueLivraison.getShell(), SWT.POP_UP);
+					table.setMenu(menu);
+
 					compositeSelectionCreer();
 				}
 			}
 		});
 		vue.pack();
 	}
-	
+
 	/***
 	 * remplit la table de toutes les livraisons publiees
+	 * 
 	 * @param table
 	 */
 	public void updateTable(Table table) {
 		table.removeAll();
 		try {
 			for (Delivery l : Delivery.getAllLivraison()) {
-				//on verifie le status
+				// on verifie le status
 				if (l.getStatus().contentEquals("Publié")) {
-					TableItem item = new TableItem (table, SWT.NONE);
-					item.setText(0,Site.getChantierById(l.getIdChantier()).getNom());
-					//item.setText(1,Produit.getProductById(l.getIdProduit()).getNom());
+					TableItem item = new TableItem(table, SWT.NONE);
+					item.setText(0, Site.getSiteById(l.getIdChantier()).getName());
+					// item.setText(1,Produit.getProductById(l.getIdProduit()).getNom());
 					if (l.getDate() == null) {
-						item.setText(1,"");
+						item.setText(1, "");
+					} else {
+						item.setText(1, l.getDate());
 					}
-					else {
-						item.setText(1,l.getDate());
-					}
-					item.setText(2,l.getPrixTotal().toString());
-					item.setText(3,Integer.toString(l.getLivraisonId()));
+					item.setText(2, l.getPrixTotal().toString());
+					item.setText(3, Integer.toString(l.getLivraisonId()));
 				}
 			}
 		} catch (SQLException e) {
-	    	System.out.println("erreur dans la table des livraisons");
-	    	MessageBox dialog = new MessageBox(vueLivraison.getShell(), SWT.ICON_ERROR | SWT.OK);
-	    	dialog.setText("Erreur");
-	    	dialog.setMessage("Une erreur est survenue. "+'\n'+e.getMessage());
-	    	dialog.open();
+			System.out.println("erreur dans la table des livraisons");
+			MessageBox dialog = new MessageBox(vueLivraison.getShell(), SWT.ICON_ERROR | SWT.OK);
+			dialog.setText("Erreur");
+			dialog.setMessage("Une erreur est survenue. " + '\n' + e.getMessage());
+			dialog.open();
 		}
 	}
-	
+
 	/***
 	 * cree un menu sur la selection de la table des livraisons lors d'un clic droit
+	 * 
 	 * @param table
-	 */	
+	 */
 	public void doMenu(Table table) {
 		menu = new Menu(tabFolder.getShell(), SWT.POP_UP);
 		table.setMenu(menu);
@@ -1930,10 +1978,9 @@ public class ViewTurnOver {
 				@Override
 				public void widgetSelected(SelectionEvent arg0) {
 					if (table.getSelection().length != 0) {
-						if (selectedAmorti!=null) {
+						if (selectedAmorti != null) {
 							vueCreationA();
-						}
-						else {
+						} else {
 							vueLivraisonModifier();
 						}
 					}
@@ -1948,11 +1995,13 @@ public class ViewTurnOver {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				try {
-					if (selectedAmorti!=null) {
-						AmmortissementChantier ae = AmmortissementChantier.getAmmortissementChantierById(selectedAmorti.getAmmortissementChantierId());
+					if (selectedAmorti != null) {
+						AmmortissementChantier ae = AmmortissementChantier
+								.getAmmortissementChantierById(selectedAmorti.getAmmortissementChantierId());
 						MessageBox dialog = new MessageBox(tabFolder.getShell(), SWT.ICON_QUESTION | SWT.YES | SWT.NO);
 						dialog.setText("Suppression Amortissement Chantier");
-						dialog.setMessage("Voulez vous supprimer le coût à amortir du chantier " + Site.getChantierById(ae.getChantierId()).getNom() + " ?");
+						dialog.setMessage("Voulez vous supprimer le coût à amortir du chantier "
+								+ Site.getSiteById(ae.getChantierId()).getName() + " ?");
 						int buttonID = dialog.open();
 						switch (buttonID) {
 						case SWT.YES:
@@ -1962,11 +2011,11 @@ public class ViewTurnOver {
 						}
 						selectedAmorti = null;
 						amortiSelection();
-					}
-					else {
+					} else {
 						suppLivraison(table);
 					}
-					selectedChantier = null; selectedAmorti = null;
+					selectedChantier = null;
+					selectedAmorti = null;
 					menu.dispose();
 					menu = new Menu(tabFolder.getShell(), SWT.POP_UP);
 					table.setMenu(menu);
@@ -1981,10 +2030,9 @@ public class ViewTurnOver {
 		});
 
 	}
-	
-	
+
 	public Composite getComposite() {
 		return this.tabFolder;
 	}
-	
+
 }

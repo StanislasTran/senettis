@@ -227,6 +227,10 @@ public class FournitureSanitaire {
 	public int getChantierId() {
 		return chantierId;
 	}
+	
+	public int getSiteId() {
+		return chantierId;
+	}
 
 	public void setChantierId(Integer chantierId) {
 		if (chantierId == null) {

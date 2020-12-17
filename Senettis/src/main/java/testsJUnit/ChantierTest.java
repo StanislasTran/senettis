@@ -3,6 +3,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import classes.Site;
+import classes.Status;
 
 
 public class ChantierTest
@@ -14,19 +15,19 @@ public class ChantierTest
     @Before
     public void setUp() 
     {
-        puteaux = new Site("Puteaux","à Puteaux",100.0,"Publié");
-        boulogne = new Site("Boulogne","Publié");
-        boulogne.setAdresse("à Boulogne");
-        boulogne.setCA(200.0);
+        puteaux = new Site("Puteaux","à Puteaux",Status.PUBLISHED);
+        boulogne = new Site("Boulogne",Status.PUBLISHED);
+        boulogne.setAdress("à Boulogne");
+       ;
     }
     
     @Test
     public void testGet() 
     {
 	     String s = "";
-	     s += puteaux.getNom() + ", ";
+	     s += puteaux.getName() + ", ";
 	     s += puteaux.getAdresse() + ", ";
-	     s += puteaux.getCA() + ", ";
+	     
 	     
 	     System.out.println(s);
     }

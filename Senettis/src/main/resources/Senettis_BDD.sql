@@ -28,7 +28,6 @@ SET Date_de_modification = GETDATE()
 Create table Chantier (
     ChantierId INT PRIMARY KEY IDENTITY (1, 1),
     Nom VARCHAR (100) NOT NULL,
-    CA decimal,
     adresse VARCHAR (500),
 	"Status" VARCHAR (50) NOT NULL,
 	"Date_de_creation" DateTime  NOT NUll Default (GETDATE()), 

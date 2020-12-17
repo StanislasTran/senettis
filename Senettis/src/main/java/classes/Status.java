@@ -31,4 +31,9 @@ public enum Status {
 		return status;
 	}
 
+	
+	public boolean equals(String value) {
+		return this.value.equals(value);
+	}
+	
 }

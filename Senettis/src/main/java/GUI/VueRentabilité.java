@@ -162,7 +162,7 @@ public class VueRentabilité {
 
 								// à Gerer
 								try {
-									TurnOver TO = TurnOver.getTurnOverByDateAndSite(s.getChantierId(), i, j);
+									TurnOver TO = TurnOver.getTurnOverByDateAndSite(s.getSiteId(), i, j);
 									CA = TO.getCa();
 								} catch (SQLException sqlException) {
 
@@ -171,7 +171,7 @@ public class VueRentabilité {
 									
 									
 								try {
-									CoutsEmploye = new SalaryCostPerSite(s.getChantierId(), Month.of(i), Year.of(j))
+									CoutsEmploye = new SalaryCostPerSite(s.getSiteId(), Month.of(i), Year.of(j))
 											.getTotalCost();
 
 								} catch (SQLException sqlException) {
@@ -191,7 +191,7 @@ public class VueRentabilité {
 												Integer.parseInt(d1[1]));
 
 										if (l.getStatus().equals("Publié")) {
-											if (l.getIdChantier() == s.getChantierId() && date1.equals(date2)) {
+											if (l.getIdChantier() == s.getSiteId() && date1.equals(date2)) {
 												livraison += l.getPrixTotal();
 											}
 										}
@@ -209,7 +209,7 @@ public class VueRentabilité {
 																							// le temps
 										YearMonth debut = YearMonth.of(fs.getAnneeD(), fs.getMoisD());
 										if (fs.getStatus().equals("Publié")) {
-											if (fs.getChantierId() == s.getChantierId()) {
+											if (fs.getSiteId() == s.getSiteId()) {
 												if (debut.equals(date1) || (debut.isBefore(date1))) {
 													coutsFs += fs.getMontantParMois();
 												}
@@ -228,7 +228,7 @@ public class VueRentabilité {
 									YearMonth debut = YearMonth.of(ac.getAnneeD(), ac.getMoisD());
 									YearMonth fin = YearMonth.of(ac.getAnneeF(), ac.getMoisF());
 									if (ac.getStatus().equals("Publié")) {
-										if (ac.getChantierId() == s.getChantierId()) {
+										if (ac.getSiteId() == s.getSiteId()) {
 											if (debut.equals(date1) || fin.equals(date1)
 													|| (debut.isBefore(date1) && fin.isAfter(date1))) {
 												materiel += ac.getMontantParMois();
@@ -237,7 +237,7 @@ public class VueRentabilité {
 									}
 								}
 
-								Double comission = Comission.getComissionSum(s.getChantierId(), date1.getMonth(),
+								Double comission = Comission.getComissionSum(s.getSiteId(), date1.getMonth(),
 										Year.of(date1.getYear()));
 
 								coutRevient = CoutsEmploye + materiel + coutsFs + comissions + livraison;
@@ -245,7 +245,7 @@ public class VueRentabilité {
 								pourcentage = (margeBrut * 100) / CA;
 								
 								
-								new Rentabilite(s.getChantierId(), Month.of(i), Year.of(j), CA, CoutsEmploye, livraison,
+								new Rentabilite(s.getSiteId(), Month.of(i), Year.of(j), CA, CoutsEmploye, livraison,
 										materiel, coutsFs, comissions, coutRevient, margeBrut, pourcentage).update();
 								
 								}
@@ -326,12 +326,12 @@ public class VueRentabilité {
 				Double CoutRevient = 0.0;
 				if (c.getStatus().equals("Publié")) {
 					TableItem item = new TableItem(tableRentabilite, SWT.NONE);
-					item.setText(0, c.getNom());
+					item.setText(0, c.getName());
 
 					double CA = 0.0;
 
 					try {
-						CA = TurnOver.getTurnOverByDateAndSite(c.getChantierId(), Month.valueOf(d2[0]).getValue(),
+						CA = TurnOver.getTurnOverByDateAndSite(c.getSiteId(), Month.valueOf(d2[0]).getValue(),
 								Integer.parseInt(d2[1])).getCa();
 
 						item.setText(1, Double.toString(CA));
@@ -343,7 +343,7 @@ public class VueRentabilité {
 					//// masse salariale TODO
 					Double totalEmployeCost = 0.0;
 					try {
-						totalEmployeCost = new SalaryCostPerSite(c.getChantierId(), Month.valueOf(d2[0]),
+						totalEmployeCost = new SalaryCostPerSite(c.getSiteId(), Month.valueOf(d2[0]),
 								Year.of(Integer.parseInt(d2[1]))).getTotalCost();
 
 					} catch (SQLException sqlException) {
@@ -361,7 +361,7 @@ public class VueRentabilité {
 							YearMonth date2 = YearMonth.of(Integer.parseInt(d1[2]), Integer.parseInt(d1[1]));
 
 							if (l.getStatus().equals("Publié")) {
-								if (l.getIdChantier() == c.getChantierId() && date1.equals(date2)) {
+								if (l.getIdChantier() == c.getSiteId() && date1.equals(date2)) {
 									total_livraison += l.getPrixTotal();
 								}
 							}
@@ -377,7 +377,7 @@ public class VueRentabilité {
 						YearMonth debut = YearMonth.of(ac.getAnneeD(), ac.getMoisD());
 						YearMonth fin = YearMonth.of(ac.getAnneeF(), ac.getMoisF());
 						if (ac.getStatus().equals("Publié")) {
-							if (ac.getChantierId() == c.getChantierId()) {
+							if (ac.getSiteId() == c.getSiteId()) {
 								if (debut.equals(date1) || fin.equals(date1)
 										|| (debut.isBefore(date1) && fin.isAfter(date1))) {
 									total_materiel += ac.getMontantParMois();
@@ -396,7 +396,7 @@ public class VueRentabilité {
 																				// considere que c'est tout le temps
 							YearMonth debut = YearMonth.of(fs.getAnneeD(), fs.getMoisD());
 							if (fs.getStatus().equals("Publié")) {
-								if (fs.getChantierId() == c.getChantierId()) {
+								if (fs.getSiteId() == c.getSiteId()) {
 									if (debut.equals(date1) || (debut.isBefore(date1))) {
 										total_fs += fs.getMontantParMois();
 									}
@@ -410,7 +410,7 @@ public class VueRentabilité {
 
 					// Comission
 
-					Double comission = Comission.getComissionSum(c.getChantierId(), date1.getMonth(),
+					Double comission = Comission.getComissionSum(c.getSiteId(), date1.getMonth(),
 							Year.of(date1.getYear()));
 					item.setText(6, Double.toString(comission));
 
