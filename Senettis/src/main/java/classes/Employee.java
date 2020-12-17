@@ -20,6 +20,7 @@ import java.sql.Statement;
 import java.sql.Types;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 
 public class Employee {
 
@@ -239,7 +240,8 @@ public class Employee {
 		} else {
 			throw new Error("Le numéro de matricule indiqué est vide.");
 		}
-		this.anciennetePC = 2;
+		this.anciennetePC = 0;
+		
 	}
 
 	// Liens avec la BDD-----------------------------------------------
@@ -310,6 +312,12 @@ public class Employee {
 
 		return statement.executeUpdate();
 	}
+	
+	
+	
+	
+	
+
 
 	/***
 	 * requete la base de données afin de recuperer tous les elements de la table
@@ -731,6 +739,34 @@ public class Employee {
 
 	public void setAnciennetePC(int anciennetePC) {
 		this.anciennetePC = anciennetePC;
+	}
+
+	public Integer getComputeAnciennete() {
+		String date = this.getDateArrivee();
+		int j1 = Integer.parseInt(date.substring(0, 2));
+		int m1 = Integer.parseInt(date.substring(3, 5));
+		int a1 = Integer.parseInt(date.substring(6, 10));
+		LocalDate currentdate = LocalDate.now();
+		int j2 = currentdate.getDayOfMonth();
+		int m2 = currentdate.getMonthValue();
+		int a2 = currentdate.getYear();
+	
+		Integer anciennete = 0;
+
+		if (a2 - a1 == 0) {
+			anciennete = 0;
+
+		} else if (a2 - a1 > 0) {
+			
+
+			if (m1 > m2)
+				anciennete = a2 - a1 - 1;
+			else
+				anciennete = a2 - a1;
+
+		}
+
+		return anciennete;
 	}
 	
 	

@@ -149,7 +149,7 @@ public class VueEmploye {
 							updateTableAmorti();
 						}
 					} catch (Exception e) {
-						
+
 						MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_ERROR | SWT.OK);
 						dialog.setText("Erreur");
 						dialog.setMessage("Une erreur est survenue. " + '\n' + e.getMessage());
@@ -510,7 +510,7 @@ public class VueEmploye {
 					int moisF = moisD + duree;
 					int anneeF = anneeD;
 
-					while (moisF>12) {
+					while (moisF > 12) {
 						moisF -= 12;
 						anneeF += 1;
 					}
@@ -519,16 +519,17 @@ public class VueEmploye {
 
 					AmmortissementEmploye ae;
 					if (selectedAmorti != null) {
-						ae = new AmmortissementEmploye(selectedAmorti.getAmmortissementEmployeId(),
-								employeId, moisD, anneeD, moisF, anneeF, textDesc.getText(), valeurTotale / duree, duree,
-								valeurTotale, type.getText(), "Publié");
+						ae = new AmmortissementEmploye(selectedAmorti.getAmmortissementEmployeId(), employeId, moisD,
+								anneeD, moisF, anneeF, textDesc.getText(), valeurTotale / duree, duree, valeurTotale,
+								type.getText(), "Publié");
 						ae.updateDatabase();
 						MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_INFORMATION | SWT.OK);
 						dialog.setText("Modification réussie");
 						dialog.setMessage("Ce cout a bien été modifié dans la base de données.");
 						dialog.open();
 					} else {
-						ae = new AmmortissementEmploye(employeId, moisD, anneeD, moisF, anneeF,  valeurTotale / duree, 						textDesc.getText(),	duree, valeurTotale, type.getText(), "Publié");
+						ae = new AmmortissementEmploye(employeId, moisD, anneeD, moisF, anneeF, valeurTotale / duree,
+								textDesc.getText(), duree, valeurTotale, type.getText(), "Publié");
 						ae.insertDatabase();
 						MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_INFORMATION | SWT.OK);
 						dialog.setText("Création réussie");
@@ -696,7 +697,7 @@ public class VueEmploye {
 		vueEmploye.getParent().pack();
 
 	}
-	
+
 	public static void selectionCouts() {
 		if (!Objects.isNull(selection) && !selection.isDisposed()) {
 			selection.dispose();
@@ -816,7 +817,7 @@ public class VueEmploye {
 		updateCoutsTable(month.toString() + " " + year);
 		vue.pack();
 	}
-	
+
 	public static void compoValidation() {
 		if (!Objects.isNull(validation) && !validation.isDisposed()) {
 			validation.dispose();
@@ -848,7 +849,7 @@ public class VueEmploye {
 			public void widgetSelected(SelectionEvent arg0) {
 
 				for (int ligne = 0; ligne < tableCouts.getItems().length; ligne++) {
-					System.out.println(ligne+"-----------------------------");
+					System.out.println(ligne + "-----------------------------");
 					Integer employeId = Integer.parseInt(tableCouts.getItem(ligne).getText(0));
 					Boolean empty = true;
 					try {
@@ -859,106 +860,95 @@ public class VueEmploye {
 						int mois = Integer.parseInt(periode[0]);
 						int annee = Integer.parseInt(periode[1]);
 
-						CoutsEmploye ce = new CoutsEmploye(employeId,mois,annee,"Publié");
+						CoutsEmploye ce = new CoutsEmploye(employeId, mois, annee, "Publié");
 						System.out.println("on a cree ");
 
 						if (!tableCouts.getItem(ligne).getText(5).isBlank()) {
 							ce.setSalaireNet(Double.parseDouble(tableCouts.getItem(ligne).getText(5)));
 							empty = false;
-						}
-						else {
+						} else {
 							ce.setSalaireNet(0.0);
 						}
 
 						if (!tableCouts.getItem(ligne).getText(6).isBlank()) {
 							ce.setSalaireBrut(Double.parseDouble(tableCouts.getItem(ligne).getText(6)));
 							empty = false;
-						}
-						else {
+						} else {
 							ce.setSalaireBrut(0.0);
 						}
 
 						if (!tableCouts.getItem(ligne).getText(7).isBlank()) {
 							ce.setNombreHeures(Double.parseDouble(tableCouts.getItem(ligne).getText(7)));
 							empty = false;
-						}
-						else {
+						} else {
 							ce.setNombreHeures(0.0);
 						}
 
 						if (!tableCouts.getItem(ligne).getText(8).isBlank()) {
 							ce.setChargesP(Double.parseDouble(tableCouts.getItem(ligne).getText(8)));
 							empty = false;
-						}
-						else {
+						} else {
 							ce.setChargesP(0.0);
 						}
 
 						if (!tableCouts.getItem(ligne).getText(9).isBlank()) {
 							ce.setMasseS(Double.parseDouble(tableCouts.getItem(ligne).getText(9)));
 							empty = false;
-						}
-						else {
+						} else {
 							ce.setMasseS(0.0);
 						}
 
 						if (!tableCouts.getItem(ligne).getText(10).isBlank()) {
 							ce.setRemboursementTransport(Double.parseDouble(tableCouts.getItem(ligne).getText(10)));
 							empty = false;
-						}
-						else {
+						} else {
 							ce.setRemboursementTransport(0.0);
 						}
 
 						if (!tableCouts.getItem(ligne).getText(11).isBlank()) {
 							ce.setRemboursementTelephone(Double.parseDouble(tableCouts.getItem(ligne).getText(11)));
 							empty = false;
-						}
-						else {
+						} else {
 							ce.setRemboursementTelephone(0.0);
 						}
 
 						if (!tableCouts.getItem(ligne).getText(12).isBlank()) {
 							ce.setMutuelle(Double.parseDouble(tableCouts.getItem(ligne).getText(12)));
 							empty = false;
-						}
-						else {
+						} else {
 							ce.setMutuelle(0.0);
 						}
 
 						if (!tableCouts.getItem(ligne).getText(13).isBlank()) {
 							ce.setPaniers(Double.parseDouble(tableCouts.getItem(ligne).getText(13)));
 							empty = false;
-						}
-						else {
+						} else {
 							ce.setPaniers(0.0);
 						}
 
 						if (!tableCouts.getItem(ligne).getText(14).isBlank()) {
 							ce.setPrets(Double.parseDouble(tableCouts.getItem(ligne).getText(14)));
 							empty = false;
-						}
-						else {
+						} else {
 							ce.setPrets(0.0);
 						}
 
 						if (!tableCouts.getItem(ligne).getText(15).isBlank()) {
 							ce.setSaisieArret(Double.parseDouble(tableCouts.getItem(ligne).getText(15)));
 							empty = false;
-						}
-						else {
+						} else {
 							ce.setSaisieArret(0.0);
 						}
 
 						System.out.println("on a tout rempli");
 
-						if (!empty) {//si au moins un champs est renseigné
+						if (!empty) {// si au moins un champs est renseigné
 							try {
-								System.out.println(employeId+","+mois+","+annee);
-								if(ce.updateDatabaseFromEmployeId()==0) {
+								System.out.println(employeId + "," + mois + "," + annee);
+								if (ce.updateDatabaseFromEmployeId() == 0) {
 									ce.insertDatabase();
 								}
-							} catch(Exception e) {
+							} catch (Exception e) {
 								System.out.println("creation");
 								ce.insertDatabase();
 							}
@@ -996,14 +986,14 @@ public class VueEmploye {
 	}
 
 	public static void updateCoutsTable(String periode) {
-		//if (!Objects.isNull(tableCouts)) {
-		//	tableCouts.removeAll();
-		//}
-		
+		// if (!Objects.isNull(tableCouts)) {
+		// tableCouts.removeAll();
+		// }
+
 		if (!Objects.isNull(tableCouts) && !tableCouts.isDisposed()) {
 			tableCouts.dispose();
 		}
-		
+
 		// creation de la table des produits
 		tableCouts = new Table(vue, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.FULL_SELECTION);
 		tableCouts.setLayoutData(new RowData(1045, 530));
@@ -1035,11 +1025,12 @@ public class VueEmploye {
 					item.setText(1, e.getNom());
 					item.setText(2, e.getPrenom());
 					item.setText(3, e.getNumeroMatricule());
-					item.setText(4, Integer.toString(moisInt.getValue())+'/'+annee);
-					
+					item.setText(4, Integer.toString(moisInt.getValue()) + '/' + annee);
+
 					try {
 						System.out.println("ici");
-						CoutsEmploye ce = CoutsEmploye.getCoutEmployeByEmployeId(e.getEmployeId(),moisInt.getValue(),Integer.parseInt(annee));
+						CoutsEmploye ce = CoutsEmploye.getCoutEmployeByEmployeId(e.getEmployeId(), moisInt.getValue(),
+								Integer.parseInt(annee));
 						if (ce.getStatus().equals("Publié")) {
 							item.setText(5, ce.getSalaireNet().toString());
 							item.setText(6, ce.getSalaireBrut().toString());
@@ -1051,20 +1042,22 @@ public class VueEmploye {
 							item.setText(12, ce.getMutuelle().toString());
 							item.setText(13, ce.getPaniers().toString());
 							System.out.println("Nouvel employe --------------------------------------");
-							
-							Double pret = 0.0; Double saisie = 0.0;
-							for (AmmortissementEmploye ae : AmmortissementEmploye.getAmmortissementEmployeByEmployeId(e.getEmployeId())) {
+
+							Double pret = 0.0;
+							Double saisie = 0.0;
+							for (AmmortissementEmploye ae : AmmortissementEmploye
+									.getAmmortissementEmployeByEmployeId(e.getEmployeId())) {
 								System.out.println("dans la boucle");
 								if (ae.getStatus().equals("Publié")) {
 									System.out.println("c'est publie");
-									YearMonth debut = YearMonth.of(ae.getAnneeD(),ae.getMoisD());
-									YearMonth fin = YearMonth.of(ae.getAnneeF(),ae.getMoisF());
-									YearMonth now = YearMonth.of(Integer.parseInt(annee),moisInt.getValue());
-									if (debut.equals(now) || fin.equals(now) || (debut.isBefore(now) && fin.isAfter(now))) {
+									YearMonth debut = YearMonth.of(ae.getAnneeD(), ae.getMoisD());
+									YearMonth fin = YearMonth.of(ae.getAnneeF(), ae.getMoisF());
+									YearMonth now = YearMonth.of(Integer.parseInt(annee), moisInt.getValue());
+									if (debut.equals(now) || fin.equals(now)
+											|| (debut.isBefore(now) && fin.isAfter(now))) {
 										if (ae.getType().equals("Prêt")) {
 											pret += ae.getMontantParMois();
-										}
-										else {
+										} else {
 											saisie += ae.getMontantParMois();
 										}
 									}
@@ -1073,16 +1066,16 @@ public class VueEmploye {
 							item.setText(14, pret.toString());
 							item.setText(15, saisie.toString());
 						}
-					}catch (Exception e2) {
-						//si on n'a pas de couts associes a cet employe pour l'instant
+					} catch (Exception e2) {
+						// si on n'a pas de couts associes a cet employe pour l'instant
 					}
 				}
-				
+
 			}
-			
-			tableCouts.layout(true,true);
-			vue.layout(true,true);
-			
+
+			tableCouts.layout(true, true);
+			vue.layout(true, true);
+
 		} catch (SQLException e1) {
 			System.out.println("erreur dans la table des couts employes");
 			MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_ERROR | SWT.OK);
@@ -1214,24 +1207,22 @@ public class VueEmploye {
 																	// de modifier
 							try {
 								item.setText(6, newEditorSB.getText());
-								
+
 								Double cp;
 								if (!item.getText(8).isBlank()) {
 									cp = Double.parseDouble(item.getText(8));
-								}
-								else {
+								} else {
 									cp = 0.0;
 								}
-								
+
 								Double sb;
 								if (!newEditorSB.getText().isBlank()) {
 									sb = Double.parseDouble(newEditorSB.getText());
-								}
-								else {
+								} else {
 									sb = 0.0;
 								}
-								
-								item.setText(9,Double.toString(sb+cp));
+
+								item.setText(9, Double.toString(sb + cp));
 							} catch (Exception e) {
 								System.out.println("erreur dans la modif");
 								MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_ERROR | SWT.OK);
@@ -1272,25 +1263,23 @@ public class VueEmploye {
 																	// de modifier
 							try {
 								item.setText(8, newEditorCP.getText());
-								
+
 								Double sb;
 								if (!item.getText(6).isBlank()) {
 									sb = Double.parseDouble(item.getText(6));
-								}
-								else {
+								} else {
 									sb = 0.0;
 								}
-								
+
 								Double cp;
 								if (!newEditorCP.getText().isBlank()) {
 									cp = Double.parseDouble(newEditorCP.getText());
-								}
-								else {
+								} else {
 									cp = 0.0;
 								}
-								
-								item.setText(9,Double.toString(sb+cp));
-								
+
+								item.setText(9, Double.toString(sb + cp));
+
 							} catch (Exception e) {
 								System.out.println("erreur dans la modif");
 								MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_ERROR | SWT.OK);
@@ -1917,39 +1906,15 @@ public class VueEmploye {
 		// date
 		if (!(textDateArrivee.isEmpty())) {
 			employe.setDateArrivee(textDateArrivee);
-			String date = textDateArrivee;
-			int j1 = Integer.parseInt(date.substring(0, 2));
-			int m1 = Integer.parseInt(date.substring(3, 5));
-			int a1 = Integer.parseInt(date.substring(6, 10));
-			LocalDate currentdate = LocalDate.now();
-			int j2 = currentdate.getDayOfMonth();
-			int m2 = currentdate.getMonthValue();
-			int a2 = currentdate.getYear();
+			
 
-			if (a2 - a1 == 0) {
-				employe.setAnciennetePC(2);
-			} else {
-				if ((m1 > m2) || (m1 == m2 && j1 > j2)) {
-					if (a2 - a1 - 1 == 0) { employe.setAnciennetePC(2); } 
-					else if (a2 - a1 - 1 == 1) { employe.setAnciennetePC(2); } 
-					else { if ((m1 == m2) && (a2 - a1 - 1 >= 3)) {employe.setAnciennetePC(a2 - a1 - 2);}
-						     else {employe.setAnciennetePC(2);}
-					}
-				} else {
-					if (a2 - a1 == 1) { employe.setAnciennetePC(2); } 
-					else { if ((m1 == m2) && (a2 - a1 >= 3)) { employe.setAnciennetePC(a2 - a1 - 1); }
-						else { employe.setAnciennetePC(2); }
-					}
-				}
-			}
-		
-		} 
-		
+		}
+
 		// on insert dans la base de données
 		try {
 			String t, texte;
 			if (selectedEmploye != null) {
-		
+
 				employe.setEmployeId(selectedEmploye.getEmployeId());
 				employe.updateDatabase();
 				t = "Modification réussie";
@@ -1959,14 +1924,14 @@ public class VueEmploye {
 				t = "Création réussie";
 				texte = "L'employé a bien été ajouté à la base de données.";
 			}
-			
+
 			MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_INFORMATION | SWT.OK);
 			dialog.setText(t);
 			dialog.setMessage(texte);
 			dialog.open();
 			newVueEmploye();
 		} catch (SQLException e) {
-			
+
 			MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_ERROR | SWT.OK);
 			dialog.setText("Erreur Création");
 			dialog.setMessage(
@@ -2032,7 +1997,7 @@ public class VueEmploye {
 						MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_QUESTION | SWT.YES | SWT.NO);
 						dialog.setText("Suppression Employe");
 						dialog.setMessage("Voulez vous supprimer l'employé " + e.getNom() + " " + e.getPrenom()
-						+ " ?\nToutes les affectations et les couts liés à cet employé seront supprimés.");
+								+ " ?\nToutes les affectations et les couts liés à cet employé seront supprimés.");
 						int buttonID = dialog.open();
 
 						switch (buttonID) {
@@ -2041,7 +2006,7 @@ public class VueEmploye {
 						}
 
 					} catch (NumberFormatException | SQLException e) {
-					
+
 						MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_ERROR | SWT.OK);
 						dialog.setText("Erreur Supression");
 						dialog.setMessage(
@@ -2054,27 +2019,35 @@ public class VueEmploye {
 			});
 
 			if (!tableGlobaleEmploye.isDisposed()) {
-				if (tableGlobaleEmploye.getSelection()[0].getForeground(9).equals(Couleur.rouge)) {
-					// Bouton Supprimer
-					Button boutonAnciennete = new Button(selection, SWT.CENTER);
-					boutonAnciennete.setText("Ancienneté prise en compte");
-					boutonAnciennete.addSelectionListener(new SelectionAdapter() {
-						@Override
-						public void widgetSelected(SelectionEvent arg0) {
-							if (selectedEmploye == null) {
-								throw new Error("selectedEmploye est vide");
-							}
-							tableGlobaleEmploye.getSelection()[0].setForeground(9, Couleur.noir);
-							try {
-								Employee.updateAnciennete(selectedEmploye.getAnciennetePC()+1, selectedEmploye.getEmployeId());
-							} catch (SQLException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
+
+				// Bouton Supprimer
+				Button boutonAnciennete = new Button(selection, SWT.CENTER);
+				boutonAnciennete.setText("Mettre à jour l'ancienneté prise en compte");
+				boutonAnciennete.addSelectionListener(new SelectionAdapter() {
+					@Override
+					public void widgetSelected(SelectionEvent arg0) {
+						if (selectedEmploye == null) {
+							throw new Error("selectedEmploye est vide");
 						}
-					});
-				}
+						
+						
+						tableGlobaleEmploye.getSelection()[0].setForeground(9, Couleur.noir);
+						try {
+							int employeeId=selectedEmploye.getEmployeId();
+							int newAnciennetePC=Employee.getEmployeById(employeeId).getComputeAnciennete();
+							Employee.updateAnciennete(Employee.getEmployeById(employeeId).getComputeAnciennete(),employeeId);
+							tableGlobaleEmploye.getSelection()[0].setForeground(9, Couleur.noir);
+							tableGlobaleEmploye.getSelection()[0].setForeground(11, Couleur.noir);
+							tableGlobaleEmploye.getSelection()[0].setText(11,""+newAnciennetePC);
+							
+						} catch (SQLException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+				});
 			}
+
 		}
 
 		Button boutonCouts = new Button(selection, SWT.CENTER);
@@ -2123,8 +2096,9 @@ public class VueEmploye {
 
 		// on met les noms des colonnes //espaces dans les titres pour changer la taille
 		// des colonnes
-		String[] titles = { "Titre  ", "Nom          ", "Prenom       ", "Email                                    ", "Téléphone    ",
-				"Matricule", "Pointure", "Taille", "Date d'ancienneté", "Ancienneté", "Id DB" };
+		String[] titles = { "Titre  ", "Nom          ", "Prenom       ", "Email                                    ",
+				"Téléphone    ", "Matricule", "Pointure", "Taille", "Date d'ancienneté", "Ancienneté", "Id DB",
+				"Ancienneté prise en compte" };
 		for (String title : titles) {
 			TableColumn column = new TableColumn(tableGlobaleEmploye, SWT.NONE);
 			column.setText(title);
@@ -2144,7 +2118,7 @@ public class VueEmploye {
 						selectedEmploye = Employee
 								.getEmployeById(Integer.parseInt(tableGlobaleEmploye.getSelection()[0].getText(10)));
 					} catch (NumberFormatException | SQLException e1) {
-						
+
 						MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_ERROR | SWT.OK);
 						dialog.setText("Erreur");
 						dialog.setMessage("Une erreur est survenue. " + '\n' + e1.getMessage());
@@ -2199,57 +2173,34 @@ public class VueEmploye {
 					item.setText(5, e.getNumeroMatricule());
 					item.setText(6, e.getPointure());
 					item.setText(7, e.getTaille());
-
+					item.setText(10, Integer.toString(e.getEmployeId()));
 					// date et anciennete
 					if (e.getDateArrivee() != null && !e.getDateArrivee().equals("")) {
 						item.setText(8, e.getDateArrivee());
 
-						String date = e.getDateArrivee();
-						int j1 = Integer.parseInt(date.substring(0, 2));
-						int m1 = Integer.parseInt(date.substring(3, 5));
-						int a1 = Integer.parseInt(date.substring(6, 10));
-						LocalDate currentdate = LocalDate.now();
-						int j2 = currentdate.getDayOfMonth();
-						int m2 = currentdate.getMonthValue();
-						int a2 = currentdate.getYear();
-
-						if (a2 - a1 < 0) {
-							item.setText(9, "euuuh ... ");
-						} else if (a2 - a1 == 0) {
+						Integer anciennete=e.getComputeAnciennete();
+						if (anciennete == 0)
 							item.setText(9, "moins d'un an");
-						} else {
-							if ((m1 > m2) || (m1 == m2 && j1 > j2)) {
-								if (a2 - a1 - 1 == 0) {
-									item.setText(9, "");
-								} else if (a2 - a1 - 1 == 1) {
-									item.setText(9, Integer.toString(a2 - a1 - 1) + " an");
-								} else {
-									if ((m1 == m2) && (a2 - a1 - 1 >= 3) && (e.getAnciennetePC()!=(a2 - a1 - 1))) {
-											item.setForeground(9, Couleur.rouge);
-									}
-									item.setText(9, Integer.toString(a2 - a1 - 1) + " ans");
-								}
-							} else {
-								if (a2 - a1 == 1) {
-									item.setText(9, Integer.toString(a2 - a1) + " an");
-								} else {
-									if ((m1 == m2) && (a2 - a1 >= 3) && (e.getAnciennetePC()!=(a2 - a1))) {
-										item.setForeground(9, Couleur.rouge);
-									}
-									item.setText(9, Integer.toString(a2 - a1) + " ans");
-								}
-							}
+						else
+							item.setText(9, anciennete + " an");
+
+					
+
+						item.setText(11, "" + e.getAnciennetePC());
+						boolean mustBeRed = anciennete >= 3 && e.getAnciennetePC() < 3;
+
+						if (mustBeRed) {
+							item.setForeground(9, Couleur.rouge);
+							item.setForeground(11, Couleur.rouge);
+
 						}
-					} else {
-						item.setText(8, "");
-						item.setText(9, "");
+
 					}
 
-					item.setText(10, Integer.toString(e.getEmployeId()));
 				}
 			}
 		} catch (SQLException e) {
-			
+
 			MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_ERROR | SWT.OK);
 			dialog.setText("Erreur");
 			dialog.setMessage("Une erreur est survenue. " + '\n' + e.getMessage());
@@ -2389,7 +2340,7 @@ public class VueEmploye {
 					menu = new Menu(vueEmploye.getShell(), SWT.POP_UP);
 					table.setMenu(menu);
 				} catch (Exception e) {
-					
+
 					MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_ERROR | SWT.OK);
 					dialog.setText("Erreur");
 					dialog.setMessage("Une erreur est survenue. " + '\n' + e.getMessage());
@@ -2441,7 +2392,7 @@ public class VueEmploye {
 				}
 			}
 		} catch (SQLException e) {
-			
+
 			MessageBox dialog = new MessageBox(composite.getShell(), SWT.ICON_ERROR | SWT.OK);
 			dialog.setText("Erreur");
 			dialog.setMessage("Une erreur est survenue. " + '\n' + e.getMessage());
