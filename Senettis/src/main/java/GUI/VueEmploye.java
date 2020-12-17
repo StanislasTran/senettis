@@ -1800,20 +1800,6 @@ public class VueEmploye {
 
 		final Text textDateArrivee = new Text(compositeDateArrivee, SWT.BORDER);
 		textDateArrivee.setText(dateArrivee);
-		// pour ajouter les barres / automatiquement
-		textDateArrivee.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent me) {
-				if (!(textDateArrivee.getText().isEmpty())) {// pour ne pas tester quand l'utilisateur est en train de
-					// modifier
-					if (textDateArrivee.getText().length() == 2) {
-						textDateArrivee.append("/");
-					}
-					if (textDateArrivee.getText().length() == 5) {
-						textDateArrivee.append("/");
-					}
-				}
-			}
-		});
 
 		// Boutons
 		Composite compositeBoutons = new Composite(colonne2, SWT.CENTER);

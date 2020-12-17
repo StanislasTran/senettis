@@ -694,24 +694,26 @@ public class Employee {
 	public void setDateArrivee(String dateArrivee) {
 		// date arrivee
 		if (dateArrivee != null) {
-			if (StringUtils.isNumeric(dateArrivee.substring(0, 4))
-					&& StringUtils.isNumeric(dateArrivee.substring(8, 10))
-					&& StringUtils.isNumeric(dateArrivee.substring(5, 7))) {
-				// date anglaise
-				// on reecrit en format francais
-				dateArrivee = dateArrivee.substring(8, 10) + "/" + dateArrivee.substring(5, 7) + "/"
-						+ dateArrivee.substring(0, 4);
-			} else if (StringUtils.isNumeric(dateArrivee.substring(6, 10))
-					&& StringUtils.isNumeric(dateArrivee.substring(3, 5))
-					&& StringUtils.isNumeric(dateArrivee.substring(0, 2))) {
-				// date francaise
-				// on reecrit en format francais juste pour s'assurer que toutes les dates
-				// seront ecrites avec le meme format jj/mm/aaaa
-				dateArrivee = dateArrivee.substring(0, 2) + "/" + dateArrivee.substring(3, 5) + "/"
-						+ dateArrivee.substring(6, 10);
-			} else {
+			try {
+				if (StringUtils.isNumeric(dateArrivee.substring(0, 4))
+						&& StringUtils.isNumeric(dateArrivee.substring(8, 10))
+						&& StringUtils.isNumeric(dateArrivee.substring(5, 7))) {
+					// date anglaise
+					// on reecrit en format francais
+					dateArrivee = dateArrivee.substring(8, 10) + "/" + dateArrivee.substring(5, 7) + "/"
+							+ dateArrivee.substring(0, 4);
+				} else if (StringUtils.isNumeric(dateArrivee.substring(6, 10))
+						&& StringUtils.isNumeric(dateArrivee.substring(3, 5))
+						&& StringUtils.isNumeric(dateArrivee.substring(0, 2))) {
+					// date francaise
+					// on reecrit en format francais juste pour s'assurer que toutes les dates
+					// seront ecrites avec le meme format jj/mm/aaaa
+					dateArrivee = dateArrivee.substring(0, 2) + "/" + dateArrivee.substring(3, 5) + "/"
+							+ dateArrivee.substring(6, 10);
+				} 
+			} catch (Exception e) {
 				throw new Error(
-						"La date d'arrivée indiquée est incorrecte, une date doit être indiqué selon un des formats suivant : 31-01-2000, 31/01/2000, 2000-01-31 ou 2000/01/31.");
+						"La date d'arrivée indiquée est incorrecte, une date doit être indiqué selon un des formats suivant : 31-01-2000, 31/01/2000, 2000-01-31 ou 2000/01/31.\n"+e.getMessage());
 			}
 		} else {
 			throw new Error("La date d'arrivée indiquée est vide.");
