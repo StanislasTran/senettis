@@ -1695,18 +1695,6 @@ public class VueLivraison {
 		if (selectedLivraison.getDate() == null) { date.setText(""); }
 		else { date.setText(selectedLivraison.getDate()); }
 
-		//pour ajouter les barres / automatiquement
-		date.addModifyListener(new ModifyListener() { 
-			public void modifyText(ModifyEvent me) { 
-				if (!(date.getText().isEmpty())) {//pour ne pas tester quand l'utilisateur est en train de modifier
-					if (date.getText().length() == 2) {date.append("/");}
-					if (date.getText().length() == 5) {date.append("/");}
-				}
-			}
-		});
-
-
-
 		//Prix
 		Composite compositePrix = new Composite(colonne1, SWT.NONE);
 		compositePrix.setBackground(Couleur.bleuClair);
@@ -2144,15 +2132,7 @@ public class VueLivraison {
 
 		final Text date = new Text(compositeDate, SWT.BORDER);
 		date.setText("");
-		//pour ajouter les barres / automatiquement
-		date.addModifyListener(new ModifyListener() { 
-			public void modifyText(ModifyEvent me) { 
-				if (!(date.getText().isEmpty())) {//pour ne pas tester quand l'utilisateur est en train de modifier
-					if (date.getText().length() == 2) {date.append("/");}
-					if (date.getText().length() == 5) {date.append("/");}
-				}
-			}
-		});
+
 
 		//Prix
 		Composite compositePrix = new Composite(colonne1, SWT.NONE);
