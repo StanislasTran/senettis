@@ -82,6 +82,12 @@ public class VueLivraison {
 	 * @param display
 	 */
 	public VueLivraison (Composite composite,Display display) {
+		
+		selectedLivraison = null;
+		selectedChantier = null;
+		selectedFS = null;
+		selectedAmorti = null;
+		
 		this.display=display;
 		Couleur.setDisplay(display); // pour utiliser les couleurs du fichier couleur
 
@@ -283,7 +289,8 @@ public class VueLivraison {
 		boutonCreation.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				selectedChantier = null; selectedFS = null;
+				//selectedChantier = null; 
+				selectedFS = null;
 				vueCreationFS();
 			}
 		});
@@ -668,7 +675,7 @@ public class VueLivraison {
 				} else { 
 
 					selectedChantier = null;selectedFS = null;selectedAmorti = null;
-					updateTableChantierFS();
+					//updateTableChantierFS();
 					updateTableFS();
 				}
 			}
@@ -774,7 +781,9 @@ public class VueLivraison {
 		boutonCreation.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				selectedChantier = null; selectedAmorti = null;selectedFS = null;
+				//selectedChantier = null; 
+				selectedAmorti = null;
+				selectedFS = null;
 				vueCreationA();
 			}
 		});
@@ -858,7 +867,7 @@ public class VueLivraison {
 			column.setText (title);
 		}
 
-		updateTableEmp();
+		updateTableChant();
 		compoEmp.pack();
 
 
@@ -1240,7 +1249,7 @@ public class VueLivraison {
 		vue.pack();
 	}
 
-	public void updateTableEmp() {
+	public void updateTableChant() {
 		if(!Objects.isNull(tableChantier)) {
 			tableChantier.removeAll();
 		}
@@ -1289,7 +1298,6 @@ public class VueLivraison {
 				} else { 
 
 					selectedChantier = null;selectedAmorti = null; selectedFS = null;
-					updateTableEmp();
 					updateTableAmorti();
 
 				}
@@ -1721,6 +1729,7 @@ public class VueLivraison {
 		buttonAnnulation.addSelectionListener(new SelectionAdapter() {
 
 			@Override public void widgetSelected(SelectionEvent arg0) {
+				selectedLivraison = null;
 				newVueLivraison();
 			}
 		});

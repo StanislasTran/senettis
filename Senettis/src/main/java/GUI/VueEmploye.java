@@ -58,6 +58,9 @@ public class VueEmploye {
 	public VueEmploye(Composite composite, Display display) {
 		this.display = display;
 		Couleur.setDisplay(display); // pour utiliser les couleurs du fichier couleur
+		
+		selectedEmploye = null;
+		selectedAmorti = null;
 
 		vueEmploye = new Composite(composite, SWT.NONE);
 		RowLayout rowLayout = new RowLayout();
@@ -112,7 +115,7 @@ public class VueEmploye {
 		boutonCreation.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				selectedEmploye = null;
+				//selectedEmploye = null;
 				selectedAmorti = null;
 				vueCreationA();
 			}
@@ -332,7 +335,9 @@ public class VueEmploye {
 		labelEmploye.setBackground(Couleur.bleuClair);
 		// Titre
 		Combo employes = new Combo(compositeEmploye, SWT.BORDER);
+		System.out.println("je suis dans le formulaire");
 		if (selectedEmploye != null) {
+			System.out.println("il y a un employe");
 			try {
 				if (selectedEmploye.getNameString().length() > 25) {
 					employes.setText(selectedEmploye.getNameString().substring(0, 23) + "..." + ";id:"
@@ -603,7 +608,6 @@ public class VueEmploye {
 
 					selectedEmploye = null;
 					selectedAmorti = null;
-					updateTableEmp();
 					updateTableAmorti();
 
 				}
@@ -1096,12 +1100,6 @@ public class VueEmploye {
 			col.pack();
 
 		tableCouts.addSelectionListener(getListener());
-
-		// TODO
-		// tableCouts.setSelection(1);
-		// tableCouts.setFocus();
-		// tableCouts.selectAll();
-		// tableCouts.select(1);tableCouts.forceFocus();
 
 		vue.pack();
 	}
@@ -1926,7 +1924,12 @@ public class VueEmploye {
 			int m2 = currentdate.getMonthValue();
 			int a2 = currentdate.getYear();
 
-			if (a2 - a1 == 0) {
+			YearMonth now = YearMonth.of(a2, m2);
+			YearMonth arrivee = YearMonth.of(a1,m1); 
+			
+			//ym.minusYears(currentdate.getYear()); 
+			
+			if (a2 - a1 == 0 || a2 - a1 == 1 || a2 - a1 == 2) {
 				employe.setAnciennetePC(2);
 			} else {
 				if ((m1 > m2) || (m1 == m2 && j1 > j2)) {
