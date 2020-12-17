@@ -1698,25 +1698,7 @@ public class VueLivraison {
 			date.setText(selectedLivraison.getDate());
 		}
 
-<<<<<<< HEAD
 		//Prix
-=======
-		// pour ajouter les barres / automatiquement
-		date.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent me) {
-				if (!(date.getText().isEmpty())) {// pour ne pas tester quand l'utilisateur est en train de modifier
-					if (date.getText().length() == 2) {
-						date.append("/");
-					}
-					if (date.getText().length() == 5) {
-						date.append("/");
-					}
-				}
-			}
-		});
-
-		// Prix
->>>>>>> refs/remotes/origin/master
 		Composite compositePrix = new Composite(colonne1, SWT.NONE);
 		compositePrix.setBackground(Couleur.bleuClair);
 		compositePrix.setLayout(fillLayoutH5);
@@ -2178,23 +2160,6 @@ public class VueLivraison {
 
 		final Text date = new Text(compositeDate, SWT.BORDER);
 		date.setText("");
-<<<<<<< HEAD
-
-=======
-		// pour ajouter les barres / automatiquement
-		date.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent me) {
-				if (!(date.getText().isEmpty())) {// pour ne pas tester quand l'utilisateur est en train de modifier
-					if (date.getText().length() == 2) {
-						date.append("/");
-					}
-					if (date.getText().length() == 5) {
-						date.append("/");
-					}
-				}
-			}
-		});
->>>>>>> refs/remotes/origin/master
 
 		// Prix
 		Composite compositePrix = new Composite(colonne1, SWT.NONE);
