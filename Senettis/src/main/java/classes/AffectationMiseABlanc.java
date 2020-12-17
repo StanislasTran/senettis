@@ -107,6 +107,8 @@ public class AffectationMiseABlanc {
 		statement.setObject(4, this.month.getValue(), Types.INTEGER);
 		statement.setObject(5, this.year.getValue(), Types.INTEGER);
 		statement.setObject(6, this.status.getValue(), Types.VARCHAR);
+		
+	
 
 		return statement.executeUpdate();
 	}
@@ -130,6 +132,7 @@ public class AffectationMiseABlanc {
 		statement.setObject(4, this.year.getValue(), Types.INTEGER);
 		statement.setObject(5, this.status.getValue(), Types.VARCHAR);
 		statement.setObject(6, this.affectationId, Types.INTEGER);
+		
 
 		return statement.executeUpdate();
 	}
@@ -438,7 +441,7 @@ public class AffectationMiseABlanc {
 		statement.setObject(4, this.month.getValue(), Types.INTEGER);
 		statement.setObject(5, this.year.getValue(), Types.INTEGER);
 		statement.setObject(6, this.affectationId, Types.INTEGER);
-		System.out.println(reqSql);
+		
 
 		return statement.executeUpdate();
 
@@ -457,8 +460,8 @@ public class AffectationMiseABlanc {
 		PreparedStatement statement = connection.prepareStatement(reqSql);
 
 		statement.setObject(1, this.affectationId, Types.INTEGER);
-		System.out.println(reqSql);
 
+	
 		return statement.executeUpdate();
 
 	}

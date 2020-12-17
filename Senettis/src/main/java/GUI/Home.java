@@ -490,6 +490,34 @@ public class Home {
 				// System.out.println("done");
 			}
 		});
+		
+		
+		Button boutonComission = new Button(menu, SWT.NONE);
+		boutonComission.setText("Comissions");
+		boutonComission.setBackground(Couleur.blanc);
+		boutonComission.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				if (!contenuColonneDroite.isDisposed()) {
+					for (Control c : contenuColonneDroite.getChildren()) {
+						if (!c.isDisposed()) {
+							c.dispose();
+						}
+					}
+					contenuColonneDroite.dispose();
+				}
+				try {
+					contenuColonneDroite = new ViewComission(getColonneDroite()).getVueProduit();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+				contenuColonneDroite.pack();
+				colonneDroite.pack();
+				// System.out.println("done");
+			}
+		});
 
 		Button buttonCA = new Button(menu, SWT.NONE);
 		buttonCA.setText("Chiffre d'Affaire");

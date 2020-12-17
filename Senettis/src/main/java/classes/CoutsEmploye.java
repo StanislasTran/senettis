@@ -20,6 +20,8 @@ import java.sql.Statement;
 import java.sql.Types;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Month;
+import java.time.Year;
 
 public class CoutsEmploye {
 
@@ -136,6 +138,7 @@ public class CoutsEmploye {
 		statement.setObject(14, this.nombreHeures, Types.DECIMAL);
 		statement.setObject(15, this.status, Types.VARCHAR);
 
+		
 		return statement.executeUpdate();
 	}
 
@@ -161,7 +164,8 @@ public class CoutsEmploye {
 		statement.setObject(14, this.status, Types.VARCHAR);
 		statement.setObject(15, this.annee, Types.INTEGER);
 		statement.setObject(16, this.coutEmployeId, Types.INTEGER);
-
+		
+	
 		return statement.executeUpdate();
 	}
 	
@@ -186,6 +190,7 @@ public class CoutsEmploye {
 		statement.setObject(13, this.employeId, Types.INTEGER);
 		statement.setObject(14, this.mois, Types.INTEGER);
 		statement.setObject(15, this.annee, Types.INTEGER);
+		
 		return statement.executeUpdate();
 	}
 

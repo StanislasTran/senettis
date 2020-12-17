@@ -152,7 +152,7 @@ public class VueEmploye {
 							updateTableAmorti();
 						}
 					} catch (Exception e) {
-						System.out.println("erreur pour supprimer l'element");
+						
 						MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_ERROR | SWT.OK);
 						dialog.setText("Erreur");
 						dialog.setMessage("Une erreur est survenue. " + '\n' + e.getMessage());
@@ -1945,14 +1945,14 @@ public class VueEmploye {
 					}
 				}
 			}
-			System.out.println("ancienete creation : "+employe.getAnciennetePC());
+		
 		} 
 		
 		// on insert dans la base de données
 		try {
 			String t, texte;
 			if (selectedEmploye != null) {
-				System.out.println("aaaa");
+		
 				employe.setEmployeId(selectedEmploye.getEmployeId());
 				employe.updateDatabase();
 				t = "Modification réussie";
@@ -1962,14 +1962,14 @@ public class VueEmploye {
 				t = "Création réussie";
 				texte = "L'employé a bien été ajouté à la base de données.";
 			}
-			System.out.println("on a insere ou modifie l employe !!");
+			
 			MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_INFORMATION | SWT.OK);
 			dialog.setText(t);
 			dialog.setMessage(texte);
 			dialog.open();
 			newVueEmploye();
 		} catch (SQLException e) {
-			System.out.println("erreur dans la création/modification");
+			
 			MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_ERROR | SWT.OK);
 			dialog.setText("Erreur Création");
 			dialog.setMessage(
@@ -2044,7 +2044,7 @@ public class VueEmploye {
 						}
 
 					} catch (NumberFormatException | SQLException e) {
-						System.out.println("erreur dans la supression");
+					
 						MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_ERROR | SWT.OK);
 						dialog.setText("Erreur Supression");
 						dialog.setMessage(
@@ -2147,7 +2147,7 @@ public class VueEmploye {
 						selectedEmploye = Employee
 								.getEmployeById(Integer.parseInt(tableGlobaleEmploye.getSelection()[0].getText(10)));
 					} catch (NumberFormatException | SQLException e1) {
-						System.out.println("erreur pour recuperer l'employe selectionne");
+						
 						MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_ERROR | SWT.OK);
 						dialog.setText("Erreur");
 						dialog.setMessage("Une erreur est survenue. " + '\n' + e1.getMessage());
@@ -2252,7 +2252,7 @@ public class VueEmploye {
 				}
 			}
 		} catch (SQLException e) {
-			System.out.println("erreur dans la table des employes");
+			
 			MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_ERROR | SWT.OK);
 			dialog.setText("Erreur");
 			dialog.setMessage("Une erreur est survenue. " + '\n' + e.getMessage());
@@ -2392,7 +2392,7 @@ public class VueEmploye {
 					menu = new Menu(vueEmploye.getShell(), SWT.POP_UP);
 					table.setMenu(menu);
 				} catch (Exception e) {
-					System.out.println("erreur pour supprimer l'element");
+					
 					MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_ERROR | SWT.OK);
 					dialog.setText("Erreur");
 					dialog.setMessage("Une erreur est survenue. " + '\n' + e.getMessage());
@@ -2444,7 +2444,7 @@ public class VueEmploye {
 				}
 			}
 		} catch (SQLException e) {
-			System.out.println("erreur dans la table des employes");
+			
 			MessageBox dialog = new MessageBox(composite.getShell(), SWT.ICON_ERROR | SWT.OK);
 			dialog.setText("Erreur");
 			dialog.setMessage("Une erreur est survenue. " + '\n' + e.getMessage());
