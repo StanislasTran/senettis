@@ -170,7 +170,7 @@ public class Product {
 			String comment = result.getString("Commentaires");
 			String brand = result.getString("Marque");
 			Status status = Status.getStatus(result.getString("Status"));
-			allProduct.add(new Product(produitId, brand,name, price, comment,  status));
+			allProduct.add(new Product(produitId, name,brand, price, comment,  status));
 
 		}
 
@@ -312,7 +312,7 @@ public class Product {
 	 * @return <type>String</type> name
 	 */
 	public String getName() {
-		return name;
+		return this.name;
 	}
 
 	/**

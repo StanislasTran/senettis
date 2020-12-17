@@ -263,7 +263,7 @@ public class ViewAffectationMAB {
 		table.setLinesVisible(true);
 		table.setHeaderVisible(true);
 
-		String[] titles = { "ChantierId", "Nom", "CA", "Nombre de chantiers différents", "Nombre d'heures total" };
+		String[] titles = { "ChantierId", "Nom", "Nombre de chantiers différents", "Nombre d'heures total" };
 
 		for (String title : titles) {
 			TableColumn column = new TableColumn(table, SWT.NONE);
@@ -276,11 +276,7 @@ public class ViewAffectationMAB {
 			TableItem item = new TableItem(table, SWT.NONE);
 			item.setText(0, "" + result.getInt("ChantierId"));
 			item.setText(1, result.getString("Nom"));
-			if (result.getDouble("CA") == 0)
-				item.setText(2, "" + "Inconnu");
-			else
-				item.setText(2, "" + result.getDouble("CA"));
-
+		
 			item.setText(3, result.getString("nb_Employe"));
 			if (Objects.isNull(result.getString("nb_heure")))
 				item.setText(4, "" + "Inconnu");
@@ -897,12 +893,12 @@ public class ViewAffectationMAB {
 		Composite ajoutComposite = new Composite(this.affectationView, SWT.NONE);
 
 		ajoutComposite.setLayout(new RowLayout(SWT.VERTICAL));
-		Site site = Site.getChantierById(siteId);
+		Site site = Site.getSiteById(siteId);
 
 		// Employe name part
 
 		Label labelTitle = new Label(ajoutComposite, SWT.NONE);
-		labelTitle.setText(site.getNom() + " :  " + site.getAdresse());
+		labelTitle.setText(site.getName() + " :  " + site.getAdresse());
 
 		// nbHeures part
 
@@ -1383,10 +1379,10 @@ public class ViewAffectationMAB {
 		Composite modifComposite = new Composite(this.affectationView, SWT.NONE);
 
 		modifComposite.setLayout(new RowLayout(SWT.VERTICAL));
-		Site site = Site.getChantierById(affectation.getIdEmploye());
+		Site site = Site.getSiteById(affectation.getIdEmploye());
 
 		Label labelNom = new Label(modifComposite, SWT.NONE);
-		labelNom.setText(site.getNom() + " : " + site.getAdresse());
+		labelNom.setText(site.getName() + " : " + site.getAdresse());
 
 		Composite nbHeureComposite = new Composite(modifComposite, SWT.NONE);
 

@@ -1,7 +1,6 @@
 package GUI;
 
 import java.sql.SQLException;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -19,7 +18,6 @@ import classes.Status;
 
 public class VueChantier {
 
-	private Display display;
 	private Composite vueChantier;
 	private Composite selection;
 	private Composite vue;
@@ -34,7 +32,7 @@ public class VueChantier {
 	 * @param display
 	 */
 	public VueChantier(Composite composite, Display display) {
-		this.display = display;
+
 		Couleur.setDisplay(display); // pour utiliser les couleurs du fichier couleur
 
 		vueChantier = new Composite(composite, SWT.NONE);
@@ -50,8 +48,8 @@ public class VueChantier {
 	}
 
 	/***
-	 * Pour créer une vueChantier : Appelle  les
-	 * fonctions compositeSelectionCreer et vueChantierAfficher
+	 * Pour créer une vueChantier : Appelle les fonctions compositeSelectionCreer et
+	 * vueChantierAfficher
 	 * 
 	 */
 	public void newVueChantier() {
@@ -73,7 +71,7 @@ public class VueChantier {
 		if (!Objects.isNull(selection) && !selection.isDisposed()) {
 			selection.dispose();
 		}
-		
+
 		selection = new Composite(vueChantier, SWT.NONE);
 		RowLayout rowLayout = new RowLayout();
 		rowLayout.marginWidth = 20;
@@ -101,7 +99,7 @@ public class VueChantier {
 		if (!Objects.isNull(selection) && !selection.isDisposed()) {
 			selection.dispose();
 		}
-		
+
 		selection = new Composite(vueChantier, SWT.NONE);
 		RowLayout rowLayout = new RowLayout();
 		rowLayout.marginWidth = 22;
@@ -139,10 +137,11 @@ public class VueChantier {
 					if (selectedChantier == null) {
 						throw new Error("selectedChantier est vide");
 					}
-					Site c = Site.getChantierById(selectedChantier.getChantierId());
+					Site c = Site.getSiteById(selectedChantier.getSiteId());
 					MessageBox dialog = new MessageBox(vueChantier.getShell(), SWT.ICON_QUESTION | SWT.YES | SWT.NO);
 					dialog.setText("Suppression Chantier");
-					dialog.setMessage("Voulez vous supprimer le chantier " + c.getNom() + " ?\nToutes les affectations et livraisons liées à ce chantier seront supprimées.");
+					dialog.setMessage("Voulez vous supprimer le chantier " + c.getName()
+							+ " ?\nToutes les affectations et livraisons liées à ce chantier seront supprimées.");
 					int buttonID = dialog.open();
 					switch (buttonID) {
 					case SWT.YES:
@@ -163,9 +162,11 @@ public class VueChantier {
 		});
 		selection.pack();
 	}
-	
+
 	/***
-	 * va archiver le chantier selectionne et les affectations et livraisons qui lui sont liées
+	 * va archiver le chantier selectionne et les affectations et livraisons qui lui
+	 * sont liées
+	 * 
 	 * @param table : table contenant les chantiers
 	 * @throws SQLException
 	 */
@@ -173,40 +174,41 @@ public class VueChantier {
 		if (selectedChantier == null) {
 			throw new Error("selectedChantier est vide");
 		}
-		
-		Site c = Site.getChantierById(selectedChantier.getChantierId());
-		c.setStatus("Archivé");
+
+		Site c = Site.getSiteById(selectedChantier.getSiteId());
+		c.setStatus(Status.ARCHIVED);
 		c.updateDatabase();
-		
+
 		for (Delivery d : Delivery.getAllLivraison()) {
-			if (d.getIdChantier() == c.getChantierId()) {
+			if (d.getIdChantier() == c.getSiteId()) {
 				d.setStatus("Archivé");
 				d.updateDatabase();
 			}
 		}
-		
+
 		for (AffectationMiseABlanc a : AffectationMiseABlanc.getAllAffectation()) {
-			if (a.getIdChantier() == c.getChantierId()) {
+			if (a.getIdChantier() == c.getSiteId()) {
 				a.setStatus(Status.ARCHIVED);
 				a.updateDatabase();
 			}
 		}
-		
+
 		selectedChantier = null;
-	
+
 		compositeSelectionCreer();
-		
+
 		updateTable(table);
 	}
 
 	// Modification d'un chantier --------------------------------------------------
 	/***
-	 * Regroupe les fonctions a appeler pour faire une modification La fonction va appeler
-	 * les fonctions titreModification et formulaireModification
+	 * Regroupe les fonctions a appeler pour faire une modification La fonction va
+	 * appeler les fonctions titreModification et formulaireModification
 	 */
 	public void vueChantierModifier() {
-		
-		formulaireModification();//on le fait une fois d'abord pour recuperer la taille du formulaire et pour creer le titre a la bonne taille
+
+		formulaireModification();// on le fait une fois d'abord pour recuperer la taille du formulaire et pour
+									// creer le titre a la bonne taille
 		titreModification();
 		formulaireModification();
 
@@ -227,9 +229,10 @@ public class VueChantier {
 
 		FillLayout fillLayout = new FillLayout();
 		fillLayout.type = SWT.VERTICAL;
-		
+
 		int addSize = vue.getSize().x;
-		addSize = (addSize - 200)/2;//on recupere l'ecrat entre la taille du titre de base (200) et le formulaire de modif
+		addSize = (addSize - 200) / 2;// on recupere l'ecrat entre la taille du titre de base (200) et le formulaire
+										// de modif
 		fillLayout.marginWidth = addSize;
 		selection.setLayout(fillLayout);
 
@@ -293,10 +296,11 @@ public class VueChantier {
 
 		Label labelNom = new Label(compositeNom, SWT.NONE);
 		labelNom.setBackground(Couleur.bleuClair);
-		labelNom.setText("Nom* :                                                           ");//espaces pour agrandir le champs texte 
+		labelNom.setText("Nom* :                                                           ");// espaces pour agrandir
+																								// le champs texte
 
 		final Text textNom = new Text(compositeNom, SWT.BORDER);
-		textNom.setText(selectedChantier.getNom());
+		textNom.setText(selectedChantier.getName());
 
 		// Adresse
 		Composite compositeAdresse = new Composite(colonne1, SWT.NONE);
@@ -309,18 +313,6 @@ public class VueChantier {
 
 		final Text textAdresse = new Text(compositeAdresse, SWT.BORDER);
 		textAdresse.setText(selectedChantier.getAdresse());
-
-		// CA
-		Composite compositeCA = new Composite(colonne1, SWT.NONE);
-		compositeCA.setBackground(Couleur.bleuClair);
-		compositeCA.setLayout(fillLayoutH5);
-
-		Label labelCA = new Label(compositeCA, SWT.NONE);
-		labelCA.setBackground(Couleur.bleuClair);
-		labelCA.setText("Chiffre d'affaire : ");
-
-		final Text textCA = new Text(compositeCA, SWT.BORDER);
-		textCA.setText(selectedChantier.getCA().toString());
 
 		// Boutons
 		Composite compositeBoutons = new Composite(colonne1, SWT.CENTER);
@@ -345,9 +337,8 @@ public class VueChantier {
 			public void widgetSelected(SelectionEvent arg0) {
 
 				try {
-					int id = selectedChantier.getChantierId();
-					selectedChantier = new Site(id, textNom.getText(), textAdresse.getText(),
-							Double.parseDouble(textCA.getText()), "Publié");
+					int id = selectedChantier.getSiteId();
+					selectedChantier = new Site(id, textNom.getText(), textAdresse.getText(), Status.PUBLISHED);
 					validerModification();
 				} catch (Throwable e) {
 					e.printStackTrace();
@@ -396,8 +387,8 @@ public class VueChantier {
 	// Création d'un chantier --------------------------------------------------
 	/***
 	 * va appeler les fonctions qui modifie la partie vue et la partie selection
-	 * afin d'afficher le formulaire de création 
-	 * appelle titreCreation et formulaireCreation
+	 * afin d'afficher le formulaire de création appelle titreCreation et
+	 * formulaireCreation
 	 */
 	public void vueChantierCreer() {
 		titreCreation();
@@ -416,7 +407,7 @@ public class VueChantier {
 		if (!Objects.isNull(selection) && !selection.isDisposed()) {
 			selection.dispose();
 		}
-		
+
 		selection = new Composite(vueChantier, SWT.CENTER);
 
 		FillLayout fillLayout = new FillLayout();
@@ -480,7 +471,9 @@ public class VueChantier {
 
 		Label labelNom = new Label(compositeNom, SWT.NONE);
 		labelNom.setBackground(Couleur.bleuClair);
-		labelNom.setText("Nom* :                                                           "); // j'ai mis des espaces pour agrandir la barre de texte 
+		labelNom.setText("Nom* :                                                           "); // j'ai mis des espaces
+																								// pour agrandir la
+																								// barre de texte
 
 		final Text textNom = new Text(compositeNom, SWT.BORDER);
 		textNom.setText("");
@@ -496,18 +489,6 @@ public class VueChantier {
 
 		final Text textAdresse = new Text(compositeAdresse, SWT.BORDER);
 		textAdresse.setText("");
-
-		// CA
-		Composite compositeCA = new Composite(colonne1, SWT.NONE);
-		compositeCA.setBackground(Couleur.bleuClair);
-		compositeCA.setLayout(fillLayoutH5);
-
-		Label labelCA = new Label(compositeCA, SWT.NONE);
-		labelCA.setBackground(Couleur.bleuClair);
-		labelCA.setText("Chiffre d'affaire : ");
-
-		final Text textCA = new Text(compositeCA, SWT.BORDER);
-		textCA.setText("");
 
 		// Boutons
 		Composite compositeBoutons = new Composite(colonne1, SWT.CENTER);
@@ -532,7 +513,7 @@ public class VueChantier {
 			public void widgetSelected(SelectionEvent arg0) {
 
 				try {
-					validerCreation(textNom.getText(), textAdresse.getText(), textCA.getText());
+					validerCreation(textNom.getText(), textAdresse.getText());
 				} catch (Throwable e) {
 					e.printStackTrace();
 					System.out.println("erreur dans la creation");
@@ -550,26 +531,18 @@ public class VueChantier {
 	/***
 	 * cree un chantier a partir du formulaire et l'insere dans la base de donnees
 	 */
-	public void validerCreation(String textNom, String textAdresse, String textCA) {
+	public void validerCreation(String textNom, String textAdresse) {
 
 		if (textNom.isEmpty()) {
 			throw new Error("Merci d'indiquer au moins le nom du chantier.");
 		}
 
 		// champs obligatoires
-		Site chantier = new Site(textNom, "Publié");
+		Site chantier = new Site(textNom, Status.PUBLISHED);
 
 		// champs optionels
 		if (!(textAdresse.isEmpty())) {
-			chantier.setAdresse(textAdresse);
-		}
-
-		if (textCA != null) {
-			if (textCA != "" && textCA.contains(".")) {
-				chantier.setCA(Double.parseDouble(textCA));
-			} else if (textCA != "" && textCA.matches(".*\\d.*")) {
-				chantier.setCA(Double.parseDouble(textCA + ".0"));
-			}
+			chantier.setAdress(textAdresse);
 		}
 
 		// on insert dans la base de données
@@ -602,7 +575,7 @@ public class VueChantier {
 		if (!Objects.isNull(vue) && !vue.isDisposed()) {
 			vue.dispose();
 		}
-		
+
 		RowLayout rowLayoutV = new RowLayout();
 		rowLayoutV.type = SWT.VERTICAL;
 
@@ -616,29 +589,25 @@ public class VueChantier {
 		table.setHeaderVisible(true);
 
 		// on met les noms des colonnes
-		String[] titles = { "Nom", "Adresse", "Chiffre d'affaire" };
+		String[] titles = { "Nom", "Adresse" };
 		for (String title : titles) {
 			TableColumn column = new TableColumn(table, SWT.NONE);
 			column.setText(title);
 		}
 
-		// je voulais cacher cette colonne mais ca ne fonctionne pas
-		TableColumn column = new TableColumn(table, SWT.NONE);
-		column.setText("Id Base de données");
-		column.setWidth(0);
-		column.setResizable(false);
-
+		
 		// on remplit la table
 		final TableColumn[] columns = table.getColumns();
+		ArrayList<Integer> listSiteId = new ArrayList<Integer>();
+
 		try {
 			for (Site c : Site.getAllChantier()) {
 				// on verifie le status
-				if (c.getStatus().contentEquals("Publié")) {
+				if (c.getStatus().getValue().contentEquals("Publié")) {
 					TableItem item = new TableItem(table, SWT.NONE);
-					item.setText(0, c.getNom());
+					item.setText(0, c.getName());
 					item.setText(1, c.getAdresse());
-					item.setText(2, c.getCA().toString());
-					item.setText(3, Integer.toString(c.getChantierId()));
+					listSiteId.add(c.getSiteId());
 				}
 			}
 		} catch (SQLException e) {
@@ -652,7 +621,7 @@ public class VueChantier {
 		// on pack les colonnes
 		for (TableColumn col : columns)
 			col.pack();
-		
+
 		// on ajoute un listener pour modifier l'interface si l'utilisateur clique sur
 		// une ligne
 		table.addSelectionListener(new SelectionAdapter() {
@@ -660,8 +629,7 @@ public class VueChantier {
 				if (table.getSelectionIndex() != -1) {
 
 					try {
-						selectedChantier = Site
-								.getChantierById(Integer.parseInt(table.getSelection()[0].getText(3)));
+						selectedChantier = Site.getSiteById(listSiteId.get(table.getSelectionIndex()));
 					} catch (NumberFormatException | SQLException e1) {
 						System.out.println("erreur pour recuperer le chantier selectionne");
 						MessageBox dialog = new MessageBox(vueChantier.getShell(), SWT.ICON_ERROR | SWT.OK);
@@ -686,12 +654,10 @@ public class VueChantier {
 				}
 			}
 		});
-		
+
 		vue.pack();
 
 	}
-
-
 
 	/**
 	 * Ajoute un table contenant la liste de tous les chantier au composité entré en
@@ -708,29 +674,22 @@ public class VueChantier {
 		table.setHeaderVisible(true);
 
 		// on met les noms des colonnes
-		String[] titles = { "Nom", "Adresse", "Chiffre d'affaire" };
+		String[] titles = { "Nom", "Adresse" };
 		for (String title : titles) {
 			TableColumn column = new TableColumn(table, SWT.NONE);
 			column.setText(title);
 		}
-
-		// je voulais cacher cette colonne mais ca ne fonctionne pas
-		TableColumn column = new TableColumn(table, SWT.NONE);
-		column.setText("Id Base de données");
-		column.setWidth(0);
-		column.setResizable(false);
 
 		// on remplit la table
 		final TableColumn[] columns = table.getColumns();
 		try {
 			for (Site c : Site.getAllChantier()) {
 				// on verifie le status
-				if (c.getStatus().contentEquals("Publié")) {
+				if (c.getStatus().getValue().contentEquals("Publié")) {
 					TableItem item = new TableItem(table, SWT.NONE);
-					item.setText(0, c.getNom());
+					item.setText(0, c.getName());
 					item.setText(1, c.getAdresse());
-					item.setText(2, c.getCA().toString());
-					item.setText(3, Integer.toString(c.getChantierId()));
+
 				}
 			}
 		} catch (SQLException e) {
@@ -746,20 +705,18 @@ public class VueChantier {
 			col.pack();
 		return table;
 	}
-	
-	
+
 	public void updateTable(Table table) {
 		table.removeAll();
-		
+
 		try {
 			for (Site c : Site.getAllChantier()) {
 				// on verifie le status
-				if (c.getStatus().contentEquals("Publié")) {
+				if (c.getStatus().getValue().contentEquals("Publié")) {
 					TableItem item = new TableItem(table, SWT.NONE);
-					item.setText(0, c.getNom());
+					item.setText(0, c.getName());
 					item.setText(1, c.getAdresse());
-					item.setText(2, c.getCA().toString());
-					item.setText(3, Integer.toString(c.getChantierId()));
+
 				}
 			}
 		} catch (SQLException e) {
@@ -772,9 +729,9 @@ public class VueChantier {
 
 	}
 
-	
 	/***
 	 * cree un menu sur la selection de la table des chantiers lors d'un clic droit
+	 * 
 	 * @param table
 	 */
 	public void doMenu(Table table) {
@@ -800,10 +757,11 @@ public class VueChantier {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				try {
-					Site c = Site.getChantierById(selectedChantier.getChantierId());
+					Site c = Site.getSiteById(selectedChantier.getSiteId());
 					MessageBox dialog = new MessageBox(vueChantier.getShell(), SWT.ICON_QUESTION | SWT.YES | SWT.NO);
 					dialog.setText("Suppression Chantier");
-					dialog.setMessage("Voulez-vous supprimer le chantier " + c.getNom() + " ?\nToutes les affectations et livraisons liées à ce chantier seront supprimées.");
+					dialog.setMessage("Voulez-vous supprimer le chantier " + c.getName()
+							+ " ?\nToutes les affectations et livraisons liées à ce chantier seront supprimées.");
 					int buttonID = dialog.open();
 					switch (buttonID) {
 					case SWT.YES:

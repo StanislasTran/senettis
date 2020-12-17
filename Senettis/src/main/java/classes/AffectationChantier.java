@@ -263,9 +263,9 @@ public class AffectationChantier {
 	 * @throws SQLException
 	 */
 	public static ResultSet getChantierStats() throws SQLException {
-		String selection = "chantData.ChantierId AS 'ChantierId',ChantData.Nom,ChantData.CA,count(DISTINCT AffectationChantier.Employe) as 'nb_Employe',SUM(AffectationChantier.Nombre_heures) as 'nb_heure' ";
-		String source = "AffectationChantier RIGHT JOIN (Select DISTINCT ChantierId,Nom,CA FROM Chantier) AS chantData ON chantData.ChantierId=AffectationChantier.Chantier";
-		String group = "chantData.ChantierId,chantData.Nom,chantData.CA";
+		String selection = "chantData.ChantierId AS 'ChantierId',ChantData.Nom,count(DISTINCT AffectationChantier.Employe) as 'nb_Employe',SUM(AffectationChantier.Nombre_heures) as 'nb_heure' ";
+		String source = "AffectationChantier RIGHT JOIN (Select DISTINCT ChantierId,Nom FROM Chantier) AS chantData ON chantData.ChantierId=AffectationChantier.Chantier";
+		String group = "chantData.ChantierId,chantData.Nom";
 
 		String reqSql = "SELECT " + selection + " FROM " + source + " GROUP BY " + group;
 
@@ -287,9 +287,9 @@ public class AffectationChantier {
 	 * @throws SQLException
 	 */
 	public static ResultSet getChantierStats(Month startMonth, Year startYear) throws SQLException {
-		String selection = "chantData.ChantierId AS 'ChantierId',ChantData.Nom,ChantData.CA,count(DISTINCT AffectationChantier.Employe) as 'nb_Employe',SUM(AffectationChantier.Nombre_heures) as 'nb_heure' ";
-		String source = "( Select * FROM AffectationChantier WHERE MoisDebut=? AND AnneeDebut=?) AS AffectationChantier RIGHT JOIN (Select DISTINCT ChantierId,Nom,CA FROM Chantier) AS chantData ON chantData.ChantierId=AffectationChantier.Chantier";
-		String group = "chantData.ChantierId,chantData.Nom,chantData.CA";
+		String selection = "chantData.ChantierId AS 'ChantierId',ChantData.Nom,count(DISTINCT AffectationChantier.Employe) as 'nb_Employe',SUM(AffectationChantier.Nombre_heures) as 'nb_heure' ";
+		String source = "( Select * FROM AffectationChantier WHERE MoisDebut=? AND AnneeDebut=?) AS AffectationChantier RIGHT JOIN (Select DISTINCT ChantierId,Nom FROM Chantier) AS chantData ON chantData.ChantierId=AffectationChantier.Chantier";
+		String group = "chantData.ChantierId,chantData.Nomd";
 
 		String reqSql = "SELECT " + selection + " FROM " + source + " GROUP BY " + group;
 

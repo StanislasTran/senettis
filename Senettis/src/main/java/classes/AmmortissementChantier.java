@@ -292,6 +292,9 @@ public class AmmortissementChantier {
 		return chantierId;
 	}
 
+	public int getSiteId() {
+		return chantierId;
+	}
 	public void setChantierId(Integer chantierId) {
 		if (chantierId == null) {
 			throw new Error("setChantierId : le chantierId indique est vide");

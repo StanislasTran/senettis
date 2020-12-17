@@ -21,14 +21,12 @@ import classes.AffectationMiseABlanc;
 import classes.AmmortissementEmploye;
 import classes.CoutsEmploye;
 import classes.Employee;
-import classes.Product;
-import classes.ProductByDelivery;
-import classes.Site;
+
 import classes.Status;
 
 public class VueEmploye {
 
-	private Display display;
+
 
 	private static Composite vueEmploye;
 	private static Composite selection;
@@ -56,7 +54,7 @@ public class VueEmploye {
 	 * @param display
 	 */
 	public VueEmploye(Composite composite, Display display) {
-		this.display = display;
+		
 		Couleur.setDisplay(display); // pour utiliser les couleurs du fichier couleur
 		
 		selectedEmploye = null;

@@ -107,8 +107,6 @@ public class AffectationMiseABlanc {
 		statement.setObject(4, this.month.getValue(), Types.INTEGER);
 		statement.setObject(5, this.year.getValue(), Types.INTEGER);
 		statement.setObject(6, this.status.getValue(), Types.VARCHAR);
-		
-	
 
 		return statement.executeUpdate();
 	}
@@ -132,7 +130,6 @@ public class AffectationMiseABlanc {
 		statement.setObject(4, this.year.getValue(), Types.INTEGER);
 		statement.setObject(5, this.status.getValue(), Types.VARCHAR);
 		statement.setObject(6, this.affectationId, Types.INTEGER);
-		
 
 		return statement.executeUpdate();
 	}
@@ -233,15 +230,15 @@ public class AffectationMiseABlanc {
 
 	/**
 	 * Return a list of stats for each site in a <type> ResultSet</type> Column 1 :
-	 * siteId Column 2 : name Column 3 : CA Column 4 : Number of Employee affected
-	 * Column 5 : Sum of all hours affected
+	 * siteId Column 2 : name Column 4 : Number of Employee affected Column 5 : Sum
+	 * of all hours affected
 	 * 
 	 * @return <type> ResultSet </type> statement ResultSet
 	 * @throws SQLException
 	 */
 	public static ResultSet getChantierStats() throws SQLException {
 		String selection = "chantData.ChantierId AS 'ChantierId',ChantData.Nom,ChantData.CA,count(DISTINCT AffectationMAB.Employe) as 'nb_Employe',SUM(AffectationMAB.Nombre_heures) as 'nb_heure' ";
-		String source = "AffectationMAB RIGHT JOIN (Select DISTINCT ChantierId,Nom,CA FROM Chantier) AS chantData ON chantData.ChantierId=AffectationMAB.Chantier";
+		String source = "AffectationMAB RIGHT JOIN (Select DISTINCT ChantierId,Nom FROM Chantier) AS chantData ON chantData.ChantierId=AffectationMAB.Chantier";
 		String group = "chantData.ChantierId,chantData.Nom,chantData.CA";
 
 		String reqSql = "SELECT " + selection + " FROM " + source + " GROUP BY " + group;
@@ -257,16 +254,16 @@ public class AffectationMiseABlanc {
 
 	/**
 	 * Return a list of stats for each site in a <type> ResultSet</type> Column 1 :
-	 * siteId Column 2 : name Column 3 : CA Column 4 : Number of Employee affected
-	 * Column 5 : Sum of all hours affected
+	 * siteId Column 2 : name column 3: Number of Employee affected Column 5 : Sum
+	 * of all hours affected
 	 * 
 	 * @return <type> ResultSet </type> statement ResultSet
 	 * @throws SQLException
 	 */
 	public static ResultSet getChantierStats(Month month, Year year) throws SQLException {
-		String selection = "chantData.ChantierId AS 'ChantierId',ChantData.Nom,ChantData.CA,count(DISTINCT AffectationMAB.Employe) as 'nb_Employe',SUM(AffectationMAB.Nombre_heures) as 'nb_heure' ";
-		String source = "( Select * FROM AffectationMAB WHERE Mois=? AND Annee=?) AS AffectationMAB RIGHT JOIN (Select DISTINCT ChantierId,Nom,CA FROM Chantier) AS chantData ON chantData.ChantierId=AffectationMAB.Chantier";
-		String group = "chantData.ChantierId,chantData.Nom,chantData.CA";
+		String selection = "chantData.ChantierId AS 'ChantierId',ChantData.Nom,count(DISTINCT AffectationMAB.Employe) as 'nb_Employe',SUM(AffectationMAB.Nombre_heures) as 'nb_heure' ";
+		String source = "( Select * FROM AffectationMAB WHERE Mois=? AND Annee=?) AS AffectationMAB RIGHT JOIN (Select DISTINCT ChantierId , Nom FROM Chantier) AS chantData ON chantData.ChantierId=AffectationMAB.Chantier";
+		String group = "chantData.ChantierId,chantData.Nom"; 
 
 		String reqSql = "SELECT " + selection + " FROM " + source + " GROUP BY " + group;
 
@@ -441,7 +438,6 @@ public class AffectationMiseABlanc {
 		statement.setObject(4, this.month.getValue(), Types.INTEGER);
 		statement.setObject(5, this.year.getValue(), Types.INTEGER);
 		statement.setObject(6, this.affectationId, Types.INTEGER);
-		
 
 		return statement.executeUpdate();
 
@@ -461,7 +457,6 @@ public class AffectationMiseABlanc {
 
 		statement.setObject(1, this.affectationId, Types.INTEGER);
 
-	
 		return statement.executeUpdate();
 
 	}
