@@ -118,42 +118,44 @@ public class turnOverView {
 			
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				
+				boolean erreurs = false;
+
 				int i=0;
 				for(TableItem item:table.getItems()) {
-					
-					
-					
-					turnOvers.get(i).setVitrerie(checkStringDouble(item.getText(VITRERIECOLUMN)));
-					turnOvers.get(i).setMisesBlanc(checkStringDouble(item.getText(MISESBLANCCOLUMN)));
-					turnOvers.get(i).setMenage(checkStringDouble(item.getText(MENAGECOLUMN)));
-					turnOvers.get(i).setFournituresSanitaires(checkStringDouble(item.getText(FOURNITURESCOLUMN)));
-					turnOvers.get(i).setAutres(checkStringDouble(item.getText(AUTRESCOLUMN)));
-					turnOvers.get(i).setCA(checkStringDouble(item.getText(CACOLUMN)));
-			
-					
+
 					try {
-						
+
+						turnOvers.get(i).setVitrerie(checkStringDouble(item.getText(VITRERIECOLUMN)));
+						turnOvers.get(i).setMisesBlanc(checkStringDouble(item.getText(MISESBLANCCOLUMN)));
+						turnOvers.get(i).setMenage(checkStringDouble(item.getText(MENAGECOLUMN)));
+						turnOvers.get(i).setFournituresSanitaires(checkStringDouble(item.getText(FOURNITURESCOLUMN)));
+						turnOvers.get(i).setAutres(checkStringDouble(item.getText(AUTRESCOLUMN)));
+						turnOvers.get(i).setCA(checkStringDouble(item.getText(CACOLUMN)));
+
 						System.out.println(turnOvers.get(i).exist());
 						turnOvers.get(i).inserOrUpdateRow();
-						MessageBox dialog = new MessageBox(turnOverView.getShell(), SWT.ICON_WORKING| SWT.OK);
-						dialog.setText("Succès");
-						dialog.setMessage("Données enregistrée avec succès");
-						dialog.open();
-						
-					} catch (SQLException e1) {
-						MessageBox dialog = new MessageBox(turnOverView.getShell(), SWT.ICON_WORKING| SWT.OK);
-						dialog.setText("erreur");
-						dialog.setMessage("Erreur : "+e1.getMessage());
-						dialog.open();
+
+					} catch (Exception e1) {
+							erreurs = true;
+							MessageBox dialog = new MessageBox(turnOverView.getShell(), SWT.ICON_ERROR| SWT.OK);
+							dialog.setText("Erreur de saisie");
+							dialog.setMessage("Erreur : "+e1.getMessage());
+							dialog.open();
+							break;
 					}
 					i++;
-					
+
+				}
+				if (!erreurs) { //on affiche le message de succes si on a eu aucune erreur
+					MessageBox dialog = new MessageBox(turnOverView.getShell(), SWT.ICON_WORKING| SWT.OK);
+					dialog.setText("Succès");
+					dialog.setMessage("Données enregistrée avec succès");
+					dialog.open();
 				}
 			}
-			
+
 		});
-		
+
 
 	}
 
@@ -289,7 +291,7 @@ public class turnOverView {
 	
 	private String computeCA(TableItem item) {
 		
-
+		try {
 		
 		Double menage=checkStringDouble(item.getText(MENAGECOLUMN));
 		Double vitrerie=checkStringDouble(item.getText(VITRERIECOLUMN));
@@ -299,15 +301,20 @@ public class turnOverView {
 		
 		Double CA=menage+vitrerie+fournitures+miseABlanc+autres;
 		return ""+CA;
+		}
+		catch(Exception e) {
+			//TODO
+			return "";
+		}
 	}
 	
-	private Double checkStringDouble(String value) {
+	private Double checkStringDouble(String value) throws Exception {
 		if(Objects.isNull(value))
 			return 0.0;
 		try {
 			return Double.parseDouble(value);
-		}catch( NumberFormatException exception) {
-			return 0.0;
+		}catch(Exception exception) {
+			throw new Exception("Merci de saisir une valeur correcte.");
 		}
 		
 		
