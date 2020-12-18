@@ -33,6 +33,8 @@ Create table Chantier (
 	"Date_de_creation" DateTime  NOT NUll Default (GETDATE()), 
 	"Date_de_modification" DateTime  NOT NUll Default (GETDATE()),
 	CONSTRAINT check_status_chantier CHECK (("Status") IN ('Publié','Brouillon','Archivé')),
+	 CONSTRAINT UNIQUE_name UNIQUE(Nom)   
+	
 	 
 );
 
@@ -95,6 +97,7 @@ Create table Livraison (
 	"Date_de_creation" DateTime  NOT NUll Default (GETDATE()), 
 	"Date_de_modification" DateTime  NOT NUll Default (GETDATE()), 
 	CONSTRAINT check_status_livraison CHECK (("Status") IN ('Publié','Brouillon','Archivé')),
+
 	 
 );
 

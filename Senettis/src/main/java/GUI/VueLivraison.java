@@ -32,23 +32,14 @@ import org.eclipse.swt.*;
 import org.eclipse.swt.custom.TableEditor;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.TouchEvent;
-import org.eclipse.swt.events.TouchListener;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-
 import classes.Site;
 import classes.AmmortissementChantier;
-import classes.AmmortissementEmploye;
-import classes.CoutsEmploye;
-import classes.AmmortissementChantier;
 import classes.Delivery;
-import classes.Employee;
 import classes.FournitureSanitaire;
 import classes.Product;
 import classes.ProductByDelivery;
@@ -72,7 +63,8 @@ public class VueLivraison {
 	private Table tableAmorti;
 	private Table tableFS;
 
-	//////////////////////////////////////////// Creation VueLivraison ////////////////////////////////////////////
+	//////////////////////////////////////////// Creation VueLivraison
+	//////////////////////////////////////////// ////////////////////////////////////////////
 
 	/***
 	 * Utilisé depuis Home pour créer une vueLivraison
@@ -207,11 +199,12 @@ public class VueLivraison {
 		tabFolder.getParent().pack();
 	}
 
-	////////////////////////////////////// FS ////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////// FS
+	////////////////////////////////////// ////////////////////////////////////////////////////////////////////////////////
 
 	/***
-	 * Cree la vue des FS 
-	 * Fait appel a fsSelection pour les boutons et cree les tables Chantiers et FS
+	 * Cree la vue des FS Fait appel a fsSelection pour les boutons et cree les
+	 * tables Chantiers et FS
 	 */
 	public void vueFS() {
 
@@ -287,7 +280,8 @@ public class VueLivraison {
 	}
 
 	/***
-	 * Pour modifier les boutons Creation, Modification et Suppression qui sont au dessus des tables Chantiers et FS
+	 * Pour modifier les boutons Creation, Modification et Suppression qui sont au
+	 * dessus des tables Chantiers et FS
 	 */
 	public void fsSelection() {
 		/// SELECTION
@@ -788,10 +782,11 @@ public class VueLivraison {
 		vue.layout(true, true);
 	}
 
-	////////////////////////////////////// COUTS A AMORTIR ////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////// COUTS A AMORTIR
+	////////////////////////////////////// ////////////////////////////////////////////////////////////////////////////
 
 	/***
-	 * Cree les bouton creation modification et suppression en haut des tables 
+	 * Cree les bouton creation modification et suppression en haut des tables
 	 */
 	public void amortiSelection() {
 		/// SELECTION
@@ -1420,7 +1415,8 @@ public class VueLivraison {
 		vue.layout(true, true);
 	}
 
-	//////////////////////////////////////  LIVRAISON  /////////////////////////////////////////////////////////////////
+	////////////////////////////////////// LIVRAISON
+	////////////////////////////////////// /////////////////////////////////////////////////////////////////
 
 	/***
 	 * Creation de la partie Selection avec les boutons creer, modifier et supprimer
@@ -1509,7 +1505,7 @@ public class VueLivraison {
 						+ Site.getSiteById(l.getIdChantier()).getName() + " ?");
 			} else {
 				dialog.setMessage("Voulez vous supprimer le livraison de " + l.getPrixTotal()
-				+ " euros sur le chantier " + Site.getSiteById(l.getIdChantier()).getName() + " ?");
+						+ " euros sur le chantier " + Site.getSiteById(l.getIdChantier()).getName() + " ?");
 			}
 			int buttonID = dialog.open();
 
@@ -1555,7 +1551,8 @@ public class VueLivraison {
 	 */
 	public void vueLivraisonForm() {
 
-		formulaire();// on l'appelle d'abord une fois pour pouvoir recuperer sa taille dans titre et mettre tout a la bonne taille
+		formulaire();// on l'appelle d'abord une fois pour pouvoir recuperer sa taille dans titre et
+						// mettre tout a la bonne taille
 		titre();
 		formulaire();
 
@@ -1595,8 +1592,7 @@ public class VueLivraison {
 		if (selectedLivraison != null) {
 			addSize = (addSize - 215) / 2;
 			HeadLabel.setText("Modification d'une Livraison");
-		}
-		else {
+		} else {
 			addSize = (addSize - 187) / 2;
 			HeadLabel.setText("Creation d'une Livraison");
 		}
@@ -1664,15 +1660,15 @@ public class VueLivraison {
 
 		// on affiche le chantier selectionne
 		Combo chantier = new Combo(compositeChantier, SWT.BORDER);
+		Integer idChantierSelectionne=null;
 		if (selectedLivraison != null) {
 			try {
 				if (Site.getSiteById(selectedLivraison.getIdChantier()).getStatus().equals("Publié")) {
-					String stringChantier = Site.getSiteById(selectedLivraison.getIdChantier()).getName() + "; id :"
-							+ selectedLivraison.getIdChantier().toString();
+					String stringChantier = Site.getSiteById(selectedLivraison.getIdChantier()).getName() ;
 					if (stringChantier.length() > 30) {
-						chantier.setText(stringChantier.substring(0, 23) + "..." + ";id:"
-								+ ((Integer) selectedLivraison.getIdChantier()).toString());
-						labelChantier.setText("Chantier* :");// pour pas que ca fasse un trop grand espace et que ca decale
+						chantier.setText(stringChantier.substring(0, 23) + "..." );
+						labelChantier.setText("Chantier* :");// pour pas que ca fasse un trop grand espace et que ca
+						idChantierSelectionne=selectedLivraison.getIdChantier();								// decale
 						// le titre
 					} else {
 						chantier.setText(stringChantier);
@@ -1688,22 +1684,23 @@ public class VueLivraison {
 				dialog.setMessage("Une erreur est survenue. " + '\n' + e1.getMessage());
 				dialog.open();
 			}
-		}
-		else {
+		} else {
 			chantier.setText("Selectionner ...");
 		}
 		// on recupere les autres chantiers pour les afficher aussi et pouvoir modifier
 		// le chantier actuel
+		
+		ArrayList<Integer> siteIdList =new ArrayList<Integer>();
 		try {
 			for (Site c : Site.getAllChantier()) {
-				if ( c.getStatus().equals("Publié")) {
-					String stringChantier = c.getName() + "; id :" + ((Integer) c.getSiteId()).toString();
-					if (stringChantier.length() > 30) {
-						chantier.add(stringChantier.substring(0, 23) + "..." + ";id:"
-								+ ((Integer) c.getSiteId()).toString());
+				if (c.getStatus().equals("Publié")) {
+				
+					siteIdList.add(c.getSiteId());
+					if (c.getName().length() > 30) {
+						chantier.add(c.getName().substring(0, 23) + "..." );
 						labelChantier.setText("Chantier* :");
 					} else {
-						chantier.add(stringChantier);
+						chantier.add(c.getName());
 					}
 				}
 			}
@@ -1732,12 +1729,11 @@ public class VueLivraison {
 			} else {
 				date.setText(selectedLivraison.getDate());
 			}
-		}
-		else {
+		} else {
 			date.setText("");
 		}
 
-		//Prix
+		// Prix
 		Composite compositePrix = new Composite(colonne1, SWT.NONE);
 		compositePrix.setBackground(Couleur.bleuClair);
 		compositePrix.setLayout(fillLayoutH5);
@@ -1749,8 +1745,7 @@ public class VueLivraison {
 		final Text prix = new Text(compositePrix, SWT.BORDER);
 		if (selectedLivraison != null) {
 			prix.setText(selectedLivraison.getPrixTotal().toString());
-		}
-		else {
+		} else {
 			prix.setText("");
 		}
 
@@ -1927,7 +1922,6 @@ public class VueLivraison {
 		Button buttonCalculPrix = new Button(calculPrix, SWT.BACKGROUND);
 		buttonCalculPrix.setText("Afficher le prix total");
 
-
 		buttonCalculPrix.addSelectionListener(new SelectionAdapter() {
 			// on calcule le prix total
 			@Override
@@ -1960,8 +1954,8 @@ public class VueLivraison {
 				// on verifie si un chantier est saisi
 				try {
 
-					String c = chantier.getText().split(";")[1].replace(" ", "");
-					idChantier = Integer.parseInt(c.substring(3, c.length()));
+
+					idChantier = siteIdList.get(chantier.getSelectionIndex());
 				} catch (Throwable e) {
 					e.printStackTrace();
 					System.out.println("erreur dans la modif");
@@ -1991,8 +1985,7 @@ public class VueLivraison {
 							selectedLivraison.setPrixTotal(Double.parseDouble(prix.getText()));
 
 							validerModification(listProductId, quantites);
-						}
-						else {
+						} else {
 							validerCreation(idChantier, listProductId, quantites, prix.getText(), date.getText());
 						}
 					}
@@ -2231,7 +2224,7 @@ public class VueLivraison {
 				// on verifie le status
 				if (l.getStatus().contentEquals("Publié")) {
 					if (l.getDate() != null) {
-						System.out.println("date avant d'afficher :"+l.getDate());
+						System.out.println("date avant d'afficher :" + l.getDate());
 						String[] d1 = l.getDate().split("/");
 						Integer mois1 = Integer.parseInt(d1[1]);
 						Integer annee1 = Integer.parseInt(d1[2]);
