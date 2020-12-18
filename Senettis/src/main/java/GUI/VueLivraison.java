@@ -447,18 +447,18 @@ public class VueLivraison {
 		labelChantier.setBackground(Couleur.bleuClair);
 		// Titre
 		Combo chantiers = new Combo(compositeChantier, SWT.BORDER);
+
 		if (selectedChantier != null) {
 			try {
 				if (selectedChantier.getName().length() > 25) {
-					chantiers.setText(selectedChantier.getName().substring(0, 23) + "..." + ";id:"
-							+ ((Integer) selectedChantier.getSiteId()).toString());
+					chantiers.setText(selectedChantier.getName().substring(0, 23) + "...");
 				} else {
-					chantiers.setText(selectedChantier.getName() + " ; id :"
-							+ ((Integer) selectedChantier.getSiteId()).toString());
+					chantiers.setText(selectedChantier.getName());
 				}
+
 			} catch (Exception e1) {
 				e1.printStackTrace();
-				System.out.println("erreur pour recuperer les chantiers");
+
 				MessageBox dialog = new MessageBox(vueFS.getShell(), SWT.ICON_ERROR | SWT.OK);
 				dialog.setText("Erreur");
 				dialog.setMessage("Une erreur est survenue. " + '\n' + e1.getMessage());
@@ -467,14 +467,17 @@ public class VueLivraison {
 		} else {
 			chantiers.setText("Selectionner ...");
 		}
+
+		ArrayList<Integer> siteIdList = new ArrayList<Integer>();
+
 		try {
 			for (Site e : Site.getAllChantier()) {
+				siteIdList.add(e.getSiteId());
 				if (e.getStatus().equals("Publié")) {
 					if (e.getName().length() > 25) {
-						chantiers.add(
-								e.getName().substring(0, 23) + "..." + ";id:" + ((Integer) e.getSiteId()).toString());
+						chantiers.add(e.getName().substring(0, 23) + "...");
 					} else {
-						chantiers.add(e.getName() + " ; id :" + ((Integer) e.getSiteId()).toString());
+						chantiers.add(e.getName());
 					}
 				}
 			}
@@ -588,13 +591,12 @@ public class VueLivraison {
 			public void widgetSelected(SelectionEvent arg0) {
 
 				try {
-					String id;
+					Integer chantierId = null;
 					try {
-						id = chantiers.getText().split(";")[1].replace(" ", "");
+						chantierId = siteIdList.get(chantiers.getSelectionIndex());
 					} catch (Exception e) {
 						throw new Error("Merci d'indiquer un chantier.");
 					}
-					Integer chantierId = Integer.parseInt(id.substring(3, id.length()));
 
 					String[] debut = periode.getText().split(" ");
 
@@ -1030,14 +1032,16 @@ public class VueLivraison {
 		labelChantier.setBackground(Couleur.bleuClair);
 		// Titre
 		Combo chantiers = new Combo(compositeChantier, SWT.BORDER);
+
 		if (selectedChantier != null) {
 			try {
+
 				if (selectedChantier.getName().length() > 25) {
-					chantiers.setText(selectedChantier.getName().substring(0, 23) + "..." + ";id:"
-							+ ((Integer) selectedChantier.getSiteId()).toString());
+					chantiers.setText(selectedChantier.getName().substring(0, 23) + "...");
+
 				} else {
-					chantiers.setText(selectedChantier.getName() + " ; id :"
-							+ ((Integer) selectedChantier.getSiteId()).toString());
+					chantiers.setText(selectedChantier.getName() + " ");
+
 				}
 			} catch (Exception e1) {
 				e1.printStackTrace();
@@ -1050,14 +1054,16 @@ public class VueLivraison {
 		} else {
 			chantiers.setText("Selectionner ...");
 		}
+		ArrayList<Integer> siteIdList = new ArrayList<Integer>();
 		try {
+			
 			for (Site e : Site.getAllChantier()) {
+				siteIdList.add(e.getSiteId());
 				if (e.getStatus().equals("Publié")) {
 					if (e.getName().length() > 25) {
-						chantiers.add(
-								e.getName().substring(0, 23) + "..." + ";id:" + ((Integer) e.getSiteId()).toString());
+						chantiers.add(e.getName().substring(0, 23) + "...");
 					} else {
-						chantiers.add(e.getName() + " ; id :" + ((Integer) e.getSiteId()).toString());
+						chantiers.add(e.getName() );
 					}
 				}
 			}
@@ -1206,13 +1212,13 @@ public class VueLivraison {
 			public void widgetSelected(SelectionEvent arg0) {
 
 				try {
-					String id;
+					Integer chantierId=null;
 					try {
-						id = chantiers.getText().split(";")[1].replace(" ", "");
+						chantierId = siteIdList.get(chantiers.getSelectionIndex());
 					} catch (Exception e) {
 						throw new Error("Merci d'indiquer un chantier.");
 					}
-					Integer chantierId = Integer.parseInt(id.substring(3, id.length()));
+				
 
 					String[] debut = periode.getText().split(" ");
 					System.out.println(debut[0] + " " + debut[1]);
@@ -1660,15 +1666,15 @@ public class VueLivraison {
 
 		// on affiche le chantier selectionne
 		Combo chantier = new Combo(compositeChantier, SWT.BORDER);
-		Integer idChantierSelectionne=null;
+		Integer idChantierSelectionne = null;
 		if (selectedLivraison != null) {
 			try {
 				if (Site.getSiteById(selectedLivraison.getIdChantier()).getStatus().equals("Publié")) {
-					String stringChantier = Site.getSiteById(selectedLivraison.getIdChantier()).getName() ;
+					String stringChantier = Site.getSiteById(selectedLivraison.getIdChantier()).getName();
 					if (stringChantier.length() > 30) {
-						chantier.setText(stringChantier.substring(0, 23) + "..." );
+						chantier.setText(stringChantier.substring(0, 23) + "...");
 						labelChantier.setText("Chantier* :");// pour pas que ca fasse un trop grand espace et que ca
-						idChantierSelectionne=selectedLivraison.getIdChantier();								// decale
+						idChantierSelectionne = selectedLivraison.getIdChantier(); // decale
 						// le titre
 					} else {
 						chantier.setText(stringChantier);
@@ -1689,15 +1695,15 @@ public class VueLivraison {
 		}
 		// on recupere les autres chantiers pour les afficher aussi et pouvoir modifier
 		// le chantier actuel
-		
-		ArrayList<Integer> siteIdList =new ArrayList<Integer>();
+
+		ArrayList<Integer> siteIdList = new ArrayList<Integer>();
 		try {
 			for (Site c : Site.getAllChantier()) {
 				if (c.getStatus().equals("Publié")) {
-				
+
 					siteIdList.add(c.getSiteId());
 					if (c.getName().length() > 30) {
-						chantier.add(c.getName().substring(0, 23) + "..." );
+						chantier.add(c.getName().substring(0, 23) + "...");
 						labelChantier.setText("Chantier* :");
 					} else {
 						chantier.add(c.getName());
@@ -1953,7 +1959,6 @@ public class VueLivraison {
 				Integer idChantier = 0;
 				// on verifie si un chantier est saisi
 				try {
-
 
 					idChantier = siteIdList.get(chantier.getSelectionIndex());
 				} catch (Throwable e) {
