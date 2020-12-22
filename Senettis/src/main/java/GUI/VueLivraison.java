@@ -616,7 +616,7 @@ public class VueLivraison {
 
 					if (selectedFS != null) {
 						FournitureSanitaire fs = new FournitureSanitaire(selectedFS.getFournitureSanitaireId(),
-								chantierId, moisD, anneeD, textDesc.getText(), montantParMois, textST.getText(),
+								chantierId, moisD, anneeD, textDesc.getText(), montantParMois, textST.getText().trim(),
 								"Publié");
 						fs.updateDatabase();
 						MessageBox dialog = new MessageBox(vueFS.getShell(), SWT.ICON_INFORMATION | SWT.OK);
@@ -626,7 +626,7 @@ public class VueLivraison {
 						dialog.open();
 					} else {
 						FournitureSanitaire fs = new FournitureSanitaire(chantierId, moisD, anneeD, montantParMois,
-								textDesc.getText(), textST.getText(), "Publié");
+								textDesc.getText(), textST.getText().trim(), "Publié");
 						fs.insertDatabase();
 						MessageBox dialog = new MessageBox(vueFS.getShell(), SWT.ICON_INFORMATION | SWT.OK);
 						dialog.setText("Création réussie");
@@ -1056,14 +1056,14 @@ public class VueLivraison {
 		}
 		ArrayList<Integer> siteIdList = new ArrayList<Integer>();
 		try {
-			
+
 			for (Site e : Site.getAllChantier()) {
 				siteIdList.add(e.getSiteId());
 				if (e.getStatus().equals("Publié")) {
 					if (e.getName().length() > 25) {
 						chantiers.add(e.getName().substring(0, 23) + "...");
 					} else {
-						chantiers.add(e.getName() );
+						chantiers.add(e.getName());
 					}
 				}
 			}
@@ -1212,16 +1212,14 @@ public class VueLivraison {
 			public void widgetSelected(SelectionEvent arg0) {
 
 				try {
-					Integer chantierId=null;
+					Integer chantierId = null;
 					try {
 						chantierId = siteIdList.get(chantiers.getSelectionIndex());
 					} catch (Exception e) {
 						throw new Error("Merci d'indiquer un chantier.");
 					}
-				
 
 					String[] debut = periode.getText().split(" ");
-					System.out.println(debut[0] + " " + debut[1]);
 
 					int moisD = Month.valueOf(debut[0]).getValue();
 					int anneeD = Integer.parseInt(debut[1]);
@@ -1251,7 +1249,7 @@ public class VueLivraison {
 					if (selectedAmorti != null) {
 						AmmortissementChantier ae = new AmmortissementChantier(
 								selectedAmorti.getAmmortissementChantierId(), chantierId, moisD, anneeD, moisF, anneeF,
-								textDesc.getText(), valeurTotale / duree, duree, valeurTotale, type.getText(),
+								textDesc.getText().trim(), valeurTotale / duree, duree, valeurTotale, type.getText(),
 								"Publié");
 						ae.updateDatabase();
 						MessageBox dialog = new MessageBox(vueAutres.getShell(), SWT.ICON_INFORMATION | SWT.OK);
@@ -1260,7 +1258,7 @@ public class VueLivraison {
 						dialog.open();
 					} else {
 						AmmortissementChantier ae = new AmmortissementChantier(0, chantierId, moisD, anneeD, moisF,
-								anneeF, textDesc.getText(), valeurTotale / duree, duree, valeurTotale, type.getText(),
+								anneeF, textDesc.getText().trim(), valeurTotale / duree, duree, valeurTotale, type.getText(),
 								"Publié");
 						ae.insertDatabase();
 						MessageBox dialog = new MessageBox(vueAutres.getShell(), SWT.ICON_INFORMATION | SWT.OK);
@@ -1985,13 +1983,14 @@ public class VueLivraison {
 							// on met a jour la livraison selectionnee
 							selectedLivraison.setIdChantier(idChantier);
 							if (!(date.getText().isEmpty())) {
-								selectedLivraison.setDate(date.getText());
+								selectedLivraison.setDate(date.getText().trim());
 							}
 							selectedLivraison.setPrixTotal(Double.parseDouble(prix.getText()));
 
 							validerModification(listProductId, quantites);
 						} else {
-							validerCreation(idChantier, listProductId, quantites, prix.getText(), date.getText());
+							validerCreation(idChantier, listProductId, quantites, prix.getText(),
+									date.getText().trim());
 						}
 					}
 				} catch (Throwable e) {

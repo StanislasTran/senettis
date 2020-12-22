@@ -233,6 +233,27 @@ public class Site {
 		}
 	}
 
+	/***
+	 * @param <type>String</type>name
+	 * @return <
+	 * @throws SQLException
+	 */
+	public static Integer getSiteIdByName(String name) throws SQLException {
+		String reqSql = "SELECT ChantierId,nom,adresse,Status FROM Chantier WHERE Nom=?;";
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		PreparedStatement statement = connection.prepareStatement(reqSql);
+		statement.setObject(1, name, Types.VARCHAR);
+		statement.executeQuery();
+
+		ResultSet result = statement.getResultSet();
+		Integer chantierId = 0;
+		if (result.next())
+			chantierId = result.getInt("ChantierId");
+
+		return chantierId;
+
+	}
+
 	/**
 	 * getter and setter
 	 */
@@ -273,9 +294,9 @@ public class Site {
 		return adress;
 	}
 
-	
 	/**
 	 * setter for the attribute adress
+	 * 
 	 * @param <type>String</type>adress
 	 */
 	public void setAdress(String adress) {
@@ -291,6 +312,7 @@ public class Site {
 
 	/**
 	 * Setter for the attribute <type>Integer</type>siteId
+	 * 
 	 * @param siteId
 	 */
 	public void setSiteId(Integer siteId) {

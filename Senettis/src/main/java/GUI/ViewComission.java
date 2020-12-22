@@ -20,6 +20,7 @@ import org.eclipse.swt.widgets.*;
 import classes.Comission;
 //import javafx.embed.swt.FXCanvas ;
 import classes.Product;
+import classes.Site;
 import classes.Status;
 
 public class ViewComission {
@@ -149,9 +150,9 @@ public class ViewComission {
 
 		}
 		mainView = new Composite(this.comissionView, SWT.CENTER);
-		FillLayout fillLayout = new FillLayout(SWT.VERTICAL);
-		fillLayout.marginWidth = 50;
-		mainView.setLayout(fillLayout);
+		RowLayout mainRowLayout = new RowLayout(SWT.VERTICAL);
+		mainRowLayout.marginWidth = 50;
+		mainView.setLayout(mainRowLayout);
 		mainView.setBackground(Couleur.bleuClair);
 		comissionView.setBackground(Couleur.bleuClair);
 
@@ -159,11 +160,11 @@ public class ViewComission {
 
 		addHeader("Creation Comission");
 
-		FillLayout fillLayoutH5 = new FillLayout();
-		fillLayoutH5.marginHeight = 30;
-		fillLayoutH5.marginWidth = 20;
-		fillLayoutH5.spacing = 5;
-		fillLayoutH5.type = SWT.HORIZONTAL;
+		RowLayout rowLayout = new RowLayout();
+		rowLayout.marginHeight = 30;
+		rowLayout.marginWidth = 20;
+		rowLayout.spacing = 5;
+		rowLayout.type = SWT.HORIZONTAL;
 
 		// Month part
 
@@ -201,7 +202,7 @@ public class ViewComission {
 		// Comission part
 
 		Composite compositeComission = new Composite(mainView, SWT.BACKGROUND);
-		compositeComission.setLayout(fillLayoutH5);
+		compositeComission.setLayout(rowLayout);
 		compositeComission.setBackground(Couleur.bleuClair);
 		Label labelComission = new Label(compositeComission, SWT.NONE);
 		labelComission.setBackground(Couleur.bleuClair);
@@ -215,7 +216,7 @@ public class ViewComission {
 
 		Composite compositeButtons = new Composite(mainView, SWT.CENTER);
 		compositeButtons.setBackground(Couleur.bleuClair);
-		compositeButtons.setLayout(fillLayoutH5);
+		compositeButtons.setLayout(rowLayout);
 		Button validationButton = new Button(compositeButtons, SWT.BACKGROUND);
 		validationButton.setText("Valider");
 		validationButton.setBounds(10, 60, 100, 25);
@@ -224,63 +225,75 @@ public class ViewComission {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 
-				
 				String comission = textComission.getText().replace(",", ".");
-				String siteId =table.getSelection()[0].getText(3);
+				String siteId = "";
+				try {
+					siteId = "" + Site.getSiteIdByName(table.getSelection()[0].getText(0));
+				} catch (SQLException e) {
+					MessageBox dialog = new MessageBox(comissionView.getShell(), SWT.ICON_ERROR | SWT.OK);
+					dialog.setText("Erreur Création :");
+					dialog.setMessage("Une erreur est survenue lors de la création de la comission. " + '\n'
+							+ e.getMessage() + "erreuto de base de donnée, contactez l'admin");
+					dialog.open();
+
+				} catch (ArrayIndexOutOfBoundsException exceptionArray) {
+					
+				}
 				boolean isChecked = false;
 				try {
-					isChecked = checkProduct( siteId,comission);
+					isChecked = checkProduct(siteId, comission);
 				} catch (IllegalArgumentException argException) {
 
 					MessageBox dialog = new MessageBox(comissionView.getShell(), SWT.ICON_ERROR | SWT.OK);
 					dialog.setText("Erreur Création :");
-					dialog.setMessage("Une erreur est survenue lors de la création du produit. " + '\n'
+					dialog.setMessage("Une erreur est survenue lors de la création de la comission. " + '\n'
 							+ argException.getMessage());
 					dialog.open();
 				}
 
-				Double comissionCheck=Double.parseDouble(comission);
-				Month startMonth = Month.of(comboMonth.getSelectionIndex() + 1);
-				Year startYear = Year.of(Integer.parseInt(comboYear.getText()));
-				Integer siteIdChecked = Integer.parseInt(siteId);
 				if (isChecked) {
 
-					try {
-					 new Comission(comissionCheck,siteIdChecked, startMonth,startYear ,Status.PUBLISHED).insert();
-					
+					Double comissionCheck = Double.parseDouble(comission);
+					Month startMonth = Month.of(comboMonth.getSelectionIndex() + 1);
+					Year startYear = Year.of(Integer.parseInt(comboYear.getText()));
+					Integer siteIdChecked = Integer.parseInt(siteId);
+					if (isChecked) {
 
-						// validationMessageBox
+						try {
+							new Comission(comissionCheck, siteIdChecked, startMonth, startYear, Status.PUBLISHED)
+									.insert();
 
-						MessageBox dialog = new MessageBox(comissionView.getShell(), SWT.ICON_WORKING | SWT.OK);
-						dialog.setText("Succes");
-						dialog.setMessage("La comission  a bien été enregistré");
-						dialog.open();
+							// validationMessageBox
 
-						// view change
+							MessageBox dialog = new MessageBox(comissionView.getShell(), SWT.ICON_WORKING | SWT.OK);
+							dialog.setText("Succes");
+							dialog.setMessage("La comission  a bien été enregistré");
+							dialog.open();
 
-						compositeSelection();
-						addCreateButton();
-						comissionViewDisplay();
+							// view change
 
-					} catch (SQLException sqlException) {
-						MessageBox dialog = new MessageBox(comissionView.getShell(), SWT.ICON_ERROR | SWT.OK);
-						dialog.setText("Erreur Création :");
-						dialog.setMessage(
-								"Une erreur est survenue lors de l'insertion du produit dans la base de données. "
-										+ '\n' + sqlException.getMessage());
-						dialog.open();
+							compositeSelection();
+							addCreateButton();
+							comissionViewDisplay();
+
+						} catch (SQLException sqlException) {
+							MessageBox dialog = new MessageBox(comissionView.getShell(), SWT.ICON_ERROR | SWT.OK);
+							dialog.setText("Erreur Création :");
+							dialog.setMessage(
+									"Une erreur est survenue lors de l'insertion du produit dans la base de données. "
+											+ '\n' + sqlException.getMessage());
+							dialog.open();
+
+						}
+
+						compositeComission.dispose();
+
+						compositeButtons.dispose();
+						mainView.pack();
+						mainView.getParent().pack();
+						selection.pack();
 
 					}
-
-				
-					compositeComission.dispose();
-				
-					compositeButtons.dispose();
-					mainView.pack();
-					mainView.getParent().pack();
-					selection.pack();
-
-					System.out.println("done");
 				}
 
 			}
@@ -304,9 +317,9 @@ public class ViewComission {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				
+
 				compositeComission.dispose();
-		
+
 				compositeButtons.dispose();
 				mainView.pack();
 				mainView.getParent().pack();
@@ -319,10 +332,9 @@ public class ViewComission {
 			mainView.moveBelow(selection);
 		}
 
-	
 		labelComission.pack();
 		validationButton.pack();
-		
+
 		mainView.pack();
 		selection.pack();
 		tableComposite.pack();
@@ -331,8 +343,6 @@ public class ViewComission {
 		comissionView.getParent().pack();
 
 	}
-
-	
 
 	public void setVueProduit(Composite composite) {
 		this.comissionView = composite;
@@ -487,8 +497,8 @@ public class ViewComission {
 	 * 
 	 *****************/
 
-	public boolean checkProduct(String siteId,String comission) {
-		
+	public boolean checkProduct(String siteId, String comission) {
+
 		if (Objects.isNull(siteId))
 			throw new IllegalArgumentException("Veuillez selectionner un chantier");
 		else if (siteId.isBlank())
@@ -499,9 +509,9 @@ public class ViewComission {
 			if (comissionCheck <= 0)
 				throw new IllegalArgumentException("Le  prix doit être supérieur à 0");
 		} catch (NumberFormatException parseDoubleException) {
-			throw new IllegalArgumentException("La comission entrée n'est pas valide, veuillez entrer une valeur numérique");
+			throw new IllegalArgumentException(
+					"La comission entrée n'est pas valide, veuillez entrer une valeur numérique");
 		}
-
 
 		if (Objects.isNull(comission))
 			throw new IllegalArgumentException("L'attribut comission ne peut pas être null");
@@ -510,10 +520,11 @@ public class ViewComission {
 
 		try {
 			Double comissionCheck = Double.parseDouble(comission);
-			if (comissionCheck <= 0)
-				throw new IllegalArgumentException("Le  prix doit être supérieur à 0");
+			if (comissionCheck <= 0 || comissionCheck > 100)
+				throw new IllegalArgumentException("Le  prix doit être comprise entre  0 et 100");
 		} catch (NumberFormatException parseDoubleException) {
-			throw new IllegalArgumentException("La comission entrée n'est pas valide, veuillez entrer une valeur numérique");
+			throw new IllegalArgumentException(
+					"La comission entrée n'est pas valide, veuillez entrer une valeur numérique");
 		}
 
 		return true;

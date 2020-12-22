@@ -507,11 +507,12 @@ public class ViewAffectationMAB {
 	 * 
 	 * @param table
 	 * @param idChantier
+	 * @throws SQLException 
 	 */
-	private void setSelectionOnChantierId(Table table, int idChantier) {
-
+	private void setSelectionOnChantierId(Table table, int idChantier) throws SQLException {
+		String name=Site.getSiteById(idChantier).getName();
 		for (int i = 0; i < table.getItems().length; i++)
-			if (Integer.parseInt((table.getItem(i).getText(3))) == idChantier)
+			if (table.getItem(i).getText(0).contentEquals(name))
 				table.setSelection(i);
 
 	}
@@ -960,7 +961,7 @@ public class ViewAffectationMAB {
 				try {
 
 					checkEmployeId = table.getSelection()[0].getText(3);
-					checkNbHours = nbHeureTexte.getText();
+					checkNbHours = nbHeureTexte.getText().trim().replace(",",".");
 					checkMonth = comboMonth.getSelectionIndex() + 1;
 					checkYear = comboYear.getText();
 
@@ -1127,13 +1128,13 @@ public class ViewAffectationMAB {
 
 				try {
 
-					checkSiteId = table.getSelection()[0].getText(3);
-					checkNbHours = nbHeureTexte.getText();
+					checkSiteId = ""+Site.getSiteIdByName( table.getSelection()[0].getText(0));
+					checkNbHours = nbHeureTexte.getText().trim().replace(",",".");
 					checkMonth = comboMonth.getSelectionIndex() + 1;
 					checkYear = comboYear.getText();
 
 					isChecked = checkAffectation(checkSiteId, "" + employeeId, checkNbHours, checkMonth, checkYear);
-				} catch (IllegalArgumentException | ArrayIndexOutOfBoundsException argException) {
+				} catch (IllegalArgumentException | ArrayIndexOutOfBoundsException | SQLException argException) {
 					MessageBox dialog = new MessageBox(affectationView.getShell(), SWT.ICON_ERROR | SWT.OK);
 					dialog.setText("Erreur Création :");
 					if (argException.getClass() == IllegalArgumentException.class)
@@ -1257,7 +1258,7 @@ public class ViewAffectationMAB {
 
 		nbHeureTexte.pack();
 		Composite tableComposite = new Composite(modifComposite, SWT.NONE);
-		Table table = VueChantier.getTableAllChantier(modifComposite);
+		Table table = VueChantier.getTableAllChantier(tableComposite);
 		setSelectionOnChantierId(table, affectation.getIdChantier());
 
 		table.setLayoutData(new RowData(400, 100));
@@ -1280,15 +1281,17 @@ public class ViewAffectationMAB {
 
 				try {
 
-					checkSiteId = table.getSelection()[0].getText(3);
-					checkNbHours = nbHeureTexte.getText();
+					checkSiteId =""+Site.getSiteIdByName( table.getSelection()[0].getText(0));
+			
+					checkNbHours = nbHeureTexte.getText().trim().replace(",",".");
+					
 					isChecked = checkAffectation(checkSiteId, "" + affectation.getIdEmploye(), checkNbHours,
 							affectation.getMonth().getValue(), "" + affectation.getYear().getValue());
-				} catch (IllegalArgumentException | ArrayIndexOutOfBoundsException argException) {
+				} catch (IllegalArgumentException | ArrayIndexOutOfBoundsException | SQLException argException) {
 					MessageBox dialog = new MessageBox(affectationView.getShell(), SWT.ICON_ERROR | SWT.OK);
 					dialog.setText("Erreur Création :");
 					if (argException.getClass() == IllegalArgumentException.class)
-						dialog.setMessage("Une erreur est survenue lors de la création de l'afféctation. " + '\n'
+						dialog.setMessage("Une erreur est survenue lors de la mise à jour de l'afféctation. " + '\n'
 								+ argException.getMessage());
 					if (argException.getClass() == ArrayIndexOutOfBoundsException.class)
 						dialog.setMessage("Veuillez sélectionner un chantier");
@@ -1303,8 +1306,9 @@ public class ViewAffectationMAB {
 					if (table.getSelection().length == 1) {
 
 						try {
+				
 							affectation.update();
-
+					
 							modifComposite.dispose();
 							getVueAffectation().pack();
 							getVueAffectation().getParent().pack();
@@ -1317,7 +1321,7 @@ public class ViewAffectationMAB {
 						} catch (SQLException sqlException) {
 							MessageBox dialog = new MessageBox(affectationView.getShell(), SWT.ICON_ERROR | SWT.OK);
 							dialog.setText("Erreur Création :");
-							dialog.setMessage("Une erreur est survenue lors de la création de l'affectation. " + '\n'
+							dialog.setMessage("Une erreur est survenue lors de mise à joour de l'affectation. " + '\n'
 									+ sqlException.getMessage());
 							dialog.open();
 						}
@@ -1395,7 +1399,7 @@ public class ViewAffectationMAB {
 
 		nbHeureTexte.pack();
 		Composite tableComposite = new Composite(modifComposite, SWT.NONE);
-		Table table = VueEmploye.getAllEmployerForAffectation(modifComposite);
+		Table table = VueEmploye.getAllEmployerForAffectation(tableComposite);
 		setSelectionOnChantierId(table, affectation.getIdChantier());
 
 		table.setLayoutData(new RowData(400, 100));
@@ -1418,7 +1422,7 @@ public class ViewAffectationMAB {
 				try {
 
 					checkEmployeId = table.getSelection()[0].getText(3);
-					checkNbHours = nbHeureTexte.getText();
+					checkNbHours = nbHeureTexte.getText().trim().replace(",",".");
 					isChecked = checkAffectation(affectation.getIdChantier() + "", checkEmployeId, checkNbHours,
 							affectation.getMonth().getValue(), "" + affectation.getYear().getValue());
 				} catch (IllegalArgumentException | ArrayIndexOutOfBoundsException argException) {
@@ -1572,7 +1576,7 @@ public class ViewAffectationMAB {
 		try {
 			Double priceCheck = Double.parseDouble(nbHours);
 
-			if (priceCheck <= 0)
+			if (priceCheck < 0)
 				throw new IllegalArgumentException("Le  nombre d'heures doit être supérieur à 0");
 		} catch (NumberFormatException parseDoubleException) {
 			throw new IllegalArgumentException(

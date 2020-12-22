@@ -23,6 +23,7 @@ public class ViewProduct {
 	private Button boutonCreer;
 	private Button buttonModify;
 	private Button buttonRemove;
+	private Composite header;
 
 	/**
 	 * Constructor
@@ -38,12 +39,17 @@ public class ViewProduct {
 		RowLayout rowLayoutV = new RowLayout(SWT.VERTICAL);
 		productView.setLayout(rowLayoutV);
 
+		addHeader("Gestion des produits");
 		compositeSelection();
 		addCreateButton();
-		mainView();
+	
 		productViewDisplay();
 
 	}
+	
+	/**
+	 * create the composite which contain
+	 */
 
 	private void mainView() {
 		if (!Objects.isNull(mainView) && !mainView.isDisposed()) {
@@ -52,6 +58,7 @@ public class ViewProduct {
 		}
 		this.mainView = new Composite(this.productView, SWT.NONE);
 		this.productView.layout(true, true);
+		
 		if (!Objects.isNull(selection) && !selection.isDisposed())
 			mainView.moveBelow(selection);
 
@@ -75,7 +82,10 @@ public class ViewProduct {
 		this.mainView();
 		RowLayout rowLayoutV = new RowLayout();
 		rowLayoutV.type = SWT.VERTICAL;
-		final Table table = new Table(mainView, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.FULL_SELECTION);
+		Composite tableComposite = new  Composite (mainView,SWT.NONE);
+		tableComposite.setLayoutData(new RowLayout());
+		final Table table = new Table(tableComposite, SWT.CENTER|SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.FULL_SELECTION);
+		table.setSize(500,500);
 		table.setLayoutData(new RowData(400, 600));
 
 		table.setLinesVisible(true);
@@ -125,6 +135,8 @@ public class ViewProduct {
 		table.pack();
 		mainView.pack();
 		productView.pack();
+		tableComposite.pack();
+	
 		productView.getParent().pack();
 
 	}
@@ -135,28 +147,32 @@ public class ViewProduct {
 	 * @param composite
 	 */
 	public void createProduct() {
-		this.productView.setLayout(new RowLayout(SWT.VERTICAL));
 
+		
+		this.productView.setLayout(new RowLayout(SWT.VERTICAL));
+		
 		if (!Objects.isNull(mainView) && !mainView.isDisposed()) {
 			mainView.dispose();
 			productView.layout(true, true);
 
 		}
+		
+		addHeader("création d'un produit");
 		mainView = new Composite(this.productView, SWT.CENTER);
-		FillLayout fillLayout = new FillLayout(SWT.VERTICAL);
-		fillLayout.marginWidth = 50;
+		FillLayout fillLayout = new FillLayout(SWT.VERTICAL|SWT.CENTER);
+		fillLayout.marginWidth = 130;
 		mainView.setLayout(fillLayout);
 		mainView.setBackground(Couleur.bleuClair);
+
 		productView.setBackground(Couleur.bleuClair);
 
 		productView.layout(true, true);
 
-		addHeader("Creation Produit");
 
 		FillLayout fillLayoutH5 = new FillLayout();
 		fillLayoutH5.marginHeight = 30;
 		fillLayoutH5.marginWidth = 20;
-		fillLayoutH5.spacing = 5;
+		fillLayoutH5.spacing = 30;
 		fillLayoutH5.type = SWT.HORIZONTAL;
 
 		// Name part
@@ -166,11 +182,11 @@ public class ViewProduct {
 		compositeName.setBackground(Couleur.bleuClair);
 		Label labelName = new Label(compositeName, SWT.NONE);
 		labelName.setBackground(Couleur.bleuClair);
-		labelName.setText("Nom");
-		labelName.setBounds(10, 10, 100, 25);
-		final Text textName = new Text(compositeName, SWT.BORDER);
+		labelName.setText("Nom* ");
+		
+		final Text textName = new Text(compositeName,SWT.NONE);
 		textName.setText("");
-		textName.setBounds(10, 30, 100, 25);
+
 
 		// Brand part
 
@@ -193,10 +209,10 @@ public class ViewProduct {
 		Label labelPrix = new Label(compositePrice, SWT.NONE);
 		labelPrix.setBackground(Couleur.bleuClair);
 		labelPrix.setText("Prix");
-		labelPrix.setBounds(10, 10, 20, 25);
-		final Text textPrice = new Text(compositePrice, SWT.BORDER);
+		
+		final Text textPrice = new Text(compositePrice, SWT.NONE);
 		textPrice.setText("");
-		textPrice.setBounds(10, 30, 30, 25);
+
 
 		// comment part
 
@@ -206,10 +222,10 @@ public class ViewProduct {
 		Label labelComment = new Label(compositeComment, SWT.NONE);
 		labelComment.setBackground(Couleur.bleuClair);
 		labelComment.setText("Commentaires");
-		labelComment.setBounds(10, 10, 100, 25);
+		
 		final Text textCommentaire = new Text(compositeComment, SWT.NONE);
 		textCommentaire.setText("");
-		textCommentaire.setBounds(10, 30, 100, 25);
+
 
 		// Validation button
 
@@ -224,10 +240,10 @@ public class ViewProduct {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 
-				String name = textName.getText();
-				String price = textPrice.getText().replace(",",".");
-				String comment = textCommentaire.getText();
-				String brand = textBrand.getText();
+				String name = textName.getText().trim();
+				String price = textPrice.getText().replace(",",".").trim();
+				String comment = textCommentaire.getText().trim();
+				String brand = textBrand.getText().trim();
 				boolean isChecked = false;
 				try {
 					isChecked = checkProduct(name, price);
@@ -243,6 +259,7 @@ public class ViewProduct {
 				if (isChecked) {
 
 					try {
+						
 						Product produit = new Product(name, brand, Double.parseDouble(price), comment,
 								Status.PUBLISHED);
 
@@ -258,10 +275,18 @@ public class ViewProduct {
 						dialog.open();
 
 						// view change
-
+						addHeader("Gestion des produits");
 						compositeSelection();
 						addCreateButton();
 						productViewDisplay();
+
+						compositeName.dispose();
+						compositePrice.dispose();
+						compositeComment.dispose();
+						compositeButtons.dispose();
+						mainView.pack();
+						mainView.getParent().pack();
+						
 
 					} catch (SQLException sqlException) {
 						MessageBox dialog = new MessageBox(productView.getShell(), SWT.ICON_ERROR | SWT.OK);
@@ -273,15 +298,8 @@ public class ViewProduct {
 
 					}
 
-					compositeName.dispose();
-					compositePrice.dispose();
-					compositeComment.dispose();
-					compositeButtons.dispose();
-					mainView.pack();
-					mainView.getParent().pack();
-					selection.pack();
 
-					System.out.println("done");
+			
 				}
 
 			}
@@ -297,20 +315,21 @@ public class ViewProduct {
 			public void widgetSelected(SelectionEvent arg0) {
 
 				try {
-
+					addHeader("Gestion des produits");
 					compositeSelection();
 					addCreateButton();
 					productViewDisplay();
+					compositeName.dispose();
+					compositePrice.dispose();
+					compositeComment.dispose();
+					compositeButtons.dispose();
+					mainView.pack();
+					mainView.getParent().pack();
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				compositeName.dispose();
-				compositePrice.dispose();
-				compositeComment.dispose();
-				compositeButtons.dispose();
-				mainView.pack();
-				mainView.getParent().pack();
+				
 
 			}
 
@@ -325,7 +344,6 @@ public class ViewProduct {
 		validationButton.pack();
 		labelComment.pack();
 		mainView.pack();
-		selection.pack();
 		productView.pack();
 		productView.getParent().pack();
 
@@ -350,6 +368,7 @@ public class ViewProduct {
 			productView.layout(true, true);
 
 		}
+		addHeader("Modification d'un produit");
 		mainView = new Composite(this.productView, SWT.CENTER);
 		FillLayout fillLayout = new FillLayout(SWT.VERTICAL);
 		fillLayout.marginWidth = 50;
@@ -359,13 +378,14 @@ public class ViewProduct {
 
 		productView.layout(true, true);
 
-		addHeader("Creation Produit");
+
 
 		FillLayout fillLayoutH5 = new FillLayout();
 		fillLayoutH5.marginHeight = 30;
 		fillLayoutH5.marginWidth = 20;
-		fillLayoutH5.spacing = 5;
+		fillLayoutH5.spacing = 10;
 		fillLayoutH5.type = SWT.HORIZONTAL;
+
 
 		// Name part
 
@@ -401,10 +421,9 @@ public class ViewProduct {
 		Label labelPrice = new Label(compositePrice, SWT.NONE);
 		labelPrice.setBackground(Couleur.bleuClair);
 		labelPrice.setText("Prix");
-		labelPrice.setBounds(10, 10, 20, 25);
+	
 		final Text textPrice = new Text(compositePrice, SWT.BORDER);
 		textPrice.setText("" + product.getPrice());
-		textPrice.setBounds(10, 30, 30, 25);
 
 		// Comment part
 
@@ -414,10 +433,10 @@ public class ViewProduct {
 		Label labelComment = new Label(compositeComment, SWT.NONE);
 		labelComment.setBackground(Couleur.bleuClair);
 		labelComment.setText("Commentaires");
-		labelComment.setBounds(10, 10, 100, 25);
+
 		final Text textComment = new Text(compositeComment, SWT.CENTER);
 		textComment.setText("" + product.getComment());
-		textComment.setBounds(10, 30, 100, 25);
+	
 
 		// Validation button
 
@@ -426,15 +445,15 @@ public class ViewProduct {
 		compositeButtons.setLayout(fillLayoutH5);
 		Button buttonValidation = new Button(compositeButtons, SWT.BACKGROUND);
 		buttonValidation.setText("Valider");
-		buttonValidation.setBounds(10, 60, 100, 25);
+		
 		buttonValidation.addSelectionListener(new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				String name = textName.getText();
-				String price = textPrice.getText().replace(",", ".");
-				String comment = textComment.getText();
-				String brand = textBrand.getText();
+				String name = textName.getText().trim();
+				String price = textPrice.getText().replace(",", ".").trim();
+				String comment = textComment.getText().trim();
+				String brand = textBrand.getText().trim();
 
 				boolean isChecked = false;
 				try {
@@ -454,7 +473,7 @@ public class ViewProduct {
 				if (isChecked) {
 					try {
 						produit.updateDatabase();
-						compositeSelection();
+				
 
 						// validationMessageBox
 
@@ -462,20 +481,27 @@ public class ViewProduct {
 						dialog.setText("Succes");
 						dialog.setMessage("Le produit " + name + " a bien été enregistré");
 						dialog.open();
-
+						addHeader("Gestion des produits");
+						compositeSelection();
 						addCreateButton();
+						
 						productViewDisplay();
+						
+						
+						
+						fillLayoutH5.spacing = 10;
+						compositeName.dispose();
+						compositePrice.dispose();
+						compositeComment.dispose();
+						compositeButtons.dispose();
+						mainView.pack();
+						mainView.getParent().pack();
 					} catch (SQLException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 
-					compositeName.dispose();
-					compositePrice.dispose();
-					compositeComment.dispose();
-					compositeButtons.dispose();
-					mainView.pack();
-					mainView.getParent().pack();
+				
 				}
 			}
 
@@ -483,14 +509,14 @@ public class ViewProduct {
 
 		Button buttonCancel = new Button(compositeButtons, SWT.BACKGROUND);
 		buttonCancel.setText("Annuler");
-		buttonCancel.setBounds(10, 60, 100, 25);
+		
 		buttonCancel.addSelectionListener(new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 
 				try {
-
+					addHeader("Gestion des produits");
 					compositeSelection();
 					addCreateButton();
 					productViewDisplay();
@@ -585,7 +611,7 @@ public class ViewProduct {
 		boutonCreer.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-
+				header.dispose();
 				selection.dispose();
 				mainView.dispose();
 
@@ -607,22 +633,22 @@ public class ViewProduct {
 	 * @param <type>String</type> header
 	 */
 	public void addHeader(String header) {
-		if (!this.selection.isDisposed())
-			this.selection.dispose();
-		this.selection = new Composite(this.productView, SWT.CENTER | SWT.BORDER);
-		this.selection.setBackground(Couleur.bleuFonce);
+		if (!Objects.isNull(this.header) && !this.header.isDisposed())
+			this.header.dispose();
+		this.header = new Composite(this.productView, SWT.CENTER | SWT.BORDER);
+		this.header.setBackground(Couleur.bleuFonce);
 		FillLayout layout = new FillLayout();
-		layout.marginWidth = 100;
-		this.selection.setLayout(layout);
+		layout.marginWidth = 170;
+		this.header.setLayout(layout);
 
-		Label HeadLabel = new Label(this.selection, SWT.TITLE);
+		Label HeadLabel = new Label(this.header, SWT.TITLE);
 
-		HeadLabel.setText(header);
+		HeadLabel.setText("\n"+header+"\n \n");
 		Font fontTitle = new Font(HeadLabel.getDisplay(), "Arial", 12, SWT.BOLD);
 		HeadLabel.setForeground(Couleur.bleuClair);
 		HeadLabel.setFont(fontTitle);
 		HeadLabel.setBackground(Couleur.bleuFonce);
-		this.selection.pack();
+		this.header.pack();
 		HeadLabel.pack();
 
 	}

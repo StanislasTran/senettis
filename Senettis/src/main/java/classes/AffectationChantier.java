@@ -335,7 +335,7 @@ public class AffectationChantier {
 	 */
 	public static ResultSet getSiteAffectationPublished(int siteId) throws SQLException {
 		String selection = "AffectationId,Nom,Prenom,AffectationChantier.Nombre_heures,AffectationChantier.AffectationId,Numero_matricule";
-		String source = "(Select * from Employe WHERE Employe.Status='Publié' ) cas Employe INNER JOIN (Select * from AffectationChantier WHERE AffectationChantier.Status='Publié') as AffectationChantier ON Employe.EmployeId=AffectationChantier.Employe  ";
+		String source = "(Select * from Employe WHERE Employe.Status='Publié' ) as Employe INNER JOIN (Select * from AffectationChantier WHERE AffectationChantier.Status='Publié') as AffectationChantier ON Employe.EmployeId=AffectationChantier.Employe  ";
 		String condition = "AffectationChantier.Chantier=?";
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		String reqSql = "SELECT " + selection + " FROM " + source + " WHERE " + condition;

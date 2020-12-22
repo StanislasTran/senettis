@@ -240,7 +240,7 @@ public class VueRentabilité {
 								Double comission = Comission.getComissionSum(s.getSiteId(), date1.getMonth(),
 										Year.of(date1.getYear()));
 
-								coutRevient = CoutsEmploye + materiel + coutsFs + comissions + livraison;
+								coutRevient = CoutsEmploye + materiel + coutsFs + ((CA*comissions)/100) + livraison;
 								margeBrut = CA - coutRevient;
 								pourcentage = (margeBrut * 100) / CA;
 								
@@ -414,9 +414,9 @@ public class VueRentabilité {
 							Year.of(date1.getYear()));
 					item.setText(6, Double.toString(comission));
 
-					CoutRevient = totalEmployeCost + total_livraison + total_materiel + total_fs + comission;
+					CoutRevient = totalEmployeCost + total_livraison + total_materiel + total_fs + (CA*comission)/100;
 
-					margeBrut = CA - CoutRevient - comission;
+					margeBrut = CA - CoutRevient ;
 					item.setText(7, Double.toString(CoutRevient));
 
 					item.setText(8, Double.toString(margeBrut));

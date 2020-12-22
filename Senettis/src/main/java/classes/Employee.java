@@ -393,6 +393,13 @@ public class Employee {
 	}
 
 	
+	
+	
+	
+	
+	
+	
+	
 	public static void retrieveByMatricule(String matricule) throws SQLException {
 		String reqSql = "SELECT EmployeId FROM Employe WHERE Numero_matricule=?;";
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());

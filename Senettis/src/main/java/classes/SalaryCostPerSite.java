@@ -34,8 +34,8 @@ public class SalaryCostPerSite {
 		this.year = year;
 		this.siteId = siteId;
 		this.AffectationCost = computeAffectationCost(siteId, month, year, "normal");
-		this.MABCost=computeAffectationCost(siteId, month, year, "MAB");
-		this.totalCost=AffectationCost+MABCost;
+		this.MABCost = computeAffectationCost(siteId, month, year, "MAB");
+		this.totalCost = AffectationCost + MABCost;
 	}
 
 	private ResultSet getACjoinCE(int siteId, Month month, Year year) throws SQLException {
@@ -83,6 +83,7 @@ public class SalaryCostPerSite {
 	}
 
 	private Double computeAffectationCost(int siteId, Month month, Year year, String type) throws SQLException {
+
 		ResultSet result = null;
 		if (Objects.isNull(type))
 			throw new IllegalArgumentException("type can't be null must be equal to 'normal' Or 'MAB'");
@@ -94,6 +95,7 @@ public class SalaryCostPerSite {
 			throw new IllegalArgumentException("unknown type, type are 'normal' or 'MAB'");
 
 		Double affectationCost = 0.00;
+
 		while (result.next()) {
 
 			Double ACNbHeures = 0.00;
@@ -118,10 +120,11 @@ public class SalaryCostPerSite {
 				coutTransport = result.getDouble("cout_transport");
 			if (!Objects.isNull(result.getDouble("cout_telephone")))
 				coutTelephone = result.getDouble("cout_telephone");
-			if (!Objects.isNull(result.getDouble("remboursement_prets")))
-				remboursementPrets = result.getDouble("remboursement_prets");
-			if (!Objects.isNull(result.getDouble("saisie_arret")))
-				saisieArret = result.getDouble("saisie_arret");
+
+			saisieArret = sumArret(result.getInt("Employe"), month, year);
+			System.out.println(saisieArret);
+			remboursementPrets = sumRemboursementPret(result.getInt("Employe"), month, year);
+
 			if (!Objects.isNull(result.getDouble("CE_nb_heures")))
 				CENbHeures = result.getDouble("CE_nb_heures");
 			affectationCost += computeSalaryAffectationCost(ACNbHeures, mutuelle, indemnitePanier, masseSalariale,
@@ -129,6 +132,68 @@ public class SalaryCostPerSite {
 
 		}
 		return affectationCost;
+	}
+
+	private Double sumArret(int employeId, Month month, Year year) throws SQLException {
+
+		String selection = "Employe ,sum(valeurParMois)  as sumV  ";
+		String source = "AmmortissementEmploye ";
+
+		String condition = "status='Publié'  AND Employe=? AND type='Saisie Arret' AND datefromparts(?,?,1) between datefromparts(AmmortissementEmploye.AnneeDepart,AmmortissementEmploye.MoisDepart,1) AND datefromparts(AmmortissementEmploye.AnneeFin,AmmortissementEmploye.MoisFin,1) ";
+		String reqSql = "Select " + selection + " FROM " + source + " WHERE " + condition + "group by (Employe) ;";
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		PreparedStatement statement = connection.prepareStatement(reqSql);
+		statement.setObject(1, employeId, Types.INTEGER);
+
+		statement.setObject(2, year.getValue(), Types.INTEGER);
+		statement.setObject(3, month.getValue(), Types.INTEGER);
+
+		try {
+			statement.execute();
+
+			ResultSet result = statement.getResultSet();
+			if (result.next()) {
+				;
+				return result.getDouble("sumV");
+			}
+
+		} catch (Exception e) {
+
+		}
+		return 0.00;
+
+	}
+
+	private Double sumRemboursementPret(int employeId, Month month, Year year) throws SQLException {
+
+		String selection = "Employe ,sum(valeurParMois)  as sumV ";
+		String source = "AmmortissementEmploye";
+
+		String condition = "status='Publié'  AND Employe=? AND type='Saisie Arret' AND datefromparts(?,?,1) between datefromparts(AmmortissementEmploye.AnneeDepart,AmmortissementEmploye.MoisDepart,1) AND datefromparts(AmmortissementEmploye.AnneeFin,AmmortissementEmploye.MoisFin,1)";
+		String reqSql = "Select " + selection + " FROM " + source + " WHERE " + condition + "group by (Employe) ;";
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		PreparedStatement statement = connection.prepareStatement(reqSql);
+		statement.setObject(1, employeId, Types.INTEGER);
+
+		statement.setObject(2, year.getValue(), Types.INTEGER);
+		statement.setObject(3, month.getValue(), Types.INTEGER);
+		statement.execute();
+
+		ResultSet result = statement.getResultSet();
+		try {
+			statement.execute();
+
+			if (result.next()) {
+
+				
+				return result.getDouble("sumV");
+			}
+
+		} catch (Exception e) {
+
+		}
+		return 0.00;
+
 	}
 
 	public Double getAffectationCost() {
@@ -143,5 +208,4 @@ public class SalaryCostPerSite {
 		return MABCost;
 	}
 
-	
 }

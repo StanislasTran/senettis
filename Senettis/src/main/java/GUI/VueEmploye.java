@@ -26,8 +26,6 @@ import classes.Status;
 
 public class VueEmploye {
 
-
-
 	private static Composite vueEmploye;
 	private static Composite selection;
 	private static Composite vue;
@@ -54,9 +52,9 @@ public class VueEmploye {
 	 * @param display
 	 */
 	public VueEmploye(Composite composite, Display display) {
-		
+
 		Couleur.setDisplay(display); // pour utiliser les couleurs du fichier couleur
-		
+
 		selectedEmploye = null;
 		selectedAmorti = null;
 
@@ -113,7 +111,7 @@ public class VueEmploye {
 		boutonCreation.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				//selectedEmploye = null;
+				// selectedEmploye = null;
 				selectedAmorti = null;
 				vueCreationA();
 			}
@@ -855,10 +853,9 @@ public class VueEmploye {
 					Integer employeId = Integer.parseInt(tableCouts.getItem(ligne).getText(0));
 					Boolean empty = true;
 					try {
-						System.out.println("dans le try ");
+
 						String[] periode = tableCouts.getItem(ligne).getText(4).split("/");
-						System.out.println(periode[0]);
-						System.out.println(periode[1]);
+
 						int mois = Integer.parseInt(periode[0]);
 						int annee = Integer.parseInt(periode[1]);
 
@@ -946,12 +943,12 @@ public class VueEmploye {
 
 						if (!empty) {// si au moins un champs est renseigné
 							try {
-								System.out.println(employeId + "," + mois + "," + annee);
+
 								if (ce.updateDatabaseFromEmployeId() == 0) {
 									ce.insertDatabase();
 								}
 							} catch (Exception e) {
-								System.out.println("creation");
+								
 								ce.insertDatabase();
 							}
 						}
@@ -1051,11 +1048,16 @@ public class VueEmploye {
 									.getAmmortissementEmployeByEmployeId(e.getEmployeId())) {
 								System.out.println("dans la boucle");
 								if (ae.getStatus().equals("Publié")) {
-									System.out.println("c'est publie");
+
 									YearMonth debut = YearMonth.of(ae.getAnneeD(), ae.getMoisD());
 									YearMonth fin = YearMonth.of(ae.getAnneeF(), ae.getMoisF());
 									YearMonth now = YearMonth.of(Integer.parseInt(annee), moisInt.getValue());
-									if (debut.equals(now) || fin.equals(now)
+									System.out.println(ae.getValeur());
+									System.out.println(debut.equals(now));
+									System.out.println(fin.equals(now));
+									
+									System.out.println(debut.isBefore(now) && fin.isAfter(now));
+									if (debut.equals(now) 
 											|| (debut.isBefore(now) && fin.isAfter(now))) {
 										if (ae.getType().equals("Prêt")) {
 											pret += ae.getMontantParMois();
@@ -1826,12 +1828,12 @@ public class VueEmploye {
 			public void widgetSelected(SelectionEvent arg0) {
 
 				try {
-					validerEmploye(comboTitre.getText(), textNom.getText(), textPrenom.getText(),
-							textNumeroMatricule.getText(), textMail.getText(), textTelephone.getText(),
-							textPointure.getText(), textTaille.getText(), textDateArrivee.getText());
+					validerEmploye(comboTitre.getText().trim(), textNom.getText().trim(), textPrenom.getText().trim(),
+							textNumeroMatricule.getText().trim(), textMail.getText().trim(), textTelephone.getText().trim(),
+							textPointure.getText().trim(), textTaille.getText().trim(), textDateArrivee.getText().trim());
 				} catch (Throwable e) {
 					e.printStackTrace();
-					System.out.println("erreur dans la creation/modification");
+					
 					MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_ERROR | SWT.OK);
 					dialog.setText("Erreur Création/Modification");
 					dialog.setMessage("Une erreur est survenue lors de la création/modification de l'employé. " + '\n'
@@ -1888,11 +1890,8 @@ public class VueEmploye {
 		// date
 		if (!(textDateArrivee.isEmpty())) {
 			employe.setDateArrivee(textDateArrivee);
-			
-
 
 		}
-
 
 		// on insert dans la base de données
 		try {
@@ -2013,17 +2012,17 @@ public class VueEmploye {
 						if (selectedEmploye == null) {
 							throw new Error("selectedEmploye est vide");
 						}
-						
-						
+
 						tableGlobaleEmploye.getSelection()[0].setForeground(9, Couleur.noir);
 						try {
-							int employeeId=selectedEmploye.getEmployeId();
-							int newAnciennetePC=Employee.getEmployeById(employeeId).getComputeAnciennete();
-							Employee.updateAnciennete(Employee.getEmployeById(employeeId).getComputeAnciennete(),employeeId);
+							int employeeId = selectedEmploye.getEmployeId();
+							int newAnciennetePC = Employee.getEmployeById(employeeId).getComputeAnciennete();
+							Employee.updateAnciennete(Employee.getEmployeById(employeeId).getComputeAnciennete(),
+									employeeId);
 							tableGlobaleEmploye.getSelection()[0].setForeground(9, Couleur.noir);
 							tableGlobaleEmploye.getSelection()[0].setForeground(11, Couleur.noir);
-							tableGlobaleEmploye.getSelection()[0].setText(11,""+newAnciennetePC);
-							
+							tableGlobaleEmploye.getSelection()[0].setText(11, "" + newAnciennetePC);
+
 						} catch (SQLException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
@@ -2162,13 +2161,11 @@ public class VueEmploye {
 					if (e.getDateArrivee() != null && !e.getDateArrivee().equals("")) {
 						item.setText(8, e.getDateArrivee());
 
-						Integer anciennete=e.getComputeAnciennete();
+						Integer anciennete = e.getComputeAnciennete();
 						if (anciennete == 0)
 							item.setText(9, "moins d'un an");
 						else
 							item.setText(9, anciennete + " an");
-
-					
 
 						item.setText(11, "" + e.getAnciennetePC());
 						boolean mustBeRed = anciennete >= 3 && e.getAnciennetePC() < 3;

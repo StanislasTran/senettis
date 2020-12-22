@@ -38,6 +38,7 @@ public class turnOverView {
 	private Composite buttons;
 	private Composite compositeTable;
 	private Button saveButton;
+	private Button lastButton;
 	final int SITENAMECOLUMN = 0;
 	final int MENAGECOLUMN = 1;
 	final int VITRERIECOLUMN = 2;
@@ -53,13 +54,12 @@ public class turnOverView {
 		createMonthFilter();
 		createYearFilter();
 		compositeTable();
-		
 
 		yearFilter.addSelectionListener(new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				
+
 				try {
 					compositeTable();
 				} catch (SQLException e1) {
@@ -105,23 +105,24 @@ public class turnOverView {
 	}
 
 	private void addSaveButton(Table table, List<TurnOver> turnOvers) {
-		
-		if(!Objects.isNull(this.saveButton)&& !this.saveButton.isDisposed()) {
+
+		if (!Objects.isNull(this.saveButton) && !this.saveButton.isDisposed()) {
 			this.saveButton.dispose();
-			this.buttons.layout(true,true);
+			this.buttons.layout(true, true);
 		}
 		this.saveButton = new Button(this.buttons, SWT.NONE);
+		this.buttons.layout(true, true);
 		this.saveButton.setText("Enregistrer");
 		this.saveButton.pack();
 		this.buttons.pack();
 		this.saveButton.addSelectionListener(new SelectionAdapter() {
-			
+
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				boolean erreurs = false;
 
-				int i=0;
-				for(TableItem item:table.getItems()) {
+				int i = 0;
+				for (TableItem item : table.getItems()) {
 
 					try {
 
@@ -136,18 +137,18 @@ public class turnOverView {
 						turnOvers.get(i).inserOrUpdateRow();
 
 					} catch (Exception e1) {
-							erreurs = true;
-							MessageBox dialog = new MessageBox(turnOverView.getShell(), SWT.ICON_ERROR| SWT.OK);
-							dialog.setText("Erreur de saisie");
-							dialog.setMessage("Erreur : "+e1.getMessage());
-							dialog.open();
-							break;
+						erreurs = true;
+						MessageBox dialog = new MessageBox(turnOverView.getShell(), SWT.ICON_ERROR | SWT.OK);
+						dialog.setText("Erreur de saisie");
+						dialog.setMessage("Erreur : " + e1.getMessage());
+						dialog.open();
+						break;
 					}
 					i++;
 
 				}
-				if (!erreurs) { //on affiche le message de succes si on a eu aucune erreur
-					MessageBox dialog = new MessageBox(turnOverView.getShell(), SWT.ICON_WORKING| SWT.OK);
+				if (!erreurs) { // on affiche le message de succes si on a eu aucune erreur
+					MessageBox dialog = new MessageBox(turnOverView.getShell(), SWT.ICON_WORKING | SWT.OK);
 					dialog.setText("Succès");
 					dialog.setMessage("Données enregistrée avec succès");
 					dialog.open();
@@ -156,6 +157,45 @@ public class turnOverView {
 
 		});
 
+	}
+
+	private void addLastButton(Table table, List<TurnOver> turnOvers) {
+
+		if (!Objects.isNull(this.lastButton) && !this.lastButton.isDisposed()) {
+			this.lastButton.dispose();
+			this.buttons.layout(true, true);
+		}
+		this.lastButton = new Button(this.buttons, SWT.NONE);
+		this.buttons.layout(true, true);
+		this.lastButton.setText("récupérer données précédentes");
+
+		this.lastButton.pack();
+		this.lastButton.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				boolean erreurs = false;
+
+				try {
+
+					Table t=compositeTableLast();
+					addSaveButton(t, turnOvers);
+					addLastButton(t, turnOvers);
+				} catch (Exception e1) {
+					erreurs = true;
+					MessageBox dialog = new MessageBox(turnOverView.getShell(), SWT.ICON_ERROR | SWT.OK);
+					dialog.setText("Erreur de saisie");
+					dialog.setMessage("Erreur : " + e1.getMessage());
+					dialog.open();
+					
+				}
+
+				if (!erreurs) { // on affiche le message de succes si on a eu aucune erreur
+					
+				}
+			}
+
+		});
 
 	}
 
@@ -177,13 +217,35 @@ public class turnOverView {
 
 	}
 
+	private Table compositeTableLast() throws SQLException {
+		if (!Objects.isNull(this.compositeTable) && !this.compositeTable.isDisposed()) {
+			this.compositeTable.dispose();
+			turnOverView.layout(true, true);
+		}
+		this.compositeTable = new Composite(turnOverView, SWT.NONE);
+		turnOverView.layout(true, true);
+
+		int month = this.monthFilter.getSelectionIndex() + 1;
+		int year = Integer.parseInt(this.yearFilter.getText());
+		Table table=null;
+		if (month == 1) {
+			table=createTableListCA(Month.of(12), Year.of(year - 1));
+		} else
+
+			table=createTableListCA(Month.of(month - 1), Year.of(year));
+		compositeTable.pack();
+		turnOverView.pack();
+		turnOverView.getParent().pack();
+		return table;
+	}
+
 	private Table createTableListCA(Month month, Year year) throws SQLException {
 
 		List<TurnOver> turnOvers = TurnOver.getListCAForAllSite(month, year);
 
 		String[] titles = { "Nom de chantier", "Menage", "Vitrerie", "Fournitures Sainitaires", "Mise à Blanc",
 				"autres", "CA  " };
-		final Table table = new Table(this.compositeTable, SWT.FULL_SELECTION | SWT.HIDE_SELECTION|SWT.MULTI);
+		final Table table = new Table(this.compositeTable, SWT.FULL_SELECTION | SWT.HIDE_SELECTION | SWT.MULTI);
 		table.setLinesVisible(true);
 		table.setHeaderVisible(true);
 		table.setLayoutData(new RowData(900, 800));
@@ -192,11 +254,8 @@ public class turnOverView {
 			TableColumn column = new TableColumn(table, SWT.NONE);
 			column.setText(title);
 		}
-		
-		
 
 		for (TurnOver turnOver : turnOvers) {
-			
 
 			TableItem item = new TableItem(table, SWT.NONE);
 			item.setText(SITENAMECOLUMN, turnOver.getSiteName());
@@ -206,7 +265,6 @@ public class turnOverView {
 			item.setText(MISESBLANCCOLUMN, "" + turnOver.getMisesBlanc());
 			item.setText(AUTRESCOLUMN, "" + turnOver.getAutres());
 			item.setText(CACOLUMN, "" + turnOver.getCa());
-			
 
 		}
 
@@ -216,10 +274,9 @@ public class turnOverView {
 
 		// editing the second column
 
-
 		table.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				
+
 				// Identify the selected row
 				TableItem item = (TableItem) e.item;
 				if (item == null)
@@ -227,16 +284,14 @@ public class turnOverView {
 
 				// The control that will be the editor must be a child of the Table
 				textForColumn(MENAGECOLUMN, table, item);
-				textForColumn(VITRERIECOLUMN, table,  item);
-				textForColumn(FOURNITURESCOLUMN, table,  item);
-				textForColumn(MISESBLANCCOLUMN, table,  item);
-				textForColumn(AUTRESCOLUMN, table,  item);
-				
+				textForColumn(VITRERIECOLUMN, table, item);
+				textForColumn(FOURNITURESCOLUMN, table, item);
+				textForColumn(MISESBLANCCOLUMN, table, item);
+				textForColumn(AUTRESCOLUMN, table, item);
+
 				table.pack();
 				turnOverView.pack();
-				
-			
-				
+
 			}
 		});
 
@@ -244,15 +299,13 @@ public class turnOverView {
 		table.pack();
 		this.compositeTable.pack();
 		this.turnOverView.getParent().pack();
-		addSaveButton(table,turnOvers);
-		
+		addSaveButton(table, turnOvers);
+		addLastButton(table, turnOvers);
 		return table;
 
 	}
 
-	
-	public Text textForColumn(int index,Table table,TableItem item) {
-		
+	public Text textForColumn(int index, Table table, TableItem item) {
 
 		final TableEditor editor = new TableEditor(table);
 		// Clean up any previous editor control
@@ -265,7 +318,7 @@ public class turnOverView {
 		editor.horizontalAlignment = SWT.LEFT;
 		editor.grabHorizontal = true;
 		editor.minimumWidth = 50;
-		
+
 		Text newEditor = new Text(table, SWT.NONE);
 		newEditor.setText(item.getText(index));
 		newEditor.addModifyListener(new ModifyListener() {
@@ -274,51 +327,46 @@ public class turnOverView {
 			public void modifyText(ModifyEvent e) {
 				Text text = (Text) editor.getEditor();
 				editor.getItem().setText(index, text.getText());
-				
-				editor.getItem().setText(CACOLUMN,computeCA(item));
-		
-			}
 
-			
+				editor.getItem().setText(CACOLUMN, computeCA(item));
+
+			}
 
 		});
 		editor.setEditor(newEditor, item, index);
 		return newEditor;
 
-		
 	}
-	
-	
+
 	private String computeCA(TableItem item) {
-		
+
 		try {
-		
-		Double menage=checkStringDouble(item.getText(MENAGECOLUMN));
-		Double vitrerie=checkStringDouble(item.getText(VITRERIECOLUMN));
-		Double fournitures=checkStringDouble(item.getText(FOURNITURESCOLUMN));
-		Double miseABlanc=checkStringDouble(item.getText(MISESBLANCCOLUMN));
-		Double autres=checkStringDouble(item.getText(AUTRESCOLUMN));
-		
-		Double CA=menage+vitrerie+fournitures+miseABlanc+autres;
-		return ""+CA;
-		}
-		catch(Exception e) {
-			//TODO
+
+			Double menage = checkStringDouble(item.getText(MENAGECOLUMN));
+			Double vitrerie = checkStringDouble(item.getText(VITRERIECOLUMN));
+			Double fournitures = checkStringDouble(item.getText(FOURNITURESCOLUMN));
+			Double miseABlanc = checkStringDouble(item.getText(MISESBLANCCOLUMN));
+			Double autres = checkStringDouble(item.getText(AUTRESCOLUMN));
+
+			Double CA = menage + vitrerie + fournitures + miseABlanc + autres;
+			return "" + CA;
+		} catch (Exception e) {
+			// TODO
 			return "";
 		}
 	}
-	
+
 	private Double checkStringDouble(String value) throws Exception {
-		if(Objects.isNull(value))
+		if (Objects.isNull(value))
 			return 0.0;
 		try {
 			return Double.parseDouble(value);
-		}catch(Exception exception) {
+		} catch (Exception exception) {
 			throw new Exception("Merci de saisir une valeur correcte.");
 		}
-		
-		
+
 	}
+
 	private void selection() {
 		if (!Objects.isNull(this.selection) && !this.selection.isDisposed()) {
 			this.selection.dispose();

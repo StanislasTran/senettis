@@ -429,9 +429,13 @@ public class AffectationMiseABlanc {
 	 */
 	public int update() throws SQLException {
 		String reqSql = "UPDATE AffectationMAB SET Chantier=? , Employe=?,Nombre_heures=?, Mois=?,Annee=? WHERE affectationId=?";
-
+		System.out.println(this.idChantier);
+		System.out.println( this.idEmploye);
+		System.out.println(this.affectationId);
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+
 		PreparedStatement statement = connection.prepareStatement(reqSql);
+		
 		statement.setObject(1, this.idChantier, Types.INTEGER);
 		statement.setObject(2, this.idEmploye, Types.INTEGER);
 		statement.setObject(3, this.nbHours, Types.DECIMAL);

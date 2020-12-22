@@ -73,7 +73,6 @@ public class ViewAffectationChantier {
 
 		selection(this.affectationView);
 
-
 		this.mainComposite = new Composite(this.affectationView, SWT.NONE);
 		this.mainComposite.setLayout(new RowLayout(SWT.HORIZONTAL));
 
@@ -99,11 +98,9 @@ public class ViewAffectationChantier {
 		TabItem tabChantier = new TabItem(tabFolder, SWT.NULL);
 		tabChantier.setText("Affectation par Chantier");
 
-		
-		createTableEmployeStats(tabEmploye );
-		createTableChantierStats(tabChantier );
+		createTableEmployeStats(tabEmploye);
+		createTableChantierStats(tabChantier);
 
-	
 		mainComposite.pack();
 		tabFolder.pack();
 		this.selection.pack();
@@ -143,7 +140,7 @@ public class ViewAffectationChantier {
 			column.setText(title);
 		}
 
-		ResultSet result = AffectationChantier.getEmployeStats( );
+		ResultSet result = AffectationChantier.getEmployeStats();
 		final TableColumn[] columns = table.getColumns();
 		while (result.next()) {
 			TableItem item = new TableItem(table, SWT.NONE);
@@ -216,7 +213,7 @@ public class ViewAffectationChantier {
 		table.setLinesVisible(true);
 		table.setHeaderVisible(true);
 
-		String[] titles = { "ChantierId", "Nom",  "Nombre de chantiers différents", "Nombre d'heures total" };
+		String[] titles = { "ChantierId", "Nom", "Nombre de chantiers différents", "Nombre d'heures total" };
 
 		for (String title : titles) {
 			TableColumn column = new TableColumn(table, SWT.NONE);
@@ -229,7 +226,7 @@ public class ViewAffectationChantier {
 			TableItem item = new TableItem(table, SWT.NONE);
 			item.setText(0, "" + result.getInt("ChantierId"));
 			item.setText(1, result.getString("Nom"));
-			
+
 			item.setText(3, result.getString("nb_Employe"));
 			if (Objects.isNull(result.getString("nb_heure")))
 				item.setText(4, "" + "Inconnu");
@@ -289,7 +286,7 @@ public class ViewAffectationChantier {
 	public void EmployeAffectationDisplay(int employeId) throws SQLException {
 
 		this.cleanRightComposite();
-	
+
 		ResultSet result = AffectationChantier.getEmployeAffectationPublished(employeId);
 
 		final Table table = new Table(this.rightComposite, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.FULL_SELECTION);
@@ -356,7 +353,7 @@ public class ViewAffectationChantier {
 	 */
 	public void siteAffectationDisplay(int siteId) throws SQLException {
 		cleanRightComposite();
-	
+
 		ResultSet result = AffectationChantier.getSiteAffectationPublished(siteId);
 		disposeAllChildren(this.rightComposite);
 
@@ -458,11 +455,12 @@ public class ViewAffectationChantier {
 	 * 
 	 * @param table
 	 * @param idChantier
+	 * @throws SQLException 
 	 */
-	private void setSelectionOnChantierId(Table table, int idChantier) {
-
+	private void setSelectionOnChantierId(Table table, int idChantier) throws SQLException {
+		String name = Site.getSiteById(idChantier).getName();
 		for (int i = 0; i < table.getItems().length; i++)
-			if (Integer.parseInt((table.getItem(i).getText(3))) == idChantier)
+			if (table.getItem(i).getText(0).equals(name))
 				table.setSelection(i);
 
 	}
@@ -483,13 +481,11 @@ public class ViewAffectationChantier {
 		RowLayout rowLayout = new RowLayout(SWT.VERTICAL);
 		this.selection.setLayout(rowLayout);
 
-		
-
 		this.buttons = new Composite(this.selection, SWT.NONE);
 		this.buttons.setLayout(new RowLayout(SWT.HORIZONTAL));
 
 		this.selection.pack();
-		
+
 		this.buttons.pack();
 		composite.pack();
 	}
@@ -513,6 +509,7 @@ public class ViewAffectationChantier {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				try {
+
 					modifyEmployeeAffectation(affectationId);
 				} catch (SQLException e1) {
 					// TODO Auto-generated catch block
@@ -778,8 +775,6 @@ public class ViewAffectationChantier {
 
 	}
 
-	
-
 	/***
 	 * 
 	 * ADD forms
@@ -845,9 +840,9 @@ public class ViewAffectationChantier {
 		Combo comboYear = new Combo(yearComposite, SWT.NONE);
 
 		int currentYear = Year.now().getValue();
-		for (int i = currentYear - 2; i < currentYear + 3; i++)
+		for (int i = currentYear - 10; i < currentYear + 2; i++)
 			comboYear.add("" + i);
-		comboYear.select(2);
+		comboYear.select(10);
 
 		Composite buttonComposite = new Composite(ajoutComposite, SWT.NONE);
 		buttonComposite.setLayout(new RowLayout(SWT.HORIZONTAL));
@@ -868,7 +863,7 @@ public class ViewAffectationChantier {
 				try {
 
 					checkEmployeId = table.getSelection()[0].getText(3);
-					checkNbHours = nbHeureTexte.getText();
+					checkNbHours = nbHeureTexte.getText().trim().replace(",", ".");
 					checkMonth = comboMonth.getSelectionIndex() + 1;
 					checkYear = comboYear.getText();
 
@@ -892,7 +887,8 @@ public class ViewAffectationChantier {
 					Year year = Year.of(Integer.parseInt(checkYear));
 					Status status = Status.PUBLISHED;
 					if (table.getSelection().length == 1) {
-						AffectationChantier affectation = new AffectationChantier(siteId, idEmploye, nbHeure, month, year, status);
+						AffectationChantier affectation = new AffectationChantier(siteId, idEmploye, nbHeure, month,
+								year, status);
 						try {
 							affectation.insertDatabase();
 							ajoutComposite.dispose();
@@ -981,8 +977,7 @@ public class ViewAffectationChantier {
 		nbHeureLabel.setText("Nombre d'heures");
 		Text nbHeureTexte = new Text(nbHeureComposite, SWT.NONE);
 
-		
-		//Table pert
+		// Table pert
 		Composite tableComposite = new Composite(ajoutComposite, SWT.NONE);
 		Table table = VueChantier.getTableAllChantier(ajoutComposite);
 
@@ -1013,12 +1008,10 @@ public class ViewAffectationChantier {
 		Combo comboYear = new Combo(yearComposite, SWT.NONE);
 
 		int currentYear = Year.now().getValue();
-		for (int i = currentYear - 2; i < currentYear + 3; i++)
+		for (int i = currentYear - 10; i < currentYear + 2; i++)
 			comboYear.add("" + i);
-		comboYear.select(2);
+		comboYear.select(10);
 
-		
-		
 		Composite buttonComposite = new Composite(ajoutComposite, SWT.NONE);
 
 		buttonComposite.setLayout(new RowLayout(SWT.HORIZONTAL));
@@ -1039,13 +1032,12 @@ public class ViewAffectationChantier {
 
 				try {
 
-					checkSiteId = table.getSelection()[0].getText(3);
-					checkNbHours = nbHeureTexte.getText();
+					checkSiteId = "" + Site.getSiteIdByName(table.getSelection()[0].getText(0));
+					checkNbHours = nbHeureTexte.getText().trim().replace(",", ".");
 					checkMonth = comboMonth.getSelectionIndex() + 1;
 					checkYear = comboYear.getText();
-
 					isChecked = checkAffectation(checkSiteId, "" + employeeId, checkNbHours, checkMonth, checkYear);
-				} catch (IllegalArgumentException | ArrayIndexOutOfBoundsException argException) {
+				} catch (IllegalArgumentException | ArrayIndexOutOfBoundsException | SQLException argException) {
 					MessageBox dialog = new MessageBox(affectationView.getShell(), SWT.ICON_ERROR | SWT.OK);
 					dialog.setText("Erreur Création :");
 					if (argException.getClass() == IllegalArgumentException.class)
@@ -1064,7 +1056,8 @@ public class ViewAffectationChantier {
 					Year startYear = Year.of(Integer.parseInt(checkYear));
 					Status status = Status.PUBLISHED;
 					if (table.getSelection().length == 1) {
-						AffectationChantier affectation = new AffectationChantier(siteId, employeeId, nbHeure, startMonth, startYear, status);
+						AffectationChantier affectation = new AffectationChantier(siteId, employeeId, nbHeure,
+								startMonth, startYear, status);
 						try {
 							affectation.insertDatabase();
 							ajoutComposite.dispose();
@@ -1192,11 +1185,11 @@ public class ViewAffectationChantier {
 
 				try {
 
-					checkSiteId = table.getSelection()[0].getText(3);
-					checkNbHours = nbHeureTexte.getText();
+					checkSiteId = "" + Site.getSiteIdByName(table.getSelection()[0].getText(0));
+					checkNbHours = nbHeureTexte.getText().trim().replace(",", ".");
 					isChecked = checkAffectation(checkSiteId, "" + affectation.getIdEmploye(), checkNbHours,
 							affectation.getStartMonth().getValue(), "" + affectation.getStartYear().getValue());
-				} catch (IllegalArgumentException | ArrayIndexOutOfBoundsException argException) {
+				} catch (IllegalArgumentException | ArrayIndexOutOfBoundsException | SQLException argException) {
 					MessageBox dialog = new MessageBox(affectationView.getShell(), SWT.ICON_ERROR | SWT.OK);
 					dialog.setText("Erreur Création :");
 					if (argException.getClass() == IllegalArgumentException.class)
@@ -1270,7 +1263,7 @@ public class ViewAffectationChantier {
 		nbHeureComposite.pack();
 		tableComposite.pack();
 		modifComposite.pack();
-		table.pack();
+	
 		this.affectationView.pack();
 		this.affectationView.getParent().pack();
 
@@ -1307,7 +1300,7 @@ public class ViewAffectationChantier {
 
 		nbHeureTexte.pack();
 		Composite tableComposite = new Composite(modifComposite, SWT.NONE);
-		Table table = VueEmploye.getAllEmployerForAffectation(modifComposite);
+		Table table = VueEmploye.getAllEmployerForAffectation(tableComposite);
 		setSelectionOnChantierId(table, affectation.getIdChantier());
 
 		table.setLayoutData(new RowData(400, 100));
@@ -1405,6 +1398,7 @@ public class ViewAffectationChantier {
 		tableComposite.pack();
 		modifComposite.pack();
 		table.pack();
+		buttonComposite.pack();
 		this.affectationView.pack();
 		this.affectationView.getParent().pack();
 

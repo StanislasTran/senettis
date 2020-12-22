@@ -590,7 +590,7 @@ public class ViewTurnOver {
 
 					Double valeurTotale;
 					try {
-						valeurTotale = Double.parseDouble(textValeur.getText());
+						valeurTotale = Double.parseDouble(textValeur.getText().replace(",",".").trim());
 					} catch (Exception e) {
 						throw new Error("Merci d'indiquer le montant total.");
 					}
@@ -598,7 +598,7 @@ public class ViewTurnOver {
 					if (selectedAmorti != null) {
 						AmmortissementChantier ae = new AmmortissementChantier(
 								selectedAmorti.getAmmortissementChantierId(), chantierId, moisD, anneeD, moisF, anneeF,
-								textDesc.getText(), valeurTotale / duree, duree, valeurTotale, type.getText(),
+								textDesc.getText().trim(), valeurTotale / duree, duree, valeurTotale, type.getText().trim(),
 								"Publié");
 						ae.updateDatabase();
 						MessageBox dialog = new MessageBox(vueAutres.getShell(), SWT.ICON_INFORMATION | SWT.OK);
@@ -607,7 +607,7 @@ public class ViewTurnOver {
 						dialog.open();
 					} else {
 						AmmortissementChantier ae = new AmmortissementChantier(0, chantierId, moisD, anneeD, moisF,
-								anneeF, textDesc.getText(), valeurTotale / duree, duree, valeurTotale, type.getText(),
+								anneeF, textDesc.getText().trim(), valeurTotale / duree, duree, valeurTotale, type.getText().trim(),
 								"Publié");
 						ae.insertDatabase();
 						MessageBox dialog = new MessageBox(vueAutres.getShell(), SWT.ICON_INFORMATION | SWT.OK);
@@ -1098,10 +1098,10 @@ public class ViewTurnOver {
 		date.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent me) {
 				if (!(date.getText().isEmpty())) {// pour ne pas tester quand l'utilisateur est en train de modifier
-					if (date.getText().length() == 2) {
+					if (date.getText().trim().length() == 2) {
 						date.append("/");
 					}
-					if (date.getText().length() == 5) {
+					if (date.getText().trim().length() == 5) {
 						date.append("/");
 					}
 				}
@@ -1249,11 +1249,11 @@ public class ViewTurnOver {
 						if (!(newEditor.getText().isEmpty())) {// pour ne pas tester quand l'utilisateur est en train de
 																// modifier
 							try {
-								if (Integer.parseInt(newEditor.getText()) < 0) {// on ne peut pas mettre de quantite
+								if (Integer.parseInt(newEditor.getText().trim()) < 0) {// on ne peut pas mettre de quantite
 																				// negative
 									item.setText(4, "0");
 								} else {
-									item.setText(4, newEditor.getText()); // on modifie la ligne avec la nouvelle
+									item.setText(4, newEditor.getText().trim()); // on modifie la ligne avec la nouvelle
 																			// quantite
 								}
 							} catch (Exception e) {
@@ -1293,8 +1293,8 @@ public class ViewTurnOver {
 			public void widgetSelected(SelectionEvent arg0) {
 				Double somme = 0.0;
 				for (TableItem i : tableProduit.getItems()) {
-					Integer quantite = Integer.parseInt(i.getText(4));
-					Double prix = Double.parseDouble(i.getText(2));
+					Integer quantite = Integer.parseInt(i.getText(4).trim());
+					Double prix = Double.parseDouble(i.getText(2).trim());
 					somme += quantite * prix;
 				}
 				prix.setText(somme.toString());
@@ -1308,8 +1308,8 @@ public class ViewTurnOver {
 				// d'abord, on recalcule le prix pour etre sur
 				Double somme = 0.0;
 				for (TableItem i : tableProduit.getItems()) {
-					Integer quantite = Integer.parseInt(i.getText(4));
-					Double prix = Double.parseDouble(i.getText(2));
+					Integer quantite = Integer.parseInt(i.getText(4).trim());
+					Double prix = Double.parseDouble(i.getText(2).trim());
 					somme += quantite * prix;
 				}
 				prix.setText(somme.toString());
@@ -1685,10 +1685,10 @@ public class ViewTurnOver {
 					public void modifyText(ModifyEvent me) {
 						if (!(newEditor.getText().isEmpty())) {
 							try {
-								if (Integer.parseInt(newEditor.getText()) < 0) {
+								if (Integer.parseInt(newEditor.getText().trim()) < 0) {
 									item.setText(4, "0");
 								} else {
-									item.setText(4, newEditor.getText());
+									item.setText(4, newEditor.getText().trim());
 								}
 							} catch (Exception e) {
 								System.out.println("erreur dans la modif");
@@ -1725,8 +1725,8 @@ public class ViewTurnOver {
 			public void widgetSelected(SelectionEvent arg0) {
 				Double somme = 0.0;
 				for (TableItem i : tableProduit.getItems()) {
-					Integer quantite = Integer.parseInt(i.getText(4));
-					Double prix = Double.parseDouble(i.getText(2));
+					Integer quantite = Integer.parseInt(i.getText(4).trim());
+					Double prix = Double.parseDouble(i.getText(2).trim());
 					somme += quantite * prix;
 				}
 				prix.setText(somme.toString());
@@ -1739,8 +1739,8 @@ public class ViewTurnOver {
 				// d'abord, on calcul le prix pour etre sur
 				Double somme = 0.0;
 				for (TableItem i : tableProduit.getItems()) {
-					Integer quantite = Integer.parseInt(i.getText(4));
-					Double prix = Double.parseDouble(i.getText(2));
+					Integer quantite = Integer.parseInt(i.getText(4).trim());
+					Double prix = Double.parseDouble(i.getText(2).trim());
 					somme += quantite * prix;
 				}
 				prix.setText(somme.toString());
@@ -1764,8 +1764,8 @@ public class ViewTurnOver {
 						ArrayList<Integer> quantites = new ArrayList<Integer>();
 
 						for (TableItem i : tableProduit.getItems()) {
-							produits.add(Integer.parseInt(i.getText(0)));
-							quantites.add(Integer.parseInt(i.getText(4)));
+							produits.add(Integer.parseInt(i.getText(0).trim()));
+							quantites.add(Integer.parseInt(i.getText(4).trim()));
 						}
 						validerCreation(idChantier, produits, quantites, prix.getText(), date.getText());
 					}
@@ -1898,7 +1898,7 @@ public class ViewTurnOver {
 				if (table.getSelectionIndex() != -1) {
 
 					try {
-						System.out.println(Integer.parseInt(table.getSelection()[0].getText(3)));
+		
 						selectedLivraison = Delivery
 								.getLivraisonById(Integer.parseInt(table.getSelection()[0].getText(3)));
 					} catch (NumberFormatException | SQLException e1) {
