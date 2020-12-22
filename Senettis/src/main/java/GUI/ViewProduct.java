@@ -56,7 +56,7 @@ public class ViewProduct {
 			mainView.dispose();
 			this.productView.layout(true, true);
 		}
-		this.mainView = new Composite(this.productView, SWT.NONE);
+		this.mainView = new Composite(this.productView,SWT.NONE);
 		this.productView.layout(true, true);
 		
 		if (!Objects.isNull(selection) && !selection.isDisposed())
@@ -80,13 +80,14 @@ public class ViewProduct {
 		List<Product> allProduct = Product.getAllPublished();
 
 		this.mainView();
-		RowLayout rowLayoutV = new RowLayout();
-		rowLayoutV.type = SWT.VERTICAL;
-		Composite tableComposite = new  Composite (mainView,SWT.NONE);
-		tableComposite.setLayoutData(new RowLayout());
-		final Table table = new Table(tableComposite, SWT.CENTER|SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.FULL_SELECTION);
-		table.setSize(500,500);
-		table.setLayoutData(new RowData(400, 600));
+	
+	
+		
+		final Table table = new Table(mainView,SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.FULL_SELECTION);
+		mainView.setLayout(new RowLayout());
+
+		table.setLayoutData(new RowData(470, 500));
+	
 
 		table.setLinesVisible(true);
 		table.setHeaderVisible(true);
@@ -135,7 +136,6 @@ public class ViewProduct {
 		table.pack();
 		mainView.pack();
 		productView.pack();
-		tableComposite.pack();
 	
 		productView.getParent().pack();
 

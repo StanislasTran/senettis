@@ -9,8 +9,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import org.eclipse.swt.*;
+import javax.management.openmbean.CompositeType;
 
+import org.eclipse.swt.*;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
@@ -18,8 +20,7 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
 import classes.Comission;
-//import javafx.embed.swt.FXCanvas ;
-import classes.Product;
+
 import classes.Site;
 import classes.Status;
 
@@ -29,6 +30,7 @@ public class ViewComission {
 	private Composite comissionView;
 	private Button boutonCreer;
 	private Button buttonRemove;
+	private Composite header;
 
 	/**
 	 * Constructor
@@ -43,8 +45,9 @@ public class ViewComission {
 
 		RowLayout rowLayoutV = new RowLayout(SWT.VERTICAL);
 		comissionView.setLayout(rowLayoutV);
-
+		addHeader("Gestion des comissions", 127);
 		compositeSelection();
+
 		addCreateButton();
 		mainView();
 		comissionViewDisplay();
@@ -82,7 +85,8 @@ public class ViewComission {
 		RowLayout rowLayoutV = new RowLayout();
 		rowLayoutV.type = SWT.VERTICAL;
 		final Table table = new Table(mainView, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.FULL_SELECTION);
-		table.setLayoutData(new RowData(400, 600));
+		this.mainView.setLayout(new RowLayout());
+		table.setLayoutData(new RowData(410, 300));
 
 		table.setLinesVisible(true);
 		table.setHeaderVisible(true);
@@ -142,6 +146,7 @@ public class ViewComission {
 	 * @param composite
 	 */
 	public void createComission() {
+		addHeader("Creation Comission", 150);
 		this.comissionView.setLayout(new RowLayout(SWT.VERTICAL));
 
 		if (!Objects.isNull(mainView) && !mainView.isDisposed()) {
@@ -149,29 +154,24 @@ public class ViewComission {
 			comissionView.layout(true, true);
 
 		}
-		mainView = new Composite(this.comissionView, SWT.CENTER);
-		RowLayout mainRowLayout = new RowLayout(SWT.VERTICAL);
-		mainRowLayout.marginWidth = 50;
-		mainView.setLayout(mainRowLayout);
+		mainView = new Composite(this.comissionView, SWT.NONE);
+		comissionView.layout(true, true);
+
+		// mainRowLayout.marginWidth = 50;
+		mainView.setLayout(new RowLayout(SWT.VERTICAL));
 		mainView.setBackground(Couleur.bleuClair);
 		comissionView.setBackground(Couleur.bleuClair);
 
 		comissionView.layout(true, true);
 
-		addHeader("Creation Comission");
-
-		RowLayout rowLayout = new RowLayout();
-		rowLayout.marginHeight = 30;
-		rowLayout.marginWidth = 20;
-		rowLayout.spacing = 5;
-		rowLayout.type = SWT.HORIZONTAL;
-
 		// Month part
 
 		Composite monthComposite = new Composite(mainView, SWT.NONE);
 		monthComposite.setLayout(new RowLayout(SWT.HORIZONTAL));
+		monthComposite.setBackground(Couleur.bleuClair);
 		Label monthLabel = new Label(monthComposite, SWT.NONE);
 		monthLabel.setText("Moi début");
+		monthLabel.setBackground(Couleur.bleuClair);
 		Combo comboMonth = new Combo(monthComposite, SWT.NONE);
 
 		String[] frenchMonth = { "Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre",
@@ -185,8 +185,10 @@ public class ViewComission {
 
 		// Year part
 		Composite yearComposite = new Composite(mainView, SWT.NONE);
+		yearComposite.setBackground(Couleur.bleuClair);
 		yearComposite.setLayout(new RowLayout(SWT.HORIZONTAL));
 		Label yearLabel = new Label(yearComposite, SWT.NONE);
+		yearLabel.setBackground(Couleur.bleuClair);
 		yearLabel.setText("Année début");
 		Combo comboYear = new Combo(yearComposite, SWT.NONE);
 
@@ -195,14 +197,10 @@ public class ViewComission {
 			comboYear.add("" + i);
 		comboYear.select(2);
 
-		// TAble part
-		Composite tableComposite = new Composite(mainView, SWT.NONE);
-		Table table = VueChantier.getTableAllChantier(tableComposite);
-
 		// Comission part
 
 		Composite compositeComission = new Composite(mainView, SWT.BACKGROUND);
-		compositeComission.setLayout(rowLayout);
+		compositeComission.setLayout(new RowLayout());
 		compositeComission.setBackground(Couleur.bleuClair);
 		Label labelComission = new Label(compositeComission, SWT.NONE);
 		labelComission.setBackground(Couleur.bleuClair);
@@ -212,11 +210,20 @@ public class ViewComission {
 		textComission.setText("");
 		textComission.setBounds(10, 30, 30, 25);
 
+		
+		/// SITE PART
+		
+		Composite tableComposite = new Composite(mainView,SWT.NONE);
+	
+		tableComposite.setLayoutData(new RowData(400,400));
+
+		Table table = VueChantier.getTableAllChantier(tableComposite, 400, 400);
+
 		// Validation button
 
-		Composite compositeButtons = new Composite(mainView, SWT.CENTER);
+		Composite compositeButtons = new Composite(mainView, SWT.NONE);
 		compositeButtons.setBackground(Couleur.bleuClair);
-		compositeButtons.setLayout(rowLayout);
+		compositeButtons.setLayout(new RowLayout());
 		Button validationButton = new Button(compositeButtons, SWT.BACKGROUND);
 		validationButton.setText("Valider");
 		validationButton.setBounds(10, 60, 100, 25);
@@ -237,7 +244,7 @@ public class ViewComission {
 					dialog.open();
 
 				} catch (ArrayIndexOutOfBoundsException exceptionArray) {
-					
+
 				}
 				boolean isChecked = false;
 				try {
@@ -287,7 +294,8 @@ public class ViewComission {
 						}
 
 						compositeComission.dispose();
-
+						table.pack();
+						tableComposite.pack();
 						compositeButtons.dispose();
 						mainView.pack();
 						mainView.getParent().pack();
@@ -336,9 +344,13 @@ public class ViewComission {
 		validationButton.pack();
 
 		mainView.pack();
-		selection.pack();
-		tableComposite.pack();
+
+		// tableComposite.pack();
 		table.pack();
+		table.moveAbove(compositeButtons);
+		validationButton.pack();
+		buttonCancel.pack();
+		compositeButtons.pack();
 		comissionView.pack();
 		comissionView.getParent().pack();
 
@@ -404,6 +416,7 @@ public class ViewComission {
 
 				selection.dispose();
 				mainView.dispose();
+				comissionView.layout(true, true);
 
 				createComission();
 
@@ -422,23 +435,23 @@ public class ViewComission {
 	 * 
 	 * @param <type>String</type> header
 	 */
-	public void addHeader(String header) {
-		if (!this.selection.isDisposed())
-			this.selection.dispose();
-		this.selection = new Composite(this.comissionView, SWT.CENTER | SWT.BORDER);
-		this.selection.setBackground(Couleur.bleuFonce);
+	public void addHeader(String header, int size) {
+		if (!Objects.isNull(this.header) && !this.header.isDisposed())
+			this.header.dispose();
+		this.header = new Composite(this.comissionView, SWT.CENTER | SWT.BORDER);
+		this.header.setBackground(Couleur.bleuFonce);
 		FillLayout layout = new FillLayout();
-		layout.marginWidth = 100;
-		this.selection.setLayout(layout);
+		layout.marginWidth = size;
+		this.header.setLayout(layout);
 
-		Label HeadLabel = new Label(this.selection, SWT.TITLE);
+		Label HeadLabel = new Label(this.header, SWT.TITLE);
 
-		HeadLabel.setText(header);
+		HeadLabel.setText("\n" + header + "\n\n");
 		Font fontTitle = new Font(HeadLabel.getDisplay(), "Arial", 12, SWT.BOLD);
 		HeadLabel.setForeground(Couleur.bleuClair);
 		HeadLabel.setFont(fontTitle);
 		HeadLabel.setBackground(Couleur.bleuFonce);
-		this.selection.pack();
+		this.header.pack();
 		HeadLabel.pack();
 
 	}

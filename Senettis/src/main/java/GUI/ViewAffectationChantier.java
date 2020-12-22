@@ -979,7 +979,7 @@ public class ViewAffectationChantier {
 
 		// Table pert
 		Composite tableComposite = new Composite(ajoutComposite, SWT.NONE);
-		Table table = VueChantier.getTableAllChantier(ajoutComposite);
+		Table table = VueChantier.getTableAllChantier(ajoutComposite,400,400);
 
 		table.setLayoutData(new RowData(400, 100));
 
@@ -1162,7 +1162,7 @@ public class ViewAffectationChantier {
 
 		nbHeureTexte.pack();
 		Composite tableComposite = new Composite(modifComposite, SWT.NONE);
-		Table table = VueChantier.getTableAllChantier(modifComposite);
+		Table table = VueChantier.getTableAllChantier(modifComposite,400,400);
 		setSelectionOnChantierId(table, affectation.getIdChantier());
 
 		table.setLayoutData(new RowData(400, 100));

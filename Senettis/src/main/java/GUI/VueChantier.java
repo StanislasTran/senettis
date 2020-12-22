@@ -662,14 +662,17 @@ public class VueChantier {
 	/**
 	 * Ajoute un table contenant la liste de tous les chantier au composité entré en
 	 * paramètre
+	 * @param j 
+	 * @param i 
 	 * 
 	 * @param <type>composite</type> composite
 	 * @return <type> Table </type> table
 	 */
-	public static Table getTableAllChantier(Composite composite) {
+	public static Table getTableAllChantier(Composite composite, int width, int height) {
 		// creation de la table
 		final Table table = new Table(composite, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.FULL_SELECTION);
-		table.setLayoutData(new RowData(400, 400));
+		table.setLayout(new RowLayout());
+		table.setLayoutData(new RowData(width, height));
 		table.setLinesVisible(true);
 		table.setHeaderVisible(true);
 

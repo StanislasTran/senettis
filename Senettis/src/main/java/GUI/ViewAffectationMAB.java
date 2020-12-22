@@ -1075,7 +1075,7 @@ public class ViewAffectationMAB {
 		Text nbHeureTexte = new Text(nbHeureComposite, SWT.NONE);
 
 		Composite tableComposite = new Composite(ajoutComposite, SWT.NONE);
-		Table table = VueChantier.getTableAllChantier(ajoutComposite);
+		Table table = VueChantier.getTableAllChantier(ajoutComposite,400,400);
 
 		table.setLayoutData(new RowData(400, 100));
 
@@ -1258,7 +1258,7 @@ public class ViewAffectationMAB {
 
 		nbHeureTexte.pack();
 		Composite tableComposite = new Composite(modifComposite, SWT.NONE);
-		Table table = VueChantier.getTableAllChantier(tableComposite);
+		Table table = VueChantier.getTableAllChantier(tableComposite,400,400);
 		setSelectionOnChantierId(table, affectation.getIdChantier());
 
 		table.setLayoutData(new RowData(400, 100));
