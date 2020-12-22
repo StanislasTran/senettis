@@ -1,5 +1,4 @@
 
-
 Create table Produit (
     "ProduitId"  INT PRIMARY KEY IDENTITY (1, 1),
     "Nom" VARCHAR (100) NOT NULL,

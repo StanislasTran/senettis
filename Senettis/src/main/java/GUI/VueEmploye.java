@@ -62,6 +62,7 @@ public class VueEmploye {
 		RowLayout rowLayout = new RowLayout();
 		rowLayout.type = SWT.VERTICAL;
 		vueEmploye.setLayout(rowLayout);
+		vueEmploye.setBackground(Couleur.bleuClair);
 
 		compositeSelectionBoutons();
 		vueEmployeAfficher();
@@ -113,7 +114,7 @@ public class VueEmploye {
 			public void widgetSelected(SelectionEvent arg0) {
 				// selectedEmploye = null;
 				selectedAmorti = null;
-				vueCreationA();
+				vueCreationA(0);
 			}
 		});
 
@@ -123,7 +124,7 @@ public class VueEmploye {
 			boutonModif.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent arg0) {
-					vueCreationA();
+					vueCreationA(1);
 				}
 			});
 
@@ -244,16 +245,17 @@ public class VueEmploye {
 		vueEmploye.getParent().pack();
 	}
 
-	public static void vueCreationA() {
+	//i = 0 -> creation , 1 -> modif
+	public static void vueCreationA(int i) {
 
-		vueFormulaireAmorti();
+		vueFormulaireAmorti(i);
 
 		if (!Objects.isNull(selection) && !selection.isDisposed()) {
 			selection.dispose();
 		}
 		String s;
 		int addSize;
-		if (selectedAmorti != null) {
+		if (i == 1) {
 			s = "Modification d'un coût à amortir";
 			addSize = vue.getSize().x;
 			addSize = (addSize - 235) / 2;
@@ -290,13 +292,13 @@ public class VueEmploye {
 
 		selection.pack();
 
-		vueFormulaireAmorti();
+		vueFormulaireAmorti(i);
 
 		vueEmploye.pack();
 		vueEmploye.getParent().pack();
 	}
 
-	public static void vueFormulaireAmorti() {
+	public static void vueFormulaireAmorti(int j) {
 		if (!Objects.isNull(vue) && !vue.isDisposed()) {
 			vue.dispose();
 		}
@@ -332,8 +334,7 @@ public class VueEmploye {
 		// Titre
 		Combo employes = new Combo(compositeEmploye, SWT.BORDER);
 		System.out.println("je suis dans le formulaire");
-		if (selectedEmploye != null) {
-			System.out.println("il y a un employe");
+		if (j == 1) {
 			try {
 				if (selectedEmploye.getNameString().length() > 25) {
 					employes.setText(selectedEmploye.getNameString().substring(0, 23) + "..." + ";id:"
@@ -385,15 +386,15 @@ public class VueEmploye {
 		LocalDate currentdate = LocalDate.now();
 		Month month = currentdate.getMonth();
 		int year = currentdate.getYear();
-		if (selectedAmorti == null) {
+		if (j == 1) {
 			periode.setText(month.toString() + " " + year);
 		} else {
 			periode.setText(Month.of(selectedAmorti.getMoisD()) + " " + selectedAmorti.getAnneeD().toString());
 		}
 
 		for (int i = 2020; i <= year + 1; i++) {
-			for (int j = 1; j <= 12; j++) {
-				periode.add(Month.of(j) + " " + i);
+			for (int i2 = 1; i2 <= 12; i2++) {
+				periode.add(Month.of(i2) + " " + i);
 			}
 		}
 
@@ -407,7 +408,7 @@ public class VueEmploye {
 		labelDuree.setText("Durée (en mois)* : ");
 
 		final Text textDuree = new Text(compositeDuree, SWT.BORDER);
-		if (selectedAmorti != null) {
+		if (j == 1) {
 			textDuree.setText(selectedAmorti.getDuree().toString());
 		} else {
 			textDuree.setText("");
@@ -432,7 +433,7 @@ public class VueEmploye {
 		labelValeur.setText("Montant total* : ");
 
 		final Text textValeur = new Text(compositeValeur, SWT.BORDER);
-		if (selectedAmorti != null) {
+		if (j == 1) {
 			textValeur.setText(selectedAmorti.getValeur().toString());
 		} else {
 			textValeur.setText("");
@@ -447,7 +448,7 @@ public class VueEmploye {
 		labelType.setBackground(Couleur.bleuClair);
 		// Titre
 		Combo type = new Combo(compositeType, SWT.BORDER);
-		if (selectedAmorti != null) {
+		if (j == 1) {
 			type.setText(selectedAmorti.getType());
 		} else {
 			type.setText("Prêt");
@@ -465,7 +466,7 @@ public class VueEmploye {
 		labelDesc.setText("Description : ");
 
 		final Text textDesc = new Text(compositeDesc, SWT.BORDER);
-		if (selectedAmorti != null) {
+		if (j == 1) {
 			textDesc.setText(selectedAmorti.getDescription());
 		} else {
 			textDesc.setText("");
@@ -1552,10 +1553,10 @@ public class VueEmploye {
 	 * afin d'afficher le formulaire de création appelle titreCreation et
 	 * formulaireCreation
 	 */
-	public static void vueEmployeFormulaire() {
-		formulaireEmploye();
-		titreEmploye();
-		formulaireEmploye();
+	public static void vueEmployeFormulaire(int i) {
+		formulaireEmploye(i);
+		titreEmploye(i);
+		formulaireEmploye(i);
 
 		vueEmploye.pack();
 		vueEmploye.getParent().pack();
@@ -1566,14 +1567,14 @@ public class VueEmploye {
 	 * modifie la partie selection (partie superieur droite) en ajoutant un titre de
 	 * creation
 	 */
-	public static void titreEmploye() {
+	public static void titreEmploye(int i) {
 		if (!Objects.isNull(selection) && !selection.isDisposed()) {
 			selection.dispose();
 		}
 
 		String s;
 		int addSize;
-		if (selectedEmploye != null) {
+		if (i ==1) {
 			s = "Modification d'un employé";
 			addSize = vue.getSize().x;
 			addSize = (addSize - 198) / 2;
@@ -1615,7 +1616,7 @@ public class VueEmploye {
 	 * cree la vue de modification et fait appel a showFormulaire pour afficher le
 	 * formulaire de modification
 	 */
-	public static void formulaireEmploye() {
+	public static void formulaireEmploye(int i) {
 		if (!Objects.isNull(vue) && !vue.isDisposed()) {
 			vue.dispose();
 		}
@@ -1624,7 +1625,7 @@ public class VueEmploye {
 		fillLayoutH.type = SWT.HORIZONTAL;
 		vue.setLayout(fillLayoutH);
 
-		showFormulaire();
+		showFormulaire(i);
 
 		vue.pack();
 	}
@@ -1646,9 +1647,9 @@ public class VueEmploye {
 	 * @param taille
 	 * @param dateArrivee
 	 */
-	public static void showFormulaire() {
+	public static void showFormulaire(int i) {
 		String titre, nom, prenom, mail, telephone, numeroMatricule, pointure, taille, dateArrivee;
-		if (selectedEmploye == null) {
+		if (i == 0) {
 			titre = "";
 			nom = "";
 			prenom = "";
@@ -1936,36 +1937,76 @@ public class VueEmploye {
 			selection.dispose();
 		}
 
-		selection = new Composite(vueEmploye, SWT.NONE);
+		String s;
+		int addSize;
+		s = "Gestion des employés";
+		addSize = (847 - 145) / 2;
+
+		selection = new Composite(vueEmploye, SWT.CENTER);
+
+		FillLayout fillLayout = new FillLayout();
+		fillLayout.type = SWT.VERTICAL;
+		selection.setLayout(fillLayout);
+		selection.setBackground(Couleur.bleuClair);
+		
+		Composite selection1 = new Composite(selection, SWT.BORDER);
+
+		FillLayout fillLayout2 = new FillLayout();
+		fillLayout2.type = SWT.VERTICAL;
+		fillLayout2.marginWidth = addSize;
+		selection1.setLayout(fillLayout2);
+
+		// juste pour creer un espace
+		Label l1 = new Label(selection1, SWT.NONE);
+		l1.setText("");
+		l1.setBackground(Couleur.bleuFonce);
+
+		selection1.setBackground(Couleur.bleuFonce);
+		Label HeadLabel = new Label(selection1, SWT.TITLE);
+		HeadLabel.setText(s);
+		Font fontTitle = new Font(HeadLabel.getDisplay(), "Arial", 12, SWT.BOLD);
+		HeadLabel.setForeground(Couleur.bleuClair);
+		HeadLabel.setFont(fontTitle);
+		HeadLabel.setBackground(Couleur.bleuFonce);
+
+		// juste pour creer un espace
+		Label l2 = new Label(selection1, SWT.NONE);
+		l2.setText("");
+		l2.setBackground(Couleur.bleuFonce);
+
+		selection1.pack();
+		
+
+		Composite selection2 = new Composite(selection, SWT.NONE);
 		RowLayout rowLayout = new RowLayout();
 		rowLayout.marginWidth = 20;
 		rowLayout.marginTop = 6;
-		selection.setLayout(rowLayout);
-		selection.setBackground(Couleur.gris);
+		selection2.setLayout(rowLayout);
+		selection2.setBackground(Couleur.bleuClair);
 
-		Button boutonCreer = new Button(selection, SWT.CENTER);
+		Button boutonCreer = new Button(selection2, SWT.CENTER);
 		boutonCreer.setText("Créer");
 		boutonCreer.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				selectedEmploye = null;
-				vueEmployeFormulaire();
+				vueEmployeFormulaire(0);
 			}
 		});
 
 		if (selectedEmploye != null) {
 			// Bouton Modifier
-			Button boutonModifier = new Button(selection, SWT.CENTER);
+			Button boutonModifier = new Button(selection2, SWT.CENTER);
 			boutonModifier.setText("Modifier");
 			boutonModifier.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent arg0) {
-					vueEmployeFormulaire();
+					vueEmployeFormulaire(1);
 				}
 			});
 
 			// Bouton Supprimer
-			Button boutonSupprimer = new Button(selection, SWT.CENTER);
+			Button boutonSupprimer = new Button(selection2, SWT.CENTER);
 			boutonSupprimer.setText("Supprimer");
 			boutonSupprimer.addSelectionListener(new SelectionAdapter() {
 				@Override
@@ -2004,7 +2045,7 @@ public class VueEmploye {
 			if (!tableGlobaleEmploye.isDisposed()) {
 
 				// Bouton Supprimer
-				Button boutonAnciennete = new Button(selection, SWT.CENTER);
+				Button boutonAnciennete = new Button(selection2, SWT.CENTER);
 				boutonAnciennete.setText("Mettre à jour l'ancienneté prise en compte");
 				boutonAnciennete.addSelectionListener(new SelectionAdapter() {
 					@Override
@@ -2033,7 +2074,7 @@ public class VueEmploye {
 
 		}
 
-		Button boutonCouts = new Button(selection, SWT.CENTER);
+		Button boutonCouts = new Button(selection2, SWT.CENTER);
 		boutonCouts.setText("Gérer les couts employés");
 		boutonCouts.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -2043,7 +2084,7 @@ public class VueEmploye {
 			}
 		});
 
-		Button boutonAncienEmploye = new Button(selection, SWT.CENTER);
+		Button boutonAncienEmploye = new Button(selection2, SWT.CENTER);
 		boutonAncienEmploye.setText("Récupérer ancien employé");
 		boutonAncienEmploye.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -2052,6 +2093,8 @@ public class VueEmploye {
 			}
 
 		});
+		selection2.pack();
+		
 		selection.pack();
 	}
 
@@ -2069,7 +2112,7 @@ public class VueEmploye {
 
 		vue = new Composite(vueEmploye, SWT.NONE);
 		vue.setLayout(rowLayoutV);
-		vue.setBackground(Couleur.gris);
+		vue.setBackground(Couleur.bleuClair);
 
 		// creation de la table
 		tableGlobaleEmploye = new Table(vue, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.FULL_SELECTION);
@@ -2251,9 +2294,9 @@ public class VueEmploye {
 				public void widgetSelected(SelectionEvent arg0) {
 					if (table.getSelection().length != 0) {
 						if (selectedAmorti != null) {
-							vueCreationA();
+							vueCreationA(1);
 						} else if (selectedEmploye != null) {
-							vueEmployeFormulaire();
+							vueEmployeFormulaire(1);
 						}
 					}
 				}

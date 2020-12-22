@@ -307,7 +307,7 @@ public class VueLivraison {
 			public void widgetSelected(SelectionEvent arg0) {
 				// selectedChantier = null;
 				selectedFS = null;
-				vueCreationFS();
+				vueCreationFS(0);
 			}
 		});
 
@@ -317,7 +317,7 @@ public class VueLivraison {
 			boutonModif.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent arg0) {
-					vueCreationFS();
+					vueCreationFS(1);
 				}
 			});
 
@@ -357,16 +357,16 @@ public class VueLivraison {
 	/***
 	 * Creer le titre et fait appel au formulaire (vueFormulaireFS)
 	 */
-	public void vueCreationFS() {
-
-		vueFormulaireFS();
+	public void vueCreationFS(int i) {
+		//i = 1 -> modif
+		vueFormulaireFS(i);
 
 		if (!Objects.isNull(selection) && !selection.isDisposed()) {
 			selection.dispose();
 		}
 		String s;
 		int addSize;
-		if (selectedFS != null) {
+		if (i == 1) {
 			s = "Modification d'un coût de fourniture sanitaire";
 			addSize = vue.getSize().x;
 			addSize = (addSize - 342) / 2;
@@ -403,7 +403,8 @@ public class VueLivraison {
 
 		selection.pack();
 
-		vueFormulaireFS();
+		vueFormulaireFS(i);
+		selectedFS = null;
 
 		vueFS.pack();
 		tabFolder.pack();
@@ -413,7 +414,7 @@ public class VueLivraison {
 	/***
 	 * Cree le formulaire de Creation ou modification
 	 */
-	public void vueFormulaireFS() {
+	public void vueFormulaireFS(int i) {
 		if (!Objects.isNull(vue) && !vue.isDisposed()) {
 			vue.dispose();
 		}
@@ -448,7 +449,7 @@ public class VueLivraison {
 		// Titre
 		Combo chantiers = new Combo(compositeChantier, SWT.BORDER);
 
-		if (selectedChantier != null) {
+		if (i == 1 && selectedChantier != null) {
 			try {
 				if (selectedChantier.getName().length() > 25) {
 					chantiers.setText(selectedChantier.getName().substring(0, 23) + "...");
@@ -502,15 +503,15 @@ public class VueLivraison {
 		LocalDate currentdate = LocalDate.now();
 		Month month = currentdate.getMonth();
 		int year = currentdate.getYear();
-		if (selectedFS == null) {
-			periode.setText(month.toString() + " " + year);
-		} else {
+		if (selectedFS != null && i ==1){
 			periode.setText(Month.of(selectedFS.getMoisD()) + " " + selectedFS.getAnneeD().toString());
+		} else {
+			periode.setText(month.toString() + " " + year);
 		}
 
-		for (int i = 2020; i <= year + 1; i++) {
+		for (int j1 = 2020; j1 <= year + 1; j1++) {
 			for (int j = 1; j <= 12; j++) {
-				periode.add(Month.of(j) + " " + i);
+				periode.add(Month.of(j) + " " + j1);
 			}
 		}
 
@@ -524,7 +525,7 @@ public class VueLivraison {
 		labelValeur.setText("Montant par mois* : ");
 
 		final Text textValeur = new Text(compositeValeur, SWT.BORDER);
-		if (selectedFS != null) {
+		if (i == 1 && selectedFS != null) {
 			textValeur.setText(selectedFS.getMontantParMois().toString());
 		} else {
 			textValeur.setText("");
@@ -540,10 +541,14 @@ public class VueLivraison {
 		labelST.setText("Sous Traitant* : ");
 
 		final Text textST = new Text(compositeST, SWT.BORDER);
+		textST.setText("");
+		System.out.println("i : "+i);
 		if (selectedFS != null) {
+			System.out.println("non nul");
+		}
+		if (i == 1 && selectedFS != null) {
+			System.out.println("here");
 			textST.setText(selectedFS.getSousTraitant());
-		} else {
-			textST.setText("");
 		}
 
 		// desc
@@ -556,7 +561,7 @@ public class VueLivraison {
 		labelDesc.setText("Description : ");
 
 		final Text textDesc = new Text(compositeDesc, SWT.BORDER);
-		if (selectedFS != null) {
+		if (i == 1 && selectedFS != null) {
 			textDesc.setText(selectedFS.getDescription());
 		} else {
 			textDesc.setText("");
@@ -645,7 +650,7 @@ public class VueLivraison {
 				}
 			}
 		});
-		selectedFS = null;
+		//selectedFS = null;
 		vue.pack();
 	}
 
@@ -815,7 +820,7 @@ public class VueLivraison {
 				// selectedChantier = null;
 				selectedAmorti = null;
 				selectedFS = null;
-				vueCreationA();
+				vueCreationA(0);
 			}
 		});
 
@@ -825,7 +830,7 @@ public class VueLivraison {
 			boutonModif.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent arg0) {
-					vueCreationA();
+					vueCreationA(1);
 				}
 			});
 
@@ -941,16 +946,16 @@ public class VueLivraison {
 	/***
 	 * Cree la vue Creation ou Modification pour les ammortissements
 	 */
-	public void vueCreationA() {
+	public void vueCreationA(int i) {
 
-		vueFormulaireAmorti();
+		vueFormulaireAmorti(i);
 
 		if (!Objects.isNull(selection) && !selection.isDisposed()) {
 			selection.dispose();
 		}
 		String s;
 		int addSize;
-		if (selectedAmorti != null) {
+		if (i == 1) {
 			s = "Modification d'un coût à amortir";
 			addSize = vue.getSize().x;
 			addSize = (addSize - 235) / 2;
@@ -987,7 +992,7 @@ public class VueLivraison {
 
 		selection.pack();
 
-		vueFormulaireAmorti();
+		vueFormulaireAmorti(i);
 
 		vueAutres.pack();
 		tabFolder.pack();
@@ -997,7 +1002,7 @@ public class VueLivraison {
 	/***
 	 * Cree le formulaire de creation ou de modification des Ammortissements
 	 */
-	public void vueFormulaireAmorti() {
+	public void vueFormulaireAmorti(int i) {
 		if (!Objects.isNull(vue) && !vue.isDisposed()) {
 			vue.dispose();
 		}
@@ -1033,7 +1038,7 @@ public class VueLivraison {
 		// Titre
 		Combo chantiers = new Combo(compositeChantier, SWT.BORDER);
 
-		if (selectedChantier != null) {
+		if (i == 1) {
 			try {
 
 				if (selectedChantier.getName().length() > 25) {
@@ -1088,15 +1093,15 @@ public class VueLivraison {
 		LocalDate currentdate = LocalDate.now();
 		Month month = currentdate.getMonth();
 		int year = currentdate.getYear();
-		if (selectedAmorti == null) {
-			periode.setText(month.toString() + " " + year);
-		} else {
+		if (i == 0 && selectedAmorti != null) {
 			periode.setText(Month.of(selectedAmorti.getMoisD()) + " " + selectedAmorti.getAnneeD().toString());
+		} else {
+			periode.setText(month.toString() + " " + year);
 		}
 
-		for (int i = 2020; i <= year + 1; i++) {
+		for (int i2 = 2020; i2 <= year + 1; i2++) {
 			for (int j = 1; j <= 12; j++) {
-				periode.add(Month.of(j) + " " + i);
+				periode.add(Month.of(j) + " " + i2);
 			}
 		}
 
@@ -1110,7 +1115,7 @@ public class VueLivraison {
 		labelDuree.setText("Durée (en mois)* : ");
 
 		final Text textDuree = new Text(compositeDuree, SWT.BORDER);
-		if (selectedAmorti != null) {
+		if (i == 1) {
 			textDuree.setText(selectedAmorti.getDuree().toString());
 		} else {
 			textDuree.setText("");
@@ -1135,7 +1140,7 @@ public class VueLivraison {
 		labelValeur.setText("Montant total* : ");
 
 		final Text textValeur = new Text(compositeValeur, SWT.BORDER);
-		if (selectedAmorti != null) {
+		if (i == 1) {
 			textValeur.setText(selectedAmorti.getValeur().toString());
 		} else {
 			textValeur.setText("");
@@ -1150,7 +1155,7 @@ public class VueLivraison {
 		labelType.setBackground(Couleur.bleuClair);
 		// Titre
 		Combo type = new Combo(compositeType, SWT.BORDER);
-		if (selectedAmorti != null) {
+		if (i == 1) {
 			type.setText(selectedAmorti.getType());
 		} else {
 			type.setText("Ammortissement matériel");
@@ -1177,7 +1182,7 @@ public class VueLivraison {
 		labelDesc.setText("Description : ");
 
 		final Text textDesc = new Text(compositeDesc, SWT.BORDER);
-		if (selectedAmorti != null) {
+		if (i == 1) {
 			textDesc.setText(selectedAmorti.getDescription());
 		} else {
 			textDesc.setText("");
@@ -1463,7 +1468,7 @@ public class VueLivraison {
 		boutonCreer.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				vueLivraisonForm();
+				vueLivraisonForm(0);
 			}
 		});
 
@@ -1474,7 +1479,7 @@ public class VueLivraison {
 			boutonModifier.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent arg0) {
-					vueLivraisonForm();
+					vueLivraisonForm(1);
 				}
 			});
 
@@ -1553,12 +1558,12 @@ public class VueLivraison {
 	/***
 	 * Cree la vue avec le formulaire de crea ou modif et le titre
 	 */
-	public void vueLivraisonForm() {
+	public void vueLivraisonForm(int i) {
 
-		formulaire();// on l'appelle d'abord une fois pour pouvoir recuperer sa taille dans titre et
+		formulaire(i);// on l'appelle d'abord une fois pour pouvoir recuperer sa taille dans titre et
 						// mettre tout a la bonne taille
-		titre();
-		formulaire();
+		titre(i);
+		formulaire(i);
 
 		vueLivraison.pack();
 		tabFolder.pack();
@@ -1569,7 +1574,7 @@ public class VueLivraison {
 	/***
 	 * Affiche le titre au dessus du formulaire de creation ou de modif
 	 */
-	public void titre() {
+	public void titre(int i) {
 		if (!Objects.isNull(selection) && !selection.isDisposed()) {
 			selection.dispose();
 		}
@@ -1593,7 +1598,7 @@ public class VueLivraison {
 		HeadLabel.setFont(fontTitle);
 		HeadLabel.setBackground(Couleur.bleuFonce);
 
-		if (selectedLivraison != null) {
+		if (i == 1) {
 			addSize = (addSize - 215) / 2;
 			HeadLabel.setText("Modification d'une Livraison");
 		} else {
@@ -1615,7 +1620,7 @@ public class VueLivraison {
 	/***
 	 * Cree le formulaire de creation ou de modif d'une livraison
 	 */
-	public void formulaire() {
+	public void formulaire(int i) {
 		if (!Objects.isNull(vue) && !vue.isDisposed()) {
 			vue.dispose();
 		}
@@ -1663,22 +1668,24 @@ public class VueLivraison {
 		// plus grande
 
 		// on affiche le chantier selectionne
-		Combo chantier = new Combo(compositeChantier, SWT.BORDER);
-		Integer idChantierSelectionne = null;
-		if (selectedLivraison != null) {
+		
+		ArrayList<Integer> siteIdList = new ArrayList<Integer>();
+		final Combo chantier = new Combo(compositeChantier, SWT.BORDER);
+		if (selectedLivraison != null && i == 1) {
+			chantier.dispose();
+			Label chantier2 = new Label(compositeChantier, SWT.NONE);
+			chantier2.setBackground(Couleur.bleuClair);
 			try {
 				if (Site.getSiteById(selectedLivraison.getIdChantier()).getStatus().equals("Publié")) {
 					String stringChantier = Site.getSiteById(selectedLivraison.getIdChantier()).getName();
 					if (stringChantier.length() > 30) {
-						chantier.setText(stringChantier.substring(0, 23) + "...");
-						labelChantier.setText("Chantier* :");// pour pas que ca fasse un trop grand espace et que ca
-						idChantierSelectionne = selectedLivraison.getIdChantier(); // decale
-						// le titre
+						chantier2.setText(stringChantier.substring(0, 23) + "...");
+						labelChantier.setText("Chantier* :");
 					} else {
-						chantier.setText(stringChantier);
+						chantier2.setText(stringChantier);
 					}
 				} else {
-					chantier.setText("Selectionner ...");
+					chantier2.setText("Selectionner ...");
 				}
 			} catch (SQLException e1) {
 				e1.printStackTrace();
@@ -1688,33 +1695,32 @@ public class VueLivraison {
 				dialog.setMessage("Une erreur est survenue. " + '\n' + e1.getMessage());
 				dialog.open();
 			}
-		} else {
-			chantier.setText("Selectionner ...");
 		}
-		// on recupere les autres chantiers pour les afficher aussi et pouvoir modifier
-		// le chantier actuel
+		else {
+			//chantier = new Combo(compositeChantier, SWT.BORDER);
+			chantier.setText("Selectionner ...");
+			
+			try {
+				for (Site c : Site.getAllChantier()) {
+					if (c.getStatus().equals("Publié")) {
 
-		ArrayList<Integer> siteIdList = new ArrayList<Integer>();
-		try {
-			for (Site c : Site.getAllChantier()) {
-				if (c.getStatus().equals("Publié")) {
-
-					siteIdList.add(c.getSiteId());
-					if (c.getName().length() > 30) {
-						chantier.add(c.getName().substring(0, 23) + "...");
-						labelChantier.setText("Chantier* :");
-					} else {
-						chantier.add(c.getName());
+						siteIdList.add(c.getSiteId());
+						if (c.getName().length() > 30) {
+							chantier.add(c.getName().substring(0, 23) + "...");
+							labelChantier.setText("Chantier* :");
+						} else {
+							chantier.add(c.getName());
+						}
 					}
 				}
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+				System.out.println("erreur pour recuperer les chantiers");
+				MessageBox dialog = new MessageBox(vueLivraison.getShell(), SWT.ICON_ERROR | SWT.OK);
+				dialog.setText("Erreur");
+				dialog.setMessage("Une erreur est survenue. " + '\n' + e1.getMessage());
+				dialog.open();
 			}
-		} catch (SQLException e1) {
-			e1.printStackTrace();
-			System.out.println("erreur pour recuperer les chantiers");
-			MessageBox dialog = new MessageBox(vueLivraison.getShell(), SWT.ICON_ERROR | SWT.OK);
-			dialog.setText("Erreur");
-			dialog.setMessage("Une erreur est survenue. " + '\n' + e1.getMessage());
-			dialog.open();
 		}
 
 		// Date
@@ -1727,7 +1733,7 @@ public class VueLivraison {
 		labelDate.setText("Date : ");
 
 		final Text date = new Text(compositeDate, SWT.BORDER);
-		if (selectedLivraison != null) {
+		if (selectedLivraison != null && i == 1) {
 			if (selectedLivraison.getDate() == null) {
 				date.setText("");
 			} else {
@@ -1747,7 +1753,7 @@ public class VueLivraison {
 		labelPrix.setText("Prix Total : ");
 
 		final Text prix = new Text(compositePrix, SWT.BORDER);
-		if (selectedLivraison != null) {
+		if (selectedLivraison != null && i ==1) {
 			prix.setText(selectedLivraison.getPrixTotal().toString());
 		} else {
 			prix.setText("");
@@ -1831,7 +1837,7 @@ public class VueLivraison {
 			dialog.open();
 		}
 
-		if (selectedLivraison != null) {
+		if (selectedLivraison != null && i == 1) {
 			// on modifie les quantites du tableau en y mettant celles des produits par
 			// livraison de la base de donnees
 			try {
@@ -1841,9 +1847,9 @@ public class VueLivraison {
 						// on verifie le status
 						if (p.getStatus().contentEquals("Publié")) {
 
-							for (int i = 0; i < tableProduit.getItems().length; i++) {
-								if (listProductId.get(i) == p.getIdProduit()) {
-									tableProduit.getItem(i).setText(2, p.getQuantite().toString());
+							for (int i2 = 0; i2 < tableProduit.getItems().length; i2++) {
+								if (listProductId.get(i2) == p.getIdProduit()) {
+									tableProduit.getItem(i2).setText(2, p.getQuantite().toString());
 								}
 							}
 						}
@@ -2280,11 +2286,11 @@ public class VueLivraison {
 				public void widgetSelected(SelectionEvent arg0) {
 					if (table.getSelection().length != 0) {
 						if (selectedAmorti != null) {
-							vueCreationA();
+							vueCreationA(1);
 						} else if (selectedFS != null) {
-							vueCreationFS();
+							vueCreationFS(1);
 						} else {
-							vueLivraisonForm();
+							vueLivraisonForm(1);
 						}
 					}
 				}

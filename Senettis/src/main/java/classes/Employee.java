@@ -440,7 +440,7 @@ public class Employee {
 			employeId = result.getInt("EmployeId");
 
 		} else {
-			throw new SQLException("Data not found");
+			throw new SQLException("Aucun employé ne correspond.");
 		}
 		
 		try {
