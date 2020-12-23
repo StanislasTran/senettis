@@ -157,7 +157,7 @@ Create table AffectationMAB (
 	"Date_de_modification" DateTime  NOT NUll Default (GETDATE()), 
 	CONSTRAINT check_status_affectationMAB CHECK (("Status") IN ('Publié','Brouillon','Archivé')),
 	CONSTRAINT check_moonthMAB CHECK (("Mois")>=0 and ("Mois")<=12),
-	PRIMARY KEY(Chantier,Employe,Mois,Annee)
+	
 );
 
 GO

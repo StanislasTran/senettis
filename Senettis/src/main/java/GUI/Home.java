@@ -4,27 +4,18 @@ import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.ArrayList;
-
-import javax.swing.JFileChooser;
 
 import org.eclipse.swt.*;
 import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.swt.events.ControlAdapter;
-import org.eclipse.swt.events.ControlEvent;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseListener;
+
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.TouchEvent;
-import org.eclipse.swt.events.TouchListener;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
 import classes.Site;
 import classes.Employee;
-import classes.Product;
 
 public class Home {
 
@@ -57,112 +48,78 @@ public class Home {
 
 		// employee
 		/*
-		MenuItem menuHeaderEmployee = new MenuItem(menuBar, SWT.CASCADE);
-		menuHeaderEmployee.setText("&Employés");
-		Menu employeeMenu = new Menu(shell, SWT.DROP_DOWN);
-		menuHeaderEmployee.setMenu(employeeMenu);
-
-		MenuItem employeeItem = new MenuItem(employeeMenu, SWT.CASCADE);
-		employeeItem.setText("&Gérer les employés");
-
-		final Menu subMenuEmployee = new Menu(shell, SWT.DROP_DOWN);
-		employeeItem.setMenu(subMenuEmployee);
-
-		MenuItem employeeCreation = new MenuItem(subMenuEmployee, SWT.PUSH);
-		employeeCreation.setText("&Créer un employé");
-		employeeCreation.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent arg0) {
-				if (!contenuColonneDroite.isDisposed()) {
-					contenuColonneDroite.dispose();
-				}
-				contenuColonneDroite = new VueEmploye(colonneDroite, display).getComposite();
-				VueEmploye.titreEmploye();
-				VueEmploye.vueEmployeFormulaire();
-				contenuColonneDroite.pack();
-				colonneDroite.pack();
-			}
-		});
-		MenuItem employeeTable = new MenuItem(subMenuEmployee, SWT.PUSH);
-		employeeTable.setText("&Afficher les employés");
-		employeeTable.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent arg0) {
-				if (!contenuColonneDroite.isDisposed()) {
-					contenuColonneDroite.dispose();
-				}
-				contenuColonneDroite = new VueEmploye(colonneDroite, display).getComposite();
-				contenuColonneDroite.pack();
-				colonneDroite.pack();
-			}
-		});
-		MenuItem employeeGlobalCost = new MenuItem(subMenuEmployee, SWT.PUSH);
-		employeeGlobalCost.setText("&Récupérer un ancien employé");
-		employeeGlobalCost.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent arg0) {
-				if (!contenuColonneDroite.isDisposed()) {
-					contenuColonneDroite.dispose();
-				}
-				contenuColonneDroite = new VueEmploye(colonneDroite, display).getComposite();
-				VueEmploye.vueRecupEmploye();
-				contenuColonneDroite.pack();
-				colonneDroite.pack();
-			}
-		});
-
-		// couts
-		MenuItem SLItem = new MenuItem(employeeMenu, SWT.CASCADE);
-		SLItem.setText("&Gérer les coûts");
-
-		final Menu subMenuSickLeave = new Menu(shell, SWT.DROP_DOWN);
-		SLItem.setMenu(subMenuSickLeave);
-
-		MenuItem sickLeaveCreation = new MenuItem(subMenuSickLeave, SWT.PUSH);
-		sickLeaveCreation.setText("&Modifier les coûts des employés");
-		sickLeaveCreation.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent arg0) {
-				if (!contenuColonneDroite.isDisposed()) {
-					contenuColonneDroite.dispose();
-				}
-				contenuColonneDroite = new VueEmploye(colonneDroite, display).getComposite();
-				VueEmploye.vueCompleteCouts();
-				contenuColonneDroite.pack();
-				colonneDroite.pack();
-			}
-		});
-		MenuItem sickLeaveTable = new MenuItem(subMenuSickLeave, SWT.PUSH);
-		sickLeaveTable.setText("&Afficher les couts à amortir");
-		sickLeaveTable.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent arg0) {
-				if (!contenuColonneDroite.isDisposed()) {
-					contenuColonneDroite.dispose();
-				}
-				contenuColonneDroite = new VueEmploye(colonneDroite, display).getComposite();
-				VueEmploye.vueAmortissement();
-				contenuColonneDroite.pack();
-				colonneDroite.pack();
-			}
-		});
-
-		MenuItem sickLeaveTable2 = new MenuItem(subMenuSickLeave, SWT.PUSH);
-		sickLeaveTable2.setText("&Créer un cout à amortir");
-		sickLeaveTable2.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent arg0) {
-				if (!contenuColonneDroite.isDisposed()) {
-					contenuColonneDroite.dispose();
-				}
-				contenuColonneDroite = new VueEmploye(colonneDroite, display).getComposite();
-				VueEmploye.vueCreationA();
-				contenuColonneDroite.pack();
-				colonneDroite.pack();
-			}
-		});
-		*/
-
+		 * MenuItem menuHeaderEmployee = new MenuItem(menuBar, SWT.CASCADE);
+		 * menuHeaderEmployee.setText("&Employés"); Menu employeeMenu = new Menu(shell,
+		 * SWT.DROP_DOWN); menuHeaderEmployee.setMenu(employeeMenu);
+		 * 
+		 * MenuItem employeeItem = new MenuItem(employeeMenu, SWT.CASCADE);
+		 * employeeItem.setText("&Gérer les employés");
+		 * 
+		 * final Menu subMenuEmployee = new Menu(shell, SWT.DROP_DOWN);
+		 * employeeItem.setMenu(subMenuEmployee);
+		 * 
+		 * MenuItem employeeCreation = new MenuItem(subMenuEmployee, SWT.PUSH);
+		 * employeeCreation.setText("&Créer un employé");
+		 * employeeCreation.addSelectionListener(new SelectionAdapter() {
+		 * 
+		 * @Override public void widgetSelected(SelectionEvent arg0) { if
+		 * (!contenuColonneDroite.isDisposed()) { contenuColonneDroite.dispose(); }
+		 * contenuColonneDroite = new VueEmploye(colonneDroite, display).getComposite();
+		 * VueEmploye.titreEmploye(); VueEmploye.vueEmployeFormulaire();
+		 * contenuColonneDroite.pack(); colonneDroite.pack(); } }); MenuItem
+		 * employeeTable = new MenuItem(subMenuEmployee, SWT.PUSH);
+		 * employeeTable.setText("&Afficher les employés");
+		 * employeeTable.addSelectionListener(new SelectionAdapter() {
+		 * 
+		 * @Override public void widgetSelected(SelectionEvent arg0) { if
+		 * (!contenuColonneDroite.isDisposed()) { contenuColonneDroite.dispose(); }
+		 * contenuColonneDroite = new VueEmploye(colonneDroite, display).getComposite();
+		 * contenuColonneDroite.pack(); colonneDroite.pack(); } }); MenuItem
+		 * employeeGlobalCost = new MenuItem(subMenuEmployee, SWT.PUSH);
+		 * employeeGlobalCost.setText("&Récupérer un ancien employé");
+		 * employeeGlobalCost.addSelectionListener(new SelectionAdapter() {
+		 * 
+		 * @Override public void widgetSelected(SelectionEvent arg0) { if
+		 * (!contenuColonneDroite.isDisposed()) { contenuColonneDroite.dispose(); }
+		 * contenuColonneDroite = new VueEmploye(colonneDroite, display).getComposite();
+		 * VueEmploye.vueRecupEmploye(); contenuColonneDroite.pack();
+		 * colonneDroite.pack(); } });
+		 * 
+		 * // couts MenuItem SLItem = new MenuItem(employeeMenu, SWT.CASCADE);
+		 * SLItem.setText("&Gérer les coûts");
+		 * 
+		 * final Menu subMenuSickLeave = new Menu(shell, SWT.DROP_DOWN);
+		 * SLItem.setMenu(subMenuSickLeave);
+		 * 
+		 * MenuItem sickLeaveCreation = new MenuItem(subMenuSickLeave, SWT.PUSH);
+		 * sickLeaveCreation.setText("&Modifier les coûts des employés");
+		 * sickLeaveCreation.addSelectionListener(new SelectionAdapter() {
+		 * 
+		 * @Override public void widgetSelected(SelectionEvent arg0) { if
+		 * (!contenuColonneDroite.isDisposed()) { contenuColonneDroite.dispose(); }
+		 * contenuColonneDroite = new VueEmploye(colonneDroite, display).getComposite();
+		 * VueEmploye.vueCompleteCouts(); contenuColonneDroite.pack();
+		 * colonneDroite.pack(); } }); MenuItem sickLeaveTable = new
+		 * MenuItem(subMenuSickLeave, SWT.PUSH);
+		 * sickLeaveTable.setText("&Afficher les couts à amortir");
+		 * sickLeaveTable.addSelectionListener(new SelectionAdapter() {
+		 * 
+		 * @Override public void widgetSelected(SelectionEvent arg0) { if
+		 * (!contenuColonneDroite.isDisposed()) { contenuColonneDroite.dispose(); }
+		 * contenuColonneDroite = new VueEmploye(colonneDroite, display).getComposite();
+		 * VueEmploye.vueAmortissement(); contenuColonneDroite.pack();
+		 * colonneDroite.pack(); } });
+		 * 
+		 * MenuItem sickLeaveTable2 = new MenuItem(subMenuSickLeave, SWT.PUSH);
+		 * sickLeaveTable2.setText("&Créer un cout à amortir");
+		 * sickLeaveTable2.addSelectionListener(new SelectionAdapter() {
+		 * 
+		 * @Override public void widgetSelected(SelectionEvent arg0) { if
+		 * (!contenuColonneDroite.isDisposed()) { contenuColonneDroite.dispose(); }
+		 * contenuColonneDroite = new VueEmploye(colonneDroite, display).getComposite();
+		 * VueEmploye.vueCreationA(); contenuColonneDroite.pack(); colonneDroite.pack();
+		 * } });
+		 */
 
 		// help
 		MenuItem menuHeader = new MenuItem(menuBar, SWT.CASCADE);
@@ -490,8 +447,7 @@ public class Home {
 				// System.out.println("done");
 			}
 		});
-		
-		
+
 		Button boutonComission = new Button(menu, SWT.NONE);
 		boutonComission.setText("Comissions");
 		boutonComission.setBackground(Couleur.blanc);
@@ -545,8 +501,7 @@ public class Home {
 				// System.out.println("done");
 			}
 		});
-		
-		
+
 		Button buttonRent = new Button(menu, SWT.NONE);
 		buttonRent.setText("Rentabilité");
 		buttonRent.setBackground(Couleur.blanc);

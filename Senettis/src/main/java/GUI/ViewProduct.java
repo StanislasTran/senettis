@@ -628,7 +628,7 @@ public class ViewProduct {
 	}
 
 	/**
-	 * Add a header in Selection composite with title <param>header</param>
+	 * Add a header in header composite with title <param>header</param>
 	 * 
 	 * @param <type>String</type> header
 	 */
