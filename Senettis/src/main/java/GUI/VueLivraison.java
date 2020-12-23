@@ -622,6 +622,11 @@ public class VueLivraison {
 		compositeBoutons.setBackground(Couleur.bleuClair);
 		compositeBoutons.setLayout(fillLayoutH5);
 
+		
+
+		Button buttonValidation = new Button(compositeBoutons, SWT.BACKGROUND);
+		buttonValidation.setText("Valider");
+		
 		Button buttonAnnulation = new Button(compositeBoutons, SWT.BACKGROUND);
 		buttonAnnulation.setText("Annuler");
 		buttonAnnulation.addSelectionListener(new SelectionAdapter() {
@@ -634,9 +639,6 @@ public class VueLivraison {
 				vueFS();
 			}
 		});
-
-		Button buttonValidation = new Button(compositeBoutons, SWT.BACKGROUND);
-		buttonValidation.setText("Valider");
 
 		// creation
 
@@ -1290,24 +1292,10 @@ public class VueLivraison {
 		compositeBoutons.setBackground(Couleur.bleuClair);
 		compositeBoutons.setLayout(fillLayoutH5);
 
-		Button buttonAnnulation = new Button(compositeBoutons, SWT.BACKGROUND);
-		buttonAnnulation.setText("Annuler");
-		buttonAnnulation.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(SelectionEvent arg0) {
-				selectedAmorti = null;
-				selectedChantier = null;
-				selectedFS = null;
-				vueAmortissement();
-			}
-		});
+		
 
 		Button buttonValidation = new Button(compositeBoutons, SWT.BACKGROUND);
 		buttonValidation.setText("Valider");
-
-		// creation
-
 		buttonValidation.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -1378,6 +1366,21 @@ public class VueLivraison {
 							"Une erreur est survenue lors de la création du cout à amortir. " + '\n' + e.getMessage());
 					dialog.open();
 				}
+			}
+		});
+
+
+		// creation
+		Button buttonAnnulation = new Button(compositeBoutons, SWT.BACKGROUND);
+		buttonAnnulation.setText("Annuler");
+		buttonAnnulation.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				selectedAmorti = null;
+				selectedChantier = null;
+				selectedFS = null;
+				vueAmortissement();
 			}
 		});
 
@@ -1618,7 +1621,7 @@ public class VueLivraison {
 
 		if (selectedLivraison != null) {
 			// Bouton Modifier
-			Button boutonModifier = new Button(selection, SWT.CENTER);
+			Button boutonModifier = new Button(selection2, SWT.CENTER);
 			boutonModifier.setText("Modifier");
 			boutonModifier.addSelectionListener(new SelectionAdapter() {
 				@Override
@@ -1628,7 +1631,7 @@ public class VueLivraison {
 			});
 
 			// Bouton Supprimer
-			Button boutonSupprimer = new Button(selection, SWT.CENTER);
+			Button boutonSupprimer = new Button(selection2, SWT.CENTER);
 			boutonSupprimer.setText("Supprimer");
 			boutonSupprimer.addSelectionListener(new SelectionAdapter() {
 				@Override
@@ -1910,6 +1913,11 @@ public class VueLivraison {
 		compositeBoutons.setBackground(Couleur.bleuClair);
 		compositeBoutons.setLayout(fillLayoutH5);
 
+		
+
+		Button buttonValidation = new Button(compositeBoutons, SWT.BACKGROUND);
+		buttonValidation.setText("Valider");
+		
 		Button buttonAnnulation = new Button(compositeBoutons, SWT.BACKGROUND);
 		buttonAnnulation.setText("Annuler");
 		buttonAnnulation.addSelectionListener(new SelectionAdapter() {
@@ -1920,9 +1928,6 @@ public class VueLivraison {
 				newVueLivraison();
 			}
 		});
-
-		Button buttonValidation = new Button(compositeBoutons, SWT.BACKGROUND);
-		buttonValidation.setText("Valider");
 
 		// Produit
 		Composite compositeProduit = new Composite(colonne2, SWT.NONE);

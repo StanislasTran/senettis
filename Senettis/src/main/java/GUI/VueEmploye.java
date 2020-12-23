@@ -523,17 +523,6 @@ public class VueEmploye {
 		compositeBoutons.setBackground(Couleur.bleuClair);
 		compositeBoutons.setLayout(fillLayoutH5);
 
-		Button buttonAnnulation = new Button(compositeBoutons, SWT.BACKGROUND);
-		buttonAnnulation.setText("Annuler");
-		buttonAnnulation.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(SelectionEvent arg0) {
-				selectedAmorti = null;
-				selectedEmploye = null;
-				vueAmortissement();
-			}
-		});
 
 		Button buttonValidation = new Button(compositeBoutons, SWT.BACKGROUND);
 		buttonValidation.setText("Valider");
@@ -596,6 +585,19 @@ public class VueEmploye {
 				}
 			}
 		});
+		
+		Button buttonAnnulation = new Button(compositeBoutons, SWT.BACKGROUND);
+		buttonAnnulation.setText("Annuler");
+		buttonAnnulation.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				selectedAmorti = null;
+				selectedEmploye = null;
+				vueAmortissement();
+			}
+		});
+
 
 		vue.pack();
 	}
@@ -1740,17 +1742,7 @@ public class VueEmploye {
 		compositeBoutons.setBackground(Couleur.bleuClair);
 		compositeBoutons.setLayout(fillLayoutH5);
 
-		Button buttonAnnulation = new Button(compositeBoutons, SWT.BACKGROUND);
-		buttonAnnulation.setText("Annuler");
-		buttonAnnulation.addSelectionListener(new SelectionAdapter() {
 
-			@Override
-			public void widgetSelected(SelectionEvent arg0) {
-				selectedEmploye = null;
-				selectedAmorti = null;
-				newVueEmploye();
-			}
-		});
 
 		Button buttonValidation = new Button(compositeBoutons, SWT.BACKGROUND);
 		buttonValidation.setText("Valider");
@@ -1781,6 +1773,18 @@ public class VueEmploye {
 					dialog.setMessage("Une erreur est survenue. " + '\n' + e.getMessage());
 					dialog.open();
 				}
+			}
+		});
+		
+		Button buttonAnnulation = new Button(compositeBoutons, SWT.BACKGROUND);
+		buttonAnnulation.setText("Annuler");
+		buttonAnnulation.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				selectedEmploye = null;
+				selectedAmorti = null;
+				newVueEmploye();
 			}
 		});
 
@@ -2054,17 +2058,7 @@ public class VueEmploye {
 		compositeBoutons.setBackground(Couleur.bleuClair);
 		compositeBoutons.setLayout(fillLayoutH5);
 
-		Button buttonAnnulation = new Button(compositeBoutons, SWT.BACKGROUND);
-		buttonAnnulation.setText("Annuler");
-		buttonAnnulation.addSelectionListener(new SelectionAdapter() {
 
-			@Override
-			public void widgetSelected(SelectionEvent arg0) {
-				selectedEmploye = null;
-				selectedAmorti = null;
-				newVueEmploye();
-			}
-		});
 
 		Button buttonValidation = new Button(compositeBoutons, SWT.BACKGROUND);
 		buttonValidation.setText("Valider");
@@ -2086,6 +2080,18 @@ public class VueEmploye {
 							+ e.getMessage());
 					dialog.open();
 				}
+			}
+		});
+		
+		Button buttonAnnulation = new Button(compositeBoutons, SWT.BACKGROUND);
+		buttonAnnulation.setText("Annuler");
+		buttonAnnulation.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				selectedEmploye = null;
+				selectedAmorti = null;
+				newVueEmploye();
 			}
 		});
 

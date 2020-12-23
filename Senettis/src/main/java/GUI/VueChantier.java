@@ -404,15 +404,7 @@ public class VueChantier {
 		compositeBoutons.setBackground(Couleur.bleuClair);
 		compositeBoutons.setLayout(fillLayoutH5);
 
-		Button buttonAnnulation = new Button(compositeBoutons, SWT.BACKGROUND);
-		buttonAnnulation.setText("Annuler");
-		buttonAnnulation.addSelectionListener(new SelectionAdapter() {
 
-			@Override
-			public void widgetSelected(SelectionEvent arg0) {
-				newVueChantier();
-			}
-		});
 
 		Button buttonValidation = new Button(compositeBoutons, SWT.BACKGROUND);
 		buttonValidation.setText("Valider");
@@ -437,6 +429,17 @@ public class VueChantier {
 
 			}
 		});
+		
+		Button buttonAnnulation = new Button(compositeBoutons, SWT.BACKGROUND);
+		buttonAnnulation.setText("Annuler");
+		buttonAnnulation.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				newVueChantier();
+			}
+		});
+		
 		vue.pack();
 	}
 
@@ -580,15 +583,7 @@ public class VueChantier {
 		compositeBoutons.setBackground(Couleur.bleuClair);
 		compositeBoutons.setLayout(fillLayoutH5);
 
-		Button buttonAnnulation = new Button(compositeBoutons, SWT.BACKGROUND);
-		buttonAnnulation.setText("Annuler");
-		buttonAnnulation.addSelectionListener(new SelectionAdapter() {
 
-			@Override
-			public void widgetSelected(SelectionEvent arg0) {
-				newVueChantier();
-			}
-		});
 
 		Button buttonValidation = new Button(compositeBoutons, SWT.BACKGROUND);
 		buttonValidation.setText("Valider");
@@ -608,6 +603,16 @@ public class VueChantier {
 							"Une erreur est survenue lors de la création d'un chantier. " + '\n' + e.getMessage());
 					dialog.open();
 				}
+			}
+		});
+		
+		Button buttonAnnulation = new Button(compositeBoutons, SWT.BACKGROUND);
+		buttonAnnulation.setText("Annuler");
+		buttonAnnulation.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				newVueChantier();
 			}
 		});
 		vue.pack();
