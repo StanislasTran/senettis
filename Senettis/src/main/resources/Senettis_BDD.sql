@@ -344,7 +344,7 @@ SET Date_de_modification = GETDATE()
 	Chantier int NOT NULL,
     FOREIGN KEY (Chantier) REFERENCES Chantier(ChantierId), 
 	valeurParMois decimal (10,2) NOT NULL,
-	sousTraitant VARCHAR(100) NOT NULL,
+	sousTraitant VARCHAR(100),
 	description VARCHAR(200),
 	"Status" VARCHAR (50) NOT NULL,
 	"Date_de_creation" DateTime  NOT NUll Default (GETDATE()), 

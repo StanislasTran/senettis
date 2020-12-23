@@ -588,7 +588,7 @@ public class VueLivraison {
 
 		Label labelST = new Label(compositeST, SWT.NONE);
 		labelST.setBackground(Couleur.bleuClair);
-		labelST.setText("Sous Traitant* : ");
+		labelST.setText("Sous Traitant : ");
 
 		final Text textST = new Text(compositeST, SWT.BORDER);
 		textST.setText("");
@@ -665,10 +665,6 @@ public class VueLivraison {
 						montantParMois = Double.parseDouble(textValeur.getText());
 					} catch (Exception e) {
 						throw new Error("Merci d'indiquer le montant.");
-					}
-
-					if (textST.getText().isBlank()) {
-						throw new Error("Merci d'indiquer le sous traitant.");
 					}
 
 					if (selectedFS != null) {

@@ -2456,10 +2456,15 @@ public class VueEmploye {
 						item.setText(8, e.getDateArrivee());
 
 						Integer anciennete = e.getComputeAnciennete();
-						if (anciennete == 0)
+						if (anciennete == 0) {
 							item.setText(9, "moins d'un an");
-						else
+						}
+						else if (anciennete == 1) {
 							item.setText(9, anciennete + " an");
+						}
+						else {
+							item.setText(9, anciennete + " ans");
+						}
 
 						item.setText(11, "" + e.getAnciennetePC());
 						boolean mustBeRed = anciennete >= 3 && e.getAnciennetePC() < 3;
