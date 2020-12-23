@@ -96,18 +96,57 @@ public class VueEmploye {
 			selection.dispose();
 		}
 
-		selection = new Composite(vueEmploye, SWT.NONE);
+		String s;
+		int addSize;
+		s = "Gestion des amortissement employés";
+		addSize = (595 - 20) / 2;
+
+		selection = new Composite(vueEmploye, SWT.CENTER);
+
+		FillLayout fillLayout = new FillLayout();
+		fillLayout.type = SWT.VERTICAL;
+		selection.setLayout(fillLayout);
+		selection.setBackground(Couleur.bleuClair);
+		
+		Composite selection1 = new Composite(selection, SWT.BORDER);
+
+		FillLayout fillLayout2 = new FillLayout();
+		fillLayout2.type = SWT.VERTICAL;
+		fillLayout2.marginWidth = addSize;
+		selection1.setLayout(fillLayout2);
+
+		// juste pour creer un espace
+		Label l1 = new Label(selection1, SWT.NONE);
+		l1.setText("");
+		l1.setBackground(Couleur.bleuFonce);
+
+		selection1.setBackground(Couleur.bleuFonce);
+		Label HeadLabel = new Label(selection1, SWT.TITLE);
+		HeadLabel.setText(s);
+		Font fontTitle = new Font(HeadLabel.getDisplay(), "Arial", 12, SWT.BOLD);
+		HeadLabel.setForeground(Couleur.bleuClair);
+		HeadLabel.setFont(fontTitle);
+		HeadLabel.setBackground(Couleur.bleuFonce);
+
+		// juste pour creer un espace
+		Label l2 = new Label(selection1, SWT.NONE);
+		l2.setText("");
+		l2.setBackground(Couleur.bleuFonce);
+
+		selection1.pack();
+		
+
+		Composite selection2 = new Composite(selection, SWT.NONE);
 		RowLayout rowLayout = new RowLayout();
-		rowLayout.marginWidth = 5;
+		rowLayout.marginWidth = 20;
 		rowLayout.marginTop = 6;
-		rowLayout.spacing = 10;
-		selection.setLayout(rowLayout);
-		selection.setBackground(Couleur.gris);
+		selection2.setLayout(rowLayout);
+		selection2.setBackground(Couleur.bleuClair);
 
 		RowLayout rl = new RowLayout();
 		rl.type = SWT.HORIZONTAL;
 
-		Button boutonCreation = new Button(selection, SWT.CENTER);
+		Button boutonCreation = new Button(selection2, SWT.CENTER);
 		boutonCreation.setText("Créer");
 		boutonCreation.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -119,7 +158,7 @@ public class VueEmploye {
 		});
 
 		if (selectedAmorti != null) {
-			Button boutonModif = new Button(selection, SWT.CENTER);
+			Button boutonModif = new Button(selection2, SWT.CENTER);
 			boutonModif.setText("Modifier");
 			boutonModif.addSelectionListener(new SelectionAdapter() {
 				@Override
@@ -128,7 +167,7 @@ public class VueEmploye {
 				}
 			});
 
-			Button boutonSupp = new Button(selection, SWT.CENTER);
+			Button boutonSupp = new Button(selection2, SWT.CENTER);
 			boutonSupp.setText("Supprimer");
 			boutonSupp.addSelectionListener(new SelectionAdapter() {
 				@Override
@@ -159,7 +198,7 @@ public class VueEmploye {
 			});
 		}
 
-		Button boutonRetour = new Button(selection, SWT.CENTER);
+		Button boutonRetour = new Button(selection2, SWT.CENTER);
 		boutonRetour.setText("Retour");
 		boutonRetour.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -170,6 +209,7 @@ public class VueEmploye {
 			}
 		});
 
+		selection2.pack();
 		selection.pack();
 	}
 
@@ -187,16 +227,20 @@ public class VueEmploye {
 		RowLayout rowLayoutH = new RowLayout();
 		rowLayoutH.type = SWT.VERTICAL;
 		vue.setLayout(rowLayoutH);
+		vue.setBackground(Couleur.bleuClair);
 
 		Composite tables = new Composite(vue, SWT.NONE);
 		tables.setLayout(new RowLayout(SWT.HORIZONTAL));
+		tables.setBackground(Couleur.bleuClair);
 
 		// creation de la table des produits
 		Composite compoEmp = new Composite(tables, SWT.NONE);
 		compoEmp.setLayout(new RowLayout(SWT.VERTICAL));
+		compoEmp.setBackground(Couleur.bleuClair);
 
 		Label emp = new Label(compoEmp, SWT.NONE);
 		emp.setText("Choisir un employé :");
+		emp.setBackground(Couleur.bleuClair);
 
 		tableEmp = new Table(compoEmp, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.FULL_SELECTION);
 		tableEmp.setLayoutData(new RowData(300, 380));
@@ -217,9 +261,11 @@ public class VueEmploye {
 		// creation de la table amorti
 		Composite compoAmorti = new Composite(tables, SWT.NONE);
 		compoAmorti.setLayout(new RowLayout(SWT.VERTICAL));
+		compoAmorti.setBackground(Couleur.bleuClair);
 
 		Label amorti = new Label(compoAmorti, SWT.NONE);
 		amorti.setText("Coûts liés à cet employé :");
+		amorti.setBackground(Couleur.bleuClair);
 
 		tableAmorti = new Table(compoAmorti, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.FULL_SELECTION);
 		tableAmorti.setLayoutData(new RowData(500, 380));
@@ -386,7 +432,7 @@ public class VueEmploye {
 		LocalDate currentdate = LocalDate.now();
 		Month month = currentdate.getMonth();
 		int year = currentdate.getYear();
-		if (j == 1) {
+		if (j == 0) {
 			periode.setText(month.toString() + " " + year);
 		} else {
 			periode.setText(Month.of(selectedAmorti.getMoisD()) + " " + selectedAmorti.getAnneeD().toString());
@@ -606,6 +652,7 @@ public class VueEmploye {
 
 					selectedEmploye = null;
 					selectedAmorti = null;
+					amortiSelection();
 					updateTableAmorti();
 
 				}
@@ -704,22 +751,63 @@ public class VueEmploye {
 			selection.dispose();
 		}
 
-		selection = new Composite(vueEmploye, SWT.NONE);
+		String s;
+		int addSize;
+		s = "Gestion des coûts employés";
+		addSize = (1000 - 150) / 2;
+
+		selection = new Composite(vueEmploye, SWT.CENTER);
+
+		FillLayout fillLayout = new FillLayout();
+		fillLayout.type = SWT.VERTICAL;
+		selection.setLayout(fillLayout);
+		selection.setBackground(Couleur.bleuClair);
+		
+		Composite selection1 = new Composite(selection, SWT.BORDER);
+
+		FillLayout fillLayout2 = new FillLayout();
+		fillLayout2.type = SWT.VERTICAL;
+		fillLayout2.marginWidth = addSize;
+		selection1.setLayout(fillLayout2);
+
+		// juste pour creer un espace
+		Label l1 = new Label(selection1, SWT.NONE);
+		l1.setText("");
+		l1.setBackground(Couleur.bleuFonce);
+
+		selection1.setBackground(Couleur.bleuFonce);
+		Label HeadLabel = new Label(selection1, SWT.TITLE);
+		HeadLabel.setText(s);
+		Font fontTitle = new Font(HeadLabel.getDisplay(), "Arial", 12, SWT.BOLD);
+		HeadLabel.setForeground(Couleur.bleuClair);
+		HeadLabel.setFont(fontTitle);
+		HeadLabel.setBackground(Couleur.bleuFonce);
+
+		// juste pour creer un espace
+		Label l2 = new Label(selection1, SWT.NONE);
+		l2.setText("");
+		l2.setBackground(Couleur.bleuFonce);
+
+		selection1.pack();
+		
+
+		Composite selection2 = new Composite(selection, SWT.NONE);
 		RowLayout rowLayout = new RowLayout();
-		rowLayout.marginWidth = 22;
+		rowLayout.marginWidth = 20;
 		rowLayout.marginTop = 6;
-		rowLayout.spacing = 60;
-		selection.setLayout(rowLayout);
-		selection.setBackground(Couleur.gris);
+		selection2.setLayout(rowLayout);
+		selection2.setBackground(Couleur.bleuClair);
 
 		FillLayout fillLayoutH5 = new FillLayout();
 		fillLayoutH5.type = SWT.HORIZONTAL;
 
-		Composite compositePeriode = new Composite(selection, SWT.NONE);
+		Composite compositePeriode = new Composite(selection2, SWT.NONE);
 		compositePeriode.setLayout(fillLayoutH5);
+		compositePeriode.setBackground(Couleur.bleuClair);
 
 		Label labelPeriode = new Label(compositePeriode, SWT.NONE);
 		labelPeriode.setText("Periode : ");
+		labelPeriode.setBackground(Couleur.bleuClair);
 
 		Combo periode = new Combo(compositePeriode, SWT.BORDER);
 		LocalDate currentdate = LocalDate.now();
@@ -741,7 +829,7 @@ public class VueEmploye {
 			}
 		});
 
-		Button boutonMoisPrecedent = new Button(selection, SWT.CENTER);
+		Button boutonMoisPrecedent = new Button(selection2, SWT.CENTER);
 		boutonMoisPrecedent.setText("Récupérer les valeurs précédentes");
 		boutonMoisPrecedent.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -786,7 +874,7 @@ public class VueEmploye {
 			}
 		});
 
-		Button boutonGestionCouts = new Button(selection, SWT.CENTER);
+		Button boutonGestionCouts = new Button(selection2, SWT.CENTER);
 		boutonGestionCouts.setText("Gérer les couts à amortir");
 		boutonGestionCouts.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -797,6 +885,162 @@ public class VueEmploye {
 			}
 		});
 
+		Label espace = new Label(selection2, SWT.NONE);
+		espace.setText("                                         ");
+		espace.setBackground(Couleur.bleuClair);
+		
+		Button boutonAnnuler = new Button(selection2, SWT.CENTER);
+		boutonAnnuler.setText("    Retour aux employés    ");
+		boutonAnnuler.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				selectedEmploye = null;
+				selectedAmorti = null;
+				newVueEmploye();
+			}
+		});
+
+		Button boutonValider = new Button(selection2, SWT.CENTER);
+		boutonValider.setText("     Sauvegarder     ");
+		boutonValider.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+
+				for (int ligne = 0; ligne < tableCouts.getItems().length; ligne++) {
+					System.out.println(ligne + "-----------------------------");
+					Integer employeId = Integer.parseInt(tableCouts.getItem(ligne).getText(0));
+					Boolean empty = true;
+					try {
+
+						String[] periode = tableCouts.getItem(ligne).getText(4).split("/");
+
+						int mois = Integer.parseInt(periode[0]);
+						int annee = Integer.parseInt(periode[1]);
+
+						CoutsEmploye ce = new CoutsEmploye(employeId, mois, annee, "Publié");
+						System.out.println("on a cree ");
+
+						if (!tableCouts.getItem(ligne).getText(5).isBlank()) {
+							ce.setSalaireNet(Double.parseDouble(tableCouts.getItem(ligne).getText(5)));
+							empty = false;
+						} else {
+							ce.setSalaireNet(0.0);
+						}
+
+						if (!tableCouts.getItem(ligne).getText(6).isBlank()) {
+							ce.setSalaireBrut(Double.parseDouble(tableCouts.getItem(ligne).getText(6)));
+							empty = false;
+						} else {
+							ce.setSalaireBrut(0.0);
+						}
+
+						if (!tableCouts.getItem(ligne).getText(7).isBlank()) {
+							ce.setNombreHeures(Double.parseDouble(tableCouts.getItem(ligne).getText(7)));
+							empty = false;
+						} else {
+							ce.setNombreHeures(0.0);
+						}
+
+						if (!tableCouts.getItem(ligne).getText(8).isBlank()) {
+							ce.setChargesP(Double.parseDouble(tableCouts.getItem(ligne).getText(8)));
+							empty = false;
+						} else {
+							ce.setChargesP(0.0);
+						}
+
+						if (!tableCouts.getItem(ligne).getText(9).isBlank()) {
+							ce.setMasseS(Double.parseDouble(tableCouts.getItem(ligne).getText(9)));
+							empty = false;
+						} else {
+							ce.setMasseS(0.0);
+						}
+
+						if (!tableCouts.getItem(ligne).getText(10).isBlank()) {
+							ce.setRemboursementTransport(Double.parseDouble(tableCouts.getItem(ligne).getText(10)));
+							empty = false;
+						} else {
+							ce.setRemboursementTransport(0.0);
+						}
+
+						if (!tableCouts.getItem(ligne).getText(11).isBlank()) {
+							ce.setRemboursementTelephone(Double.parseDouble(tableCouts.getItem(ligne).getText(11)));
+							empty = false;
+						} else {
+							ce.setRemboursementTelephone(0.0);
+						}
+
+						if (!tableCouts.getItem(ligne).getText(12).isBlank()) {
+							ce.setMutuelle(Double.parseDouble(tableCouts.getItem(ligne).getText(12)));
+							empty = false;
+						} else {
+							ce.setMutuelle(0.0);
+						}
+
+						if (!tableCouts.getItem(ligne).getText(13).isBlank()) {
+							ce.setPaniers(Double.parseDouble(tableCouts.getItem(ligne).getText(13)));
+							empty = false;
+						} else {
+							ce.setPaniers(0.0);
+						}
+
+						if (!tableCouts.getItem(ligne).getText(14).isBlank()) {
+							ce.setPrets(Double.parseDouble(tableCouts.getItem(ligne).getText(14)));
+							empty = false;
+						} else {
+							ce.setPrets(0.0);
+						}
+
+						if (!tableCouts.getItem(ligne).getText(15).isBlank()) {
+							ce.setSaisieArret(Double.parseDouble(tableCouts.getItem(ligne).getText(15)));
+							empty = false;
+						} else {
+							ce.setSaisieArret(0.0);
+						}
+
+						System.out.println("on a tout rempli");
+
+						if (!empty) {// si au moins un champs est renseigné
+							try {
+
+								if (ce.updateDatabaseFromEmployeId() == 0) {
+									ce.insertDatabase();
+								}
+							} catch (Exception e) {
+								
+								ce.insertDatabase();
+							}
+						}
+					} catch (SQLException e) {
+						System.out.println("erreur dans la table des couts employes");
+						MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_ERROR | SWT.OK);
+						dialog.setText("Erreur");
+						dialog.setMessage("Une erreur est survenue. " + '\n' + e.getMessage());
+						dialog.open();
+					}
+				}
+
+				try {
+					String[] moisAnnee = tableCouts.getItem(0).getText(4).split("/");
+					String periode = Month.of(Integer.parseInt(moisAnnee[0])).toString() + " "
+							+ ((Integer) Integer.parseInt(moisAnnee[1])).toString();
+					System.out.println("on a modifie les couts employe !!");
+					MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_INFORMATION | SWT.OK);
+					dialog.setText("Modification réussie");
+					dialog.setMessage("Les couts employé ont bien été modifiés dans la base de données.");
+					dialog.open();
+					updateCoutsTable(periode);
+					vue.pack();
+				} catch (Exception e) {
+					System.out.println("erreur dans la table des couts employes");
+					MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_ERROR | SWT.OK);
+					dialog.setText("Erreur");
+					dialog.setMessage("Une erreur est survenue. " + '\n' + e.getMessage());
+					dialog.open();
+				}
+			}
+		});
+		
+		selection2.pack();
 		selection.pack();
 	}
 
@@ -809,12 +1053,13 @@ public class VueEmploye {
 		RowLayout rowLayoutH = new RowLayout();
 		rowLayoutH.type = SWT.VERTICAL;
 		vue.setLayout(rowLayoutH);
+		vue.setBackground(Couleur.bleuClair);
 
 		LocalDate currentdate = LocalDate.now();
 		Month month = currentdate.getMonth();
 		int year = currentdate.getYear();
 
-		compoValidation();
+		//compoValidation();
 		updateCoutsTable(month.toString() + " " + year);
 		vue.pack();
 	}
@@ -996,7 +1241,7 @@ public class VueEmploye {
 
 		// creation de la table des produits
 		tableCouts = new Table(vue, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.FULL_SELECTION);
-		tableCouts.setLayoutData(new RowData(1045, 530));
+		tableCouts.setLayoutData(new RowData(1045, 500));
 		tableCouts.setLinesVisible(true);
 		tableCouts.setHeaderVisible(true);
 

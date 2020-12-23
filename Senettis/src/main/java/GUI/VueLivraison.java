@@ -78,10 +78,11 @@ public class VueLivraison {
 		selectedChantier = null;
 		selectedFS = null;
 		selectedAmorti = null;
-
+		
 		Couleur.setDisplay(display); // pour utiliser les couleurs du fichier couleur
 
 		tabFolder = new TabFolder(composite, SWT.BORDER);
+		
 
 		TabItem tabLivraison = new TabItem(tabFolder, SWT.NULL);
 		tabLivraison.setText("     Livraisons     ");
@@ -161,12 +162,12 @@ public class VueLivraison {
 
 		vueOnglet = new Composite(tabFolder, SWT.NONE);
 		vueOnglet.setLayout(rowLayout);
-		vueOnglet.setBackground(Couleur.gris);
+		vueOnglet.setBackground(Couleur.bleuClair);
 		tabLivraison.setControl(vueOnglet);
 
 		vueLivraison = new Composite(vueOnglet, SWT.NONE);
 		vueLivraison.setLayout(rowLayout);
-		vueLivraison.setBackground(Couleur.gris);
+		vueLivraison.setBackground(Couleur.bleuClair);
 
 		compositeSelection();
 
@@ -208,6 +209,7 @@ public class VueLivraison {
 	 */
 	public void vueFS() {
 
+		vueFS.setBackground(Couleur.bleuClair);
 		fsSelection();
 
 		/// VUE
@@ -220,19 +222,23 @@ public class VueLivraison {
 		RowLayout rowLayoutH = new RowLayout();
 		rowLayoutH.type = SWT.VERTICAL;
 		vue.setLayout(rowLayoutH);
+		vue.setBackground(Couleur.bleuClair);
 
 		Composite tables = new Composite(vue, SWT.NONE);
 		tables.setLayout(new RowLayout(SWT.HORIZONTAL));
+		tables.setBackground(Couleur.bleuClair);
 
 		// creation de la table des produits
 		Composite compoChantier = new Composite(tables, SWT.NONE);
 		compoChantier.setLayout(new RowLayout(SWT.VERTICAL));
+		compoChantier.setBackground(Couleur.bleuClair);
 
 		Label chantier = new Label(compoChantier, SWT.NONE);
 		chantier.setText("Choisir un chantier :");
+		chantier.setBackground(Couleur.bleuClair);
 
 		tableChantier = new Table(compoChantier, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.FULL_SELECTION);
-		tableChantier.setLayoutData(new RowData(300, 300));
+		tableChantier.setLayoutData(new RowData(250, 300));
 		tableChantier.setLinesVisible(true);
 		tableChantier.setHeaderVisible(true);
 		tableChantier.layout(true, true);
@@ -250,9 +256,11 @@ public class VueLivraison {
 		// creation de la table amorti
 		Composite compoFS = new Composite(tables, SWT.NONE);
 		compoFS.setLayout(new RowLayout(SWT.VERTICAL));
+		compoFS.setBackground(Couleur.bleuClair);
 
 		Label fs = new Label(compoFS, SWT.NONE);
 		fs.setText("Coûts de fournitures sanitaires liés à cet chantier :");
+		fs.setBackground(Couleur.bleuClair);
 
 		tableFS = new Table(compoFS, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.FULL_SELECTION);
 		tableFS.setLayoutData(new RowData(500, 380));
@@ -289,18 +297,59 @@ public class VueLivraison {
 			selection.dispose();
 		}
 
-		selection = new Composite(vueFS, SWT.NONE);
+		String s;
+		int addSize;
+		s = "Gestion des fournitures sanitaires";
+		addSize = (640 - 80) / 2;
+
+		selection = new Composite(vueFS, SWT.CENTER);
+
+		FillLayout fillLayout = new FillLayout();
+		fillLayout.type = SWT.VERTICAL;
+		selection.setLayout(fillLayout);
+		selection.setBackground(Couleur.bleuClair);
+		
+		Composite selection1 = new Composite(selection, SWT.BORDER);
+
+		FillLayout fillLayout2 = new FillLayout();
+		fillLayout2.type = SWT.VERTICAL;
+		fillLayout2.marginWidth = addSize;
+		selection1.setLayout(fillLayout2);
+
+		// juste pour creer un espace
+		Label l1 = new Label(selection1, SWT.NONE);
+		l1.setText("");
+		l1.setBackground(Couleur.bleuFonce);
+
+		selection1.setBackground(Couleur.bleuFonce);
+		Label HeadLabel = new Label(selection1, SWT.TITLE);
+		HeadLabel.setText(s);
+		Font fontTitle = new Font(HeadLabel.getDisplay(), "Arial", 12, SWT.BOLD);
+		HeadLabel.setForeground(Couleur.bleuClair);
+		HeadLabel.setFont(fontTitle);
+		HeadLabel.setBackground(Couleur.bleuFonce);
+
+		// juste pour creer un espace
+		Label l2 = new Label(selection1, SWT.NONE);
+		l2.setText("");
+		l2.setBackground(Couleur.bleuFonce);
+
+		selection1.pack();
+		
+
+		Composite selection2 = new Composite(selection, SWT.NONE);
 		RowLayout rowLayout = new RowLayout();
-		rowLayout.marginWidth = 5;
+		rowLayout.marginWidth = 20;
 		rowLayout.marginTop = 6;
-		rowLayout.spacing = 10;
-		selection.setLayout(rowLayout);
-		selection.setBackground(Couleur.gris);
+		selection2.setLayout(rowLayout);
+		selection2.setBackground(Couleur.bleuClair);
+		
+		
 
 		RowLayout rl = new RowLayout();
 		rl.type = SWT.HORIZONTAL;
 
-		Button boutonCreation = new Button(selection, SWT.CENTER);
+		Button boutonCreation = new Button(selection2, SWT.CENTER);
 		boutonCreation.setText("Créer");
 		boutonCreation.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -312,7 +361,7 @@ public class VueLivraison {
 		});
 
 		if (selectedFS != null) {
-			Button boutonModif = new Button(selection, SWT.CENTER);
+			Button boutonModif = new Button(selection2, SWT.CENTER);
 			boutonModif.setText("Modifier");
 			boutonModif.addSelectionListener(new SelectionAdapter() {
 				@Override
@@ -321,7 +370,7 @@ public class VueLivraison {
 				}
 			});
 
-			Button boutonSupp = new Button(selection, SWT.CENTER);
+			Button boutonSupp = new Button(selection2, SWT.CENTER);
 			boutonSupp.setText("Supprimer");
 			boutonSupp.addSelectionListener(new SelectionAdapter() {
 				@Override
@@ -351,6 +400,7 @@ public class VueLivraison {
 			});
 		}
 
+		selection2.pack();
 		selection.pack();
 	}
 
@@ -801,18 +851,57 @@ public class VueLivraison {
 			selection.dispose();
 		}
 
-		selection = new Composite(vueAutres, SWT.NONE);
+		String s;
+		int addSize;
+		s = "Gestion des coûts à amortir";
+		addSize = (650 - 50) / 2;
+
+		selection = new Composite(vueAutres, SWT.CENTER);
+
+		FillLayout fillLayout = new FillLayout();
+		fillLayout.type = SWT.VERTICAL;
+		selection.setLayout(fillLayout);
+		selection.setBackground(Couleur.bleuClair);
+		
+		Composite selection1 = new Composite(selection, SWT.BORDER);
+
+		FillLayout fillLayout2 = new FillLayout();
+		fillLayout2.type = SWT.VERTICAL;
+		fillLayout2.marginWidth = addSize;
+		selection1.setLayout(fillLayout2);
+
+		// juste pour creer un espace
+		Label l1 = new Label(selection1, SWT.NONE);
+		l1.setText("");
+		l1.setBackground(Couleur.bleuFonce);
+
+		selection1.setBackground(Couleur.bleuFonce);
+		Label HeadLabel = new Label(selection1, SWT.TITLE);
+		HeadLabel.setText(s);
+		Font fontTitle = new Font(HeadLabel.getDisplay(), "Arial", 12, SWT.BOLD);
+		HeadLabel.setForeground(Couleur.bleuClair);
+		HeadLabel.setFont(fontTitle);
+		HeadLabel.setBackground(Couleur.bleuFonce);
+
+		// juste pour creer un espace
+		Label l2 = new Label(selection1, SWT.NONE);
+		l2.setText("");
+		l2.setBackground(Couleur.bleuFonce);
+
+		selection1.pack();
+		
+
+		Composite selection2 = new Composite(selection, SWT.NONE);
 		RowLayout rowLayout = new RowLayout();
-		rowLayout.marginWidth = 5;
+		rowLayout.marginWidth = 20;
 		rowLayout.marginTop = 6;
-		rowLayout.spacing = 10;
-		selection.setLayout(rowLayout);
-		selection.setBackground(Couleur.gris);
+		selection2.setLayout(rowLayout);
+		selection2.setBackground(Couleur.bleuClair);
 
 		RowLayout rl = new RowLayout();
 		rl.type = SWT.HORIZONTAL;
 
-		Button boutonCreation = new Button(selection, SWT.CENTER);
+		Button boutonCreation = new Button(selection2, SWT.CENTER);
 		boutonCreation.setText("Créer");
 		boutonCreation.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -825,7 +914,7 @@ public class VueLivraison {
 		});
 
 		if (selectedAmorti != null) {
-			Button boutonModif = new Button(selection, SWT.CENTER);
+			Button boutonModif = new Button(selection2, SWT.CENTER);
 			boutonModif.setText("Modifier");
 			boutonModif.addSelectionListener(new SelectionAdapter() {
 				@Override
@@ -834,7 +923,7 @@ public class VueLivraison {
 				}
 			});
 
-			Button boutonSupp = new Button(selection, SWT.CENTER);
+			Button boutonSupp = new Button(selection2, SWT.CENTER);
 			boutonSupp.setText("Supprimer");
 			boutonSupp.addSelectionListener(new SelectionAdapter() {
 				@Override
@@ -864,6 +953,7 @@ public class VueLivraison {
 			});
 		}
 
+		selection2.pack();
 		selection.pack();
 	}
 
@@ -872,6 +962,7 @@ public class VueLivraison {
 	 */
 	public void vueAmortissement() {
 
+		vueAutres.setBackground(Couleur.bleuClair);
 		amortiSelection();
 
 		/// VUE
@@ -884,19 +975,23 @@ public class VueLivraison {
 		RowLayout rowLayoutH = new RowLayout();
 		rowLayoutH.type = SWT.VERTICAL;
 		vue.setLayout(rowLayoutH);
+		vue.setBackground(Couleur.bleuClair);
 
 		Composite tables = new Composite(vue, SWT.NONE);
 		tables.setLayout(new RowLayout(SWT.HORIZONTAL));
+		tables.setBackground(Couleur.bleuClair);
 
 		// creation de la table des produits
 		Composite compoEmp = new Composite(tables, SWT.NONE);
 		compoEmp.setLayout(new RowLayout(SWT.VERTICAL));
+		compoEmp.setBackground(Couleur.bleuClair);
 
 		Label emp = new Label(compoEmp, SWT.NONE);
 		emp.setText("Choisir un chantier :");
+		emp.setBackground(Couleur.bleuClair);
 
 		tableChantier = new Table(compoEmp, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.FULL_SELECTION);
-		tableChantier.setLayoutData(new RowData(300, 300));
+		tableChantier.setLayoutData(new RowData(250, 300));
 		tableChantier.setLinesVisible(true);
 		tableChantier.setHeaderVisible(true);
 		tableChantier.layout(true, true);
@@ -914,9 +1009,11 @@ public class VueLivraison {
 		// creation de la table amorti
 		Composite compoAmorti = new Composite(tables, SWT.NONE);
 		compoAmorti.setLayout(new RowLayout(SWT.VERTICAL));
+		compoAmorti.setBackground(Couleur.bleuClair);
 
 		Label amorti = new Label(compoAmorti, SWT.NONE);
 		amorti.setText("Coûts liés à cet chantier :");
+		amorti.setBackground(Couleur.bleuClair);
 
 		tableAmorti = new Table(compoAmorti, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.FULL_SELECTION);
 		tableAmorti.setLayoutData(new RowData(500, 380));
@@ -1434,16 +1531,59 @@ public class VueLivraison {
 		if (!Objects.isNull(selection) && !selection.isDisposed()) {
 			selection.dispose();
 		}
-		selection = new Composite(vueLivraison, SWT.NONE);
+
+		String s;
+		int addSize;
+		s = "Gestion des livraison";
+		addSize = (500 - 30) / 2;
+
+		selection = new Composite(vueLivraison, SWT.CENTER);
+
+		FillLayout fillLayout = new FillLayout();
+		fillLayout.type = SWT.VERTICAL;
+		selection.setLayout(fillLayout);
+		selection.setBackground(Couleur.bleuClair);
+		
+		Composite selection1 = new Composite(selection, SWT.BORDER);
+
+		FillLayout fillLayout2 = new FillLayout();
+		fillLayout2.type = SWT.VERTICAL;
+		fillLayout2.marginWidth = addSize;
+		selection1.setLayout(fillLayout2);
+
+		// juste pour creer un espace
+		Label l1 = new Label(selection1, SWT.NONE);
+		l1.setText("");
+		l1.setBackground(Couleur.bleuFonce);
+
+		selection1.setBackground(Couleur.bleuFonce);
+		Label HeadLabel = new Label(selection1, SWT.TITLE);
+		HeadLabel.setText(s);
+		Font fontTitle = new Font(HeadLabel.getDisplay(), "Arial", 12, SWT.BOLD);
+		HeadLabel.setForeground(Couleur.bleuClair);
+		HeadLabel.setFont(fontTitle);
+		HeadLabel.setBackground(Couleur.bleuFonce);
+
+		// juste pour creer un espace
+		Label l2 = new Label(selection1, SWT.NONE);
+		l2.setText("");
+		l2.setBackground(Couleur.bleuFonce);
+
+		selection1.pack();
+		
+
+		Composite selection2 = new Composite(selection, SWT.NONE);
 		RowLayout rowLayout = new RowLayout();
-		rowLayout.spacing = 30;
-		selection.setLayout(rowLayout);
-		selection.setBackground(Couleur.gris);
+		rowLayout.marginWidth = 20;
+		rowLayout.marginTop = 6;
+		selection2.setLayout(rowLayout);
+		selection2.setBackground(Couleur.bleuClair);
 
-		Label labelPeriode = new Label(selection, SWT.NONE);
+		Label labelPeriode = new Label(selection2, SWT.NONE);
 		labelPeriode.setText("Période : ");
+		labelPeriode.setBackground(Couleur.bleuClair);
 
-		Combo periode = new Combo(selection, SWT.BORDER);
+		Combo periode = new Combo(selection2, SWT.BORDER);
 		LocalDate currentdate = LocalDate.now();
 		Month month = currentdate.getMonth();
 		int year = currentdate.getYear();
@@ -1463,7 +1603,11 @@ public class VueLivraison {
 			}
 		});
 
-		Button boutonCreer = new Button(selection, SWT.CENTER);
+		Label espace = new Label(selection2, SWT.NONE);
+		espace.setText("                       ");
+		espace.setBackground(Couleur.bleuClair);
+		
+		Button boutonCreer = new Button(selection2, SWT.CENTER);
 		boutonCreer.setText("Créer");
 		boutonCreer.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -1493,6 +1637,8 @@ public class VueLivraison {
 				}
 			});
 		}
+		
+		selection2.pack();
 		selection.pack();
 	}
 
@@ -2152,9 +2298,11 @@ public class VueLivraison {
 		RowLayout rowLayoutV = new RowLayout();
 		rowLayoutV.type = SWT.VERTICAL;
 
+		vueLivraison.setBackground(Couleur.bleuClair);
+		
 		vue = new Composite(vueLivraison, SWT.NONE);
 		vue.setLayout(rowLayoutV);
-		vue.setBackground(Couleur.gris);
+		vue.setBackground(Couleur.bleuClair);
 
 		// creation de la table
 		tableLivraison = new Table(vue, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.FULL_SELECTION);

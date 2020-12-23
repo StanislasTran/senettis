@@ -39,6 +39,7 @@ public class VueChantier {
 		RowLayout rowLayout = new RowLayout();
 		rowLayout.type = SWT.VERTICAL;
 		vueChantier.setLayout(rowLayout);
+		vueChantier.setBackground(Couleur.bleuClair);
 
 		compositeSelectionCreer();
 		vueChantierAfficher();
@@ -72,13 +73,54 @@ public class VueChantier {
 			selection.dispose();
 		}
 
-		selection = new Composite(vueChantier, SWT.NONE);
+		String s;
+		int addSize;
+		s = "Gestion des chantiers";
+		addSize = (474 - 20) / 2;
+
+		selection = new Composite(vueChantier, SWT.CENTER);
+
+		FillLayout fillLayout = new FillLayout();
+		fillLayout.type = SWT.VERTICAL;
+		selection.setLayout(fillLayout);
+		selection.setBackground(Couleur.bleuClair);
+		
+		Composite selection1 = new Composite(selection, SWT.BORDER);
+
+		FillLayout fillLayout2 = new FillLayout();
+		fillLayout2.type = SWT.VERTICAL;
+		fillLayout2.marginWidth = addSize;
+		selection1.setLayout(fillLayout2);
+
+		// juste pour creer un espace
+		Label l1 = new Label(selection1, SWT.NONE);
+		l1.setText("");
+		l1.setBackground(Couleur.bleuFonce);
+
+		selection1.setBackground(Couleur.bleuFonce);
+		Label HeadLabel = new Label(selection1, SWT.TITLE);
+		HeadLabel.setText(s);
+		Font fontTitle = new Font(HeadLabel.getDisplay(), "Arial", 12, SWT.BOLD);
+		HeadLabel.setForeground(Couleur.bleuClair);
+		HeadLabel.setFont(fontTitle);
+		HeadLabel.setBackground(Couleur.bleuFonce);
+
+		// juste pour creer un espace
+		Label l2 = new Label(selection1, SWT.NONE);
+		l2.setText("");
+		l2.setBackground(Couleur.bleuFonce);
+
+		selection1.pack();
+		
+
+		Composite selection2 = new Composite(selection, SWT.NONE);
 		RowLayout rowLayout = new RowLayout();
 		rowLayout.marginWidth = 20;
-		selection.setLayout(rowLayout);
-		selection.setBackground(Couleur.gris);
+		rowLayout.marginTop = 6;
+		selection2.setLayout(rowLayout);
+		selection2.setBackground(Couleur.bleuClair);
 
-		Button boutonCreer = new Button(selection, SWT.CENTER);
+		Button boutonCreer = new Button(selection2, SWT.CENTER);
 		boutonCreer.setText("Créer");
 		boutonCreer.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -86,6 +128,7 @@ public class VueChantier {
 				vueChantierCreer();
 			}
 		});
+		selection2.pack();
 		selection.pack();
 	}
 
@@ -100,15 +143,56 @@ public class VueChantier {
 			selection.dispose();
 		}
 
-		selection = new Composite(vueChantier, SWT.NONE);
+		String s;
+		int addSize;
+		s = "Gestion des chantiers";
+		addSize = (474 - 20) / 2;
+
+		selection = new Composite(vueChantier, SWT.CENTER);
+
+		FillLayout fillLayout = new FillLayout();
+		fillLayout.type = SWT.VERTICAL;
+		selection.setLayout(fillLayout);
+		selection.setBackground(Couleur.bleuClair);
+		
+		Composite selection1 = new Composite(selection, SWT.BORDER);
+
+		FillLayout fillLayout2 = new FillLayout();
+		fillLayout2.type = SWT.VERTICAL;
+		fillLayout2.marginWidth = addSize;
+		selection1.setLayout(fillLayout2);
+
+		// juste pour creer un espace
+		Label l1 = new Label(selection1, SWT.NONE);
+		l1.setText("");
+		l1.setBackground(Couleur.bleuFonce);
+
+		selection1.setBackground(Couleur.bleuFonce);
+		Label HeadLabel = new Label(selection1, SWT.TITLE);
+		HeadLabel.setText(s);
+		Font fontTitle = new Font(HeadLabel.getDisplay(), "Arial", 12, SWT.BOLD);
+		HeadLabel.setForeground(Couleur.bleuClair);
+		HeadLabel.setFont(fontTitle);
+		HeadLabel.setBackground(Couleur.bleuFonce);
+
+		// juste pour creer un espace
+		Label l2 = new Label(selection1, SWT.NONE);
+		l2.setText("");
+		l2.setBackground(Couleur.bleuFonce);
+
+		selection1.pack();
+		
+
+		Composite selection2 = new Composite(selection, SWT.NONE);
 		RowLayout rowLayout = new RowLayout();
-		rowLayout.marginWidth = 22;
+		rowLayout.marginWidth = 20;
 		rowLayout.marginTop = 6;
-		selection.setLayout(rowLayout);
-		selection.setBackground(Couleur.gris);
+		selection2.setLayout(rowLayout);
+		selection2.setBackground(Couleur.bleuClair);
+
 
 		// Bouton Creer
-		Button boutonCreer = new Button(selection, SWT.CENTER);
+		Button boutonCreer = new Button(selection2, SWT.CENTER);
 		boutonCreer.setText("Créer");
 		boutonCreer.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -118,7 +202,7 @@ public class VueChantier {
 		});
 
 		// Bouton Modifier
-		Button boutonModifier = new Button(selection, SWT.CENTER);
+		Button boutonModifier = new Button(selection2, SWT.CENTER);
 		boutonModifier.setText("Modifier");
 		boutonModifier.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -128,7 +212,7 @@ public class VueChantier {
 		});
 
 		// Bouton Supprimer
-		Button boutonSupprimer = new Button(selection, SWT.CENTER);
+		Button boutonSupprimer = new Button(selection2, SWT.CENTER);
 		boutonSupprimer.setText("Supprimer");
 		boutonSupprimer.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -160,6 +244,7 @@ public class VueChantier {
 
 			}
 		});
+		selection2.pack();
 		selection.pack();
 	}
 
@@ -581,7 +666,7 @@ public class VueChantier {
 
 		vue = new Composite(vueChantier, SWT.NONE);
 		vue.setLayout(rowLayoutV);
-		vue.setBackground(Couleur.gris);
+		vue.setBackground(Couleur.bleuClair);
 
 		final Table table = new Table(vue, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.FULL_SELECTION);
 		table.setLayoutData(new RowData(600, 400));
