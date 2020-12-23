@@ -1316,31 +1316,35 @@ public class ViewAffectationChantier {
 		Site site = Site.getSiteById(affectation.getIdEmploye());
 
 		Label labelNom = new Label(modifComposite, SWT.NONE);
-		labelNom.setText("Chantier : "+site.getName() + " : " + site.getAdresse());
-		labelNom.setBackground(Couleur.bleu);
-		Composite nbHeureComposite = new Composite(modifComposite, SWT.NONE);
+		labelNom.setText("Chantier : " + site.getName() + " : " + site.getAdresse());
+		labelNom.setBackground(Couleur.bleuClair);
 		
+		Label labelSite = new Label(modifComposite, SWT.NONE);
+		labelSite.setText("Employé : " + Employee.getEmployeById(affectation.getIdEmploye()).getNom());
+		labelSite.setBackground(Couleur.bleuClair);
+		
+		
+		Composite nbHeureComposite = new Composite(modifComposite, SWT.NONE);
+		nbHeureComposite.setBackground(Couleur.bleuClair);
 		nbHeureComposite.setLayout(new RowLayout(SWT.VERTICAL));
 		Label nbHeureLabel = new Label(nbHeureComposite, SWT.NONE);
 		nbHeureLabel.setText("Nombre d'heures");
-
+		nbHeureLabel.setBackground(Couleur.bleuClair);
 		Text nbHeureTexte = new Text(nbHeureComposite, SWT.NONE);
 		nbHeureTexte.setText(affectation.getNombreHeures() + "");
 
 		nbHeureTexte.pack();
-		Composite tableComposite = new Composite(modifComposite, SWT.NONE);
-		Table table = VueEmploye.getAllEmployerForAffectation(tableComposite);
-		setSelectionOnChantierId(table, affectation.getIdChantier());
-
-		table.setLayoutData(new RowData(400, 100));
-
+	
 		Composite buttonComposite = new Composite(modifComposite, SWT.NONE);
 		buttonComposite.setLayout(new RowLayout(SWT.HORIZONTAL));
+		buttonComposite.setBackground(Couleur.bleuClair);
 
 		Button buttonValide = new Button(buttonComposite, SWT.CENTER);
 		buttonValide.setText("Valider");
 		buttonValide.addSelectionListener(new SelectionAdapter() {
-
+			
+			
+			
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 
@@ -1351,7 +1355,7 @@ public class ViewAffectationChantier {
 
 				try {
 
-					checkEmployeId = table.getSelection()[0].getText(3);
+					checkEmployeId = "" + affectation.getIdEmploye();
 					checkNbHours = nbHeureTexte.getText();
 					isChecked = checkAffectation(affectation.getIdChantier() + "", checkEmployeId, checkNbHours,
 							affectation.getStartMonth().getValue(), "" + affectation.getStartYear().getValue());
@@ -1371,28 +1375,24 @@ public class ViewAffectationChantier {
 					affectation.setIdChantier(Integer.parseInt(checkEmployeId));
 					affectation.setNombreHeures(Double.parseDouble(checkNbHours));
 
-					if (table.getSelection().length == 1) {
+					try {
+						affectation.update();
 
-						try {
-							affectation.update();
+						modifComposite.dispose();
+						getVueAffectation().pack();
+						getVueAffectation().getParent().pack();
+						buildHome();
 
-							modifComposite.dispose();
-							getVueAffectation().pack();
-							getVueAffectation().getParent().pack();
-							buildHome();
-
-							MessageBox dialog = new MessageBox(affectationView.getShell(), SWT.ICON_WORKING | SWT.OK);
-							dialog.setText("Succes");
-							dialog.setMessage("L'affectation a été crée a bien été enregistrée");
-							dialog.open();
-						} catch (SQLException sqlException) {
-							MessageBox dialog = new MessageBox(affectationView.getShell(), SWT.ICON_ERROR | SWT.OK);
-							dialog.setText("Erreur Création :");
-							dialog.setMessage("Une erreur est survenue lors de la création de l'affectation. " + '\n'
-									+ sqlException.getMessage());
-							dialog.open();
-						}
-
+						MessageBox dialog = new MessageBox(affectationView.getShell(), SWT.ICON_WORKING | SWT.OK);
+						dialog.setText("Succes");
+						dialog.setMessage("L'affectation a été crée a bien été enregistrée");
+						dialog.open();
+					} catch (SQLException sqlException) {
+						MessageBox dialog = new MessageBox(affectationView.getShell(), SWT.ICON_ERROR | SWT.OK);
+						dialog.setText("Erreur Création :");
+						dialog.setMessage("Une erreur est survenue lors de la création de l'affectation. " + '\n'
+								+ sqlException.getMessage());
+						dialog.open();
 					}
 
 				}
@@ -1419,14 +1419,12 @@ public class ViewAffectationChantier {
 
 		});
 
-		table.pack();
-
 		buttonValide.pack();
 		labelNom.pack();
 		nbHeureComposite.pack();
-		tableComposite.pack();
+		
 		modifComposite.pack();
-		table.pack();
+
 		buttonComposite.pack();
 		this.affectationView.pack();
 		this.affectationView.getParent().pack();
