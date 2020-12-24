@@ -3,7 +3,9 @@ package classes;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -20,6 +22,8 @@ import java.sql.Statement;
 import java.sql.Types;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Month;
+import java.time.Year;
 
 public class AmmortissementChantier {
 
@@ -389,7 +393,33 @@ public class AmmortissementChantier {
 	}
 
 	
+	public static Map<Integer, Double> getAllACFilteredMap( Month month, Year year)
+			throws SQLException {
+		ResultSet result = getAllACsAfterResultSet( month, year);
+		HashMap<Integer,Double> ac = new HashMap<Integer, Double>();
+		while (result.next()) {
+
+			ac.put(result.getInt("chantier"), result.getDouble("SUM"));
+
+		}
+		return ac;
+	}
 	
+	public static ResultSet getAllACsAfterResultSet(Month month, Year year)
+			throws SQLException {
+		
+		String reqSql = "select chantier,Sum(valeurParMois) as SUM from AmmortissementChantier WHERE status ='Publié' AND (anneeDepart<=? AND anneeFin>=?) OR (anneeDepart=? AND moisDepart<=? AND moisFin>=?) GROUP BY chantier;";
+
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		PreparedStatement statement = connection.prepareStatement(reqSql);
+		statement.setObject(1, year.getValue(), Types.INTEGER);
+		statement.setObject(2, year.getValue(), Types.INTEGER);
+		statement.setObject(3, year.getValue(), Types.INTEGER);
+		statement.setObject(4, month.getValue(), Types.INTEGER);
+		statement.setObject(5, month.getValue(), Types.INTEGER);
+		statement.execute();
+		return statement.getResultSet();
+	}
 	
 	
 }

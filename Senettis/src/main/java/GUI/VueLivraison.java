@@ -2109,21 +2109,23 @@ public class VueLivraison {
 
 				Integer idChantier = 0;
 				// on verifie si un chantier est saisi
-				try {
-
-					idChantier = siteIdList.get(chantier.getSelectionIndex());
-				} catch (Throwable e) {
-					e.printStackTrace();
-					System.out.println("erreur dans la modif");
-					MessageBox dialog = new MessageBox(vueLivraison.getShell(), SWT.ICON_ERROR | SWT.OK);
-					dialog.setText("Erreur Modification");
-					dialog.setMessage("Merci d'indiquer un chantier.");
-					dialog.open();
+				if (selectedLivraison == null) {
+					try {
+	
+						idChantier = siteIdList.get(chantier.getSelectionIndex());
+					} catch (Throwable e) {
+						e.printStackTrace();
+						System.out.println("erreur dans la modif");
+						MessageBox dialog = new MessageBox(vueLivraison.getShell(), SWT.ICON_ERROR | SWT.OK);
+						dialog.setText("Erreur");
+						dialog.setMessage("Merci d'indiquer un chantier.");
+						dialog.open();
+					}
 				}
 
 				// on recupere les produits et quantites
 				try {
-					if (idChantier != 0) {
+					if (idChantier != 0 && selectedLivraison == null) {
 
 						ArrayList<Integer> quantites = new ArrayList<Integer>();
 
@@ -2132,19 +2134,24 @@ public class VueLivraison {
 							quantites.add(Integer.parseInt(i.getText(2)));
 						}
 
-						if (selectedLivraison != null) {
-							// on met a jour la livraison selectionnee
-							selectedLivraison.setIdChantier(idChantier);
-							if (!(date.getText().isEmpty())) {
-								selectedLivraison.setDate(date.getText().trim());
-							}
-							selectedLivraison.setPrixTotal(Double.parseDouble(prix.getText()));
-
-							validerModification(listProductId, quantites);
-						} else {
-							validerCreation(idChantier, listProductId, quantites, prix.getText(),
+						validerCreation(idChantier, listProductId, quantites, prix.getText(),
 									date.getText().trim());
+					}
+					else if (selectedLivraison != null){
+						ArrayList<Integer> quantites = new ArrayList<Integer>();
+
+						for (TableItem i : tableProduit.getItems()) {
+
+							quantites.add(Integer.parseInt(i.getText(2)));
 						}
+
+						if (!(date.getText().isEmpty())) {
+							selectedLivraison.setDate(date.getText().trim());
+						}
+						selectedLivraison.setPrixTotal(Double.parseDouble(prix.getText()));
+
+						validerModification(listProductId, quantites);
+						
 					}
 				} catch (Throwable e) {
 					e.printStackTrace();

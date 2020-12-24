@@ -314,6 +314,10 @@ public class VueRentabilité {
 				Year.of(date1.getYear()));
 
 		Map<Integer, Double> fsMap = FournitureSanitaire.getAllFSterMap(date1.getMonth(), Year.of(date1.getYear()));
+		
+		Map<Integer, Double> livraisonMap = Delivery.getAllLivraisonFilteredMap(date1.getMonth(), Year.of(date1.getYear()));
+		
+		Map<Integer, Double> amortiMap = AmmortissementChantier.getAllACFilteredMap(date1.getMonth(), Year.of(date1.getYear()));
 
 		try {
 			for (Site c : Site.getAllChantier()) {
@@ -356,39 +360,16 @@ public class VueRentabilité {
 				// livraison//
 
 				double total_livraison = 0.0;
-
-				for (Delivery l : Delivery.getAllLivraison()) {
-					if (l.getDate() != null) {
-						String[] d1 = l.getDate().split("/");
-						YearMonth date2 = YearMonth.of(Integer.parseInt(d1[2]), Integer.parseInt(d1[1]));
-
-						if (l.getStatus().equals("Publié")) {
-							if (l.getIdChantier() == c.getSiteId() && date1.equals(date2)) {
-								total_livraison += l.getPrixTotal();
-							}
-						}
-
-					}
-				}
+				if (livraisonMap.containsKey(c.getSiteId()))
+					total_livraison = livraisonMap.get(c.getSiteId());
 
 				item.setText(3, Double.toString(total_livraison));
 
 				// materiel
 
 				Double total_materiel = 0.0;
-
-				for (AmmortissementChantier ac : AmmortissementChantier.getAllAmmortissementChantier()) {
-					YearMonth debut = YearMonth.of(ac.getAnneeD(), ac.getMoisD());
-					YearMonth fin = YearMonth.of(ac.getAnneeF(), ac.getMoisF());
-					if (ac.getStatus().equals("Publié")) {
-						if (ac.getSiteId() == c.getSiteId()) {
-							if (debut.equals(date1) || fin.equals(date1)
-									|| (debut.isBefore(date1) && fin.isAfter(date1))) {
-								total_materiel += ac.getMontantParMois();
-							}
-						}
-					}
-				}
+				if (amortiMap.containsKey(c.getSiteId()))
+					total_materiel = amortiMap.get(c.getSiteId());
 
 				item.setText(4, Double.toString(total_materiel));
 

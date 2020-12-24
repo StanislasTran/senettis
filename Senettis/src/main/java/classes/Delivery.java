@@ -4,7 +4,9 @@ package classes;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.microsoft.sqlserver.jdbc.StringUtils;
 
@@ -18,6 +20,8 @@ import java.sql.Statement;
 import java.sql.Types;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Month;
+import java.time.Year;
 
 public class Delivery {
 
@@ -322,5 +326,52 @@ public class Delivery {
 	}
 	
 	
+	
+	public static Map<Integer, Double> getAllLivraisonFilteredMap( Month month, Year year)
+			throws SQLException {
+		ResultSet result = getAllLivraisonsAfterResultSet( month, year);
+		HashMap<Integer,Double> liv = new HashMap<Integer, Double>();
+		while (result.next()) {
+
+			liv.put(result.getInt("chantier"), result.getDouble("SUM"));
+
+		}
+		return liv;
+	}
+	
+	public static ResultSet getAllLivraisonsAfterResultSet(Month month, Year year)
+			throws SQLException {
+		String debut = "01/"+month.getValue()+"/"+year.getValue();
+		String fin;
+		if (month.getValue() == 2) {
+			fin = "29/"+month.getValue()+"/"+year.getValue();
+		}
+		else if (month.getValue() == 1 || month.getValue() == 3 || month.getValue() == 5 || month.getValue() == 7 || month.getValue() == 8 || month.getValue() == 10 || month.getValue() == 12 ) {
+			fin = "31/"+month.getValue()+"/"+year.getValue();
+		}
+		else {
+			fin = "30/"+month.getValue()+"/"+year.getValue();
+		}
+		
+		
+		String reqSql = "select chantier,Sum(PrixTotal) as SUM from Livraison WHERE status ='Publié' AND Date>=? AND Date<=? GROUP BY chantier;";
+
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		PreparedStatement statement = connection.prepareStatement(reqSql);
+		statement.setObject(1, debut, Types.DATE);
+		statement.setObject(2, fin, Types.DATE);
+		statement.execute();
+		return statement.getResultSet();
+	}
+
+
+
+
 
 }
+
+
+
+
+
+
