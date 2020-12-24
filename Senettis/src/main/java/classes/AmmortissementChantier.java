@@ -258,6 +258,8 @@ public class AmmortissementChantier {
 		return allCoutChantier;
 	}
 
+	
+	
 	public static void printAllAmmortissementChantier() throws SQLException {
 
 		List<AmmortissementChantier> allCoutChantier = getAllAmmortissementChantier();

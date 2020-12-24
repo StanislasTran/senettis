@@ -1672,7 +1672,7 @@ public class ViewAffectationMAB {
 		this.header = new Composite(this.affectationView, SWT.CENTER | SWT.BORDER);
 		this.header.setBackground(Couleur.bleuFonce);
 		FillLayout layout = new FillLayout();
-		layout.marginWidth = 200;
+		layout.marginWidth = 205;
 		this.header.setLayout(layout);
 
 		Label HeadLabel = new Label(this.header, SWT.TITLE);

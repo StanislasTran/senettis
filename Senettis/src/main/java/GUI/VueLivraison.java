@@ -2383,7 +2383,7 @@ public class VueLivraison {
 				// on verifie le status
 				if (l.getStatus().contentEquals("Publié")) {
 					if (l.getDate() != null) {
-						System.out.println("date avant d'afficher :" + l.getDate());
+					
 						String[] d1 = l.getDate().split("/");
 						Integer mois1 = Integer.parseInt(d1[1]);
 						Integer annee1 = Integer.parseInt(d1[2]);

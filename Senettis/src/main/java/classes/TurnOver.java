@@ -271,7 +271,7 @@ public class TurnOver {
 
 		statement.execute();
 		ResultSet result = statement.getResultSet();
-		System.out.println(reqSql+" "+this.getChantierId());
+	
 		if (result.next()) {
 			
 			return result.getInt("count") > 0;

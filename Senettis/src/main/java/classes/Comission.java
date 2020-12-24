@@ -9,7 +9,9 @@ import java.sql.Types;
 import java.time.Month;
 import java.time.Year;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import connexion.SQLDatabaseConnection;
 
@@ -50,6 +52,55 @@ public class Comission {
 		return statement.getResultSet();
 
 	}
+	
+	/**
+	 * 
+	 * @param chantier
+	 * @param startMonth
+	 * @param startYear
+	 * @return
+	 * @throws SQLException
+	 */
+	
+	public static ResultSet getAllComissionsAfterResultSet( Month month, Year year)
+			throws SQLException {
+		String reqSql = "select chantier,Sum(comission) as SUM from Comission WHERE status ='Publié' AND AnneeDebut<? OR (AnneeDebut=? AND MoisDebut<=?) GROUP BY chantier;";
+
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		PreparedStatement statement = connection.prepareStatement(reqSql);
+		statement.setObject(1, year.getValue(), Types.INTEGER);
+		
+		statement.setObject(2, year.getValue(), Types.INTEGER);
+		statement.setObject(3, month.getValue(), Types.INTEGER);
+		statement.execute();
+		return statement.getResultSet();
+
+	}
+	
+	/**
+	 * return a map with key=siteId and Double the comission if the comission is applied on the date month,year
+	 * @param chantier
+	 * @param month
+	 * @param year
+	 * @return
+	 * @throws SQLException
+	 */
+	
+	public static Map<Integer, Double> getAllComissionsAfterMap( Month month, Year year)
+			throws SQLException {
+		ResultSet result = getAllComissionsAfterResultSet( month, year);
+		HashMap<Integer,Double> comissions = new HashMap<Integer, Double>();
+		while (result.next()) {
+
+			comissions.put(result.getInt("chantier"), result.getDouble("SUM"));
+
+		}
+
+		return comissions;
+	}
+
+	
+
 
 	public static List<Comission> getComissionsList(int chantier, Month startMonth, Year startYear)
 			throws SQLException {
@@ -83,7 +134,7 @@ public class Comission {
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
 
-		System.out.println(this.comission);
+		
 		statement.setObject(1, this.comission, Types.DECIMAL);
 		statement.setObject(2, this.chantier, Types.INTEGER);
 		statement.setObject(3, this.startMonth.getValue(), Types.INTEGER);
@@ -96,7 +147,7 @@ public class Comission {
 	public static Double getComissionSum(Integer siteId, Month startMonth, Year startYear) throws SQLException {
 		Double totalCommision = 0.00;
 
-		String reqSql = "Select Sum(comission) as Sum FROM Comission where chantier=? AND (AnneeDebut<? OR (AnneeDebut=? AND MoisDebut=?))";
+		String reqSql = "Select Sum(comission) as Sum FROM Comission where chantier=? AND (AnneeDebut<? OR (AnneeDebut=? AND MoisDebut<=?))";
 
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);

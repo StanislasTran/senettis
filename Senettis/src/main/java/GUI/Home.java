@@ -516,7 +516,12 @@ public class Home {
 					}
 					contenuColonneDroite.dispose();
 				}
-				contenuColonneDroite = new VueRentabilité(colonneDroite, display).getComposite();
+				try {
+					contenuColonneDroite = new VueRentabilité(colonneDroite, display).getComposite();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				contenuColonneDroite.pack();
 				colonneDroite.pack();
 			}

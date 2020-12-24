@@ -29,44 +29,33 @@ import java.time.Month;
 import java.time.Year;
 import java.time.YearMonth;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Objects;
 
 import org.eclipse.swt.*;
-import org.eclipse.swt.custom.TableEditor;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseMoveListener;
+
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.TouchEvent;
-import org.eclipse.swt.events.TouchListener;
+
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-
 import classes.Site;
 import classes.TurnOver;
 import classes.AmmortissementChantier;
-import classes.AmmortissementEmploye;
 import classes.Comission;
-import classes.CoutsEmploye;
-import classes.AmmortissementChantier;
 import classes.Delivery;
-import classes.Employee;
 import classes.FournitureSanitaire;
-import classes.Product;
-import classes.ProductByDelivery;
 import classes.Rentabilite;
 import classes.SalaryCostPerSite;
 
 public class VueRentabilité {
 
-	private Display display;
 	private Composite vueRentabilite;
 	private Composite selection;
 	private Composite vue;
 	private Table tableRentabilite;
+	private Composite header;
 
 	// Creation VueLivraison --------------------------------------------------
 	/***
@@ -74,15 +63,16 @@ public class VueRentabilité {
 	 * 
 	 * @param composite : le composite vueLivraison
 	 * @param display
+	 * @throws SQLException
 	 */
-	public VueRentabilité(Composite composite, Display display) {
-		this.display = display;
+	public VueRentabilité(Composite composite, Display display) throws SQLException {
+
 		Couleur.setDisplay(display); // pour utiliser les couleurs du fichier couleur
 
 		vueRentabilite = new Composite(composite, SWT.NONE);
 		vueRentabilite.setLayout(new RowLayout(SWT.VERTICAL));
-		vueRentabilite.setBackground(Couleur.gris);
-
+		vueRentabilite.setBackground(Couleur.bleuClair);
+		addHeader("Analyse de la rentabilité");
 		getSelection();
 
 		LocalDate currentdate = LocalDate.now();
@@ -99,25 +89,22 @@ public class VueRentabilité {
 		}
 
 		selection = new Composite(vueRentabilite, SWT.NONE);
+
 		RowLayout rowLayout = new RowLayout(SWT.VERTICAL);
 		rowLayout.spacing = 15;
 		selection.setLayout(rowLayout);
-		selection.setBackground(Couleur.gris);
+		selection.setBackground(Couleur.bleuClair);
 
 		Composite selec1 = new Composite(selection, SWT.NONE);
 		selec1.setLayout(new RowLayout(SWT.HORIZONTAL));
-
-		Label HeadLabel = new Label(selec1, SWT.TITLE);
-		HeadLabel.setText("Rentabilité : ");
-		Font fontTitle = new Font(HeadLabel.getDisplay(), "Arial", 18, SWT.BOLD);
-		HeadLabel.setForeground(Couleur.bleuFonce);
-		HeadLabel.setFont(fontTitle);
+		selec1.setBackground(Couleur.bleuClair);
 
 		Composite selec2 = new Composite(selection, SWT.NONE);
 		selec2.setLayout(new RowLayout(SWT.HORIZONTAL));
+		selec2.setBackground(Couleur.bleuClair);
 		Label labelPeriode = new Label(selec2, SWT.NONE);
 		labelPeriode.setText("Période : ");
-
+		labelPeriode.setBackground(Couleur.bleuClair);
 		Combo periode = new Combo(selec2, SWT.BORDER);
 		LocalDate currentdate = LocalDate.now();
 		Month month = currentdate.getMonth();
@@ -133,7 +120,12 @@ public class VueRentabilité {
 		periode.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				updateTable(periode.getText());
+				try {
+					updateTable(periode.getText());
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				vue.pack();
 			}
 		});
@@ -167,99 +159,98 @@ public class VueRentabilité {
 								} catch (SQLException sqlException) {
 
 								}
-								if(CA>0) {
-									
-									
-								try {
-									CoutsEmploye = new SalaryCostPerSite(s.getSiteId(), Month.of(i), Year.of(j))
-											.getTotalCost();
+								if (CA > 0) {
 
-								} catch (SQLException sqlException) {
+									try {
+										CoutsEmploye = new SalaryCostPerSite(s.getSiteId(), Month.of(i), Year.of(j))
+												.getTotalCost();
 
-								}
-
-								DecimalFormat df = new DecimalFormat("0.00");
-
-								YearMonth date1 = YearMonth.of(j, i);
-
-								// livraison
-
-								for (Delivery l : Delivery.getAllLivraison()) {
-									if (l.getDate() != null) {
-										String[] d1 = l.getDate().split("/");
-										YearMonth date2 = YearMonth.of(Integer.parseInt(d1[2]),
-												Integer.parseInt(d1[1]));
-
-										if (l.getStatus().equals("Publié")) {
-											if (l.getIdChantier() == s.getSiteId() && date1.equals(date2)) {
-												livraison += l.getPrixTotal();
-											}
-										}
+									} catch (SQLException sqlException) {
 
 									}
-								}
 
+									DecimalFormat df = new DecimalFormat("0.00");
 
-								for (FournitureSanitaire fs : FournitureSanitaire.getAllFournitureSanitaire()) {
-									if (fs.getAnneeD() != null && fs.getMoisD() != null) {// si on a une date de debut
-																							// on regarde
-																							// sinon l'ajoute direct
-																							// parce que qu'on
-																							// considere que c'est tout
-																							// le temps
-										YearMonth debut = YearMonth.of(fs.getAnneeD(), fs.getMoisD());
-										if (fs.getStatus().equals("Publié")) {
-											if (fs.getSiteId() == s.getSiteId()) {
-												if (debut.equals(date1) || (debut.isBefore(date1))) {
-													coutsFs += fs.getMontantParMois();
+									YearMonth date1 = YearMonth.of(j, i);
+
+									// livraison
+
+									for (Delivery l : Delivery.getAllLivraison()) {
+										if (l.getDate() != null) {
+											String[] d1 = l.getDate().split("/");
+											YearMonth date2 = YearMonth.of(Integer.parseInt(d1[2]),
+													Integer.parseInt(d1[1]));
+
+											if (l.getStatus().equals("Publié")) {
+												if (l.getIdChantier() == s.getSiteId() && date1.equals(date2)) {
+													livraison += l.getPrixTotal();
+												}
+											}
+
+										}
+									}
+
+									for (FournitureSanitaire fs : FournitureSanitaire.getAllFournitureSanitaire()) {
+										if (fs.getAnneeD() != null && fs.getMoisD() != null) {// si on a une date de
+																								// debut
+																								// on regarde
+																								// sinon l'ajoute direct
+																								// parce que qu'on
+																								// considere que c'est
+																								// tout
+																								// le temps
+											YearMonth debut = YearMonth.of(fs.getAnneeD(), fs.getMoisD());
+											if (fs.getStatus().equals("Publié")) {
+												if (fs.getSiteId() == s.getSiteId()) {
+													if (debut.equals(date1) || (debut.isBefore(date1))) {
+														coutsFs += fs.getMontantParMois();
+													}
+												}
+											}
+										} else {
+											coutsFs += fs.getMontantParMois();
+
+										}
+									}
+
+									for (AmmortissementChantier ac : AmmortissementChantier
+											.getAllAmmortissementChantier()) {
+										YearMonth debut = YearMonth.of(ac.getAnneeD(), ac.getMoisD());
+										YearMonth fin = YearMonth.of(ac.getAnneeF(), ac.getMoisF());
+										if (ac.getStatus().equals("Publié")) {
+											if (ac.getSiteId() == s.getSiteId()) {
+												if (debut.equals(date1) || fin.equals(date1)
+														|| (debut.isBefore(date1) && fin.isAfter(date1))) {
+													materiel += ac.getMontantParMois();
 												}
 											}
 										}
-									} else {
-										coutsFs += fs.getMontantParMois();
-										
 									}
-								}
 
-								
-								
-								
-								for (AmmortissementChantier ac : AmmortissementChantier.getAllAmmortissementChantier()) {
-									YearMonth debut = YearMonth.of(ac.getAnneeD(), ac.getMoisD());
-									YearMonth fin = YearMonth.of(ac.getAnneeF(), ac.getMoisF());
-									if (ac.getStatus().equals("Publié")) {
-										if (ac.getSiteId() == s.getSiteId()) {
-											if (debut.equals(date1) || fin.equals(date1)
-													|| (debut.isBefore(date1) && fin.isAfter(date1))) {
-												materiel += ac.getMontantParMois();
-											}
-										}
-									}
-								}
+									Double comission = Comission.getComissionSum(s.getSiteId(), date1.getMonth(),
+											Year.of(date1.getYear()));
 
-								Double comission = Comission.getComissionSum(s.getSiteId(), date1.getMonth(),
-										Year.of(date1.getYear()));
+									coutRevient = CoutsEmploye + materiel + coutsFs + ((CA * comissions) / 100)
+											+ livraison;
+									margeBrut = CA - coutRevient;
+									pourcentage = (margeBrut * 100) / CA;
 
-								coutRevient = CoutsEmploye + materiel + coutsFs + ((CA*comissions)/100) + livraison;
-								margeBrut = CA - coutRevient;
-								pourcentage = (margeBrut * 100) / CA;
-								
-								
-								new Rentabilite(s.getSiteId(), Month.of(i), Year.of(j), CA, CoutsEmploye, livraison,
-										materiel, coutsFs, comissions, coutRevient, margeBrut, pourcentage).update();
-								
+									new Rentabilite(s.getSiteId(), Month.of(i), Year.of(j), CA, CoutsEmploye, livraison,
+											materiel, coutsFs, comissions, coutRevient, margeBrut, pourcentage)
+													.update();
+
 								}
 
 							}
 						}
 
 					}
-					
+
 					MessageBox dialog = new MessageBox(vueRentabilite.getShell(), SWT.ICON_INFORMATION | SWT.OK);
 					dialog.setText("Succes");
 					dialog.setMessage("La base de données a été mise à jour");
 					dialog.open();
-				
+
 				} catch (SQLException e1) {
 
 					MessageBox dialog = new MessageBox(vueRentabilite.getShell(), SWT.ICON_ERROR | SWT.OK);
@@ -268,16 +259,15 @@ public class VueRentabilité {
 					dialog.open();
 					e1.printStackTrace();
 				}
-				
 
 			}
-				
+
 		});
 		selec2.pack();
 
 	}
 
-	public void getVue(String periode) {
+	public void getVue(String periode) throws SQLException {
 		if (!Objects.isNull(vue) && !vue.isDisposed()) {
 			vue.dispose();
 		}
@@ -314,124 +304,127 @@ public class VueRentabilité {
 		vue.pack();
 	}
 
-	public void updateTable(String periode) {
+	public void updateTable(String periode) throws SQLException {
 		tableRentabilite.removeAll();
 
 		String[] d2 = periode.split(" ");
 		YearMonth date1 = YearMonth.of(Integer.parseInt(d2[1]), Month.valueOf(d2[0]).getValue());
 
+		Map<Integer, Double> comissions = Comission.getAllComissionsAfterMap(date1.getMonth(),
+				Year.of(date1.getYear()));
+
+		Map<Integer, Double> fsMap = FournitureSanitaire.getAllFSterMap(date1.getMonth(), Year.of(date1.getYear()));
+
 		try {
 			for (Site c : Site.getAllChantier()) {
 				Double margeBrut = 0.0;
 				Double CoutRevient = 0.0;
-				if (c.getStatus().equals("Publié")) {
-					TableItem item = new TableItem(tableRentabilite, SWT.NONE);
-					item.setText(0, c.getName());
 
-					double CA = 0.0;
+				TableItem item = new TableItem(tableRentabilite, SWT.NONE);
+				item.setText(0, c.getName());
 
-					try {
-						CA = TurnOver.getTurnOverByDateAndSite(c.getSiteId(), Month.valueOf(d2[0]).getValue(),
-								Integer.parseInt(d2[1])).getCa();
+				double CA = 0.0;
 
-						item.setText(1, Double.toString(CA));
-					} catch (Exception e) {
+				/// CA///
 
-						item.setText(1, "0.0");
-					}
+				try {
+					CA = TurnOver.getTurnOverByDateAndSite(c.getSiteId(), Month.valueOf(d2[0]).getValue(),
+							Integer.parseInt(d2[1])).getCa();
 
-					//// masse salariale TODO
-					Double totalEmployeCost = 0.0;
-					try {
-						totalEmployeCost = new SalaryCostPerSite(c.getSiteId(), Month.valueOf(d2[0]),
-								Year.of(Integer.parseInt(d2[1]))).getTotalCost();
+					item.setText(1, Double.toString(CA));
+				} catch (Exception e) {
 
-					} catch (SQLException sqlException) {
+					item.setText(1, "0.0");
+				}
 
-					}
-					DecimalFormat df = new DecimalFormat("0.00");
+				Double totalEmployeCost = 0.0;
 
-					item.setText(2, df.format(totalEmployeCost));
+				///// EMPLOYEECOST///
 
-					// livraison
-					double total_livraison = 0.0;
-					for (Delivery l : Delivery.getAllLivraison()) {
-						if (l.getDate() != null) {
-							String[] d1 = l.getDate().split("/");
-							YearMonth date2 = YearMonth.of(Integer.parseInt(d1[2]), Integer.parseInt(d1[1]));
+				try {
+					totalEmployeCost = new SalaryCostPerSite(c.getSiteId(), Month.valueOf(d2[0]),
+							Year.of(Integer.parseInt(d2[1]))).getTotalCost();
 
-							if (l.getStatus().equals("Publié")) {
-								if (l.getIdChantier() == c.getSiteId() && date1.equals(date2)) {
-									total_livraison += l.getPrixTotal();
-								}
-							}
-
-						}
-					}
-
-					item.setText(3, Double.toString(total_livraison));
-
-					// materiel
-					Double total_materiel = 0.0;
-					for (AmmortissementChantier ac : AmmortissementChantier.getAllAmmortissementChantier()) {
-						YearMonth debut = YearMonth.of(ac.getAnneeD(), ac.getMoisD());
-						YearMonth fin = YearMonth.of(ac.getAnneeF(), ac.getMoisF());
-						if (ac.getStatus().equals("Publié")) {
-							if (ac.getSiteId() == c.getSiteId()) {
-								if (debut.equals(date1) || fin.equals(date1)
-										|| (debut.isBefore(date1) && fin.isAfter(date1))) {
-									total_materiel += ac.getMontantParMois();
-								}
-							}
-						}
-					}
-
-					item.setText(4, Double.toString(total_materiel));
-
-					// fs
-					double total_fs = 0.0;
-					for (FournitureSanitaire fs : FournitureSanitaire.getAllFournitureSanitaire()) {
-						if (fs.getAnneeD() != null && fs.getMoisD() != null) {// si on a une date de debut on regarde
-																				// sinon l'ajoute direct parce que qu'on
-																				// considere que c'est tout le temps
-							YearMonth debut = YearMonth.of(fs.getAnneeD(), fs.getMoisD());
-							if (fs.getStatus().equals("Publié")) {
-								if (fs.getSiteId() == c.getSiteId()) {
-									if (debut.equals(date1) || (debut.isBefore(date1))) {
-										total_fs += fs.getMontantParMois();
-									}
-								}
-							}
-						} else {
-							total_fs += fs.getMontantParMois();
-						}
-					}
-					item.setText(5, Double.toString(total_fs));
-
-					// Comission
-
-					Double comission = Comission.getComissionSum(c.getSiteId(), date1.getMonth(),
-							Year.of(date1.getYear()));
-					item.setText(6, Double.toString(comission));
-
-					CoutRevient = totalEmployeCost + total_livraison + total_materiel + total_fs + (CA*comission)/100;
-
-					margeBrut = CA - CoutRevient ;
-					item.setText(7, Double.toString(CoutRevient));
-
-					item.setText(8, Double.toString(margeBrut));
-
-					if (CA != 0.0) {
-						item.setText(9, df.format((margeBrut * 100) / CA) + "%");
-					}
+				} catch (SQLException sqlException) {
 
 				}
+
+				DecimalFormat df = new DecimalFormat("0.00");
+
+				item.setText(2, df.format(totalEmployeCost));
+
+				// livraison//
+
+				double total_livraison = 0.0;
+
+				for (Delivery l : Delivery.getAllLivraison()) {
+					if (l.getDate() != null) {
+						String[] d1 = l.getDate().split("/");
+						YearMonth date2 = YearMonth.of(Integer.parseInt(d1[2]), Integer.parseInt(d1[1]));
+
+						if (l.getStatus().equals("Publié")) {
+							if (l.getIdChantier() == c.getSiteId() && date1.equals(date2)) {
+								total_livraison += l.getPrixTotal();
+							}
+						}
+
+					}
+				}
+
+				item.setText(3, Double.toString(total_livraison));
+
+				// materiel
+
+				Double total_materiel = 0.0;
+
+				for (AmmortissementChantier ac : AmmortissementChantier.getAllAmmortissementChantier()) {
+					YearMonth debut = YearMonth.of(ac.getAnneeD(), ac.getMoisD());
+					YearMonth fin = YearMonth.of(ac.getAnneeF(), ac.getMoisF());
+					if (ac.getStatus().equals("Publié")) {
+						if (ac.getSiteId() == c.getSiteId()) {
+							if (debut.equals(date1) || fin.equals(date1)
+									|| (debut.isBefore(date1) && fin.isAfter(date1))) {
+								total_materiel += ac.getMontantParMois();
+							}
+						}
+					}
+				}
+
+				item.setText(4, Double.toString(total_materiel));
+
+				// fs
+				double total_fs = 0.0;
+
+				if (fsMap.containsKey(c.getSiteId()))
+					total_fs = fsMap.get(c.getSiteId());
+
+				item.setText(5, Double.toString(total_fs));
+
+				// Comission
+
+				Double comission = 0.00;
+				if (comissions.containsKey(c.getSiteId()))
+					comission = comissions.get(c.getSiteId());
+
+				item.setText(6, Double.toString(comission));
+
+				CoutRevient = totalEmployeCost + total_livraison + total_materiel + total_fs + (CA * comission) / 100;
+
+				margeBrut = CA - CoutRevient;
+				item.setText(7, Double.toString(CoutRevient));
+
+				item.setText(8, Double.toString(margeBrut));
+
+				if (CA != 0.0) {
+					item.setText(9, df.format((margeBrut * 100) / CA) + "%");
+				}
+
 			}
 
 		} catch (
 
 		SQLException e) {
-		
+
 			MessageBox dialog = new MessageBox(vueRentabilite.getShell(), SWT.ICON_ERROR | SWT.OK);
 			dialog.setText("Erreur");
 			dialog.setMessage("Une erreur est survenue. " + '\n' + e.getMessage());
@@ -441,6 +434,32 @@ public class VueRentabilité {
 
 	public Composite getComposite() {
 		return this.vueRentabilite;
+	}
+
+	/**
+	 * Add a header in header composite with title <param>header</param>
+	 * 
+	 * @param <type>String</type> header
+	 */
+	public void addHeader(String header) {
+		if (!Objects.isNull(this.header) && !this.header.isDisposed())
+			this.header.dispose();
+		this.header = new Composite(this.vueRentabilite, SWT.CENTER | SWT.BORDER);
+		this.header.setBackground(Couleur.bleuFonce);
+		FillLayout layout = new FillLayout();
+		layout.marginWidth = 365;
+		this.header.setLayout(layout);
+
+		Label HeadLabel = new Label(this.header, SWT.TITLE);
+
+		HeadLabel.setText("\n" + header + "\n \n");
+		Font fontTitle = new Font(HeadLabel.getDisplay(), "Arial", 12, SWT.BOLD);
+		HeadLabel.setForeground(Couleur.bleuClair);
+		HeadLabel.setFont(fontTitle);
+		HeadLabel.setBackground(Couleur.bleuFonce);
+		this.header.pack();
+		HeadLabel.pack();
+
 	}
 
 }

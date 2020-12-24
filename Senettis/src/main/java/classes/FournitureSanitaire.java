@@ -3,7 +3,9 @@ package classes;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -20,6 +22,8 @@ import java.sql.Statement;
 import java.sql.Types;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Month;
+import java.time.Year;
 
 public class FournitureSanitaire {
 
@@ -202,6 +206,52 @@ public class FournitureSanitaire {
 			System.out.println(coutChantier);
 	}
 
+
+	/**
+	 * 
+	 * @param chantier
+	 * @param startMonth
+	 * @param startYear
+	 * @return
+	 * @throws SQLException
+	 */
+	
+	public static ResultSet getAllCFSAfterResultSet( Month month, Year year)
+			throws SQLException {
+		String reqSql = "select chantier,Sum(valeurParMois) as SUM from FournitureSanitaire WHERE status ='Publié' AND (anneeDepart<? OR (anneeDepart=? AND moisDepart<=?) OR (AnneeDepart is Null AND MoisDepart is Null)) GROUP BY chantier;";
+
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		PreparedStatement statement = connection.prepareStatement(reqSql);
+		statement.setObject(1, year.getValue(), Types.INTEGER);
+		
+		statement.setObject(2, year.getValue(), Types.INTEGER);
+		statement.setObject(3, month.getValue(), Types.INTEGER);
+		statement.execute();
+		return statement.getResultSet();
+
+	}
+	
+	/**
+	 * return a map with key=siteId and Double the comission if the comission is applied on the date month,year
+	 * @param chantier
+	 * @param month
+	 * @param year
+	 * @return
+	 * @throws SQLException
+	 */
+	
+	public static Map<Integer, Double> getAllFSterMap( Month month, Year year)
+			throws SQLException {
+		ResultSet result = getAllCFSAfterResultSet( month, year);
+		HashMap<Integer,Double> comissions = new HashMap<Integer, Double>();
+		while (result.next()) {
+
+			comissions.put(result.getInt("chantier"), result.getDouble("SUM"));
+
+		}
+
+		return comissions;
+	}
 
 	// Getter and setter-----------------------------------------------
 	public String getStatus() {

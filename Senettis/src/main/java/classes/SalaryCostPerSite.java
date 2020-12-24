@@ -8,7 +8,7 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.time.Month;
 import java.time.Year;
-import java.util.ArrayList;
+
 import java.util.Objects;
 
 import connexion.SQLDatabaseConnection;
@@ -122,7 +122,7 @@ public class SalaryCostPerSite {
 				coutTelephone = result.getDouble("cout_telephone");
 
 			saisieArret = sumArret(result.getInt("Employe"), month, year);
-			System.out.println(saisieArret);
+			
 			remboursementPrets = sumRemboursementPret(result.getInt("Employe"), month, year);
 
 			if (!Objects.isNull(result.getDouble("CE_nb_heures")))

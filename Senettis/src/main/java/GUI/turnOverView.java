@@ -13,6 +13,8 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.RowData;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
@@ -29,6 +31,7 @@ import org.eclipse.swt.widgets.Text;
 import classes.TurnOver;
 
 public class turnOverView {
+	private Composite header;
 	private Composite turnOverView;
 	private Composite selection;
 	private Combo monthFilter;
@@ -49,7 +52,9 @@ public class turnOverView {
 	public turnOverView(Composite parent) throws SQLException {
 		this.turnOverView = new Composite(parent, SWT.NONE);
 		this.turnOverView.setLayout(new RowLayout(SWT.VERTICAL));
+		addHeader("Gestion du Chiffre d'Affaire");
 		selection();
+		turnOverView.setBackground(Couleur.bleuClair);
 		createMonthFilter();
 		createYearFilter();
 		compositeTable();
@@ -177,7 +182,7 @@ public class turnOverView {
 
 				try {
 
-					Table t=compositeTableLast();
+					Table t = compositeTableLast();
 					addSaveButton(t, turnOvers);
 					addLastButton(t, turnOvers);
 				} catch (Exception e1) {
@@ -186,11 +191,11 @@ public class turnOverView {
 					dialog.setText("Erreur de saisie");
 					dialog.setMessage("Erreur : " + e1.getMessage());
 					dialog.open();
-					
+
 				}
 
 				if (!erreurs) { // on affiche le message de succes si on a eu aucune erreur
-					
+
 				}
 			}
 
@@ -226,12 +231,12 @@ public class turnOverView {
 
 		int month = this.monthFilter.getSelectionIndex() + 1;
 		int year = Integer.parseInt(this.yearFilter.getText());
-		Table table=null;
+		Table table = null;
 		if (month == 1) {
-			table=createTableListCA(Month.of(12), Year.of(year - 1));
+			table = createTableListCA(Month.of(12), Year.of(year - 1));
 		} else
 
-			table=createTableListCA(Month.of(month - 1), Year.of(year));
+			table = createTableListCA(Month.of(month - 1), Year.of(year));
 		compositeTable.pack();
 		turnOverView.pack();
 		turnOverView.getParent().pack();
@@ -375,13 +380,13 @@ public class turnOverView {
 		this.selection = new Composite(turnOverView, SWT.NONE);
 		RowLayout rowLayout = new RowLayout(SWT.VERTICAL);
 		this.selection.setLayout(rowLayout);
-
+		this.selection.setBackground(Couleur.bleuClair);
 		this.filterComposite = new Composite(this.selection, SWT.NONE);
 		this.filterComposite.setLayout(new RowLayout(SWT.HORIZONTAL));
-
+		this.filterComposite.setBackground(Couleur.bleuClair);
 		this.buttons = new Composite(this.selection, SWT.NONE);
 		this.buttons.setLayout(new RowLayout(SWT.HORIZONTAL));
-
+		this.buttons.setBackground(Couleur.bleuClair);
 	}
 
 	/**
@@ -394,7 +399,8 @@ public class turnOverView {
 			Label monthLabel = new Label(monthComposite, SWT.NONE);
 			monthLabel.setText("Mois");
 			this.monthFilter = new Combo(monthComposite, SWT.NONE);
-
+			monthComposite.setBackground(Couleur.bleuClair);
+			monthLabel.setBackground(Couleur.bleuClair);
 			String[] frenchMonth = { "Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août",
 					"Septembre", "Octobre", "Novembre", "Décembre" };
 
@@ -416,6 +422,8 @@ public class turnOverView {
 			Composite yearComposite = new Composite(this.filterComposite, SWT.NONE);
 			yearComposite.setLayout(new RowLayout(SWT.HORIZONTAL));
 			Label yearLabel = new Label(yearComposite, SWT.NONE);
+			yearComposite.setBackground(Couleur.bleuClair);
+			yearLabel.setBackground(Couleur.bleuClair);
 			yearLabel.setText("Année");
 			this.yearFilter = new Combo(yearComposite, SWT.NONE);
 
@@ -434,4 +442,29 @@ public class turnOverView {
 		return this.turnOverView;
 	}
 
+	/**
+	 * Add a header in header composite with title <param>header</param>
+	 * 
+	 * @param <type>String</type> header
+	 */
+	public void addHeader(String header) {
+		if (!Objects.isNull(this.header) && !this.header.isDisposed())
+			this.header.dispose();
+		this.header = new Composite(this.turnOverView, SWT.CENTER | SWT.BORDER);
+		this.header.setBackground(Couleur.bleuFonce);
+		FillLayout layout = new FillLayout();
+		layout.marginWidth = 205;
+		this.header.setLayout(layout);
+
+		Label HeadLabel = new Label(this.header, SWT.TITLE);
+
+		HeadLabel.setText("\n" + header + "\n \n");
+		Font fontTitle = new Font(HeadLabel.getDisplay(), "Arial", 12, SWT.BOLD);
+		HeadLabel.setForeground(Couleur.bleuClair);
+		HeadLabel.setFont(fontTitle);
+		HeadLabel.setBackground(Couleur.bleuFonce);
+		this.header.pack();
+		HeadLabel.pack();
+
+	}
 }
