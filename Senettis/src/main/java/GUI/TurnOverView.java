@@ -164,7 +164,7 @@ public class TurnOverView {
 		}
 		this.lastButton = new Button(this.buttons, SWT.NONE);
 		this.buttons.layout(true, true);
-		this.lastButton.setText("récupérer donn�es précèdentes");
+		this.lastButton.setText("récupérer données précédentes");
 
 		this.lastButton.pack();
 		this.lastButton.addSelectionListener(new SelectionAdapter() {
