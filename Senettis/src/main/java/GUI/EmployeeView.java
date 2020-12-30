@@ -17,14 +17,14 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
-import classes.AffectationMiseABlanc;
-import classes.AmmortissementEmploye;
-import classes.CoutsEmploye;
+import classes.MABAssignment;
+import classes.EmployeeAmortisation;
+import classes.EmployeeCost;
 import classes.Employee;
 
 import classes.Status;
 
-public class VueEmploye {
+public class EmployeeView {
 
 	private static Composite vueEmploye;
 	private static Composite selection;
@@ -34,7 +34,7 @@ public class VueEmploye {
 	private static Menu menu;
 
 	private static Employee selectedEmploye;
-	private static AmmortissementEmploye selectedAmorti;
+	private static EmployeeAmortisation selectedAmorti;
 
 	private static Table tableGlobaleEmploye;
 	private static Table tableCouts;
@@ -51,9 +51,9 @@ public class VueEmploye {
 	 *                  vueEmploye
 	 * @param display
 	 */
-	public VueEmploye(Composite composite, Display display) {
+	public EmployeeView(Composite composite, Display display) {
 
-		Couleur.setDisplay(display); // pour utiliser les couleurs du fichier couleur
+		MyColor.setDisplay(display); // pour utiliser les couleurs du fichier couleur
 
 		selectedEmploye = null;
 		selectedAmorti = null;
@@ -62,7 +62,7 @@ public class VueEmploye {
 		RowLayout rowLayout = new RowLayout();
 		rowLayout.type = SWT.VERTICAL;
 		vueEmploye.setLayout(rowLayout);
-		vueEmploye.setBackground(Couleur.bleuClair);
+		vueEmploye.setBackground(MyColor.bleuClair);
 
 		compositeSelectionBoutons();
 		vueEmployeAfficher();
@@ -106,7 +106,7 @@ public class VueEmploye {
 		FillLayout fillLayout = new FillLayout();
 		fillLayout.type = SWT.VERTICAL;
 		selection.setLayout(fillLayout);
-		selection.setBackground(Couleur.bleuClair);
+		selection.setBackground(MyColor.bleuClair);
 		
 		Composite selection1 = new Composite(selection, SWT.BORDER);
 
@@ -118,20 +118,20 @@ public class VueEmploye {
 		// juste pour creer un espace
 		Label l1 = new Label(selection1, SWT.NONE);
 		l1.setText("");
-		l1.setBackground(Couleur.bleuFonce);
+		l1.setBackground(MyColor.bleuFonce);
 
-		selection1.setBackground(Couleur.bleuFonce);
+		selection1.setBackground(MyColor.bleuFonce);
 		Label HeadLabel = new Label(selection1, SWT.TITLE);
 		HeadLabel.setText(s);
 		Font fontTitle = new Font(HeadLabel.getDisplay(), "Arial", 12, SWT.BOLD);
-		HeadLabel.setForeground(Couleur.bleuClair);
+		HeadLabel.setForeground(MyColor.bleuClair);
 		HeadLabel.setFont(fontTitle);
-		HeadLabel.setBackground(Couleur.bleuFonce);
+		HeadLabel.setBackground(MyColor.bleuFonce);
 
 		// juste pour creer un espace
 		Label l2 = new Label(selection1, SWT.NONE);
 		l2.setText("");
-		l2.setBackground(Couleur.bleuFonce);
+		l2.setBackground(MyColor.bleuFonce);
 
 		selection1.pack();
 		
@@ -141,7 +141,7 @@ public class VueEmploye {
 		rowLayout.marginWidth = 20;
 		rowLayout.marginTop = 6;
 		selection2.setLayout(rowLayout);
-		selection2.setBackground(Couleur.bleuClair);
+		selection2.setBackground(MyColor.bleuClair);
 
 		RowLayout rl = new RowLayout();
 		rl.type = SWT.HORIZONTAL;
@@ -173,7 +173,7 @@ public class VueEmploye {
 				@Override
 				public void widgetSelected(SelectionEvent arg0) {
 					try {
-						AmmortissementEmploye ae = AmmortissementEmploye
+						EmployeeAmortisation ae = EmployeeAmortisation
 								.getAmmortissementEmployeById(selectedAmorti.getAmmortissementEmployeId());
 						MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_QUESTION | SWT.YES | SWT.NO);
 						dialog.setText("Suppression Amortissement Employe");
@@ -227,20 +227,20 @@ public class VueEmploye {
 		RowLayout rowLayoutH = new RowLayout();
 		rowLayoutH.type = SWT.VERTICAL;
 		vue.setLayout(rowLayoutH);
-		vue.setBackground(Couleur.bleuClair);
+		vue.setBackground(MyColor.bleuClair);
 
 		Composite tables = new Composite(vue, SWT.NONE);
 		tables.setLayout(new RowLayout(SWT.HORIZONTAL));
-		tables.setBackground(Couleur.bleuClair);
+		tables.setBackground(MyColor.bleuClair);
 
 		// creation de la table des produits
 		Composite compoEmp = new Composite(tables, SWT.NONE);
 		compoEmp.setLayout(new RowLayout(SWT.VERTICAL));
-		compoEmp.setBackground(Couleur.bleuClair);
+		compoEmp.setBackground(MyColor.bleuClair);
 
 		Label emp = new Label(compoEmp, SWT.NONE);
 		emp.setText("Choisir un employé :");
-		emp.setBackground(Couleur.bleuClair);
+		emp.setBackground(MyColor.bleuClair);
 
 		tableEmp = new Table(compoEmp, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.FULL_SELECTION);
 		tableEmp.setLayoutData(new RowData(300, 380));
@@ -261,11 +261,11 @@ public class VueEmploye {
 		// creation de la table amorti
 		Composite compoAmorti = new Composite(tables, SWT.NONE);
 		compoAmorti.setLayout(new RowLayout(SWT.VERTICAL));
-		compoAmorti.setBackground(Couleur.bleuClair);
+		compoAmorti.setBackground(MyColor.bleuClair);
 
 		Label amorti = new Label(compoAmorti, SWT.NONE);
 		amorti.setText("Coûts liés à cet employé :");
-		amorti.setBackground(Couleur.bleuClair);
+		amorti.setBackground(MyColor.bleuClair);
 
 		tableAmorti = new Table(compoAmorti, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.FULL_SELECTION);
 		tableAmorti.setLayoutData(new RowData(500, 380));
@@ -321,20 +321,20 @@ public class VueEmploye {
 		// juste pour creer un espace
 		Label l1 = new Label(selection, SWT.NONE);
 		l1.setText("");
-		l1.setBackground(Couleur.bleuFonce);
+		l1.setBackground(MyColor.bleuFonce);
 
-		selection.setBackground(Couleur.bleuFonce);
+		selection.setBackground(MyColor.bleuFonce);
 		Label HeadLabel = new Label(selection, SWT.TITLE);
 		HeadLabel.setText(s);
 		Font fontTitle = new Font(HeadLabel.getDisplay(), "Arial", 12, SWT.BOLD);
-		HeadLabel.setForeground(Couleur.bleuClair);
+		HeadLabel.setForeground(MyColor.bleuClair);
 		HeadLabel.setFont(fontTitle);
-		HeadLabel.setBackground(Couleur.bleuFonce);
+		HeadLabel.setBackground(MyColor.bleuFonce);
 
 		// juste pour creer un espace
 		Label l2 = new Label(selection, SWT.NONE);
 		l2.setText("");
-		l2.setBackground(Couleur.bleuFonce);
+		l2.setBackground(MyColor.bleuFonce);
 
 		selection.pack();
 
@@ -359,8 +359,8 @@ public class VueEmploye {
 		fillLayoutV.marginWidth = 10;
 		Composite colonne1 = new Composite(vue, SWT.BORDER);
 		Composite colonne2 = new Composite(vue, SWT.BORDER);
-		colonne1.setBackground(Couleur.bleuClair);
-		colonne2.setBackground(Couleur.bleuClair);
+		colonne1.setBackground(MyColor.bleuClair);
+		colonne2.setBackground(MyColor.bleuClair);
 		colonne1.setLayout(fillLayoutV);
 		colonne2.setLayout(fillLayoutV);
 
@@ -371,12 +371,12 @@ public class VueEmploye {
 		fillLayoutH5.type = SWT.HORIZONTAL;
 
 		Composite compositeEmploye = new Composite(colonne1, SWT.NONE);
-		compositeEmploye.setBackground(Couleur.bleuClair);
+		compositeEmploye.setBackground(MyColor.bleuClair);
 		compositeEmploye.setLayout(fillLayoutH5);
 
 		Label labelEmploye = new Label(compositeEmploye, SWT.NONE);
 		labelEmploye.setText("Employé* : ");
-		labelEmploye.setBackground(Couleur.bleuClair);
+		labelEmploye.setBackground(MyColor.bleuClair);
 		// Titre
 		Combo employes = new Combo(compositeEmploye, SWT.BORDER);
 		System.out.println("je suis dans le formulaire");
@@ -421,12 +421,12 @@ public class VueEmploye {
 		}
 
 		Composite compositePeriode = new Composite(colonne1, SWT.NONE);
-		compositePeriode.setBackground(Couleur.bleuClair);
+		compositePeriode.setBackground(MyColor.bleuClair);
 		compositePeriode.setLayout(fillLayoutH5);
 
 		Label labelPeriode = new Label(compositePeriode, SWT.NONE);
 		labelPeriode.setText("Début* : ");
-		labelPeriode.setBackground(Couleur.bleuClair);
+		labelPeriode.setBackground(MyColor.bleuClair);
 
 		Combo periode = new Combo(compositePeriode, SWT.BORDER);
 		LocalDate currentdate = LocalDate.now();
@@ -446,11 +446,11 @@ public class VueEmploye {
 
 		// duree
 		Composite compositeDuree = new Composite(colonne1, SWT.NONE);
-		compositeDuree.setBackground(Couleur.bleuClair);
+		compositeDuree.setBackground(MyColor.bleuClair);
 		compositeDuree.setLayout(fillLayoutH5);
 
 		Label labelDuree = new Label(compositeDuree, SWT.NONE);
-		labelDuree.setBackground(Couleur.bleuClair);
+		labelDuree.setBackground(MyColor.bleuClair);
 		labelDuree.setText("Durée (en mois)* : ");
 
 		final Text textDuree = new Text(compositeDuree, SWT.BORDER);
@@ -462,20 +462,20 @@ public class VueEmploye {
 
 		// pour creer un espace
 		Composite compoTest = new Composite(colonne1, SWT.NONE);
-		compoTest.setBackground(Couleur.bleuClair);
+		compoTest.setBackground(MyColor.bleuClair);
 		compoTest.setLayout(fillLayoutH5);
 
 		Label labelTest = new Label(compoTest, SWT.NONE);
-		labelTest.setBackground(Couleur.bleuClair);
+		labelTest.setBackground(MyColor.bleuClair);
 		labelTest.setText("");
 
 		// valeur
 		Composite compositeValeur = new Composite(colonne2, SWT.NONE);
-		compositeValeur.setBackground(Couleur.bleuClair);
+		compositeValeur.setBackground(MyColor.bleuClair);
 		compositeValeur.setLayout(fillLayoutH5);
 
 		Label labelValeur = new Label(compositeValeur, SWT.NONE);
-		labelValeur.setBackground(Couleur.bleuClair);
+		labelValeur.setBackground(MyColor.bleuClair);
 		labelValeur.setText("Montant total* : ");
 
 		final Text textValeur = new Text(compositeValeur, SWT.BORDER);
@@ -486,12 +486,12 @@ public class VueEmploye {
 		}
 
 		Composite compositeType = new Composite(colonne2, SWT.NONE);
-		compositeType.setBackground(Couleur.bleuClair);
+		compositeType.setBackground(MyColor.bleuClair);
 		compositeType.setLayout(fillLayoutH5);
 
 		Label labelType = new Label(compositeType, SWT.NONE);
 		labelType.setText("Type* : ");
-		labelType.setBackground(Couleur.bleuClair);
+		labelType.setBackground(MyColor.bleuClair);
 		// Titre
 		Combo type = new Combo(compositeType, SWT.BORDER);
 		if (j == 1) {
@@ -504,11 +504,11 @@ public class VueEmploye {
 
 		// valeur
 		Composite compositeDesc = new Composite(colonne2, SWT.NONE);
-		compositeDesc.setBackground(Couleur.bleuClair);
+		compositeDesc.setBackground(MyColor.bleuClair);
 		compositeDesc.setLayout(fillLayoutH5);
 
 		Label labelDesc = new Label(compositeDesc, SWT.NONE);
-		labelDesc.setBackground(Couleur.bleuClair);
+		labelDesc.setBackground(MyColor.bleuClair);
 		labelDesc.setText("Description : ");
 
 		final Text textDesc = new Text(compositeDesc, SWT.BORDER);
@@ -520,7 +520,7 @@ public class VueEmploye {
 
 		// Boutons
 		Composite compositeBoutons = new Composite(colonne2, SWT.CENTER);
-		compositeBoutons.setBackground(Couleur.bleuClair);
+		compositeBoutons.setBackground(MyColor.bleuClair);
 		compositeBoutons.setLayout(fillLayoutH5);
 
 
@@ -554,9 +554,9 @@ public class VueEmploye {
 
 					Double valeurTotale = Double.parseDouble(textValeur.getText());
 
-					AmmortissementEmploye ae;
+					EmployeeAmortisation ae;
 					if (selectedAmorti != null) {
-						ae = new AmmortissementEmploye(selectedAmorti.getAmmortissementEmployeId(), employeId, moisD,
+						ae = new EmployeeAmortisation(selectedAmorti.getAmmortissementEmployeId(), employeId, moisD,
 								anneeD, moisF, anneeF, textDesc.getText(), valeurTotale / duree, duree, valeurTotale,
 								type.getText(), "Publié");
 						ae.updateDatabase();
@@ -565,7 +565,7 @@ public class VueEmploye {
 						dialog.setMessage("Ce cout a bien été modifié dans la base de données.");
 						dialog.open();
 					} else {
-						ae = new AmmortissementEmploye(employeId, moisD, anneeD, moisF, anneeF, valeurTotale / duree,
+						ae = new EmployeeAmortisation(employeId, moisD, anneeD, moisF, anneeF, valeurTotale / duree,
 								textDesc.getText(), duree, valeurTotale, type.getText(), "Publié");
 						ae.insertDatabase();
 						MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_INFORMATION | SWT.OK);
@@ -676,7 +676,7 @@ public class VueEmploye {
 		final TableColumn[] columns = tableAmorti.getColumns();
 
 		try {
-			for (AmmortissementEmploye a : AmmortissementEmploye.getAllAmmortissementEmploye()) {
+			for (EmployeeAmortisation a : EmployeeAmortisation.getAllAmmortissementEmploye()) {
 				// on verifie le status
 				if (a.getStatus().equals("Publié") && selectedEmploye.getEmployeId() == a.getEmployeId()) {
 					TableItem item = new TableItem(tableAmorti, SWT.NONE);
@@ -706,7 +706,7 @@ public class VueEmploye {
 				if (tableAmorti.getSelectionIndex() != -1) {
 
 					try {
-						selectedAmorti = AmmortissementEmploye.getAmmortissementEmployeById(
+						selectedAmorti = EmployeeAmortisation.getAmmortissementEmployeById(
 								Integer.parseInt(tableAmorti.getSelection()[0].getText(0)));
 					} catch (NumberFormatException | SQLException e1) {
 						System.out.println("erreur pour recuperer l'amorti selectionne");
@@ -763,7 +763,7 @@ public class VueEmploye {
 		FillLayout fillLayout = new FillLayout();
 		fillLayout.type = SWT.VERTICAL;
 		selection.setLayout(fillLayout);
-		selection.setBackground(Couleur.bleuClair);
+		selection.setBackground(MyColor.bleuClair);
 		
 		Composite selection1 = new Composite(selection, SWT.BORDER);
 
@@ -775,20 +775,20 @@ public class VueEmploye {
 		// juste pour creer un espace
 		Label l1 = new Label(selection1, SWT.NONE);
 		l1.setText("");
-		l1.setBackground(Couleur.bleuFonce);
+		l1.setBackground(MyColor.bleuFonce);
 
-		selection1.setBackground(Couleur.bleuFonce);
+		selection1.setBackground(MyColor.bleuFonce);
 		Label HeadLabel = new Label(selection1, SWT.TITLE);
 		HeadLabel.setText(s);
 		Font fontTitle = new Font(HeadLabel.getDisplay(), "Arial", 12, SWT.BOLD);
-		HeadLabel.setForeground(Couleur.bleuClair);
+		HeadLabel.setForeground(MyColor.bleuClair);
 		HeadLabel.setFont(fontTitle);
-		HeadLabel.setBackground(Couleur.bleuFonce);
+		HeadLabel.setBackground(MyColor.bleuFonce);
 
 		// juste pour creer un espace
 		Label l2 = new Label(selection1, SWT.NONE);
 		l2.setText("");
-		l2.setBackground(Couleur.bleuFonce);
+		l2.setBackground(MyColor.bleuFonce);
 
 		selection1.pack();
 		
@@ -798,18 +798,18 @@ public class VueEmploye {
 		rowLayout.marginWidth = 20;
 		rowLayout.marginTop = 6;
 		selection2.setLayout(rowLayout);
-		selection2.setBackground(Couleur.bleuClair);
+		selection2.setBackground(MyColor.bleuClair);
 
 		FillLayout fillLayoutH5 = new FillLayout();
 		fillLayoutH5.type = SWT.HORIZONTAL;
 
 		Composite compositePeriode = new Composite(selection2, SWT.NONE);
 		compositePeriode.setLayout(fillLayoutH5);
-		compositePeriode.setBackground(Couleur.bleuClair);
+		compositePeriode.setBackground(MyColor.bleuClair);
 
 		Label labelPeriode = new Label(compositePeriode, SWT.NONE);
 		labelPeriode.setText("Periode : ");
-		labelPeriode.setBackground(Couleur.bleuClair);
+		labelPeriode.setBackground(MyColor.bleuClair);
 
 		Combo periode = new Combo(compositePeriode, SWT.BORDER);
 		LocalDate currentdate = LocalDate.now();
@@ -848,9 +848,9 @@ public class VueEmploye {
 						mois -= 1;
 					}
 					System.out.println(mois.toString() + " " + annee.toString());
-					for (CoutsEmploye ce : CoutsEmploye.getAllCoutEmploye()) {
+					for (EmployeeCost ce : EmployeeCost.getAllCoutEmploye()) {
 						if (mois == ce.getMois() && (Integer.compare(annee, ce.getAnnee()) == 0)) {
-							CoutsEmploye newCE = ce;
+							EmployeeCost newCE = ce;
 							if (ce.getMois() < 12) {
 								newCE.setMois(ce.getMois() + 1);
 								newCE.setAnnee(ce.getAnnee());
@@ -889,7 +889,7 @@ public class VueEmploye {
 
 		Label espace = new Label(selection2, SWT.NONE);
 		espace.setText("                                         ");
-		espace.setBackground(Couleur.bleuClair);
+		espace.setBackground(MyColor.bleuClair);
 		
 		Button boutonAnnuler = new Button(selection2, SWT.CENTER);
 		boutonAnnuler.setText("    Retour aux employés    ");
@@ -919,7 +919,7 @@ public class VueEmploye {
 						int mois = Integer.parseInt(periode[0]);
 						int annee = Integer.parseInt(periode[1]);
 
-						CoutsEmploye ce = new CoutsEmploye(employeId, mois, annee, "Publié");
+						EmployeeCost ce = new EmployeeCost(employeId, mois, annee, "Publié");
 						System.out.println("on a cree ");
 
 						if (!tableCouts.getItem(ligne).getText(5).isBlank()) {
@@ -1055,7 +1055,7 @@ public class VueEmploye {
 		RowLayout rowLayoutH = new RowLayout();
 		rowLayoutH.type = SWT.VERTICAL;
 		vue.setLayout(rowLayoutH);
-		vue.setBackground(Couleur.bleuClair);
+		vue.setBackground(MyColor.bleuClair);
 
 		LocalDate currentdate = LocalDate.now();
 		Month month = currentdate.getMonth();
@@ -1077,7 +1077,7 @@ public class VueEmploye {
 		rowLayout.marginTop = 6;
 		rowLayout.spacing = 20;
 		validation.setLayout(rowLayout);
-		validation.setBackground(Couleur.gris);
+		validation.setBackground(MyColor.gris);
 
 		Button boutonAnnuler = new Button(validation, SWT.CENTER);
 		boutonAnnuler.setText("    Retour aux employés    ");
@@ -1107,7 +1107,7 @@ public class VueEmploye {
 						int mois = Integer.parseInt(periode[0]);
 						int annee = Integer.parseInt(periode[1]);
 
-						CoutsEmploye ce = new CoutsEmploye(employeId, mois, annee, "Publié");
+						EmployeeCost ce = new EmployeeCost(employeId, mois, annee, "Publié");
 						System.out.println("on a cree ");
 
 						if (!tableCouts.getItem(ligne).getText(5).isBlank()) {
@@ -1276,7 +1276,7 @@ public class VueEmploye {
 
 					try {
 						System.out.println("ici");
-						CoutsEmploye ce = CoutsEmploye.getCoutEmployeByEmployeId(e.getEmployeId(), moisInt.getValue(),
+						EmployeeCost ce = EmployeeCost.getCoutEmployeByEmployeId(e.getEmployeId(), moisInt.getValue(),
 								Integer.parseInt(annee));
 						if (ce.getStatus().equals("Publié")) {
 							item.setText(5, ce.getSalaireNet().toString());
@@ -1292,7 +1292,7 @@ public class VueEmploye {
 
 							Double pret = 0.0;
 							Double saisie = 0.0;
-							for (AmmortissementEmploye ae : AmmortissementEmploye
+							for (EmployeeAmortisation ae : EmployeeAmortisation
 									.getAmmortissementEmployeByEmployeId(e.getEmployeId())) {
 								System.out.println("dans la boucle");
 								if (ae.getStatus().equals("Publié")) {
@@ -1651,20 +1651,20 @@ public class VueEmploye {
 		// juste pour creer un espace
 		Label l1 = new Label(selection, SWT.NONE);
 		l1.setText("");
-		l1.setBackground(Couleur.bleuFonce);
+		l1.setBackground(MyColor.bleuFonce);
 
-		selection.setBackground(Couleur.bleuFonce);
+		selection.setBackground(MyColor.bleuFonce);
 		Label HeadLabel = new Label(selection, SWT.TITLE);
 		HeadLabel.setText("Récupération d'un Employe");
 		Font fontTitle = new Font(HeadLabel.getDisplay(), "Arial", 12, SWT.BOLD);
-		HeadLabel.setForeground(Couleur.bleuClair);
+		HeadLabel.setForeground(MyColor.bleuClair);
 		HeadLabel.setFont(fontTitle);
-		HeadLabel.setBackground(Couleur.bleuFonce);
+		HeadLabel.setBackground(MyColor.bleuFonce);
 
 		// juste pour creer un espace
 		Label l2 = new Label(selection, SWT.NONE);
 		l2.setText("");
-		l2.setBackground(Couleur.bleuFonce);
+		l2.setBackground(MyColor.bleuFonce);
 
 		selection.pack();
 		///////////////////////////////////////////////////////////////////////////////////////
@@ -1683,7 +1683,7 @@ public class VueEmploye {
 		fillLayoutV.type = SWT.VERTICAL;
 		fillLayoutV.marginWidth = 10;
 		Composite colonne1 = new Composite(vue, SWT.BORDER);
-		colonne1.setBackground(Couleur.bleuClair);
+		colonne1.setBackground(MyColor.bleuClair);
 		colonne1.setLayout(fillLayoutV);
 
 		// utilisé pour tous les composites des arguments
@@ -1694,20 +1694,20 @@ public class VueEmploye {
 
 		// titre
 		Composite compositeTitre = new Composite(colonne1, SWT.NONE);
-		compositeTitre.setBackground(Couleur.bleuClair);
+		compositeTitre.setBackground(MyColor.bleuClair);
 		compositeTitre.setLayout(fillLayoutH5);
 
 		Label labelTitre = new Label(compositeTitre, SWT.NONE);
-		labelTitre.setBackground(Couleur.bleuClair);
+		labelTitre.setBackground(MyColor.bleuClair);
 		labelTitre.setText("Merci de renseigner un matricule ou un nom\net un prénom.");
 
 		// Nom
 		Composite compositeNom = new Composite(colonne1, SWT.NONE);
-		compositeNom.setBackground(Couleur.bleuClair);
+		compositeNom.setBackground(MyColor.bleuClair);
 		compositeNom.setLayout(fillLayoutH5);
 
 		Label labelNom = new Label(compositeNom, SWT.NONE);
-		labelNom.setBackground(Couleur.bleuClair);
+		labelNom.setBackground(MyColor.bleuClair);
 		labelNom.setText("Nom :                            ");
 
 		final Text textNom = new Text(compositeNom, SWT.BORDER);
@@ -1715,11 +1715,11 @@ public class VueEmploye {
 
 		// prenom
 		Composite compositePrenom = new Composite(colonne1, SWT.NONE);
-		compositePrenom.setBackground(Couleur.bleuClair);
+		compositePrenom.setBackground(MyColor.bleuClair);
 		compositePrenom.setLayout(fillLayoutH5);
 
 		Label labelPrenom = new Label(compositePrenom, SWT.NONE);
-		labelPrenom.setBackground(Couleur.bleuClair);
+		labelPrenom.setBackground(MyColor.bleuClair);
 		labelPrenom.setText("Prénom : ");
 
 		final Text textPrenom = new Text(compositePrenom, SWT.BORDER);
@@ -1727,11 +1727,11 @@ public class VueEmploye {
 
 		// Matricule
 		Composite compositeMatricule = new Composite(colonne1, SWT.NONE);
-		compositeMatricule.setBackground(Couleur.bleuClair);
+		compositeMatricule.setBackground(MyColor.bleuClair);
 		compositeMatricule.setLayout(fillLayoutH5);
 
 		Label labelMatricule = new Label(compositeMatricule, SWT.NONE);
-		labelMatricule.setBackground(Couleur.bleuClair);
+		labelMatricule.setBackground(MyColor.bleuClair);
 		labelMatricule.setText("Matricule : ");
 
 		final Text textMatricule = new Text(compositeMatricule, SWT.BORDER);
@@ -1739,7 +1739,7 @@ public class VueEmploye {
 
 		// Boutons
 		Composite compositeBoutons = new Composite(colonne1, SWT.CENTER);
-		compositeBoutons.setBackground(Couleur.bleuClair);
+		compositeBoutons.setBackground(MyColor.bleuClair);
 		compositeBoutons.setLayout(fillLayoutH5);
 
 
@@ -1843,20 +1843,20 @@ public class VueEmploye {
 		// juste pour creer un espace
 		Label l1 = new Label(selection, SWT.NONE);
 		l1.setText("");
-		l1.setBackground(Couleur.bleuFonce);
+		l1.setBackground(MyColor.bleuFonce);
 
-		selection.setBackground(Couleur.bleuFonce);
+		selection.setBackground(MyColor.bleuFonce);
 		Label HeadLabel = new Label(selection, SWT.TITLE);
 		HeadLabel.setText(s);
 		Font fontTitle = new Font(HeadLabel.getDisplay(), "Arial", 12, SWT.BOLD);
-		HeadLabel.setForeground(Couleur.bleuClair);
+		HeadLabel.setForeground(MyColor.bleuClair);
 		HeadLabel.setFont(fontTitle);
-		HeadLabel.setBackground(Couleur.bleuFonce);
+		HeadLabel.setBackground(MyColor.bleuFonce);
 
 		// juste pour creer un espace
 		Label l2 = new Label(selection, SWT.NONE);
 		l2.setText("");
-		l2.setBackground(Couleur.bleuFonce);
+		l2.setBackground(MyColor.bleuFonce);
 
 		selection.pack();
 	}
@@ -1926,8 +1926,8 @@ public class VueEmploye {
 		fillLayoutV.marginWidth = 10;
 		Composite colonne1 = new Composite(vue, SWT.BORDER);
 		Composite colonne2 = new Composite(vue, SWT.BORDER);
-		colonne1.setBackground(Couleur.bleuClair);
-		colonne2.setBackground(Couleur.bleuClair);
+		colonne1.setBackground(MyColor.bleuClair);
+		colonne2.setBackground(MyColor.bleuClair);
 		colonne1.setLayout(fillLayoutV);
 		colonne2.setLayout(fillLayoutV);
 
@@ -1939,11 +1939,11 @@ public class VueEmploye {
 
 		// Titre
 		Composite compositeTitre = new Composite(colonne1, SWT.NONE);
-		compositeTitre.setBackground(Couleur.bleuClair);
+		compositeTitre.setBackground(MyColor.bleuClair);
 		compositeTitre.setLayout(fillLayoutH5);
 
 		Label labelTitre = new Label(compositeTitre, SWT.NONE);
-		labelTitre.setBackground(Couleur.bleuClair);
+		labelTitre.setBackground(MyColor.bleuClair);
 		labelTitre.setText("Titre : ");
 
 		Combo comboTitre = new Combo(compositeTitre, SWT.BORDER);
@@ -1959,11 +1959,11 @@ public class VueEmploye {
 
 		// Nom
 		Composite compositeNom = new Composite(colonne1, SWT.NONE);
-		compositeNom.setBackground(Couleur.bleuClair);
+		compositeNom.setBackground(MyColor.bleuClair);
 		compositeNom.setLayout(fillLayoutH5);
 
 		Label labelNom = new Label(compositeNom, SWT.NONE);
-		labelNom.setBackground(Couleur.bleuClair);
+		labelNom.setBackground(MyColor.bleuClair);
 		labelNom.setText("Nom* : ");
 
 		final Text textNom = new Text(compositeNom, SWT.BORDER);
@@ -1971,11 +1971,11 @@ public class VueEmploye {
 
 		// Prenom
 		Composite compositePrenom = new Composite(colonne1, SWT.NONE);
-		compositePrenom.setBackground(Couleur.bleuClair);
+		compositePrenom.setBackground(MyColor.bleuClair);
 		compositePrenom.setLayout(fillLayoutH5);
 
 		Label labelPrenom = new Label(compositePrenom, SWT.NONE);
-		labelPrenom.setBackground(Couleur.bleuClair);
+		labelPrenom.setBackground(MyColor.bleuClair);
 		labelPrenom.setText("Prenom* : ");
 
 		final Text textPrenom = new Text(compositePrenom, SWT.BORDER);
@@ -1983,11 +1983,11 @@ public class VueEmploye {
 
 		// Mail
 		Composite compositeMail = new Composite(colonne1, SWT.NONE);
-		compositeMail.setBackground(Couleur.bleuClair);
+		compositeMail.setBackground(MyColor.bleuClair);
 		compositeMail.setLayout(fillLayoutH5);
 
 		Label labelMail = new Label(compositeMail, SWT.NONE);
-		labelMail.setBackground(Couleur.bleuClair);
+		labelMail.setBackground(MyColor.bleuClair);
 		labelMail.setText("Email : ");
 
 		final Text textMail = new Text(compositeMail, SWT.BORDER);
@@ -1995,11 +1995,11 @@ public class VueEmploye {
 
 		// Telephone
 		Composite compositeTelephone = new Composite(colonne1, SWT.NONE);
-		compositeTelephone.setBackground(Couleur.bleuClair);
+		compositeTelephone.setBackground(MyColor.bleuClair);
 		compositeTelephone.setLayout(fillLayoutH5);
 
 		Label labelTelephone = new Label(compositeTelephone, SWT.NONE);
-		labelTelephone.setBackground(Couleur.bleuClair);
+		labelTelephone.setBackground(MyColor.bleuClair);
 		labelTelephone.setText("Telephone : ");
 
 		final Text textTelephone = new Text(compositeTelephone, SWT.BORDER);
@@ -2007,11 +2007,11 @@ public class VueEmploye {
 
 		// numeroMatricule
 		Composite compositeNumeroMatricule = new Composite(colonne2, SWT.NONE);
-		compositeNumeroMatricule.setBackground(Couleur.bleuClair);
+		compositeNumeroMatricule.setBackground(MyColor.bleuClair);
 		compositeNumeroMatricule.setLayout(fillLayoutH5);
 
 		Label labelNumeroMatricule = new Label(compositeNumeroMatricule, SWT.NONE);
-		labelNumeroMatricule.setBackground(Couleur.bleuClair);
+		labelNumeroMatricule.setBackground(MyColor.bleuClair);
 		labelNumeroMatricule.setText("Numero de Matricule* : ");
 
 		final Text textNumeroMatricule = new Text(compositeNumeroMatricule, SWT.BORDER);
@@ -2019,11 +2019,11 @@ public class VueEmploye {
 
 		// Pointure
 		Composite compositePointure = new Composite(colonne2, SWT.NONE);
-		compositePointure.setBackground(Couleur.bleuClair);
+		compositePointure.setBackground(MyColor.bleuClair);
 		compositePointure.setLayout(fillLayoutH5);
 
 		Label labelPointure = new Label(compositePointure, SWT.NONE);
-		labelPointure.setBackground(Couleur.bleuClair);
+		labelPointure.setBackground(MyColor.bleuClair);
 		labelPointure.setText("Pointure : ");
 
 		final Text textPointure = new Text(compositePointure, SWT.BORDER);
@@ -2031,11 +2031,11 @@ public class VueEmploye {
 
 		// Taille
 		Composite compositeTaille = new Composite(colonne2, SWT.NONE);
-		compositeTaille.setBackground(Couleur.bleuClair);
+		compositeTaille.setBackground(MyColor.bleuClair);
 		compositeTaille.setLayout(fillLayoutH5);
 
 		Label labelTaille = new Label(compositeTaille, SWT.NONE);
-		labelTaille.setBackground(Couleur.bleuClair);
+		labelTaille.setBackground(MyColor.bleuClair);
 		labelTaille.setText("Taille : ");
 
 		final Text textTaille = new Text(compositeTaille, SWT.BORDER);
@@ -2043,11 +2043,11 @@ public class VueEmploye {
 
 		// DateArrivee
 		Composite compositeDateArrivee = new Composite(colonne2, SWT.NONE);
-		compositeDateArrivee.setBackground(Couleur.bleuClair);
+		compositeDateArrivee.setBackground(MyColor.bleuClair);
 		compositeDateArrivee.setLayout(fillLayoutH5);
 
 		Label labelDateArrivee = new Label(compositeDateArrivee, SWT.NONE);
-		labelDateArrivee.setBackground(Couleur.bleuClair);
+		labelDateArrivee.setBackground(MyColor.bleuClair);
 		labelDateArrivee.setText("Date d'arrivée : ");
 
 		final Text textDateArrivee = new Text(compositeDateArrivee, SWT.BORDER);
@@ -2055,7 +2055,7 @@ public class VueEmploye {
 
 		// Boutons
 		Composite compositeBoutons = new Composite(colonne2, SWT.CENTER);
-		compositeBoutons.setBackground(Couleur.bleuClair);
+		compositeBoutons.setBackground(MyColor.bleuClair);
 		compositeBoutons.setLayout(fillLayoutH5);
 
 
@@ -2198,7 +2198,7 @@ public class VueEmploye {
 		FillLayout fillLayout = new FillLayout();
 		fillLayout.type = SWT.VERTICAL;
 		selection.setLayout(fillLayout);
-		selection.setBackground(Couleur.bleuClair);
+		selection.setBackground(MyColor.bleuClair);
 		
 		Composite selection1 = new Composite(selection, SWT.BORDER);
 
@@ -2210,20 +2210,20 @@ public class VueEmploye {
 		// juste pour creer un espace
 		Label l1 = new Label(selection1, SWT.NONE);
 		l1.setText("");
-		l1.setBackground(Couleur.bleuFonce);
+		l1.setBackground(MyColor.bleuFonce);
 
-		selection1.setBackground(Couleur.bleuFonce);
+		selection1.setBackground(MyColor.bleuFonce);
 		Label HeadLabel = new Label(selection1, SWT.TITLE);
 		HeadLabel.setText(s);
 		Font fontTitle = new Font(HeadLabel.getDisplay(), "Arial", 12, SWT.BOLD);
-		HeadLabel.setForeground(Couleur.bleuClair);
+		HeadLabel.setForeground(MyColor.bleuClair);
 		HeadLabel.setFont(fontTitle);
-		HeadLabel.setBackground(Couleur.bleuFonce);
+		HeadLabel.setBackground(MyColor.bleuFonce);
 
 		// juste pour creer un espace
 		Label l2 = new Label(selection1, SWT.NONE);
 		l2.setText("");
-		l2.setBackground(Couleur.bleuFonce);
+		l2.setBackground(MyColor.bleuFonce);
 
 		selection1.pack();
 		
@@ -2233,7 +2233,7 @@ public class VueEmploye {
 		rowLayout.marginWidth = 20;
 		rowLayout.marginTop = 6;
 		selection2.setLayout(rowLayout);
-		selection2.setBackground(Couleur.bleuClair);
+		selection2.setBackground(MyColor.bleuClair);
 
 		Button boutonCreer = new Button(selection2, SWT.CENTER);
 		boutonCreer.setText("Créer");
@@ -2305,18 +2305,21 @@ public class VueEmploye {
 							throw new Error("selectedEmploye est vide");
 						}
 
-						tableGlobaleEmploye.getSelection()[0].setForeground(9, Couleur.noir);
+						tableGlobaleEmploye.getSelection()[0].setForeground(9, MyColor.noir);
 						try {
 							int employeeId = selectedEmploye.getEmployeId();
 							int newAnciennetePC = Employee.getEmployeById(employeeId).getComputeAnciennete();
 							Employee.updateAnciennete(Employee.getEmployeById(employeeId).getComputeAnciennete(),
 									employeeId);
-							tableGlobaleEmploye.getSelection()[0].setForeground(9, Couleur.noir);
-							tableGlobaleEmploye.getSelection()[0].setForeground(11, Couleur.noir);
+							tableGlobaleEmploye.getSelection()[0].setForeground(9, MyColor.noir);
+							tableGlobaleEmploye.getSelection()[0].setForeground(11, MyColor.noir);
 							tableGlobaleEmploye.getSelection()[0].setText(11, "" + newAnciennetePC);
 
 						} catch (SQLException e) {
-							// TODO Auto-generated catch block
+							MessageBox msgBox = new MessageBox(vue.getShell(), SWT.ERROR);
+							msgBox.setMessage("Erreur Base de donnée");
+							msgBox.setText("erreur de liée à la base de données : \n" + e.getMessage());
+							msgBox.open();
 							e.printStackTrace();
 						}
 					}
@@ -2363,7 +2366,7 @@ public class VueEmploye {
 
 		vue = new Composite(vueEmploye, SWT.NONE);
 		vue.setLayout(rowLayoutV);
-		vue.setBackground(Couleur.bleuClair);
+		vue.setBackground(MyColor.bleuClair);
 
 		// creation de la table
 		tableGlobaleEmploye = new Table(vue, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.FULL_SELECTION);
@@ -2470,8 +2473,8 @@ public class VueEmploye {
 						boolean mustBeRed = anciennete >= 3 && e.getAnciennetePC() < 3;
 
 						if (mustBeRed) {
-							item.setForeground(9, Couleur.rouge);
-							item.setForeground(11, Couleur.rouge);
+							item.setForeground(9, MyColor.rouge);
+							item.setForeground(11, MyColor.rouge);
 
 						}
 
@@ -2505,14 +2508,14 @@ public class VueEmploye {
 		e.setStatus("Archivé");
 		e.updateDatabase();
 
-		for (AffectationMiseABlanc a : AffectationMiseABlanc.getAllAffectation()) {
+		for (MABAssignment a : MABAssignment.getAllAffectation()) {
 			if (a.getIdEmploye() == e.getEmployeId()) {
 				a.setStatus(Status.ARCHIVED);
 				a.updateDatabase();
 			}
 		}
 
-		for (CoutsEmploye ce : CoutsEmploye.getAllCoutEmploye()) {
+		for (EmployeeCost ce : EmployeeCost.getAllCoutEmploye()) {
 			if (ce.getEmployeId() == e.getEmployeId()) {
 				ce.setStatus("Archivé");
 				ce.updateDatabase();
@@ -2567,7 +2570,7 @@ public class VueEmploye {
 			public void widgetSelected(SelectionEvent arg0) {
 				try {
 					if (selectedAmorti != null) {
-						AmmortissementEmploye ae = AmmortissementEmploye
+						EmployeeAmortisation ae = EmployeeAmortisation
 								.getAmmortissementEmployeById(selectedAmorti.getAmmortissementEmployeId());
 						MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_QUESTION | SWT.YES | SWT.NO);
 						dialog.setText("Suppression Amortissement Employe");
@@ -2603,7 +2606,7 @@ public class VueEmploye {
 						switch (buttonID) {
 						case SWT.YES:
 							int id = Integer.parseInt(item.getText(0));
-							CoutsEmploye ce = CoutsEmploye.getCoutEmployeById(id);
+							EmployeeCost ce = EmployeeCost.getCoutEmployeById(id);
 							ce.setStatus("Archivé");
 							ce.updateDatabase();
 
@@ -2690,7 +2693,7 @@ public class VueEmploye {
 	////////////////////////////////////// //////////////////////////////////////////////
 
 	public Composite getComposite() {
-		return this.vueEmploye;
+		return EmployeeView.vueEmploye;
 
 	}
 

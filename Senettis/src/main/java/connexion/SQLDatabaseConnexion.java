@@ -1,9 +1,15 @@
 package connexion;
 
-import java.sql.DriverManager;
+
 import java.sql.SQLException;
 
-public class SQLDatabaseConnection {
+/**
+ * 
+ * This class is used to configurate the connexion to the database
+ * 
+ *
+ */
+public class SQLDatabaseConnexion {
 	
 	private String connectionUrl = "jdbc:sqlserver://localhost:1433;" + "database=SenettisDB;" + "user=laetitia;"
 			+ "password=laeti;" + "encrypt=false;" + "trustServerCertificate=true;" + "loginTimeout=30;";

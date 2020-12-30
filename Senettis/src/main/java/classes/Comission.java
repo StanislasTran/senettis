@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import connexion.SQLDatabaseConnection;
+import connexion.SQLDatabaseConnexion;
 
 public class Comission {
 	private Integer comissionId;
@@ -42,7 +42,7 @@ public class Comission {
 			throws SQLException {
 		String reqSql = "Select * FROM Comission Where Status ='Publié' AND chantier=? AND MoisDebut=? AND AnneeDebut=?";
 
-		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
 		statement.setObject(1, chantier, Types.INTEGER);
 		statement.setObject(2, startMonth.getValue(), Types.INTEGER);
@@ -66,7 +66,7 @@ public class Comission {
 			throws SQLException {
 		String reqSql = "select chantier,Sum(comission) as SUM from Comission WHERE status ='Publié' AND AnneeDebut<? OR (AnneeDebut=? AND MoisDebut<=?) GROUP BY chantier;";
 
-		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
 		statement.setObject(1, year.getValue(), Types.INTEGER);
 		
@@ -120,7 +120,7 @@ public class Comission {
 	public static ResultSet getComissionsResultSet() throws SQLException {
 		String reqSql = "Select Comission.comissionId,Comission.comission,Comission.MoisDebut,Comission.AnneeDebut,Chantier.ChantierId,Chantier.Nom FROM Comission JOIN Chantier ON Chantier.ChantierId=Comission.Chantier Where Chantier.Status ='Publié' AND Comission.Status='Publié'";
 
-		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
 
 		statement.execute();
@@ -131,7 +131,7 @@ public class Comission {
 	public void insert() throws SQLException {
 		String reqSql = "INSERT INTO Comission(Comission,Chantier,MoisDebut,AnneeDebut,Status) values  (?,?,?,?,?);";
 
-		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
 
 		
@@ -149,7 +149,7 @@ public class Comission {
 
 		String reqSql = "Select Sum(comission) as Sum FROM Comission where chantier=? AND (AnneeDebut<? OR (AnneeDebut=? AND MoisDebut<=?))";
 
-		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
 		statement.setObject(1, siteId, Types.INTEGER);
 		statement.setObject(2, startYear.getValue(), Types.INTEGER);
@@ -168,7 +168,7 @@ public class Comission {
 	public void Delete() throws SQLException {
 		String reqSql = "Update  Comission SET Status='Archivé' WHERE ComissionId= .;";
 
-		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
 
 		statement.setObject(1, this.comissionId, Types.INTEGER);
@@ -180,7 +180,7 @@ public class Comission {
 	public static void removeById(int productId) throws SQLException {
 		String reqSql = "Update  Comission SET Status='Archivé' WHERE ComissionId= ?;";
 
-		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
 
 		statement.setObject(1, productId, Types.INTEGER);

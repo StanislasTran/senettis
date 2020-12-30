@@ -2,15 +2,11 @@
 package classes;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import com.microsoft.sqlserver.jdbc.StringUtils;
-
-import connexion.SQLDatabaseConnection;
-
+import connexion.SQLDatabaseConnexion;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -18,9 +14,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+
+/**
+ * Represent an Employee into the System
+ *
+ */
 
 public class Employee {
 
@@ -35,7 +34,7 @@ public class Employee {
 	private String taille;
 	private String dateArrivee;
 	private String status;
-	private int anciennetePC ; //derniere annee prise en compte
+	private int anciennetePC; // derniere annee prise en compte
 
 	// Constructeurs-----------------------------------------------
 	/***
@@ -71,10 +70,10 @@ public class Employee {
 			throw new Error("L'employeId est vide, merci de sp�cifier un id ou d'utiliser un autre constructeur.");
 		}
 	}
-	
+
 	public Employee(int employeId, String t, String nom, String prenom, String mail, String telephone,
 			String numeroMatricule, String pointure, String taille, String dateArrivee, int anciennete, String status) {
-		this(employeId,t, nom, prenom, mail, telephone, numeroMatricule, pointure, taille, dateArrivee, status);
+		this(employeId, t, nom, prenom, mail, telephone, numeroMatricule, pointure, taille, dateArrivee, status);
 
 		// id
 		if ((Integer) anciennete != null) {
@@ -89,27 +88,26 @@ public class Employee {
 	 * status, dateArrivee, mail, telephone, pointure, taille, nombreHeures,
 	 * renboursementTransport, remboursementTelephone, salaire
 	 * 
-	 * @param t                      : verification faite
+	 * @param t               : verification faite
 	 * @param nom
 	 * @param prenom
-	 * @param mail                   : verification faite
+	 * @param mail            : verification faite
 	 * @param telephone
-	 * @param numeroMatricule        : int
+	 * @param numeroMatricule : int
 	 * @param pointure
 	 * @param taille
-	 * @param dateArrivee            : string, verification faite
-	 * @param status                 : verification faite
+	 * @param dateArrivee     : string, verification faite
+	 * @param status          : verification faite
 	 */
 	public Employee(String t, String nom, String prenom, String mail, String telephone, String numeroMatricule,
 			String pointure, String taille, String dateArrivee, String status) {
 		this(t, nom, prenom, numeroMatricule, dateArrivee, status);
 
 		// je verifie que l adresse mail est correcte
-		if (mail != null ) {
+		if (mail != null) {
 			if (mail.isEmpty()) {
 				mail = null;
-			}
-			else {
+			} else {
 				String regex = "^(.+)@(.+)$";
 				Pattern pattern = Pattern.compile(regex);
 				Matcher matcher = pattern.matcher(mail);
@@ -123,16 +121,15 @@ public class Employee {
 		// telephone
 		if (telephone != null) {
 			telephone = telephone.replace(".", "");
-		} 
+		}
 		this.telephone = telephone;
-		
+
 		// pointure
 		this.pointure = pointure;
-		
+
 		// taille
 		this.taille = taille;
-		
-		
+
 	}
 
 	/***
@@ -154,7 +151,7 @@ public class Employee {
 			if (!status.isEmpty()) {
 				if (status.equals("Publié") || status.equals("Publié")) {
 					this.status = "Publié";
-				} else if (status.equals("Archivé") || status.equals("Archivé"))  {
+				} else if (status.equals("Archivé") || status.equals("Archivé")) {
 					this.status = "Archivé";
 				} else if (status.equals("Draft") || status.equals("draft")) {
 					this.status = "Draft";
@@ -165,33 +162,28 @@ public class Employee {
 				this.status = null;
 			}
 		}
-		
+
 		// date arrivee
 		if (dateArrivee != null) {
 			if (!(dateArrivee.isEmpty())) {
-				if ( dateArrivee.charAt(2) =='/' || dateArrivee.charAt(2) == '-' || dateArrivee.charAt(2) == '_') {
-					//System.out.println("fr");
-					// date francaise
-					// on reecrit en format francais juste pour s'assurer que toutes les dates
-					// seront ecrites avec le meme format jj/mm/aaaa
+				if (dateArrivee.charAt(2) == '/' || dateArrivee.charAt(2) == '-' || dateArrivee.charAt(2) == '_') {
+
 					dateArrivee = dateArrivee.substring(0, 2) + "/" + dateArrivee.substring(3, 5) + "/"
 							+ dateArrivee.substring(6, 10);
-				}
-				else if ( dateArrivee.charAt(7) =='/' || dateArrivee.charAt(7) == '-' || dateArrivee.charAt(7) == '_') {
-					//System.out.println("en");
-					// date anglaise
+				} else if (dateArrivee.charAt(7) == '/' || dateArrivee.charAt(7) == '-'
+						|| dateArrivee.charAt(7) == '_') {
+
 					dateArrivee = dateArrivee.substring(8, 10) + "/" + dateArrivee.substring(5, 7) + "/"
 							+ dateArrivee.substring(0, 4);
 				} else {
 					throw new Error(
 							"La date d'arriv�e indiqu�e est incorrecte, une date doit �tre indiqu� selon un des formats suivant : 31-01-2000, 31/01/2000, 2000-01-31 ou 2000/01/31.");
 				}
-			}
-			else {
+			} else {
 				dateArrivee = null;
 			}
 		}
-		this.dateArrivee = dateArrivee;		
+		this.dateArrivee = dateArrivee;
 	}
 
 	/***
@@ -208,16 +200,16 @@ public class Employee {
 		// je verifie le titre
 		if (t != null) {
 			if ((t == "M") || (t == "M.")) {
-				this.titre = titre.M;
+				this.titre = Title.M;
 			} else if ((t == "Mme") || (t == "MME") || (t == "Mme.") || (t == "MME.")) {
-				this.titre = titre.Mme;
+				this.titre = Title.Mme;
 			} else if (t.contains("me") || t.contains("ME")) {
-				this.titre = titre.Mme;
+				this.titre = Title.Mme;
 			} else {
-				this.titre = titre.M;
+				this.titre = Title.M;
 			}
 		} else {
-			this.titre = titre.M;
+			this.titre = Title.M;
 		}
 
 		// nom
@@ -241,7 +233,7 @@ public class Employee {
 			throw new Error("Le num�ro de matricule indiqu� est vide.");
 		}
 		this.anciennetePC = 0;
-		
+
 	}
 
 	// Liens avec la BDD-----------------------------------------------
@@ -254,7 +246,7 @@ public class Employee {
 	public int insertDatabase() throws SQLException {
 		String reqSql = "INSERT INTO Employe(titre,nom,prenom,mail,telephone,numero_matricule,pointure,taille,date_arrivee,anciennete,status) VALUES (?,?,?,?,?,?,?,?,?,?,?)";
 
-		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
 		statement.setObject(1, this.titre.toString(), Types.VARCHAR);
 		statement.setObject(2, this.nom, Types.VARCHAR);
@@ -284,7 +276,7 @@ public class Employee {
 	public int updateDatabase() throws SQLException {
 		String reqSql = "UPDATE Employe SET titre=?, nom=?, prenom=?, mail=?, telephone=?, numero_matricule=?, pointure=?, taille=?, date_arrivee=?, status=?, anciennete=? WHERE EmployeId=?;";
 
-		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
 		statement.setObject(1, this.titre.toString(), Types.VARCHAR);
 		statement.setObject(2, this.nom, Types.VARCHAR);
@@ -301,23 +293,17 @@ public class Employee {
 
 		return statement.executeUpdate();
 	}
-	
+
 	public static int updateAnciennete(int anciennetePC, int employeId) throws SQLException {
 		String reqSql = "UPDATE Employe SET anciennete=? WHERE EmployeId=?;";
 
-		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
 		statement.setObject(1, anciennetePC, Types.INTEGER);
 		statement.setObject(2, employeId, Types.INTEGER);
 
 		return statement.executeUpdate();
 	}
-	
-	
-	
-	
-	
-
 
 	/***
 	 * requete la base de donn�es afin de recuperer tous les elements de la table
@@ -329,7 +315,7 @@ public class Employee {
 	private static Statement selectAllEmploye() throws SQLException {
 		String reqSql = "SELECT * FROM Employe";
 
-		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		Statement statement = connection.createStatement();
 		statement.executeQuery(reqSql);
 		return statement;
@@ -343,7 +329,7 @@ public class Employee {
 	 */
 	public static int getCountEmploye() throws SQLException {
 		String reqSql = "SELECT count(*) as count FROM Employe";
-		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		Statement statement = connection.createStatement();
 		statement.executeQuery(reqSql);
 		ResultSet result = statement.getResultSet();
@@ -363,7 +349,7 @@ public class Employee {
 	 */
 	public static Employee getEmployeById(int employeId) throws SQLException {
 		String reqSql = "SELECT EmployeId,titre,nom,prenom,mail,telephone,numero_matricule,pointure,taille,date_arrivee,anciennete,Status FROM Employe WHERE EmployeId=?;";
-		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
 		statement.setObject(1, employeId, Types.INTEGER);
 		statement.executeQuery();
@@ -392,17 +378,9 @@ public class Employee {
 		}
 	}
 
-	
-	
-	
-	
-	
-	
-	
-	
 	public static void retrieveByMatricule(String matricule) throws SQLException {
 		String reqSql = "SELECT EmployeId FROM Employe WHERE Numero_matricule=?;";
-		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
 		statement.setObject(1, matricule, Types.VARCHAR);
 		statement.executeQuery();
@@ -415,20 +393,19 @@ public class Employee {
 		} else {
 			throw new Error("Erreur de matricule, aucun employ� ne correspond.");
 		}
-		
+
 		try {
 			Employee e = getEmployeById(employeId);
-			 e.setStatus("Publié");
-			 e.updateDatabase();
-		}catch (Exception e) {
+			e.setStatus("Publié");
+			e.updateDatabase();
+		} catch (Exception e) {
 			throw new Error("Erreur de matricule, aucun employ� ne correspond.");
 		}
 	}
-	
-	
+
 	public static void retrieveByNomPrenom(String nom, String prenom) throws SQLException {
 		String reqSql = "SELECT EmployeId FROM Employe WHERE Nom=? and Prenom=?;";
-		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
 		statement.setObject(1, nom, Types.VARCHAR);
 		statement.setObject(2, prenom, Types.VARCHAR);
@@ -442,21 +419,19 @@ public class Employee {
 		} else {
 			throw new SQLException("Aucun employ� ne correspond.");
 		}
-		
+
 		try {
 			Employee e = getEmployeById(employeId);
-			 e.setStatus("Publié");
-			 e.updateDatabase();
-		}catch (Exception e) {
+			e.setStatus("Publié");
+			e.updateDatabase();
+		} catch (Exception e) {
 			throw e;
 		}
 	}
-	
-	
-	
+
 	public static int getIdByMatricule(String matricule) throws SQLException {
 		String reqSql = "SELECT EmployeId FROM Employe WHERE numero_matricule=?;";
-		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
 		statement.setObject(1, matricule, Types.VARCHAR);
 		statement.executeQuery();
@@ -470,8 +445,7 @@ public class Employee {
 			throw new SQLException("Data not found");
 		}
 	}
-	
-	
+
 	// -----------------------------------------------
 	/***
 	 * 
@@ -505,7 +479,7 @@ public class Employee {
 			String status = result.getString("Status");
 
 			allEmploye.add(new Employee(employeId, titre, nom, prenom, mail, telephone, numeroMatricule, pointure,
-					taille, dateArrivee,anciennete, status));
+					taille, dateArrivee, anciennete, status));
 
 		}
 
@@ -527,10 +501,10 @@ public class Employee {
 				+ this.telephone + "|" + this.numeroMatricule + "|" + this.pointure + "|" + this.taille + "|"
 				+ this.dateArrivee + "|" + this.status;
 	}
-	
+
 	public String getNameString() {
 
-		return "" +this.nom + " " + this.prenom ;
+		return "" + this.nom + " " + this.prenom;
 	}
 
 	// Getter and setter-----------------------------------------------
@@ -672,7 +646,7 @@ public class Employee {
 
 	public void setPointure(String pointure) {
 		if (pointure == null) {
-			throw new Error("setPointure : le pointure indique est vide"); 
+			throw new Error("setPointure : le pointure indique est vide");
 		}
 		this.pointure = pointure;
 	}
@@ -717,10 +691,11 @@ public class Employee {
 					// seront ecrites avec le meme format jj/mm/aaaa
 					dateArrivee = dateArrivee.substring(0, 2) + "/" + dateArrivee.substring(3, 5) + "/"
 							+ dateArrivee.substring(6, 10);
-				} 
+				}
 			} catch (Exception e) {
 				throw new Error(
-						"La date d'arriv�e indiqu�e est incorrecte, une date doit �tre indiqu� selon un des formats suivant : 31-01-2000, 31/01/2000, 2000-01-31 ou 2000/01/31.\n"+e.getMessage());
+						"La date d'arriv�e indiqu�e est incorrecte, une date doit �tre indiqu� selon un des formats suivant : 31-01-2000, 31/01/2000, 2000-01-31 ou 2000/01/31.\n"
+								+ e.getMessage());
 			}
 		} else {
 			throw new Error("La date d'arriv�e indiqu�e est vide.");
@@ -728,8 +703,6 @@ public class Employee {
 		this.dateArrivee = dateArrivee;
 
 	}
-
-
 
 	public int getEmployeId() {
 		return employeId;
@@ -752,21 +725,20 @@ public class Employee {
 
 	public Integer getComputeAnciennete() {
 		String date = this.getDateArrivee();
-		int j1 = Integer.parseInt(date.substring(0, 2));
+
 		int m1 = Integer.parseInt(date.substring(3, 5));
 		int a1 = Integer.parseInt(date.substring(6, 10));
 		LocalDate currentdate = LocalDate.now();
-		int j2 = currentdate.getDayOfMonth();
+
 		int m2 = currentdate.getMonthValue();
 		int a2 = currentdate.getYear();
-	
+
 		Integer anciennete = 0;
 
 		if (a2 - a1 == 0) {
 			anciennete = 0;
 
 		} else if (a2 - a1 > 0) {
-			
 
 			if (m1 > m2)
 				anciennete = a2 - a1 - 1;
@@ -777,7 +749,5 @@ public class Employee {
 
 		return anciennete;
 	}
-	
-	
 
 }

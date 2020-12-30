@@ -1,5 +1,13 @@
 package classes;
 
+/**
+ * This enumeration describe the status of an object into the system.
+ * PUBLISHED means that the system consider the object and the users can interact with it
+ * ARCHIVED means that the system don't consider the object and the user cans interact with it
+ * DRAFT means that there is some restriction on the object usage
+ * 
+ *
+ */
 public enum Status {
 	PUBLISHED("Publié"), ARCHIVED("Archivé"), DRAFT("Brouillon");
 

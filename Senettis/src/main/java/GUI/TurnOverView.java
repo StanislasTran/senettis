@@ -30,7 +30,7 @@ import org.eclipse.swt.widgets.Text;
 
 import classes.TurnOver;
 
-public class turnOverView {
+public class TurnOverView {
 	private Composite header;
 	private Composite turnOverView;
 	private Composite selection;
@@ -49,12 +49,12 @@ public class turnOverView {
 	final int AUTRESCOLUMN = 5;
 	final int CACOLUMN = 6;
 
-	public turnOverView(Composite parent) throws SQLException {
+	public TurnOverView(Composite parent) throws SQLException {
 		this.turnOverView = new Composite(parent, SWT.NONE);
 		this.turnOverView.setLayout(new RowLayout(SWT.VERTICAL));
 		addHeader("Gestion du Chiffre d'Affaire");
 		selection();
-		turnOverView.setBackground(Couleur.bleuClair);
+		turnOverView.setBackground(MyColor.bleuClair);
 		createMonthFilter();
 		createYearFilter();
 		compositeTable();
@@ -67,17 +67,14 @@ public class turnOverView {
 				try {
 					compositeTable();
 				} catch (SQLException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+					MessageBox msgBox = new MessageBox(turnOverView.getShell(), SWT.ERROR);
+					msgBox.setMessage("Erreur Base de donnée");
+					msgBox.setText("erreur de liée à la base de données : \n" + e1.getMessage());
+					msgBox.open();
+
 				}
 				compositeTable.layout(true, true);
 				compositeTable.pack();
-			}
-
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-				// TODO Auto-generated method stub
-				super.widgetDefaultSelected(e);
 			}
 
 		});
@@ -92,16 +89,12 @@ public class turnOverView {
 					compositeTable();
 					compositeTable.layout(true, true);
 				} catch (SQLException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+					MessageBox msgBox = new MessageBox(turnOverView.getShell(), SWT.ERROR);
+					msgBox.setMessage("Erreur Base de donnée");
+					msgBox.setText("erreur de liée à la base de données : \n" + e1.getMessage());
+					msgBox.open();
 				}
 				super.widgetSelected(e);
-			}
-
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-				// TODO Auto-generated method stub
-				super.widgetDefaultSelected(e);
 			}
 
 		});
@@ -130,12 +123,12 @@ public class turnOverView {
 
 					try {
 
-						turnOvers.get(i).setVitrerie(checkStringDouble(item.getText(VITRERIECOLUMN)));
+						turnOvers.get(i).setGlazing(checkStringDouble(item.getText(VITRERIECOLUMN)));
 						turnOvers.get(i).setMisesBlanc(checkStringDouble(item.getText(MISESBLANCCOLUMN)));
-						turnOvers.get(i).setMenage(checkStringDouble(item.getText(MENAGECOLUMN)));
-						turnOvers.get(i).setFournituresSanitaires(checkStringDouble(item.getText(FOURNITURESCOLUMN)));
+						turnOvers.get(i).setCleaning(checkStringDouble(item.getText(MENAGECOLUMN)));
+						turnOvers.get(i).setFS(checkStringDouble(item.getText(FOURNITURESCOLUMN)));
 						turnOvers.get(i).setAutres(checkStringDouble(item.getText(AUTRESCOLUMN)));
-						turnOvers.get(i).setCA(checkStringDouble(item.getText(CACOLUMN)));
+						turnOvers.get(i).setTurnOver(checkStringDouble(item.getText(CACOLUMN)));
 
 						System.out.println(turnOvers.get(i).exist());
 						turnOvers.get(i).inserOrUpdateRow();
@@ -263,12 +256,12 @@ public class turnOverView {
 
 			TableItem item = new TableItem(table, SWT.NONE);
 			item.setText(SITENAMECOLUMN, turnOver.getSiteName());
-			item.setText(MENAGECOLUMN, "" + turnOver.getMenage());
-			item.setText(VITRERIECOLUMN, "" + turnOver.getVitrerie());
-			item.setText(FOURNITURESCOLUMN, "" + turnOver.getFournituresSanitaires());
+			item.setText(MENAGECOLUMN, "" + turnOver.getCleaning());
+			item.setText(VITRERIECOLUMN, "" + turnOver.getGlazing());
+			item.setText(FOURNITURESCOLUMN, "" + turnOver.getFS());
 			item.setText(MISESBLANCCOLUMN, "" + turnOver.getMisesBlanc());
-			item.setText(AUTRESCOLUMN, "" + turnOver.getAutres());
-			item.setText(CACOLUMN, "" + turnOver.getCa());
+			item.setText(AUTRESCOLUMN, "" + turnOver.getOthers());
+			item.setText(CACOLUMN, "" + turnOver.getTurnOver());
 
 		}
 
@@ -355,7 +348,7 @@ public class turnOverView {
 			Double CA = menage + vitrerie + fournitures + miseABlanc + autres;
 			return "" + CA;
 		} catch (Exception e) {
-			// TODO
+			e.printStackTrace();
 			return "";
 		}
 	}
@@ -380,13 +373,13 @@ public class turnOverView {
 		this.selection = new Composite(turnOverView, SWT.NONE);
 		RowLayout rowLayout = new RowLayout(SWT.VERTICAL);
 		this.selection.setLayout(rowLayout);
-		this.selection.setBackground(Couleur.bleuClair);
+		this.selection.setBackground(MyColor.bleuClair);
 		this.filterComposite = new Composite(this.selection, SWT.NONE);
 		this.filterComposite.setLayout(new RowLayout(SWT.HORIZONTAL));
-		this.filterComposite.setBackground(Couleur.bleuClair);
+		this.filterComposite.setBackground(MyColor.bleuClair);
 		this.buttons = new Composite(this.selection, SWT.NONE);
 		this.buttons.setLayout(new RowLayout(SWT.HORIZONTAL));
-		this.buttons.setBackground(Couleur.bleuClair);
+		this.buttons.setBackground(MyColor.bleuClair);
 	}
 
 	/**
@@ -399,8 +392,8 @@ public class turnOverView {
 			Label monthLabel = new Label(monthComposite, SWT.NONE);
 			monthLabel.setText("Mois");
 			this.monthFilter = new Combo(monthComposite, SWT.NONE);
-			monthComposite.setBackground(Couleur.bleuClair);
-			monthLabel.setBackground(Couleur.bleuClair);
+			monthComposite.setBackground(MyColor.bleuClair);
+			monthLabel.setBackground(MyColor.bleuClair);
 			String[] frenchMonth = { "Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août",
 					"Septembre", "Octobre", "Novembre", "Décembre" };
 
@@ -422,8 +415,8 @@ public class turnOverView {
 			Composite yearComposite = new Composite(this.filterComposite, SWT.NONE);
 			yearComposite.setLayout(new RowLayout(SWT.HORIZONTAL));
 			Label yearLabel = new Label(yearComposite, SWT.NONE);
-			yearComposite.setBackground(Couleur.bleuClair);
-			yearLabel.setBackground(Couleur.bleuClair);
+			yearComposite.setBackground(MyColor.bleuClair);
+			yearLabel.setBackground(MyColor.bleuClair);
 			yearLabel.setText("Année");
 			this.yearFilter = new Combo(yearComposite, SWT.NONE);
 
@@ -451,7 +444,7 @@ public class turnOverView {
 		if (!Objects.isNull(this.header) && !this.header.isDisposed())
 			this.header.dispose();
 		this.header = new Composite(this.turnOverView, SWT.CENTER | SWT.BORDER);
-		this.header.setBackground(Couleur.bleuFonce);
+		this.header.setBackground(MyColor.bleuFonce);
 		FillLayout layout = new FillLayout();
 		layout.marginWidth = 205;
 		this.header.setLayout(layout);
@@ -460,9 +453,9 @@ public class turnOverView {
 
 		HeadLabel.setText("\n" + header + "\n \n");
 		Font fontTitle = new Font(HeadLabel.getDisplay(), "Arial", 12, SWT.BOLD);
-		HeadLabel.setForeground(Couleur.bleuClair);
+		HeadLabel.setForeground(MyColor.bleuClair);
 		HeadLabel.setFont(fontTitle);
-		HeadLabel.setBackground(Couleur.bleuFonce);
+		HeadLabel.setBackground(MyColor.bleuFonce);
 		this.header.pack();
 		HeadLabel.pack();
 

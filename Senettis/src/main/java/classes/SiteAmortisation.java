@@ -2,17 +2,11 @@
 package classes;
 
 import java.util.ArrayList;
-import java.util.Date;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import com.microsoft.sqlserver.jdbc.StringUtils;
-
-import connexion.SQLDatabaseConnection;
-
+import connexion.SQLDatabaseConnexion;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -20,12 +14,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.Month;
 import java.time.Year;
 
-public class AmmortissementChantier {
+public class SiteAmortisation {
 
 	private Integer ammortissementChantierId;
 	private Integer chantierId;
@@ -41,7 +33,7 @@ public class AmmortissementChantier {
 	private String type;
 
 	// Constructeurs----------------------------------------------
-	public AmmortissementChantier(int ammortissementChantierId, int chantierId, Integer moisD, Integer anneeD,Integer moisF, Integer anneeF,String description,Double montantParMois, Integer duree, Double valeur, String type, String status) {
+	public SiteAmortisation(int ammortissementChantierId, int chantierId, Integer moisD, Integer anneeD,Integer moisF, Integer anneeF,String description,Double montantParMois, Integer duree, Double valeur, String type, String status) {
 		this(chantierId,moisD, anneeD, moisF,anneeF,montantParMois, duree, valeur, type, status);
 		if ((Integer) ammortissementChantierId != null) {
 			this.ammortissementChantierId = ammortissementChantierId;
@@ -51,14 +43,14 @@ public class AmmortissementChantier {
 		this.description = description;	
 	}
 	
-	public AmmortissementChantier(int chantierId, Integer moisD, Integer anneeD,Integer moisF, Integer anneeF,Double montantParMois,String description, Integer duree, Double valeur, String type, String status) {
+	public SiteAmortisation(int chantierId, Integer moisD, Integer anneeD,Integer moisF, Integer anneeF,Double montantParMois,String description, Integer duree, Double valeur, String type, String status) {
 		this(chantierId,moisD, anneeD, moisF,anneeF,montantParMois, duree, valeur, type, status);
 		
 		this.description = description;		
 	}
 	
 	
-	public AmmortissementChantier(int chantierId, Integer moisD, Integer anneeD,Integer moisF, Integer anneeF,Double montantParMois, Integer duree, Double valeur, String type, String status) {
+	public SiteAmortisation(int chantierId, Integer moisD, Integer anneeD,Integer moisF, Integer anneeF,Double montantParMois, Integer duree, Double valeur, String type, String status) {
 		// id
 		if ((Integer) chantierId != null) {
 			this.chantierId = chantierId;
@@ -119,7 +111,7 @@ public class AmmortissementChantier {
 	public int insertDatabase() throws SQLException {
 		String reqSql = "INSERT INTO AmmortissementChantier(moisDepart, anneeDepart,chantier,valeur,duree,type,status,moisFin,anneeFin,valeurParMois,description) VALUES (?,?,?,?,?,?,?,?,?,?,?)";
 
-		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
 		statement.setObject(1, this.moisD, Types.INTEGER);
 		statement.setObject(2, this.anneeD, Types.INTEGER);
@@ -141,7 +133,7 @@ public class AmmortissementChantier {
 	public int updateDatabase() throws SQLException {
 		String reqSql = "UPDATE AmmortissementChantier SET moisDepart=?, chantier=?, duree=?, valeur=?, type=?, status=?, anneeDepart=?,moisFin=?,anneeFin=?,valeurParMois=?,description=? WHERE AmmortissementChantierId=?";
 				
-		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
 		statement.setObject(1, this.moisD, Types.INTEGER);
 		statement.setObject(2, this.chantierId, Types.INTEGER);
@@ -165,7 +157,7 @@ public class AmmortissementChantier {
 	private static Statement selectAllAmmortissementChantier() throws SQLException {
 		String reqSql = "SELECT * FROM AmmortissementChantier";
 
-		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		Statement statement = connection.createStatement();
 		statement.executeQuery(reqSql);
 		return statement;
@@ -174,7 +166,7 @@ public class AmmortissementChantier {
 
 	public static int getCountCoutChantier() throws SQLException {
 		String reqSql = "SELECT count(*) as count FROM CoutChantier";
-		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		Statement statement = connection.createStatement();
 		statement.executeQuery(reqSql);
 		ResultSet result = statement.getResultSet();
@@ -187,9 +179,9 @@ public class AmmortissementChantier {
 	}
 
 
-	public static AmmortissementChantier getAmmortissementChantierById(int ammortissementChantierId) throws SQLException {
+	public static SiteAmortisation getAmmortissementChantierById(int ammortissementChantierId) throws SQLException {
 		String reqSql = "SELECT AmmortissementChantierId,moisDepart,anneeDepart,chantier,duree,valeur,type,status,moisFin,anneeFin,valeurParMois,description FROM AmmortissementChantier WHERE AmmortissementChantierId=?";
-		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
 		statement.setObject(1, ammortissementChantierId, Types.INTEGER);
 		statement.executeQuery();
@@ -220,7 +212,7 @@ public class AmmortissementChantier {
 			String status = result.getString("status");
 			String description = result.getString("description");
 
-			return new AmmortissementChantier(ammortissementChantierId, chantierId,moisD, anneeD,moisF,anneeF,description,montantParMois,duree,valeur,type, status);
+			return new SiteAmortisation(ammortissementChantierId, chantierId,moisD, anneeD,moisF,anneeF,description,montantParMois,duree,valeur,type, status);
 
 		} else {
 			throw new SQLException("Data not found");
@@ -228,10 +220,10 @@ public class AmmortissementChantier {
 	}
 
 	// -----------------------------------------------
-	public static List<AmmortissementChantier> getAllAmmortissementChantier() throws SQLException {
+	public static List<SiteAmortisation> getAllAmmortissementChantier() throws SQLException {
 
 		ResultSet result = selectAllAmmortissementChantier().getResultSet();
-		List<AmmortissementChantier> allCoutChantier = new ArrayList<AmmortissementChantier>();
+		List<SiteAmortisation> allCoutChantier = new ArrayList<SiteAmortisation>();
 		while (result.next()) {
 			int ammortissementChantierId = result.getInt("AmmortissementChantierId");
 			Integer moisD = result.getInt("moisDepart");
@@ -256,7 +248,7 @@ public class AmmortissementChantier {
 			String status = result.getString("status");
 			String description = result.getString("description");
 
-			allCoutChantier.add(new AmmortissementChantier(ammortissementChantierId, chantierId,moisD, anneeD,moisF,anneeF,description,montantParMois,duree,valeur,type, status));
+			allCoutChantier.add(new SiteAmortisation(ammortissementChantierId, chantierId,moisD, anneeD,moisF,anneeF,description,montantParMois,duree,valeur,type, status));
 		}
 
 		return allCoutChantier;
@@ -266,9 +258,9 @@ public class AmmortissementChantier {
 	
 	public static void printAllAmmortissementChantier() throws SQLException {
 
-		List<AmmortissementChantier> allCoutChantier = getAllAmmortissementChantier();
+		List<SiteAmortisation> allCoutChantier = getAllAmmortissementChantier();
 
-		for (AmmortissementChantier coutChantier : allCoutChantier)
+		for (SiteAmortisation coutChantier : allCoutChantier)
 			System.out.println(coutChantier);
 	}
 
@@ -410,7 +402,7 @@ public class AmmortissementChantier {
 		
 		String reqSql = "select chantier,Sum(valeurParMois) as SUM from AmmortissementChantier WHERE status ='Publié' AND (anneeDepart<=? AND anneeFin>=?) OR (anneeDepart=? AND moisDepart<=? AND moisFin>=?) GROUP BY chantier;";
 
-		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
 		statement.setObject(1, year.getValue(), Types.INTEGER);
 		statement.setObject(2, year.getValue(), Types.INTEGER);

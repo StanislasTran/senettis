@@ -47,8 +47,6 @@ public class Home {
 		// creation du menu Aide
 		Menu menuBar = new Menu(shell, SWT.BAR);
 
-	
-
 		// help
 		MenuItem menuHeader = new MenuItem(menuBar, SWT.CASCADE);
 		menuHeader.setText("&Aide");
@@ -67,7 +65,7 @@ public class Home {
 					try {
 						desktop.open(file);
 					} catch (IOException e) {
-						// TODO Auto-generated catch block
+
 						e.printStackTrace();
 					} // opens the specified file
 				}
@@ -92,11 +90,13 @@ public class Home {
 		compositeMain.setAlwaysShowScrollBars(true);
 
 		contenuCompositeMain = new Composite(compositeMain, SWT.NONE);
-/*
-		System.out.println(getClass().getClassLoader().getResource("test4.png").getPath());
-		System.out.println(getClass().getResource("").getPath());
-		System.out.println(getClass().getClassLoader().getResource(""));*/
-		//String backgroundLocation = getClass().getClassLoader().getResource("test4.png").getPath();
+		/*
+		 * System.out.println(getClass().getClassLoader().getResource("test4.png").
+		 * getPath()); System.out.println(getClass().getResource("").getPath());
+		 * System.out.println(getClass().getClassLoader().getResource(""));
+		 */
+		// String backgroundLocation =
+		// getClass().getClassLoader().getResource("test4.png").getPath();
 		InputStream test4 = getClass().getClassLoader().getResourceAsStream("test4.png");
 		Image background = new Image(display, test4);
 
@@ -133,7 +133,7 @@ public class Home {
 		colonneDroite = new Composite(contenuCompositeMain, SWT.CENTER);
 		this.contenuColonneDroite = new Composite(colonneDroite, SWT.CENTER);
 		contenuColonneDroite.setLayout(rowLayoutV);
-		contenuColonneDroite.setBackground(Couleur.gris);
+		contenuColonneDroite.setBackground(MyColor.gris);
 
 		titre();
 		presentation();
@@ -153,20 +153,20 @@ public class Home {
 		// juste pour creer un espace
 		Label l1 = new Label(titre, SWT.NONE);
 		l1.setText("");
-		l1.setBackground(Couleur.bleuFonce);
+		l1.setBackground(MyColor.bleuFonce);
 
-		titre.setBackground(Couleur.bleuFonce);
+		titre.setBackground(MyColor.bleuFonce);
 		Label HeadLabel = new Label(titre, SWT.TITLE);
 		HeadLabel.setText("Bienvenue sur l'application Senettis");
 		Font fontTitle = new Font(HeadLabel.getDisplay(), "Arial", 20, SWT.BOLD);
-		HeadLabel.setForeground(Couleur.bleuClair);
+		HeadLabel.setForeground(MyColor.bleuClair);
 		HeadLabel.setFont(fontTitle);
-		HeadLabel.setBackground(Couleur.bleuFonce);
+		HeadLabel.setBackground(MyColor.bleuFonce);
 
 		// juste pour creer un espace
 		Label l2 = new Label(titre, SWT.NONE);
 		l2.setText("");
-		l2.setBackground(Couleur.bleuFonce);
+		l2.setBackground(MyColor.bleuFonce);
 
 		titre.pack();
 	}
@@ -179,11 +179,11 @@ public class Home {
 		rowLayout.marginWidth = 230;
 
 		presentation.setLayout(rowLayout);
-		presentation.setBackground(Couleur.gris);
+		presentation.setBackground(MyColor.gris);
 
 		Label presLabel = new Label(presentation, SWT.BACKGROUND);
 		String pres = "\n \nCette application gère actuellement " + Employee.getCountEmploye() + " employés et "
-				+ Site.getCountChantier() + " chantiers." + '\n'
+				+ Site.getSiteCount() + " chantiers." + '\n'
 				+ "Elle permet de stocker les informations des employés, \ndes chantiers ainsi que les produits et les livraisons."
 				+ '\n' + '\n' + '\n'
 				+ "Pour plus d'information, merci de consulter la documentation de \nl'application accessible via le menu Aide.\n \n"
@@ -192,7 +192,7 @@ public class Home {
 		presLabel.setText(pres);
 		// nbEmployeLabel.setText("Nombre d'mployé dans la base :
 		// "+Employe.getCountEmploye());
-		presLabel.setBackground(Couleur.gris);
+		presLabel.setBackground(MyColor.gris);
 		presLabel.setFont(new Font(presLabel.getDisplay(), "Arial", 13, SWT.NONE));
 
 		presentation.pack();
@@ -218,25 +218,11 @@ public class Home {
 	public void compositeLogo() {
 
 		Label logo = new Label(colonneGauche, SWT.NONE);
-		
+
 		InputStream moyenLogo = getClass().getClassLoader().getResourceAsStream("moyenLogo.jpg");
 		Image image = new Image(display, moyenLogo);
 		logo.setImage(image);
 
-		// TODO on peut essayer de remettre le fait que en cliquant sur le logo on
-		// revient a l'accueil
-		/*
-		 * logo.addMouseListener(new MouseListener() {
-		 * 
-		 * @Override public void mouseDoubleClick(MouseEvent e) {}
-		 * 
-		 * @Override public void mouseDown(MouseEvent e) {}
-		 * 
-		 * @Override public void mouseUp(MouseEvent e) { try { compositeMain.dispose();
-		 * compositeMain(); } catch (SQLException e1) { e1.printStackTrace(); } } });
-		 */
-
-		logo.pack();
 	}
 
 	public void compositeMenu() {
@@ -247,7 +233,7 @@ public class Home {
 
 		Button boutonEmploye = new Button(menu, SWT.NONE);
 		boutonEmploye.setText("Employés");
-		boutonEmploye.setBackground(Couleur.blanc);
+		boutonEmploye.setBackground(MyColor.blanc);
 		// Image image = new Image(display, "images\\boutonEmploye.png");
 		// boutonEmploye.setImage(image);
 		boutonEmploye.addSelectionListener(new SelectionAdapter() {
@@ -256,7 +242,7 @@ public class Home {
 				if (!contenuColonneDroite.isDisposed()) {
 					contenuColonneDroite.dispose();
 				}
-				contenuColonneDroite = new VueEmploye(colonneDroite, display).getComposite();
+				contenuColonneDroite = new EmployeeView(colonneDroite, display).getComposite();
 				contenuColonneDroite.pack();
 				colonneDroite.pack();
 
@@ -280,9 +266,12 @@ public class Home {
 					contenuColonneDroite.dispose();
 				}
 				try {
-					contenuColonneDroite = new ViewAffectationMAB(getColonneDroite()).getVueAffectation();
+					contenuColonneDroite = new MABAssignmentView(getColonneDroite()).getVueAffectation();
 				} catch (SQLException e) {
-					// TODO Auto-generated catch block
+					MessageBox msgBox = new MessageBox(currentVue.getShell(), SWT.ERROR);
+					msgBox.setMessage("Erreur Base de donnée");
+					msgBox.setText("erreur de liée à la base de données : \n" + e.getMessage());
+					msgBox.open();
 					e.printStackTrace();
 				}
 
@@ -310,9 +299,12 @@ public class Home {
 					contenuColonneDroite.dispose();
 				}
 				try {
-					contenuColonneDroite = new ViewAffectationChantier(getColonneDroite()).getVueAffectation();
+					contenuColonneDroite = new AssignmentSiteView(getColonneDroite()).getVueAffectation();
 				} catch (SQLException e) {
-					// TODO Auto-generated catch block
+					MessageBox msgBox = new MessageBox(currentVue.getShell(), SWT.ERROR);
+					msgBox.setMessage("Erreur Base de donnée");
+					msgBox.setText("erreur de liée à la base de données : \n" + e.getMessage());
+					msgBox.open();
 					e.printStackTrace();
 				}
 
@@ -332,7 +324,7 @@ public class Home {
 				if (!contenuColonneDroite.isDisposed()) {
 					contenuColonneDroite.dispose();
 				}
-				contenuColonneDroite = new VueChantier(colonneDroite, display).getComposite();
+				contenuColonneDroite = new SiteView(colonneDroite, display).getComposite();
 				contenuColonneDroite.pack();
 				colonneDroite.pack();
 			}
@@ -340,7 +332,7 @@ public class Home {
 
 		Button boutonLivraison = new Button(menu, SWT.NONE);
 		boutonLivraison.setText("Livraison / Fourniture / Matériel");
-		boutonLivraison.setBackground(Couleur.blanc);
+		boutonLivraison.setBackground(MyColor.blanc);
 
 		boutonLivraison.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -348,7 +340,7 @@ public class Home {
 				if (!contenuColonneDroite.isDisposed()) {
 					contenuColonneDroite.dispose();
 				}
-				contenuColonneDroite = new VueLivraison(colonneDroite, display).getComposite();
+				contenuColonneDroite = new DeliveryView(colonneDroite, display).getComposite();
 				contenuColonneDroite.pack();
 				colonneDroite.pack();
 			}
@@ -356,7 +348,7 @@ public class Home {
 
 		Button boutonProduit = new Button(menu, SWT.NONE);
 		boutonProduit.setText("Produits");
-		boutonProduit.setBackground(Couleur.blanc);
+		boutonProduit.setBackground(MyColor.blanc);
 		boutonProduit.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
@@ -369,10 +361,12 @@ public class Home {
 					contenuColonneDroite.dispose();
 				}
 				try {
-					contenuColonneDroite = new ViewProduct(getColonneDroite()).getVueProduit();
+					contenuColonneDroite = new ProductView(getColonneDroite()).getVueProduit();
 				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					MessageBox msgBox = new MessageBox(currentVue.getShell(), SWT.ERROR);
+					msgBox.setMessage("Erreur Base de donnée");
+					msgBox.setText("erreur de liée à la base de données : \n" + e.getMessage());
+					msgBox.open();
 				}
 
 				contenuColonneDroite.pack();
@@ -383,7 +377,7 @@ public class Home {
 
 		Button boutonComission = new Button(menu, SWT.NONE);
 		boutonComission.setText("Comissions");
-		boutonComission.setBackground(Couleur.blanc);
+		boutonComission.setBackground(MyColor.blanc);
 		boutonComission.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
@@ -396,21 +390,24 @@ public class Home {
 					contenuColonneDroite.dispose();
 				}
 				try {
-					contenuColonneDroite = new ViewComission(getColonneDroite()).getVueProduit();
+					contenuColonneDroite = new ComissionView(getColonneDroite()).getVueProduit();
 				} catch (SQLException e) {
-					// TODO Auto-generated catch block
+					MessageBox msgBox = new MessageBox(currentVue.getShell(), SWT.ERROR);
+					msgBox.setMessage("Erreur Base de donnée");
+					msgBox.setText("erreur de liée à la base de données : \n" + e.getMessage());
+					msgBox.open();
 					e.printStackTrace();
 				}
 
 				contenuColonneDroite.pack();
 				colonneDroite.pack();
-				// System.out.println("done");
+
 			}
 		});
 
 		Button buttonCA = new Button(menu, SWT.NONE);
 		buttonCA.setText("Chiffre d'Affaire");
-		buttonCA.setBackground(Couleur.blanc);
+		buttonCA.setBackground(MyColor.blanc);
 		buttonCA.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
@@ -423,21 +420,24 @@ public class Home {
 					contenuColonneDroite.dispose();
 				}
 				try {
-					contenuColonneDroite = new turnOverView(getColonneDroite()).getRecurringCostView();
+					contenuColonneDroite = new TurnOverView(getColonneDroite()).getRecurringCostView();
 				} catch (SQLException e) {
-					// TODO Auto-generated catch block
+					MessageBox msgBox = new MessageBox(currentVue.getShell(), SWT.ERROR);
+					msgBox.setMessage("Erreur Base de donnée");
+					msgBox.setText("erreur de liée à la base de données : \n" + e.getMessage());
+					msgBox.open();
 					e.printStackTrace();
 				}
 
 				contenuColonneDroite.pack();
 				colonneDroite.pack();
-				// System.out.println("done");
+
 			}
 		});
 
 		Button buttonRent = new Button(menu, SWT.NONE);
 		buttonRent.setText("Rentabilité");
-		buttonRent.setBackground(Couleur.blanc);
+		buttonRent.setBackground(MyColor.blanc);
 		buttonRent.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
@@ -450,10 +450,12 @@ public class Home {
 					contenuColonneDroite.dispose();
 				}
 				try {
-					contenuColonneDroite = new VueRentabilite(colonneDroite, display).getComposite();
+					contenuColonneDroite = new RentabilityView(colonneDroite, display).getComposite();
 				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					MessageBox msgBox = new MessageBox(currentVue.getShell(), SWT.ERROR);
+					msgBox.setMessage("Erreur Base de donnée");
+					msgBox.setText("erreur de liée à la base de données : \n" + e.getMessage());
+					msgBox.open();
 				}
 				contenuColonneDroite.pack();
 				colonneDroite.pack();
@@ -495,6 +497,9 @@ public class Home {
 		menuBar(); // ajoute le menu Aide en haut
 		compositeMain(); // creer le composite principal
 
+		
+	}
+	public void runHome() {
 		shell.setMaximized(true);// permet de lancer la fenetre en plein ecran
 
 		this.shell.open();

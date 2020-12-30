@@ -12,8 +12,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import connexion.SQLDatabaseConnection;
-
+import connexion.SQLDatabaseConnexion;
+/**
+ * 
+ * Site Object represent a site in the system
+ *
+ */
 public class Site {
 
 	private String name;
@@ -79,7 +83,7 @@ public class Site {
 	public int insertDatabase() throws SQLException {
 		String reqSql = "INSERT INTO Chantier(nom,adresse,status) VALUES (?,?,?)";
 
-		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
 		statement.setObject(1, this.name, Types.VARCHAR);
 		statement.setObject(2, this.adress, Types.VARCHAR);
@@ -98,7 +102,7 @@ public class Site {
 	private static Statement selectAllChantier() throws SQLException {
 		String reqSql = "SELECT * FROM Chantier Where Status='Publié'";
 
-		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		Statement statement = connection.createStatement();
 		statement.executeQuery(reqSql);
 		return statement;
@@ -111,7 +115,7 @@ public class Site {
 	 * @return <type>List<Site> </type> list which contain all Site in the database
 	 * @throws SQLException
 	 */
-	public static List<Site> getAllChantier() throws SQLException {
+	public static List<Site> getAllSite() throws SQLException {
 
 		ResultSet result = selectAllChantier().getResultSet();
 		List<Site> allChantier = new ArrayList<Site>();
@@ -139,7 +143,7 @@ public class Site {
 	 */
 	public static void printAllSite() throws SQLException {
 
-		List<Site> allSite = getAllChantier();
+		List<Site> allSite = getAllSite();
 
 		for (Site site : allSite)
 			System.out.println(site);
@@ -169,7 +173,7 @@ public class Site {
 	public int updateDatabase() throws SQLException, SQLTimeoutException {
 		String reqSql = "UPDATE Chantier SET nom=?, adresse=?, status=? WHERE ChantierId=?;";
 
-		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
 		statement.setObject(1, this.name.toString(), Types.VARCHAR);
 		statement.setObject(2, this.adress, Types.VARCHAR);
@@ -185,9 +189,9 @@ public class Site {
 	 * @return <type>int</type> the number of Site
 	 * @throws SQLException
 	 */
-	public static int getCountChantier() throws SQLException {
+	public static int getSiteCount() throws SQLException {
 		String reqSql = "SELECT count(*) as count FROM Chantier Where Status='Publié'";
-		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		Statement statement = connection.createStatement();
 		statement.executeQuery(reqSql);
 		ResultSet result = statement.getResultSet();
@@ -204,18 +208,18 @@ public class Site {
 	 * @return <type>Site</type> the site from database
 	 * @throws SQLException
 	 */
-	public static Site getSiteById(int chantierId) throws SQLException {
+	public static Site getSiteById(int siteId) throws SQLException {
 		String reqSql = "SELECT ChantierId,nom,adresse,Status FROM Chantier WHERE ChantierId=?;";
-		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
-		statement.setObject(1, chantierId, Types.INTEGER);
+		statement.setObject(1, siteId, Types.INTEGER);
 		statement.executeQuery();
 
 		ResultSet result = statement.getResultSet();
 
 		if (result.next()) {
-			chantierId = result.getInt("ChantierId");
-			String nom = result.getString("Nom");
+			siteId = result.getInt("ChantierId");
+			String name = result.getString("Nom");
 
 			String adress;
 			if (result.getString("Adresse") != null) {
@@ -226,7 +230,7 @@ public class Site {
 
 			Status status = Status.getStatus(result.getString("status"));
 
-			return new Site(chantierId, nom, adress, status);
+			return new Site(siteId, name, adress, status);
 
 		} else {
 			throw new SQLException("Data not found");
@@ -240,17 +244,17 @@ public class Site {
 	 */
 	public static Integer getSiteIdByName(String name) throws SQLException {
 		String reqSql = "SELECT ChantierId,nom,adresse,Status FROM Chantier WHERE Nom=?;";
-		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
 		statement.setObject(1, name, Types.VARCHAR);
 		statement.executeQuery();
 
 		ResultSet result = statement.getResultSet();
-		Integer chantierId = 0;
+		Integer siteId = 0;
 		if (result.next())
-			chantierId = result.getInt("ChantierId");
+			siteId = result.getInt("ChantierId");
 
-		return chantierId;
+		return siteId;
 
 	}
 

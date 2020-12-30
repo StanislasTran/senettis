@@ -11,12 +11,12 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
-import classes.AffectationMiseABlanc;
+import classes.MABAssignment;
 import classes.Delivery;
 import classes.Site;
 import classes.Status;
 
-public class VueChantier {
+public class SiteView {
 
 	private Composite vueChantier;
 	private Composite selection;
@@ -31,15 +31,15 @@ public class VueChantier {
 	 * @param composite : le composite parent
 	 * @param display
 	 */
-	public VueChantier(Composite composite, Display display) {
+	public SiteView(Composite composite, Display display) {
 
-		Couleur.setDisplay(display); // pour utiliser les couleurs du fichier couleur
+		MyColor.setDisplay(display); // pour utiliser les couleurs du fichier couleur
 
 		vueChantier = new Composite(composite, SWT.NONE);
 		RowLayout rowLayout = new RowLayout();
 		rowLayout.type = SWT.VERTICAL;
 		vueChantier.setLayout(rowLayout);
-		vueChantier.setBackground(Couleur.bleuClair);
+		vueChantier.setBackground(MyColor.bleuClair);
 
 		compositeSelectionCreer();
 		vueChantierAfficher();
@@ -83,7 +83,7 @@ public class VueChantier {
 		FillLayout fillLayout = new FillLayout();
 		fillLayout.type = SWT.VERTICAL;
 		selection.setLayout(fillLayout);
-		selection.setBackground(Couleur.bleuClair);
+		selection.setBackground(MyColor.bleuClair);
 		
 		Composite selection1 = new Composite(selection, SWT.BORDER);
 
@@ -95,20 +95,20 @@ public class VueChantier {
 		// juste pour creer un espace
 		Label l1 = new Label(selection1, SWT.NONE);
 		l1.setText("");
-		l1.setBackground(Couleur.bleuFonce);
+		l1.setBackground(MyColor.bleuFonce);
 
-		selection1.setBackground(Couleur.bleuFonce);
+		selection1.setBackground(MyColor.bleuFonce);
 		Label HeadLabel = new Label(selection1, SWT.TITLE);
 		HeadLabel.setText(s);
 		Font fontTitle = new Font(HeadLabel.getDisplay(), "Arial", 12, SWT.BOLD);
-		HeadLabel.setForeground(Couleur.bleuClair);
+		HeadLabel.setForeground(MyColor.bleuClair);
 		HeadLabel.setFont(fontTitle);
-		HeadLabel.setBackground(Couleur.bleuFonce);
+		HeadLabel.setBackground(MyColor.bleuFonce);
 
 		// juste pour creer un espace
 		Label l2 = new Label(selection1, SWT.NONE);
 		l2.setText("");
-		l2.setBackground(Couleur.bleuFonce);
+		l2.setBackground(MyColor.bleuFonce);
 
 		selection1.pack();
 		
@@ -118,7 +118,7 @@ public class VueChantier {
 		rowLayout.marginWidth = 20;
 		rowLayout.marginTop = 6;
 		selection2.setLayout(rowLayout);
-		selection2.setBackground(Couleur.bleuClair);
+		selection2.setBackground(MyColor.bleuClair);
 
 		Button boutonCreer = new Button(selection2, SWT.CENTER);
 		boutonCreer.setText("Créer");
@@ -153,7 +153,7 @@ public class VueChantier {
 		FillLayout fillLayout = new FillLayout();
 		fillLayout.type = SWT.VERTICAL;
 		selection.setLayout(fillLayout);
-		selection.setBackground(Couleur.bleuClair);
+		selection.setBackground(MyColor.bleuClair);
 		
 		Composite selection1 = new Composite(selection, SWT.BORDER);
 
@@ -165,20 +165,20 @@ public class VueChantier {
 		// juste pour creer un espace
 		Label l1 = new Label(selection1, SWT.NONE);
 		l1.setText("");
-		l1.setBackground(Couleur.bleuFonce);
+		l1.setBackground(MyColor.bleuFonce);
 
-		selection1.setBackground(Couleur.bleuFonce);
+		selection1.setBackground(MyColor.bleuFonce);
 		Label HeadLabel = new Label(selection1, SWT.TITLE);
 		HeadLabel.setText(s);
 		Font fontTitle = new Font(HeadLabel.getDisplay(), "Arial", 12, SWT.BOLD);
-		HeadLabel.setForeground(Couleur.bleuClair);
+		HeadLabel.setForeground(MyColor.bleuClair);
 		HeadLabel.setFont(fontTitle);
-		HeadLabel.setBackground(Couleur.bleuFonce);
+		HeadLabel.setBackground(MyColor.bleuFonce);
 
 		// juste pour creer un espace
 		Label l2 = new Label(selection1, SWT.NONE);
 		l2.setText("");
-		l2.setBackground(Couleur.bleuFonce);
+		l2.setBackground(MyColor.bleuFonce);
 
 		selection1.pack();
 		
@@ -188,7 +188,7 @@ public class VueChantier {
 		rowLayout.marginWidth = 20;
 		rowLayout.marginTop = 6;
 		selection2.setLayout(rowLayout);
-		selection2.setBackground(Couleur.bleuClair);
+		selection2.setBackground(MyColor.bleuClair);
 
 
 		// Bouton Creer
@@ -271,7 +271,7 @@ public class VueChantier {
 			}
 		}
 
-		for (AffectationMiseABlanc a : AffectationMiseABlanc.getAllAffectation()) {
+		for (MABAssignment a : MABAssignment.getAllAffectation()) {
 			if (a.getIdChantier() == c.getSiteId()) {
 				a.setStatus(Status.ARCHIVED);
 				a.updateDatabase();
@@ -324,20 +324,20 @@ public class VueChantier {
 		// juste pour creer un espace
 		Label l1 = new Label(selection, SWT.NONE);
 		l1.setText("");
-		l1.setBackground(Couleur.bleuFonce);
+		l1.setBackground(MyColor.bleuFonce);
 
-		selection.setBackground(Couleur.bleuFonce);
+		selection.setBackground(MyColor.bleuFonce);
 		Label HeadLabel = new Label(selection, SWT.TITLE);
 		HeadLabel.setText("Modification d'un Chantier");
 		Font fontTitle = new Font(HeadLabel.getDisplay(), "Arial", 12, SWT.BOLD);
-		HeadLabel.setForeground(Couleur.bleuClair);
+		HeadLabel.setForeground(MyColor.bleuClair);
 		HeadLabel.setFont(fontTitle);
-		HeadLabel.setBackground(Couleur.bleuFonce);
+		HeadLabel.setBackground(MyColor.bleuFonce);
 
 		// juste pour creer un espace
 		Label l2 = new Label(selection, SWT.NONE);
 		l2.setText("");
-		l2.setBackground(Couleur.bleuFonce);
+		l2.setBackground(MyColor.bleuFonce);
 
 		selection.pack();
 	}
@@ -365,7 +365,7 @@ public class VueChantier {
 		fillLayoutV.type = SWT.VERTICAL;
 		fillLayoutV.marginWidth = 10;
 		Composite colonne1 = new Composite(vue, SWT.BORDER);
-		colonne1.setBackground(Couleur.bleuClair);
+		colonne1.setBackground(MyColor.bleuClair);
 		colonne1.setLayout(fillLayoutV);
 
 		// utiliser pour tous les composites des attributs du formulaire
@@ -376,11 +376,11 @@ public class VueChantier {
 
 		// Nom
 		Composite compositeNom = new Composite(colonne1, SWT.NONE);
-		compositeNom.setBackground(Couleur.bleuClair);
+		compositeNom.setBackground(MyColor.bleuClair);
 		compositeNom.setLayout(fillLayoutH5);
 
 		Label labelNom = new Label(compositeNom, SWT.NONE);
-		labelNom.setBackground(Couleur.bleuClair);
+		labelNom.setBackground(MyColor.bleuClair);
 		labelNom.setText("Nom* :                                                           ");// espaces pour agrandir
 																								// le champs texte
 
@@ -389,11 +389,11 @@ public class VueChantier {
 
 		// Adresse
 		Composite compositeAdresse = new Composite(colonne1, SWT.NONE);
-		compositeAdresse.setBackground(Couleur.bleuClair);
+		compositeAdresse.setBackground(MyColor.bleuClair);
 		compositeAdresse.setLayout(fillLayoutH5);
 
 		Label labelAdresse = new Label(compositeAdresse, SWT.NONE);
-		labelAdresse.setBackground(Couleur.bleuClair);
+		labelAdresse.setBackground(MyColor.bleuClair);
 		labelAdresse.setText("Adresse : ");
 
 		final Text textAdresse = new Text(compositeAdresse, SWT.BORDER);
@@ -401,7 +401,7 @@ public class VueChantier {
 
 		// Boutons
 		Composite compositeBoutons = new Composite(colonne1, SWT.CENTER);
-		compositeBoutons.setBackground(Couleur.bleuClair);
+		compositeBoutons.setBackground(MyColor.bleuClair);
 		compositeBoutons.setLayout(fillLayoutH5);
 
 
@@ -506,20 +506,20 @@ public class VueChantier {
 		// juste pour creer un espace
 		Label l1 = new Label(selection, SWT.NONE);
 		l1.setText("");
-		l1.setBackground(Couleur.bleuFonce);
+		l1.setBackground(MyColor.bleuFonce);
 
-		selection.setBackground(Couleur.bleuFonce);
+		selection.setBackground(MyColor.bleuFonce);
 		Label HeadLabel = new Label(selection, SWT.TITLE);
 		HeadLabel.setText("Creation d'un Chantier");
 		Font fontTitle = new Font(HeadLabel.getDisplay(), "Arial", 12, SWT.BOLD);
-		HeadLabel.setForeground(Couleur.bleuClair);
+		HeadLabel.setForeground(MyColor.bleuClair);
 		HeadLabel.setFont(fontTitle);
-		HeadLabel.setBackground(Couleur.bleuFonce);
+		HeadLabel.setBackground(MyColor.bleuFonce);
 
 		// juste pour creer un espace
 		Label l2 = new Label(selection, SWT.NONE);
 		l2.setText("");
-		l2.setBackground(Couleur.bleuFonce);
+		l2.setBackground(MyColor.bleuFonce);
 
 		selection.pack();
 	}
@@ -542,7 +542,7 @@ public class VueChantier {
 		fillLayoutV.marginWidth = 10;
 
 		Composite colonne1 = new Composite(vue, SWT.BORDER);
-		colonne1.setBackground(Couleur.bleuClair);
+		colonne1.setBackground(MyColor.bleuClair);
 		colonne1.setLayout(fillLayoutV);
 
 		// utiliser pour tous les composites des attributs du formulaire
@@ -554,11 +554,11 @@ public class VueChantier {
 
 		// Nom
 		Composite compositeNom = new Composite(colonne1, SWT.NONE);
-		compositeNom.setBackground(Couleur.bleuClair);
+		compositeNom.setBackground(MyColor.bleuClair);
 		compositeNom.setLayout(fillLayoutH5);
 
 		Label labelNom = new Label(compositeNom, SWT.NONE);
-		labelNom.setBackground(Couleur.bleuClair);
+		labelNom.setBackground(MyColor.bleuClair);
 		labelNom.setText("Nom* :                                                           "); // j'ai mis des espaces
 																								// pour agrandir la
 																								// barre de texte
@@ -568,11 +568,11 @@ public class VueChantier {
 
 		// Adresse
 		Composite compositeAdresse = new Composite(colonne1, SWT.NONE);
-		compositeAdresse.setBackground(Couleur.bleuClair);
+		compositeAdresse.setBackground(MyColor.bleuClair);
 		compositeAdresse.setLayout(fillLayoutH5);
 
 		Label labelAdresse = new Label(compositeAdresse, SWT.NONE);
-		labelAdresse.setBackground(Couleur.bleuClair);
+		labelAdresse.setBackground(MyColor.bleuClair);
 		labelAdresse.setText("Adresse : ");
 
 		final Text textAdresse = new Text(compositeAdresse, SWT.BORDER);
@@ -580,7 +580,7 @@ public class VueChantier {
 
 		// Boutons
 		Composite compositeBoutons = new Composite(colonne1, SWT.CENTER);
-		compositeBoutons.setBackground(Couleur.bleuClair);
+		compositeBoutons.setBackground(MyColor.bleuClair);
 		compositeBoutons.setLayout(fillLayoutH5);
 
 
@@ -671,7 +671,7 @@ public class VueChantier {
 
 		vue = new Composite(vueChantier, SWT.NONE);
 		vue.setLayout(rowLayoutV);
-		vue.setBackground(Couleur.bleuClair);
+		vue.setBackground(MyColor.bleuClair);
 
 		final Table table = new Table(vue, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.FULL_SELECTION);
 		table.setLayoutData(new RowData(600, 400));
@@ -691,7 +691,7 @@ public class VueChantier {
 		ArrayList<Integer> listSiteId = new ArrayList<Integer>();
 
 		try {
-			for (Site c : Site.getAllChantier()) {
+			for (Site c : Site.getAllSite()) {
 				// on verifie le status
 				if (c.getStatus().getValue().contentEquals("Publié")) {
 					TableItem item = new TableItem(table, SWT.NONE);
@@ -776,7 +776,7 @@ public class VueChantier {
 		// on remplit la table
 		final TableColumn[] columns = table.getColumns();
 		try {
-			for (Site c : Site.getAllChantier()) {
+			for (Site c : Site.getAllSite()) {
 				// on verifie le status
 				if (c.getStatus().getValue().contentEquals("Publié")) {
 					TableItem item = new TableItem(table, SWT.NONE);
@@ -803,7 +803,7 @@ public class VueChantier {
 		table.removeAll();
 
 		try {
-			for (Site c : Site.getAllChantier()) {
+			for (Site c : Site.getAllSite()) {
 				// on verifie le status
 				if (c.getStatus().getValue().contentEquals("Publié")) {
 					TableItem item = new TableItem(table, SWT.NONE);

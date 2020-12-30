@@ -3,7 +3,7 @@ package GUI;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Display;
 
-public class Couleur {
+public class MyColor {
 
 	private static  Display displ;
 	public final static Color bleuClair = new Color(displ, 213, 234, 253);

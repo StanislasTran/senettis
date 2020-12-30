@@ -42,19 +42,19 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import classes.Site;
 import classes.TurnOver;
-import classes.AmmortissementChantier;
+import classes.SiteAmortisation;
 import classes.Comission;
 import classes.Delivery;
-import classes.FournitureSanitaire;
-import classes.Rentabilite;
+import classes.FS;
+import classes.Rentability;
 import classes.SalaryCostPerSite;
 
-public class VueRentabilite {
+public class RentabilityView {
 
-	private Composite vueRentabilite;
+	private Composite rentabilityView;
 	private Composite selection;
-	private Composite vue;
-	private Table tableRentabilite;
+	private Composite view;
+	private Table rentabilityTable;
 	private Composite header;
 
 	// Creation VueLivraison --------------------------------------------------
@@ -65,13 +65,13 @@ public class VueRentabilite {
 	 * @param display
 	 * @throws SQLException
 	 */
-	public VueRentabilite(Composite composite, Display display) throws SQLException {
+	public RentabilityView(Composite composite, Display display) throws SQLException {
 
-		Couleur.setDisplay(display); // pour utiliser les couleurs du fichier couleur
+		MyColor.setDisplay(display); // pour utiliser les couleurs du fichier couleur
 
-		vueRentabilite = new Composite(composite, SWT.NONE);
-		vueRentabilite.setLayout(new RowLayout(SWT.VERTICAL));
-		vueRentabilite.setBackground(Couleur.bleuClair);
+		rentabilityView = new Composite(composite, SWT.NONE);
+		rentabilityView.setLayout(new RowLayout(SWT.VERTICAL));
+		rentabilityView.setBackground(MyColor.bleuClair);
 		addHeader("Analyse de la rentabilité");
 		getSelection();
 
@@ -80,7 +80,7 @@ public class VueRentabilite {
 		int year = currentdate.getYear();
 		getVue(month.toString() + " " + year);
 
-		vueRentabilite.pack();
+		rentabilityView.pack();
 	}
 
 	public void getSelection() {
@@ -88,23 +88,23 @@ public class VueRentabilite {
 			selection.dispose();
 		}
 
-		selection = new Composite(vueRentabilite, SWT.NONE);
+		selection = new Composite(rentabilityView, SWT.NONE);
 
 		RowLayout rowLayout = new RowLayout(SWT.VERTICAL);
 		rowLayout.spacing = 15;
 		selection.setLayout(rowLayout);
-		selection.setBackground(Couleur.bleuClair);
+		selection.setBackground(MyColor.bleuClair);
 
 		Composite selec1 = new Composite(selection, SWT.NONE);
 		selec1.setLayout(new RowLayout(SWT.HORIZONTAL));
-		selec1.setBackground(Couleur.bleuClair);
+		selec1.setBackground(MyColor.bleuClair);
 
 		Composite selec2 = new Composite(selection, SWT.NONE);
 		selec2.setLayout(new RowLayout(SWT.HORIZONTAL));
-		selec2.setBackground(Couleur.bleuClair);
+		selec2.setBackground(MyColor.bleuClair);
 		Label labelPeriode = new Label(selec2, SWT.NONE);
 		labelPeriode.setText("Période : ");
-		labelPeriode.setBackground(Couleur.bleuClair);
+		labelPeriode.setBackground(MyColor.bleuClair);
 		Combo periode = new Combo(selec2, SWT.BORDER);
 		LocalDate currentdate = LocalDate.now();
 		Month month = currentdate.getMonth();
@@ -123,10 +123,13 @@ public class VueRentabilite {
 				try {
 					updateTable(periode.getText());
 				} catch (SQLException e) {
-					// TODO Auto-generated catch block
+					MessageBox msgBox = new MessageBox(rentabilityView.getShell(), SWT.ERROR);
+					msgBox.setMessage("Erreur Base de donnée");
+					msgBox.setText("erreur de liée à la base de données : \n" + e.getMessage());
+					msgBox.open();
 					e.printStackTrace();
 				}
-				vue.pack();
+				view.pack();
 			}
 		});
 
@@ -137,7 +140,7 @@ public class VueRentabilite {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				try {
-					ArrayList<Site> allSite = (ArrayList<Site>) Site.getAllChantier();
+					ArrayList<Site> allSite = (ArrayList<Site>) Site.getAllSite();
 					for (Site s : allSite) {
 						for (int i = 1; i <= 12; i++) {
 							for (int j = Year.now().getValue() - 1; j < Year.now().getValue() + 1; j++) {
@@ -146,20 +149,20 @@ public class VueRentabilite {
 								Double livraison = 0.00;
 								Double materiel = 0.00;
 								Double coutsFs = 0.00;
-								Double comissions = 0.00;
+
 								Double coutRevient = 0.00;
 								Double margeBrut = 0.00;
 
 								Double pourcentage = 0.00;
 
-								//  Gerer
+								// Gerer
 								try {
 									TurnOver TO = TurnOver.getTurnOverByDateAndSite(s.getSiteId(), i, j);
-									CA = TO.getCa();
+									CA = TO.getTurnOver();
 								} catch (SQLException sqlException) {
 
 								}
-								
+
 								if (CA > 0) {
 
 									try {
@@ -169,8 +172,6 @@ public class VueRentabilite {
 									} catch (SQLException sqlException) {
 
 									}
-
-									DecimalFormat df = new DecimalFormat("0.00");
 
 									YearMonth date1 = YearMonth.of(j, i);
 
@@ -191,31 +192,31 @@ public class VueRentabilite {
 										}
 									}
 
-									for (FournitureSanitaire fs : FournitureSanitaire.getAllFournitureSanitaire()) {
-										if (fs.getAnneeD() != null && fs.getMoisD() != null) {// si on a une date de
-																								// debut
-																								// on regarde
-																								// sinon l'ajoute direct
-																								// parce que qu'on
-																								// considere que c'est
-																								// tout
-																								// le temps
-											YearMonth debut = YearMonth.of(fs.getAnneeD(), fs.getMoisD());
+									for (FS fs : FS.getAllFS()) {
+										if (fs.getStartYear() != null && fs.getStartMonth() != null) {// si on a une
+																										// date de
+											// debut
+											// on regarde
+											// sinon l'ajoute direct
+											// parce que qu'on
+											// considere que c'est
+											// tout
+											// le temps
+											YearMonth debut = YearMonth.of(fs.getStartYear(), fs.getStartMonth());
 											if (fs.getStatus().equals("Publié")) {
 												if (fs.getSiteId() == s.getSiteId()) {
 													if (debut.equals(date1) || (debut.isBefore(date1))) {
-														coutsFs += fs.getMontantParMois();
+														coutsFs += fs.getAmountByMonth();
 													}
 												}
 											}
 										} else {
-											coutsFs += fs.getMontantParMois();
+											coutsFs += fs.getAmountByMonth();
 
 										}
 									}
 
-									for (AmmortissementChantier ac : AmmortissementChantier
-											.getAllAmmortissementChantier()) {
+									for (SiteAmortisation ac : SiteAmortisation.getAllAmmortissementChantier()) {
 										YearMonth debut = YearMonth.of(ac.getAnneeD(), ac.getMoisD());
 										YearMonth fin = YearMonth.of(ac.getAnneeF(), ac.getMoisF());
 										if (ac.getStatus().equals("Publié")) {
@@ -231,14 +232,13 @@ public class VueRentabilite {
 									Double comission = Comission.getComissionSum(s.getSiteId(), date1.getMonth(),
 											Year.of(date1.getYear()));
 
-									coutRevient = CoutsEmploye + materiel + coutsFs + ((CA * comissions) / 100)
+									coutRevient = CoutsEmploye + materiel + coutsFs + ((CA * comission) / 100)
 											+ livraison;
 									margeBrut = CA - coutRevient;
 									pourcentage = (margeBrut * 100) / CA;
 
-									new Rentabilite(s.getSiteId(), Month.of(i), Year.of(j), CA, CoutsEmploye, livraison,
-											materiel, coutsFs, comissions, coutRevient, margeBrut, pourcentage)
-													.update();
+									new Rentability(s.getSiteId(), Month.of(i), Year.of(j), CA, CoutsEmploye, livraison,
+											materiel, coutsFs, comission, coutRevient, margeBrut, pourcentage).update();
 
 								}
 
@@ -247,14 +247,14 @@ public class VueRentabilite {
 
 					}
 
-					MessageBox dialog = new MessageBox(vueRentabilite.getShell(), SWT.ICON_INFORMATION | SWT.OK);
+					MessageBox dialog = new MessageBox(rentabilityView.getShell(), SWT.ICON_INFORMATION | SWT.OK);
 					dialog.setText("Succes");
 					dialog.setMessage("La base de données a été mise à jour");
 					dialog.open();
 
 				} catch (SQLException e1) {
 
-					MessageBox dialog = new MessageBox(vueRentabilite.getShell(), SWT.ICON_ERROR | SWT.OK);
+					MessageBox dialog = new MessageBox(rentabilityView.getShell(), SWT.ICON_ERROR | SWT.OK);
 					dialog.setText("Erreur");
 					dialog.setMessage("Une erreur est survenue. " + '\n' + e1.getMessage());
 					dialog.open();
@@ -269,32 +269,32 @@ public class VueRentabilite {
 	}
 
 	public void getVue(String periode) throws SQLException {
-		if (!Objects.isNull(vue) && !vue.isDisposed()) {
-			vue.dispose();
+		if (!Objects.isNull(view) && !view.isDisposed()) {
+			view.dispose();
 		}
 		RowLayout rowLayoutV = new RowLayout();
 		rowLayoutV.type = SWT.VERTICAL;
 
-		vue = new Composite(vueRentabilite, SWT.NONE);
-		vue.setLayout(rowLayoutV);
-		vue.setBackground(Couleur.gris);
+		view = new Composite(rentabilityView, SWT.NONE);
+		view.setLayout(rowLayoutV);
+		view.setBackground(MyColor.gris);
 
 		// creation de la table
-		tableRentabilite = new Table(vue, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.FULL_SELECTION);
-		tableRentabilite.setLayoutData(new RowData(888, 390));
-		tableRentabilite.setLinesVisible(true);
-		tableRentabilite.setHeaderVisible(true);
+		rentabilityTable = new Table(view, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.FULL_SELECTION);
+		rentabilityTable.setLayoutData(new RowData(888, 390));
+		rentabilityTable.setLinesVisible(true);
+		rentabilityTable.setHeaderVisible(true);
 
 		// on met les noms des colonnes
 		String[] titles = { "Chantier", "Chifffre d'affaire", "Total Couts Employés", "Livraisons", "Matériels",
 				"Fournitures Sanitaires", "Comissions", "Coût de revient", "Marge Brut", "Pourcentage" };
 		for (String title : titles) {
-			TableColumn column = new TableColumn(tableRentabilite, SWT.NONE);
+			TableColumn column = new TableColumn(rentabilityTable, SWT.NONE);
 			column.setText(title);
 		}
 
 		// on remplit la table
-		final TableColumn[] columns = tableRentabilite.getColumns();
+		final TableColumn[] columns = rentabilityTable.getColumns();
 
 		updateTable(periode);
 
@@ -302,11 +302,11 @@ public class VueRentabilite {
 		for (TableColumn col : columns)
 			col.pack();
 
-		vue.pack();
+		view.pack();
 	}
 
 	public void updateTable(String periode) throws SQLException {
-		tableRentabilite.removeAll();
+		rentabilityTable.removeAll();
 
 		String[] d2 = periode.split(" ");
 		YearMonth date1 = YearMonth.of(Integer.parseInt(d2[1]), Month.valueOf(d2[0]).getValue());
@@ -314,18 +314,20 @@ public class VueRentabilite {
 		Map<Integer, Double> comissions = Comission.getAllComissionsAfterMap(date1.getMonth(),
 				Year.of(date1.getYear()));
 
-		Map<Integer, Double> fsMap = FournitureSanitaire.getAllFSterMap(date1.getMonth(), Year.of(date1.getYear()));
-		
-		Map<Integer, Double> livraisonMap = Delivery.getAllLivraisonFilteredMap(date1.getMonth(), Year.of(date1.getYear()));
-		
-		Map<Integer, Double> amortiMap = AmmortissementChantier.getAllACFilteredMap(date1.getMonth(), Year.of(date1.getYear()));
+		Map<Integer, Double> fsMap = FS.getAllFSterMap(date1.getMonth(), Year.of(date1.getYear()));
+
+		Map<Integer, Double> livraisonMap = Delivery.getAllLivraisonFilteredMap(date1.getMonth(),
+				Year.of(date1.getYear()));
+
+		Map<Integer, Double> amortiMap = SiteAmortisation.getAllACFilteredMap(date1.getMonth(),
+				Year.of(date1.getYear()));
 
 		try {
-			for (Site c : Site.getAllChantier()) {
+			for (Site c : Site.getAllSite()) {
 				Double margeBrut = 0.0;
 				Double CoutRevient = 0.0;
 
-				TableItem item = new TableItem(tableRentabilite, SWT.NONE);
+				TableItem item = new TableItem(rentabilityTable, SWT.NONE);
 				item.setText(0, c.getName());
 
 				double CA = 0.0;
@@ -333,9 +335,9 @@ public class VueRentabilite {
 				/// CA///
 
 				try {
-					
+
 					CA = TurnOver.getTurnOverByDateAndSite(c.getSiteId(), Month.valueOf(d2[0]).getValue(),
-							Integer.parseInt(d2[1])).getCa();
+							Integer.parseInt(d2[1])).getTurnOver();
 
 					item.setText(1, Double.toString(CA));
 				} catch (Exception e) {
@@ -408,7 +410,7 @@ public class VueRentabilite {
 
 		SQLException e) {
 
-			MessageBox dialog = new MessageBox(vueRentabilite.getShell(), SWT.ICON_ERROR | SWT.OK);
+			MessageBox dialog = new MessageBox(rentabilityView.getShell(), SWT.ICON_ERROR | SWT.OK);
 			dialog.setText("Erreur");
 			dialog.setMessage("Une erreur est survenue. " + '\n' + e.getMessage());
 			dialog.open();
@@ -416,7 +418,7 @@ public class VueRentabilite {
 	}
 
 	public Composite getComposite() {
-		return this.vueRentabilite;
+		return this.rentabilityView;
 	}
 
 	/**
@@ -427,8 +429,8 @@ public class VueRentabilite {
 	public void addHeader(String header) {
 		if (!Objects.isNull(this.header) && !this.header.isDisposed())
 			this.header.dispose();
-		this.header = new Composite(this.vueRentabilite, SWT.CENTER | SWT.BORDER);
-		this.header.setBackground(Couleur.bleuFonce);
+		this.header = new Composite(this.rentabilityView, SWT.CENTER | SWT.BORDER);
+		this.header.setBackground(MyColor.bleuFonce);
 		FillLayout layout = new FillLayout();
 		layout.marginWidth = 365;
 		this.header.setLayout(layout);
@@ -437,9 +439,9 @@ public class VueRentabilite {
 
 		HeadLabel.setText("\n" + header + "\n \n");
 		Font fontTitle = new Font(HeadLabel.getDisplay(), "Arial", 12, SWT.BOLD);
-		HeadLabel.setForeground(Couleur.bleuClair);
+		HeadLabel.setForeground(MyColor.bleuClair);
 		HeadLabel.setFont(fontTitle);
-		HeadLabel.setBackground(Couleur.bleuFonce);
+		HeadLabel.setBackground(MyColor.bleuFonce);
 		this.header.pack();
 		HeadLabel.pack();
 

@@ -9,10 +9,14 @@ import java.sql.Statement;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
-import connexion.SQLDatabaseConnection;
+import connexion.SQLDatabaseConnexion;
 
+/**
+ * 
+ * This object represent a product into the system
+ * 
+ */
 public class Product {
 
 	private int productId;
@@ -44,25 +48,25 @@ public class Product {
 	/***
 	 * Constructor
 	 * 
-	 * @param nom
-	 * @param prix
+	 * @param name
+	 * @param price
 	 * @param status
 	 */
-	public Product(int produitId, String nom,String brand, Double prix, String commentaires, Status status) {
-		this(nom,brand, prix, commentaires, status);
-		this.productId = produitId;
+	public Product(int productId, String name, String brand, Double price, String comment, Status status) {
+		this(name, brand, price, comment, status);
+		this.productId = productId;
 
 	}
 
 	/**
-	 * Constructor for Produit
+	 * Constructor for Product
 	 * 
-	 * @param <type>Double</type> price
-	 * @param <type>              String </type> name
-	 * @param <type>String</type> comment
-	 * @param <type>String</type> status
+	 * @param <type> Double </type> price
+	 * @param <type> String </type> name
+	 * @param <type> String </type> comment
+	 * @param <type> String </type> status
 	 */
-	public Product(String name,String brand, Double price, String comment, Status status) {
+	public Product(String name, String brand, Double price, String comment, Status status) {
 		this(name, price, status);
 		this.comment = comment;
 		this.brand = brand;
@@ -85,7 +89,7 @@ public class Product {
 	public int insertDatabase() throws SQLException {
 		String reqSql = "INSERT INTO Produit(Nom,Marque,Prix,Commentaires,Status) VALUES (?,?,?,?,?)";
 
-		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
 		statement.setObject(1, this.name, Types.VARCHAR);
 		statement.setObject(2, this.brand, Types.VARCHAR);
@@ -105,7 +109,7 @@ public class Product {
 	private static Statement selectAllProduct() throws SQLException {
 		String reqSql = "SELECT * FROM Produit";
 
-		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		Statement statement = connection.createStatement();
 		statement.executeQuery(reqSql);
 		return statement;
@@ -120,7 +124,7 @@ public class Product {
 	private static Statement selectAllPublished() throws SQLException {
 		String reqSql = "SELECT * FROM Produit WHERE Status='Publi�'";
 
-		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		Statement statement = connection.createStatement();
 		statement.executeQuery(reqSql);
 		return statement;
@@ -145,7 +149,7 @@ public class Product {
 			String brand = result.getString("Marque");
 
 			Status status = Status.getStatus(result.getString("Status"));
-			allProduct.add(new Product(produitId, name, brand,price, comment, status));
+			allProduct.add(new Product(produitId, name, brand, price, comment, status));
 
 		}
 
@@ -170,7 +174,7 @@ public class Product {
 			String comment = result.getString("Commentaires");
 			String brand = result.getString("Marque");
 			Status status = Status.getStatus(result.getString("Status"));
-			allProduct.add(new Product(produitId, name,brand, price, comment,  status));
+			allProduct.add(new Product(produitId, name, brand, price, comment, status));
 
 		}
 
@@ -191,7 +195,7 @@ public class Product {
 	}
 
 	/**
-	 *update the product in the database by using the product attributes
+	 * update the product in the database by using the product attributes
 	 * 
 	 * @return <type>int</type>
 	 * @throws SQLException
@@ -199,14 +203,14 @@ public class Product {
 	public int updateDatabase() throws SQLException {
 		String reqSql = "UPDATE Produit SET nom=?,Marque=?, prix=?, commentaires=?, status=?  WHERE ProduitId=?;";
 
-		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
 		statement.setObject(1, this.name.toString(), Types.VARCHAR);
 		statement.setObject(2, this.brand, Types.VARCHAR);
 		statement.setObject(3, this.price, Types.DECIMAL);
 		statement.setObject(4, this.comment, Types.VARCHAR);
 		statement.setObject(5, this.status.getValue(), Types.VARCHAR);
-	
+
 		statement.setObject(6, this.productId, Types.INTEGER);
 		return statement.executeUpdate();
 
@@ -226,7 +230,7 @@ public class Product {
 		String source = "Produit";
 		String condition = "ProduitId=?";
 		String reqSql = "SELECT " + selection + " FROM " + source + " WHERE " + condition + " ;";
-		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
 		statement.setObject(1, productId, Types.INTEGER);
 		statement.executeQuery();
@@ -240,7 +244,7 @@ public class Product {
 			String comment = result.getString("Commentaires");
 			String brand = result.getString("Marque");
 			Status status = Status.getStatus(result.getString("Status"));
-			return new Product(produitId, name,brand, price, comment,  status);
+			return new Product(produitId, name, brand, price, comment, status);
 
 		} else {
 			throw new SQLException("Data not found");
@@ -261,7 +265,7 @@ public class Product {
 		String modif = "status='Archivé'";
 		String condition = "ProduitId=?";
 		String reqSql = "Update " + source + " SET " + modif + " WHERE " + condition + " ;";
-		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
 		statement.setObject(1, productId, Types.INTEGER);
 		return statement.executeUpdate();
@@ -341,53 +345,6 @@ public class Product {
 		if (produitId < 0)
 			throw new IllegalArgumentException("produitId can't be negative");
 		this.productId = produitId;
-	}
-
-	/***
-	 * *
-	 * 
-	 * @param status
-	 */
-
-	/**
-	 * setter for the attribute status
-	 * 
-	 * @param <type>Status </type>status
-	 */
-	private void setStatus(Status status) {
-		this.status = status;
-	}
-
-	/**
-	 * setter for the attribute price
-	 * 
-	 * @param <type>Double</type> prix
-	 */
-	private void setPrice(Double prix) {
-		this.price = prix;
-	}
-
-	/**
-	 * setter for the attribute name
-	 * 
-	 * @param <type>String</type> name
-	 */
-	private void setName(String name) {
-		if (Objects.isNull(name))
-			throw new IllegalArgumentException("name can't be null");
-		this.name = name;
-	}
-
-	/**
-	 * setter for the attribute comment
-	 * 
-	 * @param <type>String</type> comment
-	 */
-
-	private void setComment(String comment) {
-		if (Objects.isNull(comment))
-			throw new IllegalArgumentException("comment can't be null");
-		this.comment = comment;
 	}
 
 	@Override

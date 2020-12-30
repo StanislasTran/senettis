@@ -15,8 +15,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import connexion.SQLDatabaseConnection;
+import connexion.SQLDatabaseConnexion;
 
+/**
+ * 
+ * SiteAssignment represent the number of hours affected to an employee to a
+ * site A SiteAssinment has a startDate to describe when the system has to
+ * consider the assignments into computation
+ *
+ */
 public class SiteAssignment {
 
 	private Integer assignementId;
@@ -75,8 +82,8 @@ public class SiteAssignment {
 	 * @param nombreHeures
 	 * @param status
 	 */
-	public SiteAssignment(Integer affectationId, Integer site, Integer idEmploye, Double nombreHeures,
-			Month startMonth, Year startYear, Status status) {
+	public SiteAssignment(Integer affectationId, Integer site, Integer idEmploye, Double nombreHeures, Month startMonth,
+			Year startYear, Status status) {
 		this(site, idEmploye, nombreHeures, startMonth, startYear, status);
 		this.assignementId = affectationId;
 	}
@@ -99,7 +106,7 @@ public class SiteAssignment {
 	public int insertDatabase() throws SQLException {
 		String reqSql = "INSERT INTO AffectationChantier(chantier,employe,nombre_heures,MoisDebut,AnneeDebut,status) VALUES (?,?,?,?,?,?)";
 
-		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
 		statement.setObject(1, this.site, Types.INTEGER);
 		statement.setObject(2, this.employee, Types.INTEGER);
@@ -107,7 +114,6 @@ public class SiteAssignment {
 		statement.setObject(4, this.startMonth.getValue(), Types.INTEGER);
 		statement.setObject(5, this.startYear.getValue(), Types.INTEGER);
 		statement.setObject(6, this.status.getValue(), Types.VARCHAR);
-		
 
 		return statement.executeUpdate();
 	}
@@ -122,7 +128,7 @@ public class SiteAssignment {
 	public int updateDatabase() throws SQLException {
 		String reqSql = "UPDATE AffectationChantier SET Employe=?, Chantier=?, nombre_heures=?,MoisDebut=?,AnneeDebut=?, status=? WHERE AffectationId=?;";
 
-		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
 		statement.setObject(1, this.employee.toString(), Types.INTEGER);
 		statement.setObject(2, this.site, Types.INTEGER);
@@ -145,7 +151,7 @@ public class SiteAssignment {
 	private static Statement selectAllAffectation() throws SQLException {
 		String reqSql = "SELECT * FROM AffectationChantier";
 
-		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		Statement statement = connection.createStatement();
 		statement.executeQuery(reqSql);
 		return statement;
@@ -194,9 +200,8 @@ public class SiteAssignment {
 		String group = "emplData.EmployeId,emplData.Nom,EmplData.prenom";
 
 		String reqSql = "SELECT " + selection + " FROM " + source + " GROUP BY " + group;
-	
 
-		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		Statement statement = connection.createStatement();
 		statement.execute(reqSql);
 
@@ -220,9 +225,8 @@ public class SiteAssignment {
 		String group = "emplData.EmployeId,emplData.Nom,EmplData.prenom";
 
 		String reqSql = "SELECT " + selection + " FROM " + source + " GROUP BY " + group;
-		
 
-		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		Statement statement = connection.createStatement();
 		statement.execute(reqSql);
 		return statement.getResultSet();
@@ -243,9 +247,8 @@ public class SiteAssignment {
 		String group = "emplData.EmployeId,emplData.Nom,EmplData.prenom";
 
 		String reqSql = "SELECT " + selection + " FROM " + source + " GROUP BY " + group;
-	
 
-		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		Statement statement = connection.createStatement();
 		statement.execute(reqSql);
 		return statement.getResultSet();
@@ -267,7 +270,7 @@ public class SiteAssignment {
 
 		String reqSql = "SELECT " + selection + " FROM " + source + " GROUP BY " + group;
 
-		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		Statement statement = connection.createStatement();
 
 		statement.execute(reqSql);
@@ -291,7 +294,7 @@ public class SiteAssignment {
 
 		String reqSql = "SELECT " + selection + " FROM " + source + " GROUP BY " + group;
 
-		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
 		statement.setObject(1, startMonth.getValue(), Types.INTEGER);
 		statement.setObject(2, startYear.getValue(), Types.INTEGER);
@@ -313,7 +316,7 @@ public class SiteAssignment {
 		String selection = "AffectationId,Nom,Prenom,AffectationChantier.Nombre_heures,AffectationChantier.AffectationId,Numero_matricule";
 		String source = "(Select * From Employe WHERE Employe.Status='Publié') as Employe INNER JOIN (Select * FROM AffectationChantier WHERE AffectationChantier.Status='Publié') as AffectationChantier ON Employe.EmployeId=AffectationChantier.Employe ";
 		String condition = "AffectationChantier.Chantier=? AND MoisDebut=? AND AnneeDebut=?";
-		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		String reqSql = "SELECT " + selection + " FROM " + source + " WHERE " + condition;
 
 		PreparedStatement statement = connection.prepareStatement(reqSql);
@@ -336,7 +339,7 @@ public class SiteAssignment {
 		String selection = "AffectationId,Nom,Prenom,AffectationChantier.Nombre_heures,AffectationChantier.AffectationId,Numero_matricule";
 		String source = "(Select * from Employe WHERE Employe.Status='Publié' ) as Employe INNER JOIN (Select * from AffectationChantier WHERE AffectationChantier.Status='Publié') as AffectationChantier ON Employe.EmployeId=AffectationChantier.Employe  ";
 		String condition = "AffectationChantier.Chantier=?";
-		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		String reqSql = "SELECT " + selection + " FROM " + source + " WHERE " + condition;
 
 		PreparedStatement statement = connection.prepareStatement(reqSql);
@@ -358,7 +361,7 @@ public class SiteAssignment {
 		String selection = "ChantierId,nom,adresse,Nombre_heures,AffectationChantier.AffectationId";
 		String source = " (Select * from Chantier where Chantier.Status='Publié') as Chantier INNER JOIN (Select * FROM AffectationChantier WHERE AffectationChantier.Status='Publié') as AffectationChantier ON Chantier.ChantierId=AffectationChantier.Chantier ";
 		String condition = "AffectationChantier.Employe=?";
-		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		String reqSql = "SELECT " + selection + " FROM " + source + " WHERE " + condition;
 
 		PreparedStatement statement = connection.prepareStatement(reqSql);
@@ -379,7 +382,7 @@ public class SiteAssignment {
 		String selection = "ChantierId,nom,adresse,Nombre_heures,AffectationChantier.AffectationId";
 		String source = "chantier INNER JOIN AffectationChantier ON Chantier.ChantierId=AffectationChantier.Chantier ";
 		String condition = "AffectationChantier.Employe=?  AND AffectationChantier.Status='Publié' AND Chantier.Status='Publié'";
-		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		String reqSql = "SELECT " + selection + " FROM " + source + " WHERE " + condition;
 
 		PreparedStatement statement = connection.prepareStatement(reqSql);
@@ -404,7 +407,7 @@ public class SiteAssignment {
 		String source = "AffectationChantier";
 
 		String condition = "AffectationChantier.AffectationId=?";
-		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		String reqSql = "SELECT " + selection + " FROM " + source + " WHERE " + condition;
 
 		PreparedStatement statement = connection.prepareStatement(reqSql);
@@ -425,9 +428,9 @@ public class SiteAssignment {
 	 */
 	public static SiteAssignment getAffectation(int affectationId) throws SQLException {
 		ResultSet result = getAffectationResultSet(affectationId);
-	
+
 		if (result.next()) {
-		
+
 			int chantier = result.getInt("Chantier");
 			int employe = result.getInt("Employe");
 			Double nombre_heures;
@@ -454,7 +457,7 @@ public class SiteAssignment {
 	public int update() throws SQLException {
 		String reqSql = "UPDATE AffectationChantier SET Chantier=? , Employe=?,Nombre_heures=?, MoisDebut=?,AnneeDebut=? WHERE affectationId=?";
 
-		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
 		statement.setObject(1, this.site, Types.INTEGER);
 		statement.setObject(2, this.employee, Types.INTEGER);
@@ -462,7 +465,6 @@ public class SiteAssignment {
 		statement.setObject(4, this.startMonth.getValue(), Types.INTEGER);
 		statement.setObject(5, this.startYear.getValue(), Types.INTEGER);
 		statement.setObject(6, this.assignementId, Types.INTEGER);
-	
 
 		return statement.executeUpdate();
 
@@ -477,7 +479,7 @@ public class SiteAssignment {
 	public int remove() throws SQLException {
 		String reqSql = "UPDATE AffectationChantier SET Status='Archivé' WHERE affectationId=?";
 
-		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
 
 		statement.setObject(1, this.assignementId, Types.INTEGER);

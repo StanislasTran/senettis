@@ -15,9 +15,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import connexion.SQLDatabaseConnection;
+import connexion.SQLDatabaseConnexion;
 
-public class AffectationMiseABlanc {
+
+public class MABAssignment {
 
 	private Integer affectationId;
 	private Integer idChantier;
@@ -41,7 +42,7 @@ public class AffectationMiseABlanc {
 	 * @param idEmploye
 	 * @param status
 	 */
-	public AffectationMiseABlanc(Integer idChantier, Integer idEmploye, Month month, Year year, Status status) {
+	public MABAssignment(Integer idChantier, Integer idEmploye, Month month, Year year, Status status) {
 		super();
 		this.idChantier = idChantier;
 		this.idEmploye = idEmploye;
@@ -60,7 +61,7 @@ public class AffectationMiseABlanc {
 	 * @param nombreHeures
 	 * @param status
 	 */
-	public AffectationMiseABlanc(Integer idChantier, Integer idEmploye, Double nombreHeures, Month month, Year year,
+	public MABAssignment(Integer idChantier, Integer idEmploye, Double nombreHeures, Month month, Year year,
 			Status status) {
 		this(idChantier, idEmploye, month, year, status);
 		this.nbHours = nombreHeures;
@@ -75,7 +76,7 @@ public class AffectationMiseABlanc {
 	 * @param nombreHeures
 	 * @param status
 	 */
-	public AffectationMiseABlanc(Integer affectationId, Integer idChantier, Integer idEmploye, Double nombreHeures,
+	public MABAssignment(Integer affectationId, Integer idChantier, Integer idEmploye, Double nombreHeures,
 			Month month, Year year, Status status) {
 		this(idChantier, idEmploye, nombreHeures, month, year, status);
 		this.affectationId = affectationId;
@@ -99,7 +100,7 @@ public class AffectationMiseABlanc {
 	public int insertDatabase() throws SQLException {
 		String reqSql = "INSERT INTO AffectationMAB(chantier,employe,nombre_heures,Mois,Annee,status) VALUES (?,?,?,?,?,?)";
 
-		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
 		statement.setObject(1, this.idChantier, Types.INTEGER);
 		statement.setObject(2, this.idEmploye, Types.INTEGER);
@@ -121,7 +122,7 @@ public class AffectationMiseABlanc {
 	public int updateDatabase() throws SQLException {
 		String reqSql = "UPDATE AffectationMAB SET Employe=?, Chantier=?, nombre_heures=?,Mois=?,Annee=?, status=? WHERE AffectationId=?;";
 
-		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
 		statement.setObject(1, this.idEmploye.toString(), Types.INTEGER);
 		statement.setObject(2, this.idChantier, Types.INTEGER);
@@ -144,7 +145,7 @@ public class AffectationMiseABlanc {
 	private static Statement selectAllAffectation() throws SQLException {
 		String reqSql = "SELECT * FROM AffectationMAB";
 
-		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		Statement statement = connection.createStatement();
 		statement.executeQuery(reqSql);
 		return statement;
@@ -158,10 +159,10 @@ public class AffectationMiseABlanc {
 	 *         database
 	 * @throws SQLException
 	 */
-	public static List<AffectationMiseABlanc> getAllAffectation() throws SQLException {
+	public static List<MABAssignment> getAllAffectation() throws SQLException {
 
 		ResultSet result = selectAllAffectation().getResultSet();
-		List<AffectationMiseABlanc> allAffectation = new ArrayList<AffectationMiseABlanc>();
+		List<MABAssignment> allAffectation = new ArrayList<MABAssignment>();
 
 		while (result.next()) {
 			Integer affectationId = result.getInt("AffectationId");
@@ -172,7 +173,7 @@ public class AffectationMiseABlanc {
 			Year year = Year.of(result.getInt("Annee"));
 			Status status = Status.getStatus(result.getString("Status"));
 			allAffectation.add(
-					new AffectationMiseABlanc(affectationId, employeId, chantierId, nombreHeures, month, year, status));
+					new MABAssignment(affectationId, employeId, chantierId, nombreHeures, month, year, status));
 
 		}
 
@@ -193,9 +194,9 @@ public class AffectationMiseABlanc {
 		String group = "emplData.EmployeId,emplData.Nom,EmplData.prenom";
 
 		String reqSql = "SELECT " + selection + " FROM " + source + " GROUP BY " + group;
-		System.out.println(reqSql);
+		
 
-		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		Statement statement = connection.createStatement();
 		statement.execute(reqSql);
 
@@ -219,9 +220,9 @@ public class AffectationMiseABlanc {
 		String group = "emplData.EmployeId,emplData.Nom,EmplData.prenom";
 
 		String reqSql = "SELECT " + selection + " FROM " + source + " GROUP BY " + group;
-		System.out.println(reqSql);
+		
 
-		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		Statement statement = connection.createStatement();
 		statement.execute(reqSql);
 		return statement.getResultSet();
@@ -243,7 +244,7 @@ public class AffectationMiseABlanc {
 
 		String reqSql = "SELECT " + selection + " FROM " + source + " GROUP BY " + group;
 
-		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		Statement statement = connection.createStatement();
 
 		statement.execute(reqSql);
@@ -267,7 +268,7 @@ public class AffectationMiseABlanc {
 
 		String reqSql = "SELECT " + selection + " FROM " + source + " GROUP BY " + group;
 
-		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
 		statement.setObject(1, month.getValue(), Types.INTEGER);
 		statement.setObject(2, year.getValue(), Types.INTEGER);
@@ -289,7 +290,7 @@ public class AffectationMiseABlanc {
 		String selection = "AffectationId,Nom,Prenom,AffectationMAB.Nombre_heures,AffectationMAB.AffectationId,Numero_matricule";
 		String source = "(Select * From Employe WHERE Employe.Status='Publié') as Employe INNER JOIN (Select * FROM AffectationMAB WHERE AffectationMAB.Status='Publié') as AffectationMAB ON Employe.EmployeId=AffectationMAB.Employe ";
 		String condition = "AffectationMAB.Chantier=? AND Mois=? AND Annee=?";
-		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		String reqSql = "SELECT " + selection + " FROM " + source + " WHERE " + condition;
 
 		PreparedStatement statement = connection.prepareStatement(reqSql);
@@ -312,7 +313,7 @@ public class AffectationMiseABlanc {
 		String selection = "AffectationId,Nom,Prenom,AffectationMAB.Nombre_heures,AffectationMAB.AffectationId,Numero_matricule";
 		String source = "(Select * from Employe WHERE Employe.Status='Publié' as Employe INNER JOIN (Select * from AffectationMAB WHERE AffectationMAB.Status='Publié') as AffectationMAB ON Employe.EmployeId=AffectationMAB.Employe  ";
 		String condition = "AffectationMAB.Chantier=?";
-		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		String reqSql = "SELECT " + selection + " FROM " + source + " WHERE " + condition;
 
 		PreparedStatement statement = connection.prepareStatement(reqSql);
@@ -333,7 +334,7 @@ public class AffectationMiseABlanc {
 		String selection = "ChantierId,nom,adresse,Nombre_heures,AffectationMAB.AffectationId";
 		String source = " (Select * from Chantier where Chantier.Status='Publié') as Chantier INNER JOIN (Select * FROM AffectationMAB WHERE AffectationMAB.Status='Publié') as AffectationMAB ON Chantier.ChantierId=AffectationMAB.Chantier ";
 		String condition = "AffectationMAB.Employe=?";
-		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		String reqSql = "SELECT " + selection + " FROM " + source + " WHERE " + condition;
 
 		PreparedStatement statement = connection.prepareStatement(reqSql);
@@ -354,7 +355,7 @@ public class AffectationMiseABlanc {
 		String selection = "ChantierId,nom,adresse,Nombre_heures,AffectationMAB.AffectationId";
 		String source = "chantier INNER JOIN AffectationMAB ON Chantier.ChantierId=AffectationMAB.Chantier ";
 		String condition = "AffectationMAB.Employe=? AND Mois=? AND Annee=? AND AffectationMAB.Status='Publié' AND Chantier.Status='Publié'";
-		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		String reqSql = "SELECT " + selection + " FROM " + source + " WHERE " + condition;
 
 		PreparedStatement statement = connection.prepareStatement(reqSql);
@@ -380,7 +381,7 @@ public class AffectationMiseABlanc {
 		String source = "AffectationMAB";
 
 		String condition = "AffectationMAB.AffectationId=?";
-		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		String reqSql = "SELECT " + selection + " FROM " + source + " WHERE " + condition;
 
 		PreparedStatement statement = connection.prepareStatement(reqSql);
@@ -399,11 +400,11 @@ public class AffectationMiseABlanc {
 	 * @return <type> Affectation</type>
 	 * @throws SQLException
 	 */
-	public static AffectationMiseABlanc getAffectation(int affectationId) throws SQLException {
+	public static MABAssignment getAffectation(int affectationId) throws SQLException {
 		ResultSet result = getAffectationResultSet(affectationId);
-		System.out.println(affectationId + "affectationId");
+		
 		if (result.next()) {
-			System.out.println(result.toString());
+			
 			int chantier = result.getInt("Chantier");
 			int employe = result.getInt("Employe");
 			Double nombre_heures;
@@ -415,7 +416,7 @@ public class AffectationMiseABlanc {
 			Year year = Year.of(result.getInt("Annee"));
 			Status status = Status.getStatus(result.getString("status"));
 
-			return new AffectationMiseABlanc(affectationId, chantier, employe, nombre_heures, month, year, status);
+			return new MABAssignment(affectationId, chantier, employe, nombre_heures, month, year, status);
 		}
 
 		throw new SQLException("data not found");
@@ -429,10 +430,8 @@ public class AffectationMiseABlanc {
 	 */
 	public int update() throws SQLException {
 		String reqSql = "UPDATE AffectationMAB SET Chantier=? , Employe=?,Nombre_heures=?, Mois=?,Annee=? WHERE affectationId=?";
-		System.out.println(this.idChantier);
-		System.out.println( this.idEmploye);
-		System.out.println(this.affectationId);
-		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 
 		PreparedStatement statement = connection.prepareStatement(reqSql);
 		
@@ -456,7 +455,7 @@ public class AffectationMiseABlanc {
 	public int remove() throws SQLException {
 		String reqSql = "UPDATE AffectationMAB SET Status='Archivé' WHERE affectationId=?";
 
-		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
 
 		statement.setObject(1, this.affectationId, Types.INTEGER);
@@ -628,9 +627,9 @@ public class AffectationMiseABlanc {
 
 	public static void printAllAffectation() throws SQLException {
 
-		List<AffectationMiseABlanc> allAffectation = getAllAffectation();
+		List<MABAssignment> allAffectation = getAllAffectation();
 
-		for (AffectationMiseABlanc affectation : allAffectation)
+		for (MABAssignment affectation : allAffectation)
 			System.out.println(affectation);
 	}
 

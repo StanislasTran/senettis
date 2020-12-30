@@ -2,11 +2,11 @@ package testsConnexion;
 
 import java.sql.SQLException;
 
-import classes.AffectationMiseABlanc;
+import classes.MABAssignment;
 
 public class TestAffectation {
 	public static void main (String[]args) throws SQLException {
-		//Affectation a=new Affectation(1,1,"Publié");
+		//Affectation a=new Affectation(1,1,"Publiï¿½");
 		//a.insertDatabase();
 		
 		//Affectation.printAllAffectation();
