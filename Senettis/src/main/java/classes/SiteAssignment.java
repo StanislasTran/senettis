@@ -17,11 +17,11 @@ import java.util.Objects;
 
 import connexion.SQLDatabaseConnection;
 
-public class AffectationChantier {
+public class SiteAssignment {
 
-	private Integer affectationId;
-	private Integer chantier;
-	private Integer employe;
+	private Integer assignementId;
+	private Integer site;
+	private Integer employee;
 	private Double nbHours;
 
 	private Month startMonth;
@@ -37,14 +37,14 @@ public class AffectationChantier {
 	/**
 	 * Constructor for Affectation
 	 * 
-	 * @param idChantier
-	 * @param idEmploye
+	 * @param site
+	 * @param employee
 	 * @param status
 	 */
-	public AffectationChantier(Integer idChantier, Integer idEmploye, Month startMonth, Year startYear, Status status) {
+	public SiteAssignment(Integer site, Integer employee, Month startMonth, Year startYear, Status status) {
 		super();
-		this.chantier = idChantier;
-		this.employe = idEmploye;
+		this.site = site;
+		this.employee = employee;
 		this.status = status;
 		this.startMonth = startMonth;
 		this.startYear = startYear;
@@ -53,16 +53,16 @@ public class AffectationChantier {
 	/**
 	 * Constructor for Affectation
 	 * 
-	 * @param idChantier
+	 * @param site
 	 * @param idEmploye
 	 * @param month
 	 * @param year
 	 * @param nombreHeures
 	 * @param status
 	 */
-	public AffectationChantier(Integer idChantier, Integer idEmploye, Double nombreHeures, Month startMonth, Year startYear,
+	public SiteAssignment(Integer site, Integer idEmploye, Double nombreHeures, Month startMonth, Year startYear,
 			Status status) {
-		this(idChantier, idEmploye, startMonth, startYear, status);
+		this(site, idEmploye, startMonth, startYear, status);
 		this.nbHours = nombreHeures;
 	}
 
@@ -70,15 +70,15 @@ public class AffectationChantier {
 	 * Constructor for Affectation
 	 * 
 	 * @param affectationId
-	 * @param idChantier
+	 * @param site
 	 * @param idEmploye
 	 * @param nombreHeures
 	 * @param status
 	 */
-	public AffectationChantier(Integer affectationId, Integer idChantier, Integer idEmploye, Double nombreHeures,
+	public SiteAssignment(Integer affectationId, Integer site, Integer idEmploye, Double nombreHeures,
 			Month startMonth, Year startYear, Status status) {
-		this(idChantier, idEmploye, nombreHeures, startMonth, startYear, status);
-		this.affectationId = affectationId;
+		this(site, idEmploye, nombreHeures, startMonth, startYear, status);
+		this.assignementId = affectationId;
 	}
 
 	/*******************************
@@ -101,13 +101,13 @@ public class AffectationChantier {
 
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
-		statement.setObject(1, this.chantier, Types.INTEGER);
-		statement.setObject(2, this.employe, Types.INTEGER);
+		statement.setObject(1, this.site, Types.INTEGER);
+		statement.setObject(2, this.employee, Types.INTEGER);
 		statement.setObject(3, this.nbHours, Types.DECIMAL);
 		statement.setObject(4, this.startMonth.getValue(), Types.INTEGER);
 		statement.setObject(5, this.startYear.getValue(), Types.INTEGER);
 		statement.setObject(6, this.status.getValue(), Types.VARCHAR);
-		System.out.println("ouiii");
+		
 
 		return statement.executeUpdate();
 	}
@@ -124,13 +124,13 @@ public class AffectationChantier {
 
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
-		statement.setObject(1, this.employe.toString(), Types.INTEGER);
-		statement.setObject(2, this.chantier, Types.INTEGER);
+		statement.setObject(1, this.employee.toString(), Types.INTEGER);
+		statement.setObject(2, this.site, Types.INTEGER);
 		statement.setObject(3, this.nbHours, Types.DECIMAL);
 		statement.setObject(3, this.startMonth.getValue(), Types.INTEGER);
 		statement.setObject(4, this.startYear.getValue(), Types.INTEGER);
 		statement.setObject(5, this.status.getValue(), Types.VARCHAR);
-		statement.setObject(6, this.affectationId, Types.INTEGER);
+		statement.setObject(6, this.assignementId, Types.INTEGER);
 
 		return statement.executeUpdate();
 	}
@@ -159,10 +159,10 @@ public class AffectationChantier {
 	 *         database
 	 * @throws SQLException
 	 */
-	public static List<AffectationChantier> getAllAffectation() throws SQLException {
+	public static List<SiteAssignment> getAllAffectation() throws SQLException {
 
 		ResultSet result = selectAllAffectation().getResultSet();
-		List<AffectationChantier> allAffectation = new ArrayList<AffectationChantier>();
+		List<SiteAssignment> allAffectation = new ArrayList<SiteAssignment>();
 
 		while (result.next()) {
 			Integer affectationId = result.getInt("AffectationId");
@@ -172,8 +172,8 @@ public class AffectationChantier {
 			Month startMonth = Month.of(result.getInt("MoisDebut"));
 			Year startYear = Year.of(result.getInt("AnneeDebut"));
 			Status status = Status.getStatus(result.getString("Status"));
-			allAffectation.add(
-					new AffectationChantier(affectationId, employeId, chantierId, nombreHeures, startMonth, startYear, status));
+			allAffectation.add(new SiteAssignment(affectationId, employeId, chantierId, nombreHeures, startMonth,
+					startYear, status));
 
 		}
 
@@ -194,7 +194,7 @@ public class AffectationChantier {
 		String group = "emplData.EmployeId,emplData.Nom,EmplData.prenom";
 
 		String reqSql = "SELECT " + selection + " FROM " + source + " GROUP BY " + group;
-		System.out.println(reqSql);
+	
 
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		Statement statement = connection.createStatement();
@@ -214,13 +214,13 @@ public class AffectationChantier {
 	 */
 	public static ResultSet getEmployeStats(Month startMonth, Year startYear) throws SQLException {
 		String selection = "emplData.EmployeId AS 'EmployeId',emplData.Nom,EmplData.prenom,count(DISTINCT AffectationChantier.chantier) as 'nb_chantier',SUM(AffectationChantier.Nombre_heures) as 'nb_heure'";
-		String source = "(select * FROM AffectationChantier WHERE MoisDebut='" + startMonth.getValue() + "' AND AnneeDebut='"
-				+ startYear.getValue()
+		String source = "(select * FROM AffectationChantier WHERE MoisDebut='" + startMonth.getValue()
+				+ "' AND AnneeDebut='" + startYear.getValue()
 				+ "' ) AS AffectationChantier  RIGHT JOIN (Select distinct EmployeId,Nom,Prenom FROM Employe) AS emplData ON emplData.EmployeId=AffectationChantier.Employe";
 		String group = "emplData.EmployeId,emplData.Nom,EmplData.prenom";
 
 		String reqSql = "SELECT " + selection + " FROM " + source + " GROUP BY " + group;
-		System.out.println(reqSql);
+		
 
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		Statement statement = connection.createStatement();
@@ -228,8 +228,6 @@ public class AffectationChantier {
 		return statement.getResultSet();
 
 	}
-	
-	
 
 	/**
 	 * Return a list of stats for each employee in a <type> ResultSet</type> Column
@@ -245,7 +243,7 @@ public class AffectationChantier {
 		String group = "emplData.EmployeId,emplData.Nom,EmplData.prenom";
 
 		String reqSql = "SELECT " + selection + " FROM " + source + " GROUP BY " + group;
-		System.out.println(reqSql);
+	
 
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		Statement statement = connection.createStatement();
@@ -256,7 +254,7 @@ public class AffectationChantier {
 
 	/**
 	 * Return a list of stats for each site in a <type> ResultSet</type> Column 1 :
-	 * siteId Column 2 : name Column 3 : CA Column 4 : Number of Employee affected
+	 * site Column 2 : name Column 3 : CA Column 4 : Number of Employee affected
 	 * Column 5 : Sum of all hours affected
 	 * 
 	 * @return <type> ResultSet </type> statement ResultSet
@@ -280,7 +278,7 @@ public class AffectationChantier {
 
 	/**
 	 * Return a list of stats for each site in a <type> ResultSet</type> Column 1 :
-	 * siteId Column 2 : name Column 3 : CA Column 4 : Number of Employee affected
+	 * site Column 2 : name Column 3 : CA Column 4 : Number of Employee affected
 	 * Column 5 : Sum of all hours affected
 	 * 
 	 * @return <type> ResultSet </type> statement ResultSet
@@ -303,22 +301,23 @@ public class AffectationChantier {
 	}
 
 	/**
-	 * Execute a query and return the list of all employee affected to the siteId
+	 * Execute a query and return the list of all employee affected to the site
 	 * entered in parameter
 	 * 
 	 * @param employeId
 	 * @return
 	 * @throws SQLException
 	 */
-	public static ResultSet getSiteAffectationPublished(int siteId, Month startMonth, Year startYear) throws SQLException {
+	public static ResultSet getSiteAffectationPublished(int site, Month startMonth, Year startYear)
+			throws SQLException {
 		String selection = "AffectationId,Nom,Prenom,AffectationChantier.Nombre_heures,AffectationChantier.AffectationId,Numero_matricule";
-		String source = "(Select * From Employe WHERE Employe.Status='Publié') as Employe INNER JOIN (Select * FROM AffectationChantier WHERE AffectationChantier.Status='Publié') as AffectationChantier ON Employe.EmployeId=AffectationChantier.Employe ";
+		String source = "(Select * From Employe WHERE Employe.Status='PubliÃ©') as Employe INNER JOIN (Select * FROM AffectationChantier WHERE AffectationChantier.Status='PubliÃ©') as AffectationChantier ON Employe.EmployeId=AffectationChantier.Employe ";
 		String condition = "AffectationChantier.Chantier=? AND MoisDebut=? AND AnneeDebut=?";
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		String reqSql = "SELECT " + selection + " FROM " + source + " WHERE " + condition;
 
 		PreparedStatement statement = connection.prepareStatement(reqSql);
-		statement.setObject(1, siteId, Types.INTEGER);
+		statement.setObject(1, site, Types.INTEGER);
 		statement.setObject(2, startMonth.getValue(), Types.INTEGER);
 		statement.setObject(3, startYear.getValue(), Types.INTEGER);
 		statement.execute();
@@ -326,24 +325,24 @@ public class AffectationChantier {
 	}
 
 	/**
-	 * Execute a query and return the list of all employee affected to the siteId
-	 * entered in parameter Only where Status ='Publié'
+	 * Execute a query and return the list of all employee affected to the site
+	 * entered in parameter Only where Status ='PubliÃ©'
 	 * 
 	 * @param employeId
 	 * @return
 	 * @throws SQLException
 	 */
-	public static ResultSet getSiteAffectationPublished(int siteId) throws SQLException {
+	public static ResultSet getSiteAffectationPublished(int site) throws SQLException {
 		String selection = "AffectationId,Nom,Prenom,AffectationChantier.Nombre_heures,AffectationChantier.AffectationId,Numero_matricule";
-		String source = "(Select * from Employe WHERE Employe.Status='Publié' ) as Employe INNER JOIN (Select * from AffectationChantier WHERE AffectationChantier.Status='Publié') as AffectationChantier ON Employe.EmployeId=AffectationChantier.Employe  ";
+		String source = "(Select * from Employe WHERE Employe.Status='PubliÃ©' ) as Employe INNER JOIN (Select * from AffectationChantier WHERE AffectationChantier.Status='PubliÃ©') as AffectationChantier ON Employe.EmployeId=AffectationChantier.Employe  ";
 		String condition = "AffectationChantier.Chantier=?";
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		String reqSql = "SELECT " + selection + " FROM " + source + " WHERE " + condition;
-		
+
 		PreparedStatement statement = connection.prepareStatement(reqSql);
-		statement.setObject(1, siteId, Types.INTEGER);
+		statement.setObject(1, site, Types.INTEGER);
 		statement.execute();
-		
+
 		return statement.getResultSet();
 	}
 
@@ -357,7 +356,7 @@ public class AffectationChantier {
 	 */
 	public static ResultSet getEmployeAffectationPubished(int employeId) throws SQLException {
 		String selection = "ChantierId,nom,adresse,Nombre_heures,AffectationChantier.AffectationId";
-		String source = " (Select * from Chantier where Chantier.Status='Publié') as Chantier INNER JOIN (Select * FROM AffectationChantier WHERE AffectationChantier.Status='Publié') as AffectationChantier ON Chantier.ChantierId=AffectationChantier.Chantier ";
+		String source = " (Select * from Chantier where Chantier.Status='PubliÃ©') as Chantier INNER JOIN (Select * FROM AffectationChantier WHERE AffectationChantier.Status='PubliÃ©') as AffectationChantier ON Chantier.ChantierId=AffectationChantier.Chantier ";
 		String condition = "AffectationChantier.Employe=?";
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		String reqSql = "SELECT " + selection + " FROM " + source + " WHERE " + condition;
@@ -379,13 +378,13 @@ public class AffectationChantier {
 	public static ResultSet getEmployeAffectationPublished(int employeId) throws SQLException {
 		String selection = "ChantierId,nom,adresse,Nombre_heures,AffectationChantier.AffectationId";
 		String source = "chantier INNER JOIN AffectationChantier ON Chantier.ChantierId=AffectationChantier.Chantier ";
-		String condition = "AffectationChantier.Employe=?  AND AffectationChantier.Status='Publié' AND Chantier.Status='Publié'";
+		String condition = "AffectationChantier.Employe=?  AND AffectationChantier.Status='PubliÃ©' AND Chantier.Status='PubliÃ©'";
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		String reqSql = "SELECT " + selection + " FROM " + source + " WHERE " + condition;
 
 		PreparedStatement statement = connection.prepareStatement(reqSql);
 		statement.setObject(1, employeId, Types.INTEGER);
-		
+
 		statement.execute();
 		return statement.getResultSet();
 	}
@@ -424,11 +423,11 @@ public class AffectationChantier {
 	 * @return <type> Affectation</type>
 	 * @throws SQLException
 	 */
-	public static AffectationChantier getAffectation(int affectationId) throws SQLException {
+	public static SiteAssignment getAffectation(int affectationId) throws SQLException {
 		ResultSet result = getAffectationResultSet(affectationId);
-		System.out.println(affectationId + "affectationId");
+	
 		if (result.next()) {
-			System.out.println(result.toString());
+		
 			int chantier = result.getInt("Chantier");
 			int employe = result.getInt("Employe");
 			Double nombre_heures;
@@ -440,7 +439,7 @@ public class AffectationChantier {
 			Year startYear = Year.of(result.getInt("AnneeDebut"));
 			Status status = Status.getStatus(result.getString("status"));
 
-			return new AffectationChantier(affectationId, chantier, employe, nombre_heures, startMonth, startYear, status);
+			return new SiteAssignment(affectationId, chantier, employe, nombre_heures, startMonth, startYear, status);
 		}
 
 		throw new SQLException("data not found");
@@ -457,13 +456,13 @@ public class AffectationChantier {
 
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
-		statement.setObject(1, this.chantier, Types.INTEGER);
-		statement.setObject(2, this.employe, Types.INTEGER);
+		statement.setObject(1, this.site, Types.INTEGER);
+		statement.setObject(2, this.employee, Types.INTEGER);
 		statement.setObject(3, this.nbHours, Types.DECIMAL);
 		statement.setObject(4, this.startMonth.getValue(), Types.INTEGER);
 		statement.setObject(5, this.startYear.getValue(), Types.INTEGER);
-		statement.setObject(6, this.affectationId, Types.INTEGER);
-		System.out.println(reqSql);
+		statement.setObject(6, this.assignementId, Types.INTEGER);
+	
 
 		return statement.executeUpdate();
 
@@ -476,16 +475,12 @@ public class AffectationChantier {
 	 * @throws SQLException
 	 */
 	public int remove() throws SQLException {
-		String reqSql = "UPDATE AffectationChantier SET Status='Archivé' WHERE affectationId=?";
+		String reqSql = "UPDATE AffectationChantier SET Status='ArchivÃ©' WHERE affectationId=?";
 
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
 
-		statement.setObject(1, this.affectationId, Types.INTEGER);
-
-		
-		
-	
+		statement.setObject(1, this.assignementId, Types.INTEGER);
 
 		return statement.executeUpdate();
 
@@ -520,24 +515,24 @@ public class AffectationChantier {
 	}
 
 	/**
-	 * getter for the attribute idChantier
+	 * getter for the attribute site
 	 * 
-	 * @return <type> Integer</type> idChantier
+	 * @return <type> Integer</type> site
 	 */
-	public Integer getIdChantier() {
-		return chantier;
+	public Integer getSite() {
+		return site;
 	}
 
 	/**
-	 * setter for the attribute idChantier
+	 * setter for the attribute site
 	 * 
-	 * @param <type> Integer </type> idChantier
+	 * @param <type> Integer </type> site
 	 */
-	public void setIdChantier(Integer idChantier) {
-		if (idChantier == null) {
-			throw new Error("setIdChantier : le idChantier indique est vide");
+	public void setSite(Integer site) {
+		if (site == null) {
+			throw new Error("setsite : le site indique est vide");
 		}
-		this.chantier = idChantier;
+		this.site = site;
 	}
 
 	/**
@@ -545,8 +540,8 @@ public class AffectationChantier {
 	 * 
 	 * @return <type> Integer</type> idEmploye
 	 */
-	public Integer getIdEmploye() {
-		return employe;
+	public Integer getEmployee() {
+		return employee;
 	}
 
 	/**
@@ -554,11 +549,11 @@ public class AffectationChantier {
 	 * 
 	 * @param <type> Integer </type>idEmploye
 	 */
-	public void setIdEmploye(Integer idEmploye) {
-		if (idEmploye == null) {
+	public void setEmployee(Integer employee) {
+		if (employee == null) {
 			throw new Error("setIdEmploye : le idEmploye indique est vide");
 		}
-		this.employe = idEmploye;
+		this.employee = employee;
 	}
 
 	/**
@@ -566,7 +561,7 @@ public class AffectationChantier {
 	 * 
 	 * @return <type> Double </type> nbHours
 	 */
-	public Double getNombreHeures() {
+	public Double getNbHours() {
 		return nbHours;
 	}
 
@@ -588,7 +583,7 @@ public class AffectationChantier {
 	 * @return <type> Integer </type> affectationId
 	 */
 	public Integer getAffectationId() {
-		return affectationId;
+		return assignementId;
 	}
 
 	/**
@@ -596,11 +591,11 @@ public class AffectationChantier {
 	 * 
 	 * @param <type> Integer </type> affectationId
 	 */
-	public void setAffectationId(Integer affectationId) {
+	public void setAssignment(Integer affectationId) {
 		if (affectationId == null) {
 			throw new Error("setAffectationId : le AffectationId indique est vide");
 		}
-		this.affectationId = affectationId;
+		this.assignementId = affectationId;
 	}
 
 	/**
@@ -654,17 +649,16 @@ public class AffectationChantier {
 
 	public static void printAllAffectation() throws SQLException {
 
-		List<AffectationChantier> allAffectation = getAllAffectation();
+		List<SiteAssignment> allAffectation = getAllAffectation();
 
-		for (AffectationChantier affectation : allAffectation)
+		for (SiteAssignment affectation : allAffectation)
 			System.out.println(affectation);
 	}
 
 	@Override
 	public String toString() {
 
-		return "" + this.affectationId + "|" + this.employe + "|" + this.chantier + "|" + this.nbHours + "|"
-				+ this.status;
+		return "" + this.assignementId + "|" + this.employee + "|" + this.site + "|" + this.nbHours + "|" + this.status;
 	}
 
 }

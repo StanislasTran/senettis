@@ -45,7 +45,7 @@ public class VueEmploye {
 
 	////////////////////////////////////////////////////////////////////////////////////
 	/***
-	 * Utilisé depuis Home pour créer une vueEmploye
+	 * UtilisÃ© depuis Home pour crÃ©er une vueEmploye
 	 * 
 	 * @param composite : le composite contenuColonneGauche qui va contenir
 	 *                  vueEmploye
@@ -72,7 +72,7 @@ public class VueEmploye {
 	}
 
 	/***
-	 * Pour créer une vueEmploye : Appelle les fonctions compositeSelectionCreer et
+	 * Pour crÃ©er une vueEmploye : Appelle les fonctions compositeSelectionCreer et
 	 * vueEmployeAfficher pour creer les composites Vue et selection
 	 * 
 	 * @param composite : composite vueEmploye
@@ -98,7 +98,7 @@ public class VueEmploye {
 
 		String s;
 		int addSize;
-		s = "Gestion des amortissement employés";
+		s = "Gestion des amortissement employÃ©s";
 		addSize = (595 - 20) / 2;
 
 		selection = new Composite(vueEmploye, SWT.CENTER);
@@ -147,7 +147,7 @@ public class VueEmploye {
 		rl.type = SWT.HORIZONTAL;
 
 		Button boutonCreation = new Button(selection2, SWT.CENTER);
-		boutonCreation.setText("Créer");
+		boutonCreation.setText("CrÃ©er");
 		boutonCreation.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
@@ -177,13 +177,13 @@ public class VueEmploye {
 								.getAmmortissementEmployeById(selectedAmorti.getAmmortissementEmployeId());
 						MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_QUESTION | SWT.YES | SWT.NO);
 						dialog.setText("Suppression Amortissement Employe");
-						dialog.setMessage("Voulez vous supprimer le coût à amortir de l'employé "
+						dialog.setMessage("Voulez vous supprimer le coÃ»t Ã  amortir de l'employÃ© "
 								+ Employee.getEmployeById(ae.getEmployeId()).getNom() + " "
 								+ Employee.getEmployeById(ae.getEmployeId()).getPrenom() + " ?");
 						int buttonID = dialog.open();
 						switch (buttonID) {
 						case SWT.YES:
-							ae.setStatus("Archivé");
+							ae.setStatus("ArchivÃ©");
 							ae.updateDatabase();
 							updateTableAmorti();
 						}
@@ -239,7 +239,7 @@ public class VueEmploye {
 		compoEmp.setBackground(Couleur.bleuClair);
 
 		Label emp = new Label(compoEmp, SWT.NONE);
-		emp.setText("Choisir un employé :");
+		emp.setText("Choisir un employÃ© :");
 		emp.setBackground(Couleur.bleuClair);
 
 		tableEmp = new Table(compoEmp, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.FULL_SELECTION);
@@ -264,7 +264,7 @@ public class VueEmploye {
 		compoAmorti.setBackground(Couleur.bleuClair);
 
 		Label amorti = new Label(compoAmorti, SWT.NONE);
-		amorti.setText("Coûts liés à cet employé :");
+		amorti.setText("CoÃ»ts liÃ©s Ã  cet employÃ© :");
 		amorti.setBackground(Couleur.bleuClair);
 
 		tableAmorti = new Table(compoAmorti, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.FULL_SELECTION);
@@ -274,7 +274,7 @@ public class VueEmploye {
 		tableAmorti.layout(true, true);
 
 		// on met les noms des colonnes
-		String[] titles2 = { "Id", "Début", "Fin", "Montant par mois", "Valeur totale", "Type", "Description" };
+		String[] titles2 = { "Id", "DÃ©but", "Fin", "Montant par mois", "Valeur totale", "Type", "Description" };
 		for (String title : titles2) {
 			TableColumn column = new TableColumn(tableAmorti, SWT.NONE);
 			column.setText(title);
@@ -302,11 +302,11 @@ public class VueEmploye {
 		String s;
 		int addSize;
 		if (i == 1) {
-			s = "Modification d'un coût à amortir";
+			s = "Modification d'un coÃ»t Ã  amortir";
 			addSize = vue.getSize().x;
 			addSize = (addSize - 235) / 2;
 		} else {
-			s = "Création d'un coût à amortir";
+			s = "CrÃ©ation d'un coÃ»t Ã  amortir";
 			addSize = vue.getSize().x;
 			addSize = (addSize - 210) / 2;
 		}
@@ -364,7 +364,7 @@ public class VueEmploye {
 		colonne1.setLayout(fillLayoutV);
 		colonne2.setLayout(fillLayoutV);
 
-		// utilisé pour tous les composites des arguments
+		// utilisÃ© pour tous les composites des arguments
 		FillLayout fillLayoutH5 = new FillLayout();
 		fillLayoutH5.marginHeight = 30;
 		fillLayoutH5.spacing = 5;
@@ -375,7 +375,7 @@ public class VueEmploye {
 		compositeEmploye.setLayout(fillLayoutH5);
 
 		Label labelEmploye = new Label(compositeEmploye, SWT.NONE);
-		labelEmploye.setText("Employé* : ");
+		labelEmploye.setText("EmployÃ©* : ");
 		labelEmploye.setBackground(Couleur.bleuClair);
 		// Titre
 		Combo employes = new Combo(compositeEmploye, SWT.BORDER);
@@ -402,7 +402,7 @@ public class VueEmploye {
 		}
 		try {
 			for (Employee e : Employee.getAllEmploye()) {
-				if (e.getStatus() == "Publié") {
+				if (e.getStatus() == "PubliÃ©") {
 					if (e.getNameString().length() > 25) {
 						employes.add(e.getNameString().substring(0, 23) + "..." + ";id:"
 								+ ((Integer) e.getEmployeId()).toString());
@@ -425,7 +425,7 @@ public class VueEmploye {
 		compositePeriode.setLayout(fillLayoutH5);
 
 		Label labelPeriode = new Label(compositePeriode, SWT.NONE);
-		labelPeriode.setText("Début* : ");
+		labelPeriode.setText("DÃ©but* : ");
 		labelPeriode.setBackground(Couleur.bleuClair);
 
 		Combo periode = new Combo(compositePeriode, SWT.BORDER);
@@ -451,7 +451,7 @@ public class VueEmploye {
 
 		Label labelDuree = new Label(compositeDuree, SWT.NONE);
 		labelDuree.setBackground(Couleur.bleuClair);
-		labelDuree.setText("Durée (en mois)* : ");
+		labelDuree.setText("DurÃ©e (en mois)* : ");
 
 		final Text textDuree = new Text(compositeDuree, SWT.BORDER);
 		if (j == 1) {
@@ -497,9 +497,9 @@ public class VueEmploye {
 		if (j == 1) {
 			type.setText(selectedAmorti.getType());
 		} else {
-			type.setText("Prêt");
+			type.setText("PrÃªt");
 		}
-		type.add("Prêt");
+		type.add("PrÃªt");
 		type.add("Saisie Arret");
 
 		// valeur
@@ -558,19 +558,19 @@ public class VueEmploye {
 					if (selectedAmorti != null) {
 						ae = new AmmortissementEmploye(selectedAmorti.getAmmortissementEmployeId(), employeId, moisD,
 								anneeD, moisF, anneeF, textDesc.getText(), valeurTotale / duree, duree, valeurTotale,
-								type.getText(), "Publié");
+								type.getText(), "PubliÃ©");
 						ae.updateDatabase();
 						MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_INFORMATION | SWT.OK);
-						dialog.setText("Modification réussie");
-						dialog.setMessage("Ce cout a bien été modifié dans la base de données.");
+						dialog.setText("Modification rÃ©ussie");
+						dialog.setMessage("Ce cout a bien Ã©tÃ© modifiÃ© dans la base de donnÃ©es.");
 						dialog.open();
 					} else {
 						ae = new AmmortissementEmploye(employeId, moisD, anneeD, moisF, anneeF, valeurTotale / duree,
-								textDesc.getText(), duree, valeurTotale, type.getText(), "Publié");
+								textDesc.getText(), duree, valeurTotale, type.getText(), "PubliÃ©");
 						ae.insertDatabase();
 						MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_INFORMATION | SWT.OK);
-						dialog.setText("Création réussie");
-						dialog.setMessage("Ce cout a bien été ajouté dans la base de données.");
+						dialog.setText("CrÃ©ation rÃ©ussie");
+						dialog.setMessage("Ce cout a bien Ã©tÃ© ajoutÃ© dans la base de donnÃ©es.");
 						dialog.open();
 					}
 					vueAmortissement();
@@ -578,9 +578,9 @@ public class VueEmploye {
 					e.printStackTrace();
 					System.out.println("erreur dans la creation");
 					MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_ERROR | SWT.OK);
-					dialog.setText("Erreur Création");
+					dialog.setText("Erreur CrÃ©ation");
 					dialog.setMessage(
-							"Une erreur est survenue lors de la création du cout à amortir. " + '\n' + e.getMessage());
+							"Une erreur est survenue lors de la crÃ©ation du cout Ã  amortir. " + '\n' + e.getMessage());
 					dialog.open();
 				}
 			}
@@ -613,7 +613,7 @@ public class VueEmploye {
 		try {
 			for (Employee e : Employee.getAllEmploye()) {
 				// on verifie le status
-				if (e.getStatus().equals("Publié")) {
+				if (e.getStatus().equals("PubliÃ©")) {
 					TableItem item = new TableItem(tableEmp, SWT.NONE);
 					item.setText(0, ((Integer) e.getEmployeId()).toString());
 					item.setText(1, e.getNom());
@@ -678,7 +678,7 @@ public class VueEmploye {
 		try {
 			for (AmmortissementEmploye a : AmmortissementEmploye.getAllAmmortissementEmploye()) {
 				// on verifie le status
-				if (a.getStatus().equals("Publié") && selectedEmploye.getEmployeId() == a.getEmployeId()) {
+				if (a.getStatus().equals("PubliÃ©") && selectedEmploye.getEmployeId() == a.getEmployeId()) {
 					TableItem item = new TableItem(tableAmorti, SWT.NONE);
 					item.setText(0, a.getAmmortissementEmployeId().toString());
 					item.setText(1, a.getMoisD().toString() + '/' + a.getAnneeD().toString());
@@ -755,7 +755,7 @@ public class VueEmploye {
 
 		String s;
 		int addSize;
-		s = "Gestion des coûts employés";
+		s = "Gestion des coÃ»ts employÃ©s";
 		addSize = (1000 - 150) / 2;
 
 		selection = new Composite(vueEmploye, SWT.CENTER);
@@ -832,7 +832,7 @@ public class VueEmploye {
 		});
 
 		Button boutonMoisPrecedent = new Button(selection2, SWT.CENTER);
-		boutonMoisPrecedent.setText("Récupérer les valeurs précédentes");
+		boutonMoisPrecedent.setText("RÃ©cupÃ©rer les valeurs prÃ©cÃ©dentes");
 		boutonMoisPrecedent.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
@@ -840,7 +840,7 @@ public class VueEmploye {
 					String[] moisAnnee = periode.getText().split(" ");
 					Integer mois = Month.valueOf(moisAnnee[0]).getValue();
 					Integer annee = Integer.parseInt(moisAnnee[1]);
-					// je calcule le mois et l'annee que je dois recuperer dans la base de données
+					// je calcule le mois et l'annee que je dois recuperer dans la base de donnÃ©es
 					if (mois == 1) {
 						mois = 12;
 						annee -= 1;
@@ -877,7 +877,7 @@ public class VueEmploye {
 		});
 
 		Button boutonGestionCouts = new Button(selection2, SWT.CENTER);
-		boutonGestionCouts.setText("Gérer les couts à amortir");
+		boutonGestionCouts.setText("GÃ©rer les couts Ã  amortir");
 		boutonGestionCouts.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
@@ -892,7 +892,7 @@ public class VueEmploye {
 		espace.setBackground(Couleur.bleuClair);
 		
 		Button boutonAnnuler = new Button(selection2, SWT.CENTER);
-		boutonAnnuler.setText("    Retour aux employés    ");
+		boutonAnnuler.setText("    Retour aux employÃ©s    ");
 		boutonAnnuler.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
@@ -919,7 +919,7 @@ public class VueEmploye {
 						int mois = Integer.parseInt(periode[0]);
 						int annee = Integer.parseInt(periode[1]);
 
-						CoutsEmploye ce = new CoutsEmploye(employeId, mois, annee, "Publié");
+						CoutsEmploye ce = new CoutsEmploye(employeId, mois, annee, "PubliÃ©");
 						System.out.println("on a cree ");
 
 						if (!tableCouts.getItem(ligne).getText(5).isBlank()) {
@@ -1001,7 +1001,7 @@ public class VueEmploye {
 
 						System.out.println("on a tout rempli");
 
-						if (!empty) {// si au moins un champs est renseigné
+						if (!empty) {// si au moins un champs est renseignÃ©
 							try {
 
 								if (ce.updateDatabaseFromEmployeId() == 0) {
@@ -1027,8 +1027,8 @@ public class VueEmploye {
 							+ ((Integer) Integer.parseInt(moisAnnee[1])).toString();
 					System.out.println("on a modifie les couts employe !!");
 					MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_INFORMATION | SWT.OK);
-					dialog.setText("Modification réussie");
-					dialog.setMessage("Les couts employé ont bien été modifiés dans la base de données.");
+					dialog.setText("Modification rÃ©ussie");
+					dialog.setMessage("Les couts employÃ© ont bien Ã©tÃ© modifiÃ©s dans la base de donnÃ©es.");
 					dialog.open();
 					updateCoutsTable(periode);
 					vue.pack();
@@ -1080,7 +1080,7 @@ public class VueEmploye {
 		validation.setBackground(Couleur.gris);
 
 		Button boutonAnnuler = new Button(validation, SWT.CENTER);
-		boutonAnnuler.setText("    Retour aux employés    ");
+		boutonAnnuler.setText("    Retour aux employÃ©s    ");
 		boutonAnnuler.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
@@ -1107,7 +1107,7 @@ public class VueEmploye {
 						int mois = Integer.parseInt(periode[0]);
 						int annee = Integer.parseInt(periode[1]);
 
-						CoutsEmploye ce = new CoutsEmploye(employeId, mois, annee, "Publié");
+						CoutsEmploye ce = new CoutsEmploye(employeId, mois, annee, "PubliÃ©");
 						System.out.println("on a cree ");
 
 						if (!tableCouts.getItem(ligne).getText(5).isBlank()) {
@@ -1189,7 +1189,7 @@ public class VueEmploye {
 
 						System.out.println("on a tout rempli");
 
-						if (!empty) {// si au moins un champs est renseigné
+						if (!empty) {// si au moins un champs est renseignÃ©
 							try {
 
 								if (ce.updateDatabaseFromEmployeId() == 0) {
@@ -1215,8 +1215,8 @@ public class VueEmploye {
 							+ ((Integer) Integer.parseInt(moisAnnee[1])).toString();
 					System.out.println("on a modifie les couts employe !!");
 					MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_INFORMATION | SWT.OK);
-					dialog.setText("Modification réussie");
-					dialog.setMessage("Les couts employé ont bien été modifiés dans la base de données.");
+					dialog.setText("Modification rÃ©ussie");
+					dialog.setMessage("Les couts employÃ© ont bien Ã©tÃ© modifiÃ©s dans la base de donnÃ©es.");
 					dialog.open();
 					updateCoutsTable(periode);
 					vue.pack();
@@ -1248,7 +1248,7 @@ public class VueEmploye {
 		tableCouts.setHeaderVisible(true);
 
 		// on met les noms des colonnes
-		String[] titles = { "Id", "Nom", "Prenom", "Matricule", "Période", "salaire Net", "salaire Brut",
+		String[] titles = { "Id", "Nom", "Prenom", "Matricule", "PÃ©riode", "salaire Net", "salaire Brut",
 				"nombreHeures", "charges patronales", "masse salariale", "Transport", "Telephone", "mutuelle",
 				"paniers", "prets", "saisie arret" };
 		for (String title : titles) {
@@ -1266,7 +1266,7 @@ public class VueEmploye {
 
 		try {
 			for (Employee e : Employee.getAllEmploye()) {
-				if (e.getStatus().equals("Publié")) {
+				if (e.getStatus().equals("PubliÃ©")) {
 					TableItem item = new TableItem(tableCouts, SWT.NONE);
 					item.setText(0, Integer.toString(e.getEmployeId()));
 					item.setText(1, e.getNom());
@@ -1278,7 +1278,7 @@ public class VueEmploye {
 						System.out.println("ici");
 						CoutsEmploye ce = CoutsEmploye.getCoutEmployeByEmployeId(e.getEmployeId(), moisInt.getValue(),
 								Integer.parseInt(annee));
-						if (ce.getStatus().equals("Publié")) {
+						if (ce.getStatus().equals("PubliÃ©")) {
 							item.setText(5, ce.getSalaireNet().toString());
 							item.setText(6, ce.getSalaireBrut().toString());
 							item.setText(7, ce.getNombreHeures().toString());
@@ -1295,7 +1295,7 @@ public class VueEmploye {
 							for (AmmortissementEmploye ae : AmmortissementEmploye
 									.getAmmortissementEmployeByEmployeId(e.getEmployeId())) {
 								System.out.println("dans la boucle");
-								if (ae.getStatus().equals("Publié")) {
+								if (ae.getStatus().equals("PubliÃ©")) {
 
 									YearMonth debut = YearMonth.of(ae.getAnneeD(), ae.getMoisD());
 									YearMonth fin = YearMonth.of(ae.getAnneeF(), ae.getMoisF());
@@ -1307,7 +1307,7 @@ public class VueEmploye {
 									System.out.println(debut.isBefore(now) && fin.isAfter(now));
 									if (debut.equals(now) 
 											|| (debut.isBefore(now) && fin.isAfter(now))) {
-										if (ae.getType().equals("Prêt")) {
+										if (ae.getType().equals("PrÃªt")) {
 											pret += ae.getMontantParMois();
 										} else {
 											saisie += ae.getMontantParMois();
@@ -1655,7 +1655,7 @@ public class VueEmploye {
 
 		selection.setBackground(Couleur.bleuFonce);
 		Label HeadLabel = new Label(selection, SWT.TITLE);
-		HeadLabel.setText("Récupération d'un Employe");
+		HeadLabel.setText("RÃ©cupÃ©ration d'un Employe");
 		Font fontTitle = new Font(HeadLabel.getDisplay(), "Arial", 12, SWT.BOLD);
 		HeadLabel.setForeground(Couleur.bleuClair);
 		HeadLabel.setFont(fontTitle);
@@ -1686,7 +1686,7 @@ public class VueEmploye {
 		colonne1.setBackground(Couleur.bleuClair);
 		colonne1.setLayout(fillLayoutV);
 
-		// utilisé pour tous les composites des arguments
+		// utilisÃ© pour tous les composites des arguments
 		FillLayout fillLayoutH5 = new FillLayout();
 		fillLayoutH5.marginHeight = 30;
 		fillLayoutH5.spacing = 5;
@@ -1699,7 +1699,7 @@ public class VueEmploye {
 
 		Label labelTitre = new Label(compositeTitre, SWT.NONE);
 		labelTitre.setBackground(Couleur.bleuClair);
-		labelTitre.setText("Merci de renseigner un matricule ou un nom\net un prénom.");
+		labelTitre.setText("Merci de renseigner un matricule ou un nom\net un prÃ©nom.");
 
 		// Nom
 		Composite compositeNom = new Composite(colonne1, SWT.NONE);
@@ -1720,7 +1720,7 @@ public class VueEmploye {
 
 		Label labelPrenom = new Label(compositePrenom, SWT.NONE);
 		labelPrenom.setBackground(Couleur.bleuClair);
-		labelPrenom.setText("Prénom : ");
+		labelPrenom.setText("PrÃ©nom : ");
 
 		final Text textPrenom = new Text(compositePrenom, SWT.BORDER);
 		textPrenom.setText("");
@@ -1757,19 +1757,19 @@ public class VueEmploye {
 					} else if (!textNom.getText().isBlank() && !textPrenom.getText().isBlank()) {
 						Employee.retrieveByNomPrenom(textNom.getText(), textPrenom.getText());
 					} else {
-						throw new Error("Merci d'indiquer un nom et prénom ou un matricule.");
+						throw new Error("Merci d'indiquer un nom et prÃ©nom ou un matricule.");
 					}
 					System.out.println("on a recuperer employe !!");
 					MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_INFORMATION | SWT.OK);
-					dialog.setText("Récupération réussie");
-					dialog.setMessage("L'employé a été rajouté à la base de données.");
+					dialog.setText("RÃ©cupÃ©ration rÃ©ussie");
+					dialog.setMessage("L'employÃ© a Ã©tÃ© rajoutÃ© Ã  la base de donnÃ©es.");
 					dialog.open();
 					newVueEmploye();
 				} catch (Throwable e) {
 					e.printStackTrace();
 					System.out.println("erreur dans la recup");
 					MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_ERROR | SWT.OK);
-					dialog.setText("Erreur Récupération");
+					dialog.setText("Erreur RÃ©cupÃ©ration");
 					dialog.setMessage("Une erreur est survenue. " + '\n' + e.getMessage());
 					dialog.open();
 				}
@@ -1799,7 +1799,7 @@ public class VueEmploye {
 
 	/***
 	 * va appeler les fonctions qui modifie la partie vue et la partie selection
-	 * afin d'afficher le formulaire de création appelle titreCreation et
+	 * afin d'afficher le formulaire de crÃ©ation appelle titreCreation et
 	 * formulaireCreation
 	 */
 	public static void vueEmployeFormulaire(int i) {
@@ -1824,7 +1824,7 @@ public class VueEmploye {
 		String s;
 		int addSize;
 		if (i ==1) {
-			s = "Modification d'un employé";
+			s = "Modification d'un employÃ©";
 			addSize = vue.getSize().x;
 			addSize = (addSize - 198) / 2;
 		} else {
@@ -1931,7 +1931,7 @@ public class VueEmploye {
 		colonne1.setLayout(fillLayoutV);
 		colonne2.setLayout(fillLayoutV);
 
-		// utilisé pour tous les composites des arguments
+		// utilisÃ© pour tous les composites des arguments
 		FillLayout fillLayoutH5 = new FillLayout();
 		fillLayoutH5.marginHeight = 30;
 		fillLayoutH5.spacing = 5;
@@ -2048,7 +2048,7 @@ public class VueEmploye {
 
 		Label labelDateArrivee = new Label(compositeDateArrivee, SWT.NONE);
 		labelDateArrivee.setBackground(Couleur.bleuClair);
-		labelDateArrivee.setText("Date d'arrivée : ");
+		labelDateArrivee.setText("Date d'arrivÃ©e : ");
 
 		final Text textDateArrivee = new Text(compositeDateArrivee, SWT.BORDER);
 		textDateArrivee.setText(dateArrivee);
@@ -2075,8 +2075,8 @@ public class VueEmploye {
 					e.printStackTrace();
 					
 					MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_ERROR | SWT.OK);
-					dialog.setText("Erreur Création/Modification");
-					dialog.setMessage("Une erreur est survenue lors de la création/modification de l'employé. " + '\n'
+					dialog.setText("Erreur CrÃ©ation/Modification");
+					dialog.setMessage("Une erreur est survenue lors de la crÃ©ation/modification de l'employÃ©. " + '\n'
 							+ e.getMessage());
 					dialog.open();
 				}
@@ -2118,12 +2118,12 @@ public class VueEmploye {
 			String textMail, String textTelephone, String textPointure, String textTaille, String textDateArrivee) {
 
 		if (textNom.isEmpty() || textPrenom.isEmpty() || textNumeroMatricule.isEmpty()) {
-			throw new Error("Merci d'indiquer au moins le nom, le prénom et le numéro de matricule de l'employé.");
+			throw new Error("Merci d'indiquer au moins le nom, le prÃ©nom et le numÃ©ro de matricule de l'employÃ©.");
 		}
 
 		// champs obligatoires
 		Employee employe = new Employee(titre, textNom, textPrenom, textNumeroMatricule);
-		employe.setStatus("Publié");
+		employe.setStatus("PubliÃ©");
 
 		// champs optionels
 		if (!(textMail.isEmpty())) {
@@ -2145,19 +2145,19 @@ public class VueEmploye {
 
 		}
 
-		// on insert dans la base de données
+		// on insert dans la base de donnÃ©es
 		try {
 			String t, texte;
 			if (selectedEmploye != null) {
 
 				employe.setEmployeId(selectedEmploye.getEmployeId());
 				employe.updateDatabase();
-				t = "Modification réussie";
-				texte = "L'employé a bien été modifié dans la base de données.";
+				t = "Modification rÃ©ussie";
+				texte = "L'employÃ© a bien Ã©tÃ© modifiÃ© dans la base de donnÃ©es.";
 			} else {
 				employe.insertDatabase();
-				t = "Création réussie";
-				texte = "L'employé a bien été ajouté à la base de données.";
+				t = "CrÃ©ation rÃ©ussie";
+				texte = "L'employÃ© a bien Ã©tÃ© ajoutÃ© Ã  la base de donnÃ©es.";
 			}
 
 			MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_INFORMATION | SWT.OK);
@@ -2168,9 +2168,9 @@ public class VueEmploye {
 		} catch (SQLException e) {
 
 			MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_ERROR | SWT.OK);
-			dialog.setText("Erreur Création");
+			dialog.setText("Erreur CrÃ©ation");
 			dialog.setMessage(
-					"Une erreur est survenue lors de la création/modification de l'employé. " + '\n' + e.getMessage());
+					"Une erreur est survenue lors de la crÃ©ation/modification de l'employÃ©. " + '\n' + e.getMessage());
 			dialog.open();
 		}
 	}
@@ -2190,7 +2190,7 @@ public class VueEmploye {
 
 		String s;
 		int addSize;
-		s = "Gestion des employés";
+		s = "Gestion des employÃ©s";
 		addSize = (847 - 145) / 2;
 
 		selection = new Composite(vueEmploye, SWT.CENTER);
@@ -2236,7 +2236,7 @@ public class VueEmploye {
 		selection2.setBackground(Couleur.bleuClair);
 
 		Button boutonCreer = new Button(selection2, SWT.CENTER);
-		boutonCreer.setText("Créer");
+		boutonCreer.setText("CrÃ©er");
 		boutonCreer.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
@@ -2271,8 +2271,8 @@ public class VueEmploye {
 						// on demande validation
 						MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_QUESTION | SWT.YES | SWT.NO);
 						dialog.setText("Suppression Employe");
-						dialog.setMessage("Voulez vous supprimer l'employé " + e.getNom() + " " + e.getPrenom()
-								+ " ?\nToutes les affectations et les couts liés à cet employé seront supprimés.");
+						dialog.setMessage("Voulez vous supprimer l'employÃ© " + e.getNom() + " " + e.getPrenom()
+								+ " ?\nToutes les affectations et les couts liÃ©s Ã  cet employÃ© seront supprimÃ©s.");
 						int buttonID = dialog.open();
 
 						switch (buttonID) {
@@ -2285,7 +2285,7 @@ public class VueEmploye {
 						MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_ERROR | SWT.OK);
 						dialog.setText("Erreur Supression");
 						dialog.setMessage(
-								"Une erreur est survenue lors de la supression de l'employé. " + '\n' + e.getMessage());
+								"Une erreur est survenue lors de la supression de l'employÃ©. " + '\n' + e.getMessage());
 						dialog.open();
 
 					}
@@ -2297,7 +2297,7 @@ public class VueEmploye {
 
 				// Bouton Supprimer
 				Button boutonAnciennete = new Button(selection2, SWT.CENTER);
-				boutonAnciennete.setText("Mettre à jour l'ancienneté prise en compte");
+				boutonAnciennete.setText("Mettre Ã  jour l'anciennetÃ© prise en compte");
 				boutonAnciennete.addSelectionListener(new SelectionAdapter() {
 					@Override
 					public void widgetSelected(SelectionEvent arg0) {
@@ -2326,7 +2326,7 @@ public class VueEmploye {
 		}
 
 		Button boutonCouts = new Button(selection2, SWT.CENTER);
-		boutonCouts.setText("Gérer les couts employés");
+		boutonCouts.setText("GÃ©rer les couts employÃ©s");
 		boutonCouts.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
@@ -2336,7 +2336,7 @@ public class VueEmploye {
 		});
 
 		Button boutonAncienEmploye = new Button(selection2, SWT.CENTER);
-		boutonAncienEmploye.setText("Récupérer ancien employé");
+		boutonAncienEmploye.setText("RÃ©cupÃ©rer ancien employÃ©");
 		boutonAncienEmploye.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
@@ -2374,8 +2374,8 @@ public class VueEmploye {
 		// on met les noms des colonnes //espaces dans les titres pour changer la taille
 		// des colonnes
 		String[] titles = { "Titre  ", "Nom          ", "Prenom       ", "Email                                    ",
-				"Téléphone    ", "Matricule", "Pointure", "Taille", "Date d'ancienneté", "Ancienneté", "Id DB",
-				"Ancienneté prise en compte" };
+				"TÃ©lÃ©phone    ", "Matricule", "Pointure", "Taille", "Date d'anciennetÃ©", "AnciennetÃ©", "Id DB",
+				"AnciennetÃ© prise en compte" };
 		for (String title : titles) {
 			TableColumn column = new TableColumn(tableGlobaleEmploye, SWT.NONE);
 			column.setText(title);
@@ -2428,7 +2428,7 @@ public class VueEmploye {
 
 	/***
 	 * 
-	 * methode utilisée pour remplir la table affichant les employes
+	 * methode utilisÃ©e pour remplir la table affichant les employes
 	 * 
 	 * @param table
 	 */
@@ -2440,7 +2440,7 @@ public class VueEmploye {
 		try {
 			for (Employee e : Employee.getAllEmploye()) {
 				// on verifie le status
-				if (e.getStatus().contentEquals("Publié")) {
+				if (e.getStatus().contentEquals("PubliÃ©")) {
 					TableItem item = new TableItem(tableGlobaleEmploye, SWT.NONE);
 					item.setText(0, e.getTitre());
 					item.setText(1, e.getNom());
@@ -2490,7 +2490,7 @@ public class VueEmploye {
 	}
 
 	/***
-	 * va archiver l'employe selectionne et les affections qui lui sont liées puis
+	 * va archiver l'employe selectionne et les affections qui lui sont liÃ©es puis
 	 * afficher la table des employes mise a jour
 	 * 
 	 * @param table
@@ -2502,7 +2502,7 @@ public class VueEmploye {
 		}
 
 		Employee e = Employee.getEmployeById(selectedEmploye.getEmployeId());
-		e.setStatus("Archivé");
+		e.setStatus("ArchivÃ©");
 		e.updateDatabase();
 
 		for (AffectationMiseABlanc a : AffectationMiseABlanc.getAllAffectation()) {
@@ -2514,7 +2514,7 @@ public class VueEmploye {
 
 		for (CoutsEmploye ce : CoutsEmploye.getAllCoutEmploye()) {
 			if (ce.getEmployeId() == e.getEmployeId()) {
-				ce.setStatus("Archivé");
+				ce.setStatus("ArchivÃ©");
 				ce.updateDatabase();
 			}
 		}
@@ -2571,13 +2571,13 @@ public class VueEmploye {
 								.getAmmortissementEmployeById(selectedAmorti.getAmmortissementEmployeId());
 						MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_QUESTION | SWT.YES | SWT.NO);
 						dialog.setText("Suppression Amortissement Employe");
-						dialog.setMessage("Voulez vous supprimer le coût à amortir de l'employé "
+						dialog.setMessage("Voulez vous supprimer le coÃ»t Ã  amortir de l'employÃ© "
 								+ Employee.getEmployeById(ae.getEmployeId()).getNom() + " "
 								+ Employee.getEmployeById(ae.getEmployeId()).getPrenom() + " ?");
 						int buttonID = dialog.open();
 						switch (buttonID) {
 						case SWT.YES:
-							ae.setStatus("Archivé");
+							ae.setStatus("ArchivÃ©");
 							ae.updateDatabase();
 							updateTableAmorti();
 						}
@@ -2585,8 +2585,8 @@ public class VueEmploye {
 						Employee e = Employee.getEmployeById(selectedEmploye.getEmployeId());
 						MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_QUESTION | SWT.YES | SWT.NO);
 						dialog.setText("Suppression Employe");
-						dialog.setMessage("Voulez vous supprimer l'employé " + e.getNom() + " " + e.getPrenom()
-								+ " ?\nToutes les affectations et les couts liés à cet employé seront supprimés.");
+						dialog.setMessage("Voulez vous supprimer l'employÃ© " + e.getNom() + " " + e.getPrenom()
+								+ " ?\nToutes les affectations et les couts liÃ©s Ã  cet employÃ© seront supprimÃ©s.");
 						int buttonID = dialog.open();
 						switch (buttonID) {
 						case SWT.YES:
@@ -2597,14 +2597,14 @@ public class VueEmploye {
 						TableItem item = (TableItem) tableCouts.getSelection()[0];
 						MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_QUESTION | SWT.YES | SWT.NO);
 						dialog.setText("Suppression Cout Employe");
-						dialog.setMessage("Voulez vous supprimer les couts de l'employé " + item.getText(1) + " "
+						dialog.setMessage("Voulez vous supprimer les couts de l'employÃ©" + item.getText(1) + " "
 								+ item.getText(2) + " ?");
 						int buttonID = dialog.open();
 						switch (buttonID) {
 						case SWT.YES:
 							int id = Integer.parseInt(item.getText(0));
 							CoutsEmploye ce = CoutsEmploye.getCoutEmployeById(id);
-							ce.setStatus("Archivé");
+							ce.setStatus("ArchivÃ©");
 							ce.updateDatabase();
 
 							String[] moisAnnee = item.getText(4).split("/");
@@ -2649,7 +2649,7 @@ public class VueEmploye {
 
 		// on met les noms des colonnes
 
-		String[] titles = { "Nom", "Prenom", "N° de matricule", "Id DB" };
+		String[] titles = { "Nom", "Prenom", "NÂ° de matricule", "Id DB" };
 
 		for (String title : titles) {
 			TableColumn column = new TableColumn(table, SWT.NONE);
@@ -2661,7 +2661,7 @@ public class VueEmploye {
 		try {
 			for (Employee e : Employee.getAllEmploye()) {
 				// on verifie le status
-				if (e.getStatus().contentEquals("Publié")) {
+				if (e.getStatus().contentEquals("PubliÃ©")) {
 					TableItem item = new TableItem(table, SWT.NONE);
 
 					item.setText(0, e.getNom());

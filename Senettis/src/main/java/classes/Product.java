@@ -118,7 +118,7 @@ public class Product {
 	 * @throws SQLException
 	 */
 	private static Statement selectAllPublished() throws SQLException {
-		String reqSql = "SELECT * FROM Produit WHERE Status='Publié'";
+		String reqSql = "SELECT * FROM Produit WHERE Status='Publiï¿½'";
 
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		Statement statement = connection.createStatement();
@@ -249,7 +249,7 @@ public class Product {
 	}
 
 	/**
-	 * Change a product status to 'Archivé'
+	 * Change a product status to 'ArchivÃ©'
 	 * 
 	 * @param productId
 	 * @return <type>int </type>
@@ -258,7 +258,7 @@ public class Product {
 	public static int removeById(int productId) throws SQLException {
 
 		String source = "Produit";
-		String modif = "status='Archivé'";
+		String modif = "status='ArchivÃ©'";
 		String condition = "ProduitId=?";
 		String reqSql = "Update " + source + " SET " + modif + " WHERE " + condition + " ;";
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());

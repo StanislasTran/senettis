@@ -42,7 +42,7 @@ public class FournitureSanitaire {
 		if ((Integer) fournitureSanitaireId != null) {
 			this.fournitureSanitaireId = fournitureSanitaireId;
 		} else {
-			throw new Error("Le fournitureSanitaireId est vide, merci de spécifier un id ou d'utiliser un autre constructeur.");
+			throw new Error("Le fournitureSanitaireId est vide, merci de spï¿½cifier un id ou d'utiliser un autre constructeur.");
 		}
 	}
 	
@@ -58,31 +58,31 @@ public class FournitureSanitaire {
 		if ((Integer) chantierId != null) {
 			this.chantierId = chantierId;
 		} else {
-			throw new Error("L'chantierId est vide, merci de spécifier un id.");
+			throw new Error("L'chantierId est vide, merci de spï¿½cifier un id.");
 		}
 		
 		if (moisD != null) {
 			this.moisD = moisD;
 		} else {
-			throw new Error("Le mois de depart n'est pas spécifié.");
+			throw new Error("Le mois de depart n'est pas spï¿½cifiï¿½.");
 		}
 		
 		if (anneeD != null) {
 			this.anneeD = anneeD;
 		} else {
-			throw new Error("L'annee de depart n'est pas spécifiée.");
+			throw new Error("L'annee de depart n'est pas spï¿½cifiï¿½e.");
 		}
 		
 		if (status != null) {
 			if (!status.isEmpty()) {
-				if (status.equals("Publié") || status.equals("publié")) {
-					this.status = "Publié";
-				} else if (status.equals("Archivé") || status.equals("archivé"))  {
-					this.status = "Archivé";
+				if (status.equals("PubliÃ©") || status.equals("PubliÃ©")) {
+					this.status = "PubliÃ©";
+				} else if (status.equals("ArchivÃ©") || status.equals("ArchivÃ©"))  {
+					this.status = "ArchivÃ©";
 				} else if (status.equals("Draft") || status.equals("draft")) {
 					this.status = "Draft";
 				} else {
-					throw new Error("Le status indiqué est incorrect, le status doit être publié, archivé ou draft.");
+					throw new Error("Le status indiquï¿½ est incorrect, le status doit ï¿½tre PubliÃ©, ArchivÃ© ou draft.");
 				}
 			} else {
 				this.status = null;
@@ -218,7 +218,7 @@ public class FournitureSanitaire {
 	
 	public static ResultSet getAllCFSAfterResultSet( Month month, Year year)
 			throws SQLException {
-		String reqSql = "select chantier,Sum(valeurParMois) as SUM from FournitureSanitaire WHERE status ='Publié' AND (anneeDepart<? OR (anneeDepart=? AND moisDepart<=?) OR (AnneeDepart is Null AND MoisDepart is Null)) GROUP BY chantier;";
+		String reqSql = "select chantier,Sum(valeurParMois) as SUM from FournitureSanitaire WHERE status ='PubliÃ©' AND (anneeDepart<? OR (anneeDepart=? AND moisDepart<=?) OR (AnneeDepart is Null AND MoisDepart is Null)) GROUP BY chantier;";
 
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
@@ -260,17 +260,17 @@ public class FournitureSanitaire {
 
 	public void setStatus(String status) {
 		if (status != null) {
-			if (status == "Publié" || status == "publié") {
-				this.status = "Publié";
-			} else if (status == "Archivé" || status == "archivé") {
-				this.status = "Archivé";
+			if (status == "PubliÃ©" || status == "PubliÃ©") {
+				this.status = "PubliÃ©";
+			} else if (status == "ArchivÃ©" || status == "ArchivÃ©") {
+				this.status = "ArchivÃ©";
 			} else if (status == "Draft" || status == "draft") {
 				this.status = "Draft";
 			} else {
-				throw new Error("Le status indiqué est incorrect, le status doit être publié, archivé ou draft.");
+				throw new Error("Le status indiquï¿½ est incorrect, le status doit ï¿½tre PubliÃ©, ArchivÃ© ou draft.");
 			}
 		} else {
-			throw new Error("Le status indiqué est vide.");
+			throw new Error("Le status indiquï¿½ est vide.");
 		}
 	}
 

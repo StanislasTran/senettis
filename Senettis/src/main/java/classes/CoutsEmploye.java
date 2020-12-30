@@ -51,7 +51,7 @@ public class CoutsEmploye {
 		if ((Integer) coutEmployeId != null) {
 			this.coutEmployeId = coutEmployeId;
 		} else {
-			throw new Error("Le coutEmployeId est vide, merci de spécifier un id ou d'utiliser un autre constructeur.");
+			throw new Error("Le coutEmployeId est vide, merci de spï¿½cifier un id ou d'utiliser un autre constructeur.");
 		}
 		
 	}
@@ -81,31 +81,31 @@ public class CoutsEmploye {
 		if ((Integer) employeId != null) {
 			this.employeId = employeId;
 		} else {
-			throw new Error("L'employeId est vide, merci de spécifier un id.");
+			throw new Error("L'employeId est vide, merci de spï¿½cifier un id.");
 		}
 		
 		if (mois != null) {
 			this.mois = mois;
 		} else {
-			throw new Error("Le mois n'est pas spécifié.");
+			throw new Error("Le mois n'est pas spï¿½cifiï¿½.");
 		}
 		
 		if (annee != null) {
 			this.annee = annee;
 		} else {
-			throw new Error("L'annee n'est pas spécifiée.");
+			throw new Error("L'annee n'est pas spï¿½cifiï¿½e.");
 		}
 		
 		if (status != null) {
 			if (!status.isEmpty()) {
-				if (status.equals("Publié") || status.equals("publié")) {
-					this.status = "Publié";
-				} else if (status.equals("Archivé") || status.equals("archivé"))  {
-					this.status = "Archivé";
+				if (status.equals("PubliÃ©") || status.equals("PubliÃ©")) {
+					this.status = "PubliÃ©";
+				} else if (status.equals("ArchivÃ©") || status.equals("ArchivÃ©"))  {
+					this.status = "ArchivÃ©";
 				} else if (status.equals("Draft") || status.equals("draft")) {
 					this.status = "Draft";
 				} else {
-					throw new Error("Le status indiqué est incorrect, le status doit être publié, archivé ou draft.");
+					throw new Error("Le status indiquï¿½ est incorrect, le status doit ï¿½tre PubliÃ©, ArchivÃ© ou draft.");
 				}
 			} else {
 				this.status = null;
@@ -488,17 +488,17 @@ public class CoutsEmploye {
 
 	public void setStatus(String status) {
 		if (status != null) {
-			if (status == "Publié" || status == "publié") {
-				this.status = "Publié";
-			} else if (status == "Archivé" || status == "archivé") {
-				this.status = "Archivé";
+			if (status == "PubliÃ©" || status == "PubliÃ©") {
+				this.status = "PubliÃ©";
+			} else if (status == "ArchivÃ©" || status == "ArchivÃ©") {
+				this.status = "ArchivÃ©";
 			} else if (status == "Draft" || status == "draft") {
 				this.status = "Draft";
 			} else {
-				throw new Error("Le status indiqué est incorrect, le status doit être publié, archivé ou draft.");
+				throw new Error("Le status indiquï¿½ est incorrect, le status doit ï¿½tre PubliÃ©, ArchivÃ© ou draft.");
 			}
 		} else {
-			throw new Error("Le status indiqué est vide.");
+			throw new Error("Le status indiquï¿½ est vide.");
 		}
 	}
 

@@ -90,13 +90,13 @@ public class Site {
 	}
 
 	/**
-	 * execute and return the query "Select * FROM Chantier Where Status='Publié'"
+	 * execute and return the query "Select * FROM Chantier Where Status='PubliÃ©'"
 	 * 
 	 * @return <type>Statement </type> the statement returned from the query
 	 * @throws SQLException
 	 */
 	private static Statement selectAllChantier() throws SQLException {
-		String reqSql = "SELECT * FROM Chantier Where Status='Publié'";
+		String reqSql = "SELECT * FROM Chantier Where Status='PubliÃ©'";
 
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		Statement statement = connection.createStatement();
@@ -105,7 +105,7 @@ public class Site {
 	}
 
 	/**
-	 * Execute an query to get All site in the database where the Status='Publié' in
+	 * Execute an query to get All site in the database where the Status='PubliÃ©' in
 	 * a <type>List</type>
 	 * 
 	 * @return <type>List<Site> </type> list which contain all Site in the database
@@ -133,7 +133,7 @@ public class Site {
 	}
 
 	/**
-	 * Print all site where status='Publié'
+	 * Print all site where status='PubliÃ©'
 	 * 
 	 * @throws SQLException
 	 */
@@ -180,13 +180,13 @@ public class Site {
 	}
 
 	/**
-	 * Return the number of site in the database where status="Publié"
+	 * Return the number of site in the database where status="PubliÃ©"
 	 * 
 	 * @return <type>int</type> the number of Site
 	 * @throws SQLException
 	 */
 	public static int getCountChantier() throws SQLException {
-		String reqSql = "SELECT count(*) as count FROM Chantier Where Status='Publié'";
+		String reqSql = "SELECT count(*) as count FROM Chantier Where Status='PubliÃ©'";
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		Statement statement = connection.createStatement();
 		statement.executeQuery(reqSql);

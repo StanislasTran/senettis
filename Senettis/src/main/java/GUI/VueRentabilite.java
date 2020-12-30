@@ -49,7 +49,7 @@ import classes.FournitureSanitaire;
 import classes.Rentabilite;
 import classes.SalaryCostPerSite;
 
-public class VueRentabilité {
+public class VueRentabilite {
 
 	private Composite vueRentabilite;
 	private Composite selection;
@@ -59,20 +59,20 @@ public class VueRentabilité {
 
 	// Creation VueLivraison --------------------------------------------------
 	/***
-	 * Utilisé depuis Home pour créer une vueLivraison
+	 * UtilisÃ© depuis Home pour crÃ©er une vueLivraison
 	 * 
 	 * @param composite : le composite vueLivraison
 	 * @param display
 	 * @throws SQLException
 	 */
-	public VueRentabilité(Composite composite, Display display) throws SQLException {
+	public VueRentabilite(Composite composite, Display display) throws SQLException {
 
 		Couleur.setDisplay(display); // pour utiliser les couleurs du fichier couleur
 
 		vueRentabilite = new Composite(composite, SWT.NONE);
 		vueRentabilite.setLayout(new RowLayout(SWT.VERTICAL));
 		vueRentabilite.setBackground(Couleur.bleuClair);
-		addHeader("Analyse de la rentabilité");
+		addHeader("Analyse de la rentabilitÃ©");
 		getSelection();
 
 		LocalDate currentdate = LocalDate.now();
@@ -103,7 +103,7 @@ public class VueRentabilité {
 		selec2.setLayout(new RowLayout(SWT.HORIZONTAL));
 		selec2.setBackground(Couleur.bleuClair);
 		Label labelPeriode = new Label(selec2, SWT.NONE);
-		labelPeriode.setText("Période : ");
+		labelPeriode.setText("PÃ©riode : ");
 		labelPeriode.setBackground(Couleur.bleuClair);
 		Combo periode = new Combo(selec2, SWT.BORDER);
 		LocalDate currentdate = LocalDate.now();
@@ -131,7 +131,7 @@ public class VueRentabilité {
 		});
 
 		Button save = new Button(selection, SWT.NONE);
-		save.setText("Mettre à jour données pour powerBI (Sauvegarde toutes les données des année N-1 à N )");
+		save.setText("Mettre Ã  jour donnÃ©es pour powerBI (Sauvegarde toutes les donnÃ©es des annÃ©es N-1 Ã  N )");
 		save.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -152,13 +152,14 @@ public class VueRentabilité {
 
 								Double pourcentage = 0.00;
 
-								// à Gerer
+								//  Gerer
 								try {
 									TurnOver TO = TurnOver.getTurnOverByDateAndSite(s.getSiteId(), i, j);
 									CA = TO.getCa();
 								} catch (SQLException sqlException) {
 
 								}
+								
 								if (CA > 0) {
 
 									try {
@@ -181,7 +182,7 @@ public class VueRentabilité {
 											YearMonth date2 = YearMonth.of(Integer.parseInt(d1[2]),
 													Integer.parseInt(d1[1]));
 
-											if (l.getStatus().equals("Publié")) {
+											if (l.getStatus().equals("PubliÃ©")) {
 												if (l.getIdChantier() == s.getSiteId() && date1.equals(date2)) {
 													livraison += l.getPrixTotal();
 												}
@@ -200,7 +201,7 @@ public class VueRentabilité {
 																								// tout
 																								// le temps
 											YearMonth debut = YearMonth.of(fs.getAnneeD(), fs.getMoisD());
-											if (fs.getStatus().equals("Publié")) {
+											if (fs.getStatus().equals("PubliÃ©")) {
 												if (fs.getSiteId() == s.getSiteId()) {
 													if (debut.equals(date1) || (debut.isBefore(date1))) {
 														coutsFs += fs.getMontantParMois();
@@ -217,7 +218,7 @@ public class VueRentabilité {
 											.getAllAmmortissementChantier()) {
 										YearMonth debut = YearMonth.of(ac.getAnneeD(), ac.getMoisD());
 										YearMonth fin = YearMonth.of(ac.getAnneeF(), ac.getMoisF());
-										if (ac.getStatus().equals("Publié")) {
+										if (ac.getStatus().equals("PubliÃ©")) {
 											if (ac.getSiteId() == s.getSiteId()) {
 												if (debut.equals(date1) || fin.equals(date1)
 														|| (debut.isBefore(date1) && fin.isAfter(date1))) {
@@ -248,7 +249,7 @@ public class VueRentabilité {
 
 					MessageBox dialog = new MessageBox(vueRentabilite.getShell(), SWT.ICON_INFORMATION | SWT.OK);
 					dialog.setText("Succes");
-					dialog.setMessage("La base de données a été mise à jour");
+					dialog.setMessage("La base de donnÃ©es a Ã©tÃ© mise Ã  jour");
 					dialog.open();
 
 				} catch (SQLException e1) {
@@ -285,8 +286,8 @@ public class VueRentabilité {
 		tableRentabilite.setHeaderVisible(true);
 
 		// on met les noms des colonnes
-		String[] titles = { "Chantier", "Chifffre d'affaire", "Total Couts Employés", "Livraisons", "Matériels",
-				"Fournitures Sanitaires", "Comissions", "Coût de revient", "Marge Brut", "Pourcentage" };
+		String[] titles = { "Chantier", "Chifffre d'affaire", "Total Couts EmployÃ©s", "Livraisons", "MatÃ©riels",
+				"Fournitures Sanitaires", "Comissions", "CoÃ»t de revient", "Marge Brut", "Pourcentage" };
 		for (String title : titles) {
 			TableColumn column = new TableColumn(tableRentabilite, SWT.NONE);
 			column.setText(title);
@@ -332,6 +333,7 @@ public class VueRentabilité {
 				/// CA///
 
 				try {
+					
 					CA = TurnOver.getTurnOverByDateAndSite(c.getSiteId(), Month.valueOf(d2[0]).getValue(),
 							Integer.parseInt(d2[1])).getCa();
 

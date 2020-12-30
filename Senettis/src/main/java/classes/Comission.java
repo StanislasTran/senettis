@@ -40,7 +40,7 @@ public class Comission {
 
 	public static ResultSet getComissionsResultSet(Integer chantier, Month startMonth, Year startYear)
 			throws SQLException {
-		String reqSql = "Select * FROM Comission Where Status ='Publié' AND chantier=? AND MoisDebut=? AND AnneeDebut=?";
+		String reqSql = "Select * FROM Comission Where Status ='PubliÃ©' AND chantier=? AND MoisDebut=? AND AnneeDebut=?";
 
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
@@ -64,7 +64,7 @@ public class Comission {
 	
 	public static ResultSet getAllComissionsAfterResultSet( Month month, Year year)
 			throws SQLException {
-		String reqSql = "select chantier,Sum(comission) as SUM from Comission WHERE status ='Publié' AND AnneeDebut<? OR (AnneeDebut=? AND MoisDebut<=?) GROUP BY chantier;";
+		String reqSql = "select chantier,Sum(comission) as SUM from Comission WHERE status ='PubliÃ©' AND AnneeDebut<? OR (AnneeDebut=? AND MoisDebut<=?) GROUP BY chantier;";
 
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
@@ -118,7 +118,7 @@ public class Comission {
 	}
 
 	public static ResultSet getComissionsResultSet() throws SQLException {
-		String reqSql = "Select Comission.comissionId,Comission.comission,Comission.MoisDebut,Comission.AnneeDebut,Chantier.ChantierId,Chantier.Nom FROM Comission JOIN Chantier ON Chantier.ChantierId=Comission.Chantier Where Chantier.Status ='Publié' AND Comission.Status='Publié'";
+		String reqSql = "Select Comission.comissionId,Comission.comission,Comission.MoisDebut,Comission.AnneeDebut,Chantier.ChantierId,Chantier.Nom FROM Comission JOIN Chantier ON Chantier.ChantierId=Comission.Chantier Where Chantier.Status ='PubliÃ©' AND Comission.Status='PubliÃ©'";
 
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
@@ -166,7 +166,7 @@ public class Comission {
 	}
 
 	public void Delete() throws SQLException {
-		String reqSql = "Update  Comission SET Status='Archivé' WHERE ComissionId= .;";
+		String reqSql = "Update  Comission SET Status='ArchivÃ©' WHERE ComissionId= .;";
 
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
@@ -178,7 +178,7 @@ public class Comission {
 	}
 
 	public static void removeById(int productId) throws SQLException {
-		String reqSql = "Update  Comission SET Status='Archivé' WHERE ComissionId= ?;";
+		String reqSql = "Update  Comission SET Status='ArchivÃ©' WHERE ComissionId= ?;";
 
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);

@@ -1,7 +1,7 @@
 package classes;
 
 public enum Status {
-	PUBLISHED("Publié"), ARCHIVED("Archivé"), DRAFT("Brouillon");
+	PUBLISHED("PubliÃ©"), ARCHIVED("ArchivÃ©"), DRAFT("Brouillon");
 
 	final private String value;
 
@@ -15,10 +15,10 @@ public enum Status {
 	public static Status getStatus(String value) {
 		Status status=null;
 		switch(value){
-			case "Publié" :
+			case "PubliÃ©" :
 				status=PUBLISHED;
 				break;
-			case "Archivé" :
+			case "ArchivÃ©" :
 				status=ARCHIVED;
 				break;
 			case "Brouillon" :

@@ -103,7 +103,7 @@ public class TurnOver {
 
 	public static ResultSet getCAForAllSite(Month month, Year year) throws SQLException {
 		String selection = " Chantier.nom,Chantier.chantierId, CA.Mois, CA.Annee,CA.Chantier,  CA.Menage,CA.Vitrerie,CA.Mise_a_blanc,CA.Fournitures_sanitaires,CA.Autres,CA.CA,CA.Status";
-		String sources = "Chantier Left join (Select * FROM ChiffreAffaire WHERE Mois=? AND Annee = ?) AS CA ON CA.Chantier=Chantier.ChantierId WHERE Chantier.Status='Publié'";
+		String sources = "Chantier Left join (Select * FROM ChiffreAffaire WHERE Mois=? AND Annee = ?) AS CA ON CA.Chantier=Chantier.ChantierId WHERE Chantier.Status='PubliÃ©'";
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		String reqSql = "Select " + selection + " FROM " + sources;
 		PreparedStatement statement = connection.prepareStatement(reqSql);
@@ -308,7 +308,7 @@ public class TurnOver {
 		statement.setObject(7, this.fournituresSanitaires, Types.DECIMAL);
 		statement.setObject(8, this.misesBlanc, Types.DECIMAL);
 		statement.setObject(9, this.autres, Types.DECIMAL);
-		statement.setObject(10, "Publié", Types.VARCHAR);
+		statement.setObject(10, "PubliÃ©", Types.VARCHAR);
 
 		statement.execute();
 	}

@@ -75,7 +75,7 @@ public class ViewAffectationMAB {
 	 */
 	private void buildHome() throws SQLException {
 
-		addHeader("Gestion des mises à blanc");
+		addHeader("Gestion des mises Ã  blanc");
 		// selection part
 
 		selection(this.affectationView);
@@ -105,7 +105,7 @@ public class ViewAffectationMAB {
 
 		TabItem tabEmploye = new TabItem(tabFolder, SWT.NULL);
 
-		tabEmploye.setText("Affectation par Employé");
+		tabEmploye.setText("Affectation par EmployÃ©");
 
 		TabItem tabChantier = new TabItem(tabFolder, SWT.NULL);
 		tabChantier.setText("Affectation par Chantier");
@@ -122,7 +122,8 @@ public class ViewAffectationMAB {
 					cleanRightComposite();
 					createTableEmployeStats(tabEmploye, month, year);
 					createTableChantierStats(tabChantier, month, year);
-					disposeAllChildren(rightComposite);
+					createRightComposite();
+					//disposeAllChildren(rightComposite);
 					mainComposite.layout(true, true);
 				} catch (SQLException e1) {
 					// TODO Auto-generated catch block
@@ -204,7 +205,7 @@ public class ViewAffectationMAB {
 
 		table.setLinesVisible(true);
 		table.setHeaderVisible(true);
-		String[] titles = { "EmployeId", "Nom", "Prenom", "Nombre de chantier différents", "Nombre d'heures total" };
+		String[] titles = { "EmployeId", "Nom", "Prenom", "Nombre de chantier diffÃ©rents", "Nombre d'heures total" };
 
 		for (String title : titles) {
 			TableColumn column = new TableColumn(table, SWT.NONE);
@@ -268,8 +269,8 @@ public class ViewAffectationMAB {
 	}
 
 	/**
-	 * Créer la table qui contient la liste des chantiers et les stats associées à
-	 * ces chantiers et l'ajoute à un TableItem
+	 * CrÃ©er la table qui contient la liste des chantiers et les stats associÃ©es Ã 
+	 * ces chantiers et l'ajoute Ã  un TableItem
 	 * 
 	 * @param <type> TableItem </type> onglet de type Table Item qui contient la
 	 *               liste des Chantiers
@@ -285,7 +286,7 @@ public class ViewAffectationMAB {
 		table.setLinesVisible(true);
 		table.setHeaderVisible(true);
 
-		String[] titles = { "ChantierId", "Nom", "Nombre de chantiers différents", "Nombre d'heures total" };
+		String[] titles = { "ChantierId", "Nom", "Nombre de chantiers diffÃ©rents", "Nombre d'heures total" };
 
 		for (String title : titles) {
 			TableColumn column = new TableColumn(table, SWT.NONE);
@@ -515,7 +516,7 @@ public class ViewAffectationMAB {
 	/**
 	 * Applique la fonction dispose sur tous les composite fils d'un composite
 	 * 
-	 * @param <type>Composite</type> composite possedant les composites enfant à
+	 * @param <type>Composite</type> composite possedant les composites enfant Ã 
 	 *                               dispose
 	 */
 	public void disposeAllChildren(Composite composite) {
@@ -525,8 +526,8 @@ public class ViewAffectationMAB {
 	}
 
 	/**
-	 * Ajoute une selection sur la la ligne contenant un chantierId égal au
-	 * paramètre chantier Id
+	 * Ajoute une selection sur la la ligne contenant un chantierId Ã©gal au
+	 * paramÃ¨tre chantier Id
 	 * 
 	 * @param table
 	 * @param idChantier
@@ -869,8 +870,8 @@ public class ViewAffectationMAB {
 			monthLabel.setBackground(Couleur.bleuClair);
 			this.monthFilter = new Combo(monthComposite, SWT.NONE);
 
-			String[] frenchMonth = { "Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août",
-					"Septembre", "Octobre", "Novembre", "Décembre" };
+			String[] frenchMonth = { "Janvier", "FÃ©vrier", "Mars", "Avril", "Mai", "Juin", "Juillet", "AoÃ»t",
+					"Septembre", "Octobre", "Novembre", "DÃ©cembre" };
 
 			for (String m : frenchMonth)
 				this.monthFilter.add(m);
@@ -892,7 +893,7 @@ public class ViewAffectationMAB {
 			yearComposite.setLayout(new RowLayout(SWT.HORIZONTAL));
 			yearComposite.setBackground(Couleur.bleuClair);
 			Label yearLabel = new Label(yearComposite, SWT.NONE);
-			yearLabel.setText("Année");
+			yearLabel.setText("AnnÃ©e");
 			yearLabel.setBackground(Couleur.bleuClair);
 			this.yearFilter = new Combo(yearComposite, SWT.NONE);
 
@@ -922,7 +923,7 @@ public class ViewAffectationMAB {
 	private void ajouterChantierAffectation(int siteId) throws SQLException {
 		this.mainComposite.dispose();
 		this.selection.dispose();
-		addHeader("Création d'une affectation");
+		addHeader("CrÃ©ation d'une affectation");
 		Composite ajoutComposite = new Composite(this.affectationView, SWT.NONE);
 		ajoutComposite.setBackground(Couleur.bleuClair);
 		ajoutComposite.setLayout(new RowLayout(SWT.VERTICAL));
@@ -959,8 +960,8 @@ public class ViewAffectationMAB {
 		monthLabel.setBackground(Couleur.bleuClair);
 		Combo comboMonth = new Combo(monthComposite, SWT.NONE);
 
-		String[] frenchMonth = { "Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre",
-				"Octobre", "Novembre", "Décembre" };
+		String[] frenchMonth = { "Janvier", "FÃ©vrier", "Mars", "Avril", "Mai", "Juin", "Juillet", "AoÃ»t", "Septembre",
+				"Octobre", "Novembre", "DÃ©cembre" };
 
 		for (String m : frenchMonth)
 			comboMonth.add(m);
@@ -972,7 +973,7 @@ public class ViewAffectationMAB {
 		yearComposite.setLayout(new RowLayout(SWT.HORIZONTAL));
 		yearComposite.setBackground(Couleur.bleuClair);
 		Label yearLabel = new Label(yearComposite, SWT.NONE);
-		yearLabel.setText("Année");
+		yearLabel.setText("AnnÃ©e");
 		yearLabel.setBackground(Couleur.bleuClair);
 		Combo comboYear = new Combo(yearComposite, SWT.NONE);
 
@@ -1008,12 +1009,12 @@ public class ViewAffectationMAB {
 					isChecked = checkAffectation("" + siteId, checkEmployeId, checkNbHours, checkMonth, checkYear);
 				} catch (IllegalArgumentException | ArrayIndexOutOfBoundsException argException) {
 					MessageBox dialog = new MessageBox(affectationView.getShell(), SWT.ICON_ERROR | SWT.OK);
-					dialog.setText("Erreur Création :");
+					dialog.setText("Erreur CrÃ©ation :");
 					if (argException.getClass() == IllegalArgumentException.class)
-						dialog.setMessage("Une erreur est survenue lors de la création de l'affectation. " + '\n'
+						dialog.setMessage("Une erreur est survenue lors de la crÃ©ation de l'affectation. " + '\n'
 								+ argException.getMessage());
 					if (argException.getClass() == ArrayIndexOutOfBoundsException.class)
-						dialog.setMessage("Veuillez sélectionner un employé");
+						dialog.setMessage("Veuillez sÃ©lectionner un employÃ©");
 					dialog.open();
 				}
 
@@ -1037,12 +1038,12 @@ public class ViewAffectationMAB {
 
 							MessageBox dialog = new MessageBox(affectationView.getShell(), SWT.ICON_WORKING | SWT.OK);
 							dialog.setText("Succes");
-							dialog.setMessage("L'affectation a été crée a bien été enregistrée");
+							dialog.setMessage("L'affectation crÃ©e a bien Ã©tÃ© enregistrÃ©e");
 							dialog.open();
 						} catch (SQLException sqlException) {
 							MessageBox dialog = new MessageBox(affectationView.getShell(), SWT.ICON_ERROR | SWT.OK);
-							dialog.setText("Erreur Création :");
-							dialog.setMessage("Une erreur est survenue lors de la création de l'affectation. " + '\n'
+							dialog.setText("Erreur CrÃ©ation :");
+							dialog.setMessage("Une erreur est survenue lors de la crÃ©ation de l'affectation. " + '\n'
 									+ sqlException.getMessage());
 							dialog.open();
 						}
@@ -1095,7 +1096,7 @@ public class ViewAffectationMAB {
 	public void ajouterAffectationEmploye(int employeeId) throws SQLException {
 		this.mainComposite.dispose();
 		this.selection.dispose();
-		addHeader("Création d'une affectation");
+		addHeader("CrÃ©ation d'une affectation");
 		Composite ajoutComposite = new Composite(this.affectationView, SWT.NONE);
 		ajoutComposite.setBackground(Couleur.bleuClair);
 		ajoutComposite.setLayout(new RowLayout(SWT.VERTICAL));
@@ -1104,7 +1105,7 @@ public class ViewAffectationMAB {
 		// Employe name part
 
 		Label labelName = new Label(ajoutComposite, SWT.NONE);
-		labelName.setText("Employé : " + employee.getNom() + "  " + employee.getPrenom());
+		labelName.setText("EmployÃ© : " + employee.getNom() + "  " + employee.getPrenom());
 		labelName.setBackground(Couleur.bleuClair);
 		// nbHeures part
 
@@ -1136,8 +1137,8 @@ public class ViewAffectationMAB {
 		monthLabel.setBackground(Couleur.bleuClair);
 		Combo comboMonth = new Combo(monthComposite, SWT.NONE);
 
-		String[] frenchMonth = { "Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre",
-				"Octobre", "Novembre", "Décembre" };
+		String[] frenchMonth = { "Janvier", "FÃ©vrier", "Mars", "Avril", "Mai", "Juin", "Juillet", "AoÃ»t", "Septembre",
+				"Octobre", "Novembre", "DÃ©cembre" };
 
 		for (String m : frenchMonth)
 			comboMonth.add(m);
@@ -1151,7 +1152,7 @@ public class ViewAffectationMAB {
 		yearComposite.setBackground(Couleur.bleuClair);
 
 		Label yearLabel = new Label(yearComposite, SWT.NONE);
-		yearLabel.setText("Année");
+		yearLabel.setText("AnnÃ©e");
 		yearLabel.setBackground(Couleur.bleuClair);
 		Combo comboYear = new Combo(yearComposite, SWT.NONE);
 
@@ -1189,12 +1190,12 @@ public class ViewAffectationMAB {
 					isChecked = checkAffectation(checkSiteId, "" + employeeId, checkNbHours, checkMonth, checkYear);
 				} catch (IllegalArgumentException | ArrayIndexOutOfBoundsException | SQLException argException) {
 					MessageBox dialog = new MessageBox(affectationView.getShell(), SWT.ICON_ERROR | SWT.OK);
-					dialog.setText("Erreur Création :");
+					dialog.setText("Erreur CrÃ©ation :");
 					if (argException.getClass() == IllegalArgumentException.class)
-						dialog.setMessage("Une erreur est survenue lors de la création de l'afféctation. " + '\n'
+						dialog.setMessage("Une erreur est survenue lors de la crÃ©ation de l'affÃ©ctation. " + '\n'
 								+ argException.getMessage());
 					if (argException.getClass() == ArrayIndexOutOfBoundsException.class)
-						dialog.setMessage("Veuillez sélectionner un chantier");
+						dialog.setMessage("Veuillez sÃ©lectionner un chantier");
 					dialog.open();
 				}
 
@@ -1218,18 +1219,18 @@ public class ViewAffectationMAB {
 
 							MessageBox dialog = new MessageBox(affectationView.getShell(), SWT.ICON_WORKING | SWT.OK);
 							dialog.setText("Succes");
-							dialog.setMessage("L'affectation a été crée a bien été enregistrée");
+							dialog.setMessage("L'affectation a Ã©tÃ© crÃ©e a bien Ã©tÃ© enregistrÃ©e");
 							dialog.open();
 						} catch (SQLException sqlException) {
 							MessageBox dialog = new MessageBox(affectationView.getShell(), SWT.ICON_ERROR | SWT.OK);
-							dialog.setText("Erreur Création :");
+							dialog.setText("Erreur CrÃ©ation :");
 
 							if (sqlException.getMessage().contentEquals("PRIMARY")) {
-								dialog.setMessage("Une erreur est survenue lors de la création de l'affectation. "
-										+ '\n' + "Cette affectation existe déjà les doublons ne sont pas autorisés");
+								dialog.setMessage("Une erreur est survenue lors de la crÃ©ation de l'affectation. "
+										+ '\n' + "Cette affectation existe dÃ©jÃ  les doublons ne sont pas autorisÃ©s");
 							} else {
 
-								dialog.setMessage("Une erreur est survenue lors de la création de l'affectation. "
+								dialog.setMessage("Une erreur est survenue lors de la crÃ©ation de l'affectation. "
 										+ '\n' + sqlException.getMessage());
 							}
 
@@ -1307,7 +1308,7 @@ public class ViewAffectationMAB {
 		Employee employe = Employee.getEmployeById(affectation.getIdEmploye());
 
 		Label labelNom = new Label(modifComposite, SWT.NONE);
-		labelNom.setText("Employé : " + employe.getNom() + " " + employe.getPrenom());
+		labelNom.setText("EmployÃ© : " + employe.getNom() + " " + employe.getPrenom());
 		labelNom.setBackground(Couleur.bleuClair);
 
 		Label labelSite = new Label(modifComposite, SWT.NONE);
@@ -1350,12 +1351,12 @@ public class ViewAffectationMAB {
 							affectation.getMonth().getValue(), "" + affectation.getYear().getValue());
 				} catch (IllegalArgumentException | ArrayIndexOutOfBoundsException argException) {
 					MessageBox dialog = new MessageBox(affectationView.getShell(), SWT.ICON_ERROR | SWT.OK);
-					dialog.setText("Erreur Création :");
+					dialog.setText("Erreur CrÃ©ation :");
 					if (argException.getClass() == IllegalArgumentException.class)
-						dialog.setMessage("Une erreur est survenue lors de la mise à jour de l'afféctation. " + '\n'
+						dialog.setMessage("Une erreur est survenue lors de la mise Ã  jour de l'affectation. " + '\n'
 								+ argException.getMessage());
 					if (argException.getClass() == ArrayIndexOutOfBoundsException.class)
-						dialog.setMessage("Veuillez sélectionner un chantier");
+						dialog.setMessage("Veuillez sÃ©lectionner un chantier");
 					dialog.open();
 				}
 
@@ -1375,12 +1376,12 @@ public class ViewAffectationMAB {
 
 						MessageBox dialog = new MessageBox(affectationView.getShell(), SWT.ICON_WORKING | SWT.OK);
 						dialog.setText("Succes");
-						dialog.setMessage("L'affectation a été crée a bien été enregistrée");
+						dialog.setMessage("L'affectation a Ã©tÃ© crÃ©e a bien Ã©tÃ© enregistrÃ©e");
 						dialog.open();
 					} catch (SQLException sqlException) {
 						MessageBox dialog = new MessageBox(affectationView.getShell(), SWT.ICON_ERROR | SWT.OK);
-						dialog.setText("Erreur Création :");
-						dialog.setMessage("Une erreur est survenue lors de mise à joour de l'affectation. " + '\n'
+						dialog.setText("Erreur CrÃ©ation :");
+						dialog.setMessage("Une erreur est survenue lors de mise Ã  jour de l'affectation. " + '\n'
 								+ sqlException.getMessage());
 						dialog.open();
 					}
@@ -1446,7 +1447,7 @@ public class ViewAffectationMAB {
 		labelNom.setBackground(Couleur.bleuClair);
 
 		Label labelEmploye = new Label(modifComposite, SWT.NONE);
-		labelEmploye.setText("Employé : "+Employee.getEmployeById(affectation.getIdEmploye()).getNom());
+		labelEmploye.setText("EmployÃ© : "+Employee.getEmployeById(affectation.getIdEmploye()).getNom());
 		labelEmploye.setBackground(Couleur.bleuClair);
 
 		Composite nbHeureComposite = new Composite(modifComposite, SWT.NONE);
@@ -1484,12 +1485,12 @@ public class ViewAffectationMAB {
 							affectation.getMonth().getValue(), "" + affectation.getYear().getValue());
 				} catch (IllegalArgumentException | ArrayIndexOutOfBoundsException argException) {
 					MessageBox dialog = new MessageBox(affectationView.getShell(), SWT.ICON_ERROR | SWT.OK);
-					dialog.setText("Erreur Création :");
+					dialog.setText("Erreur CrÃ©ation :");
 					if (argException.getClass() == IllegalArgumentException.class)
-						dialog.setMessage("Une erreur est survenue lors de la création de l'afféctation. " + '\n'
+						dialog.setMessage("Une erreur est survenue lors de la crÃ©ation de l'affÃ©ctation. " + '\n'
 								+ argException.getMessage());
 					if (argException.getClass() == ArrayIndexOutOfBoundsException.class)
-						dialog.setMessage("Veuillez sélectionner un employé");
+						dialog.setMessage("Veuillez sÃ©lectionner un employÃ©");
 					dialog.open();
 				}
 
@@ -1508,12 +1509,12 @@ public class ViewAffectationMAB {
 
 						MessageBox dialog = new MessageBox(affectationView.getShell(), SWT.ICON_WORKING | SWT.OK);
 						dialog.setText("Succes");
-						dialog.setMessage("L'affectation a été crée a bien été enregistrée");
+						dialog.setMessage("L'affectation a Ã©tÃ© crÃ©e a bien Ã©tÃ© enregistrÃ©e");
 						dialog.open();
 					} catch (SQLException sqlException) {
 						MessageBox dialog = new MessageBox(affectationView.getShell(), SWT.ICON_ERROR | SWT.OK);
-						dialog.setText("Erreur Création :");
-						dialog.setMessage("Une erreur est survenue lors de la création de l'affectation. " + '\n'
+						dialog.setText("Erreur CrÃ©ation :");
+						dialog.setMessage("Une erreur est survenue lors de la crÃ©ation de l'affectation. " + '\n'
 								+ sqlException.getMessage());
 						dialog.open();
 
@@ -1616,45 +1617,45 @@ public class ViewAffectationMAB {
 		}
 
 		if (Objects.isNull(employeId))
-			throw new IllegalArgumentException("Veuillez selectionner un employé valide");
+			throw new IllegalArgumentException("Veuillez selectionner un employÃ© valide");
 		try {
 			Integer.parseInt(employeId);
 		} catch (NumberFormatException e) {
-			throw new IllegalArgumentException("Veuillez selectionner un employé valide");
+			throw new IllegalArgumentException("Veuillez selectionner un employÃ© valide");
 		}
 		if (Objects.isNull(nbHours))
-			throw new IllegalArgumentException("L'attribut nombre d'heure ne peut pas être null");
+			throw new IllegalArgumentException("L'attribut nombre d'heure ne peut pas Ãªtre null");
 
 		try {
 			Double priceCheck = Double.parseDouble(nbHours);
 
 			if (priceCheck < 0)
-				throw new IllegalArgumentException("Le  nombre d'heures doit être supérieur à 0");
+				throw new IllegalArgumentException("Le  nombre d'heures doit Ãªtre supÃ©rieur Ã  0");
 		} catch (NumberFormatException parseDoubleException) {
 			throw new IllegalArgumentException(
-					"Le nombre d'heure entré n'est pas valide, veuillez entrer une valeur numérique");
+					"Le nombre d'heure entrÃ© n'est pas valide, veuillez entrer une valeur numÃ©rique");
 		}
 
 		if (Objects.isNull(month))
-			throw new IllegalArgumentException("le champ mois ne peut pas être null");
+			throw new IllegalArgumentException("le champ mois ne peut pas Ãªtre null");
 		else {
 			try {
 
 				Month.of(month);
 			} catch (DateTimeException dateTimeException) {
-				throw new IllegalArgumentException("la valeur entrée dans le champ mois est incorrecte");
+				throw new IllegalArgumentException("la valeur entrÃ©e dans le champ mois est incorrecte");
 			}
 		}
 
 		if (Objects.isNull(year))
-			throw new IllegalArgumentException("le champ mois ne peut pas être null");
+			throw new IllegalArgumentException("le champ mois ne peut pas Ãªtre null");
 		else {
 			try {
 
 				Year.of(Integer.parseInt(year));
 			} catch (DateTimeException | NumberFormatException exceptionYear) {
 				throw new IllegalArgumentException(
-						"la valeur entrée dans le champ Année est incorrecte, Veuillez selectionner une Année valide");
+						"la valeur entrÃ©e dans le champ AnnÃ©e est incorrecte, Veuillez selectionner une AnnÃ©e valide");
 			}
 		}
 

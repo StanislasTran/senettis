@@ -287,7 +287,7 @@ public class AffectationMiseABlanc {
 	 */
 	public static ResultSet getSiteAffectationPublished(int siteId, Month month, Year year) throws SQLException {
 		String selection = "AffectationId,Nom,Prenom,AffectationMAB.Nombre_heures,AffectationMAB.AffectationId,Numero_matricule";
-		String source = "(Select * From Employe WHERE Employe.Status='Publié') as Employe INNER JOIN (Select * FROM AffectationMAB WHERE AffectationMAB.Status='Publié') as AffectationMAB ON Employe.EmployeId=AffectationMAB.Employe ";
+		String source = "(Select * From Employe WHERE Employe.Status='PubliÃ©') as Employe INNER JOIN (Select * FROM AffectationMAB WHERE AffectationMAB.Status='PubliÃ©') as AffectationMAB ON Employe.EmployeId=AffectationMAB.Employe ";
 		String condition = "AffectationMAB.Chantier=? AND Mois=? AND Annee=?";
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		String reqSql = "SELECT " + selection + " FROM " + source + " WHERE " + condition;
@@ -302,7 +302,7 @@ public class AffectationMiseABlanc {
 
 	/**
 	 * Execute a query and return the list of all employee affected to the siteId
-	 * entered in parameter Only where Status ='Publié'
+	 * entered in parameter Only where Status ='PubliÃ©'
 	 * 
 	 * @param employeId
 	 * @return
@@ -310,7 +310,7 @@ public class AffectationMiseABlanc {
 	 */
 	public static ResultSet getSiteAffectationPublished(int siteId) throws SQLException {
 		String selection = "AffectationId,Nom,Prenom,AffectationMAB.Nombre_heures,AffectationMAB.AffectationId,Numero_matricule";
-		String source = "(Select * from Employe WHERE Employe.Status='Publié' as Employe INNER JOIN (Select * from AffectationMAB WHERE AffectationMAB.Status='Publié') as AffectationMAB ON Employe.EmployeId=AffectationMAB.Employe  ";
+		String source = "(Select * from Employe WHERE Employe.Status='PubliÃ©' as Employe INNER JOIN (Select * from AffectationMAB WHERE AffectationMAB.Status='PubliÃ©') as AffectationMAB ON Employe.EmployeId=AffectationMAB.Employe  ";
 		String condition = "AffectationMAB.Chantier=?";
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		String reqSql = "SELECT " + selection + " FROM " + source + " WHERE " + condition;
@@ -331,7 +331,7 @@ public class AffectationMiseABlanc {
 	 */
 	public static ResultSet getEmployeAffectationPubished(int employeId) throws SQLException {
 		String selection = "ChantierId,nom,adresse,Nombre_heures,AffectationMAB.AffectationId";
-		String source = " (Select * from Chantier where Chantier.Status='Publié') as Chantier INNER JOIN (Select * FROM AffectationMAB WHERE AffectationMAB.Status='Publié') as AffectationMAB ON Chantier.ChantierId=AffectationMAB.Chantier ";
+		String source = " (Select * from Chantier where Chantier.Status='PubliÃ©') as Chantier INNER JOIN (Select * FROM AffectationMAB WHERE AffectationMAB.Status='PubliÃ©') as AffectationMAB ON Chantier.ChantierId=AffectationMAB.Chantier ";
 		String condition = "AffectationMAB.Employe=?";
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		String reqSql = "SELECT " + selection + " FROM " + source + " WHERE " + condition;
@@ -353,7 +353,7 @@ public class AffectationMiseABlanc {
 	public static ResultSet getEmployeAffectationPublished(int employeId, Month month, Year year) throws SQLException {
 		String selection = "ChantierId,nom,adresse,Nombre_heures,AffectationMAB.AffectationId";
 		String source = "chantier INNER JOIN AffectationMAB ON Chantier.ChantierId=AffectationMAB.Chantier ";
-		String condition = "AffectationMAB.Employe=? AND Mois=? AND Annee=? AND AffectationMAB.Status='Publié' AND Chantier.Status='Publié'";
+		String condition = "AffectationMAB.Employe=? AND Mois=? AND Annee=? AND AffectationMAB.Status='PubliÃ©' AND Chantier.Status='PubliÃ©'";
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		String reqSql = "SELECT " + selection + " FROM " + source + " WHERE " + condition;
 
@@ -454,7 +454,7 @@ public class AffectationMiseABlanc {
 	 * @throws SQLException
 	 */
 	public int remove() throws SQLException {
-		String reqSql = "UPDATE AffectationMAB SET Status='Archivé' WHERE affectationId=?";
+		String reqSql = "UPDATE AffectationMAB SET Status='ArchivÃ©' WHERE affectationId=?";
 
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);

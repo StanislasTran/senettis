@@ -46,7 +46,7 @@ public class AmmortissementChantier {
 		if ((Integer) ammortissementChantierId != null) {
 			this.ammortissementChantierId = ammortissementChantierId;
 		} else {
-			throw new Error("Le ammortissementChantierId est vide, merci de spécifier un id ou d'utiliser un autre constructeur.");
+			throw new Error("Le ammortissementChantierId est vide, merci de spÃ©cifier un id ou d'utiliser un autre constructeur.");
 		}
 		this.description = description;	
 	}
@@ -63,43 +63,43 @@ public class AmmortissementChantier {
 		if ((Integer) chantierId != null) {
 			this.chantierId = chantierId;
 		} else {
-			throw new Error("L'chantierId est vide, merci de spécifier un id.");
+			throw new Error("L'chantierId est vide, merci de spÃ©cifier un id.");
 		}
 		
 		if (moisD != null) {
 			this.moisD = moisD;
 		} else {
-			throw new Error("Le mois de depart n'est pas spécifié.");
+			throw new Error("Le mois de depart n'est pas spÃ©cifiÃ©.");
 		}
 		
 		if (anneeD != null) {
 			this.anneeD = anneeD;
 		} else {
-			throw new Error("L'annee de depart n'est pas spécifiée.");
+			throw new Error("L'annee de depart n'est pas spÃ©cifiÃ©e.");
 		}
 		
 		if (moisF != null) {
 			this.moisF = moisF;
 		} else {
-			throw new Error("Le mois de fin n'est pas spécifié.");
+			throw new Error("Le mois de fin n'est pas spÃ©cifiÃ©.");
 		}
 		
 		if (anneeF != null) {
 			this.anneeF = anneeF;
 		} else {
-			throw new Error("L'annee de fin n'est pas spécifiée.");
+			throw new Error("L'annee de fin n'est pas spÃ©cifiÃ©e.");
 		}
 		
 		if (status != null) {
 			if (!status.isEmpty()) {
-				if (status.equals("Publié") || status.equals("publié")) {
-					this.status = "Publié";
-				} else if (status.equals("Archivé") || status.equals("archivé"))  {
-					this.status = "Archivé";
+				if (status.equals("PubliÃ©") || status.equals("PubliÃ©")) {
+					this.status = "PubliÃ©";
+				} else if (status.equals("ArchivÃ©") || status.equals("ArchivÃ©"))  {
+					this.status = "ArchivÃ©";
 				} else if (status.equals("Draft") || status.equals("draft")) {
 					this.status = "Draft";
 				} else {
-					throw new Error("Le status indiqué est incorrect, le status doit être publié, archivé ou draft.");
+					throw new Error("Le status indiquÃ© est incorrect, le status doit Ãªtre PubliÃ©, ArchivÃ© ou draft.");
 				}
 			} else {
 				this.status = null;
@@ -280,17 +280,17 @@ public class AmmortissementChantier {
 
 	public void setStatus(String status) {
 		if (status != null) {
-			if (status == "Publié" || status == "publié") {
-				this.status = "Publié";
-			} else if (status == "Archivé" || status == "archivé") {
-				this.status = "Archivé";
+			if (status == "PubliÃ©" || status == "PubliÃ©") {
+				this.status = "PubliÃ©";
+			} else if (status == "ArchivÃ©" || status == "ArchivÃ©") {
+				this.status = "ArchivÃ©";
 			} else if (status == "Draft" || status == "draft") {
 				this.status = "Draft";
 			} else {
-				throw new Error("Le status indiqué est incorrect, le status doit être publié, archivé ou draft.");
+				throw new Error("Le status indiquÃ© est incorrect, le status doit Ãªtre PubliÃ©, ArchivÃ© ou draft.");
 			}
 		} else {
-			throw new Error("Le status indiqué est vide.");
+			throw new Error("Le status indiquÃ© est vide.");
 		}
 	}
 
@@ -408,7 +408,7 @@ public class AmmortissementChantier {
 	public static ResultSet getAllACsAfterResultSet(Month month, Year year)
 			throws SQLException {
 		
-		String reqSql = "select chantier,Sum(valeurParMois) as SUM from AmmortissementChantier WHERE status ='Publié' AND (anneeDepart<=? AND anneeFin>=?) OR (anneeDepart=? AND moisDepart<=? AND moisFin>=?) GROUP BY chantier;";
+		String reqSql = "select chantier,Sum(valeurParMois) as SUM from AmmortissementChantier WHERE status ='PubliÃ©' AND (anneeDepart<=? AND anneeFin>=?) OR (anneeDepart=? AND moisDepart<=? AND moisFin>=?) GROUP BY chantier;";
 
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);

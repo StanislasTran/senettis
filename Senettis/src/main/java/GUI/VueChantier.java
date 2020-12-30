@@ -26,7 +26,7 @@ public class VueChantier {
 
 	// Creation VueChantier --------------------------------------------------
 	/***
-	 * Utilisé depuis Home pour créer une vueChantier
+	 * UtilisÃ© depuis Home pour crÃ©er une vueChantier
 	 * 
 	 * @param composite : le composite parent
 	 * @param display
@@ -49,7 +49,7 @@ public class VueChantier {
 	}
 
 	/***
-	 * Pour créer une vueChantier : Appelle les fonctions compositeSelectionCreer et
+	 * Pour crÃ©er une vueChantier : Appelle les fonctions compositeSelectionCreer et
 	 * vueChantierAfficher
 	 * 
 	 */
@@ -121,7 +121,7 @@ public class VueChantier {
 		selection2.setBackground(Couleur.bleuClair);
 
 		Button boutonCreer = new Button(selection2, SWT.CENTER);
-		boutonCreer.setText("Créer");
+		boutonCreer.setText("CrÃ©er");
 		boutonCreer.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
@@ -193,7 +193,7 @@ public class VueChantier {
 
 		// Bouton Creer
 		Button boutonCreer = new Button(selection2, SWT.CENTER);
-		boutonCreer.setText("Créer");
+		boutonCreer.setText("CrÃ©er");
 		boutonCreer.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
@@ -225,7 +225,7 @@ public class VueChantier {
 					MessageBox dialog = new MessageBox(vueChantier.getShell(), SWT.ICON_QUESTION | SWT.YES | SWT.NO);
 					dialog.setText("Suppression Chantier");
 					dialog.setMessage("Voulez vous supprimer le chantier " + c.getName()
-							+ " ?\nToutes les affectations et livraisons liées à ce chantier seront supprimées.");
+							+ " ?\nToutes les affectations et livraisons liÃ©es Ã  ce chantier seront supprimÃ©es.");
 					int buttonID = dialog.open();
 					switch (buttonID) {
 					case SWT.YES:
@@ -250,7 +250,7 @@ public class VueChantier {
 
 	/***
 	 * va archiver le chantier selectionne et les affectations et livraisons qui lui
-	 * sont liées
+	 * sont liÃ©es
 	 * 
 	 * @param table : table contenant les chantiers
 	 * @throws SQLException
@@ -266,7 +266,7 @@ public class VueChantier {
 
 		for (Delivery d : Delivery.getAllLivraison()) {
 			if (d.getIdChantier() == c.getSiteId()) {
-				d.setStatus("Archivé");
+				d.setStatus("ArchivÃ©");
 				d.updateDatabase();
 			}
 		}
@@ -444,20 +444,20 @@ public class VueChantier {
 	}
 
 	/***
-	 * modifie le chantier selectionne dans la base de données
+	 * modifie le chantier selectionne dans la base de donnÃ©es
 	 */
 	public void validerModification() {
 		if (selectedChantier == null) {
 			throw new Error("selectedChantier est vide");
 		}
 
-		// on insert dans la base de données
+		// on insert dans la base de donnÃ©es
 		try {
 			selectedChantier.updateDatabase();
 			System.out.println("on a modifie le chantier !!");
 			MessageBox dialog = new MessageBox(vueChantier.getShell(), SWT.ICON_INFORMATION | SWT.OK);
-			dialog.setText("Modification réussie");
-			dialog.setMessage("Le chantier a bien été modifié dans la base de données.");
+			dialog.setText("Modification rÃ©ussie");
+			dialog.setMessage("Le chantier a bien Ã©tÃ© modifiÃ© dans la base de donnÃ©es.");
 			dialog.open();
 			selectedChantier = null;
 		} catch (SQLException e) {
@@ -472,10 +472,10 @@ public class VueChantier {
 		newVueChantier();
 	}
 
-	// Création d'un chantier --------------------------------------------------
+	// CrÃ©ation d'un chantier --------------------------------------------------
 	/***
 	 * va appeler les fonctions qui modifie la partie vue et la partie selection
-	 * afin d'afficher le formulaire de création appelle titreCreation et
+	 * afin d'afficher le formulaire de crÃ©ation appelle titreCreation et
 	 * formulaireCreation
 	 */
 	public void vueChantierCreer() {
@@ -598,9 +598,9 @@ public class VueChantier {
 					e.printStackTrace();
 					System.out.println("erreur dans la creation");
 					MessageBox dialog = new MessageBox(vueChantier.getShell(), SWT.ICON_ERROR | SWT.OK);
-					dialog.setText("Erreur Création");
+					dialog.setText("Erreur CrÃ©ation");
 					dialog.setMessage(
-							"Une erreur est survenue lors de la création d'un chantier. " + '\n' + e.getMessage());
+							"Une erreur est survenue lors de la crÃ©ation d'un chantier. " + '\n' + e.getMessage());
 					dialog.open();
 				}
 			}
@@ -635,23 +635,23 @@ public class VueChantier {
 			chantier.setAdress(textAdresse);
 		}
 
-		// on insert dans la base de données
+		// on insert dans la base de donnÃ©es
 		try {
 			chantier.insertDatabase();
 			System.out.println("on a insere le chantier !!");
 			MessageBox dialog = new MessageBox(vueChantier.getShell(), SWT.ICON_INFORMATION | SWT.OK);
-			dialog.setText("Création réussie");
-			dialog.setMessage("Le chantier a bien été ajouté à la base de données.");
+			dialog.setText("CrÃ©ation rÃ©ussie");
+			dialog.setMessage("Le chantier a bien Ã©tÃ© ajoutÃ© Ã  la base de donnÃ©es.");
 			dialog.open();
 			newVueChantier();
 			vue.pack();
 			selection.pack();
 			vueChantier.pack();
 		} catch (SQLException e) {
-			System.out.println("erreur dans la création");
+			System.out.println("erreur dans la crÃ©ation");
 			MessageBox dialog = new MessageBox(vueChantier.getShell(), SWT.ICON_ERROR | SWT.OK);
-			dialog.setText("Erreur Création");
-			dialog.setMessage("Une erreur est survenue lors de la création du chantier. " + '\n' + e.getMessage());
+			dialog.setText("Erreur CrÃ©ation");
+			dialog.setMessage("Une erreur est survenue lors de la crÃ©ation du chantier. " + '\n' + e.getMessage());
 			dialog.open();
 		}
 	}
@@ -693,7 +693,7 @@ public class VueChantier {
 		try {
 			for (Site c : Site.getAllChantier()) {
 				// on verifie le status
-				if (c.getStatus().getValue().contentEquals("Publié")) {
+				if (c.getStatus().getValue().contentEquals("PubliÃ©")) {
 					TableItem item = new TableItem(table, SWT.NONE);
 					item.setText(0, c.getName());
 					item.setText(1, c.getAdresse());
@@ -750,8 +750,8 @@ public class VueChantier {
 	}
 
 	/**
-	 * Ajoute un table contenant la liste de tous les chantier au composité entré en
-	 * paramètre
+	 * Ajoute un table contenant la liste de tous les chantier au composite entrÃ© en
+	 * paramÃ¨tre
 	 * @param j 
 	 * @param i 
 	 * 
@@ -778,7 +778,7 @@ public class VueChantier {
 		try {
 			for (Site c : Site.getAllChantier()) {
 				// on verifie le status
-				if (c.getStatus().getValue().contentEquals("Publié")) {
+				if (c.getStatus().getValue().contentEquals("PubliÃ©")) {
 					TableItem item = new TableItem(table, SWT.NONE);
 					item.setText(0, c.getName());
 					item.setText(1, c.getAdresse());
@@ -805,7 +805,7 @@ public class VueChantier {
 		try {
 			for (Site c : Site.getAllChantier()) {
 				// on verifie le status
-				if (c.getStatus().getValue().contentEquals("Publié")) {
+				if (c.getStatus().getValue().contentEquals("PubliÃ©")) {
 					TableItem item = new TableItem(table, SWT.NONE);
 					item.setText(0, c.getName());
 					item.setText(1, c.getAdresse());
@@ -854,7 +854,7 @@ public class VueChantier {
 					MessageBox dialog = new MessageBox(vueChantier.getShell(), SWT.ICON_QUESTION | SWT.YES | SWT.NO);
 					dialog.setText("Suppression Chantier");
 					dialog.setMessage("Voulez-vous supprimer le chantier " + c.getName()
-							+ " ?\nToutes les affectations et livraisons liées à ce chantier seront supprimées.");
+							+ " ?\nToutes les affectations et livraisons liÃ©es Ã  ce chantier seront supprimÃ©es.");
 					int buttonID = dialog.open();
 					switch (buttonID) {
 					case SWT.YES:

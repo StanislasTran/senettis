@@ -68,7 +68,7 @@ public class Employee {
 		if ((Integer) employeId != null) {
 			this.employeId = employeId;
 		} else {
-			throw new Error("L'employeId est vide, merci de spécifier un id ou d'utiliser un autre constructeur.");
+			throw new Error("L'employeId est vide, merci de spï¿½cifier un id ou d'utiliser un autre constructeur.");
 		}
 	}
 	
@@ -80,7 +80,7 @@ public class Employee {
 		if ((Integer) anciennete != null) {
 			this.anciennetePC = anciennete;
 		} else {
-			throw new Error("L'anciennete est vide, merci de spécifier un id ou d'utiliser un autre constructeur.");
+			throw new Error("L'anciennete est vide, merci de spï¿½cifier un id ou d'utiliser un autre constructeur.");
 		}
 	}
 
@@ -152,14 +152,14 @@ public class Employee {
 		// status
 		if (status != null) {
 			if (!status.isEmpty()) {
-				if (status.equals("Publié") || status.equals("publié")) {
-					this.status = "Publié";
-				} else if (status.equals("Archivé") || status.equals("archivé"))  {
-					this.status = "Archivé";
+				if (status.equals("PubliÃ©") || status.equals("PubliÃ©")) {
+					this.status = "PubliÃ©";
+				} else if (status.equals("ArchivÃ©") || status.equals("ArchivÃ©"))  {
+					this.status = "ArchivÃ©";
 				} else if (status.equals("Draft") || status.equals("draft")) {
 					this.status = "Draft";
 				} else {
-					throw new Error("Le status indiqué est incorrect, le status doit être publié, archivé ou draft.");
+					throw new Error("Le status indiquï¿½ est incorrect, le status doit ï¿½tre PubliÃ©, ArchivÃ© ou draft.");
 				}
 			} else {
 				this.status = null;
@@ -184,7 +184,7 @@ public class Employee {
 							+ dateArrivee.substring(0, 4);
 				} else {
 					throw new Error(
-							"La date d'arrivée indiquée est incorrecte, une date doit être indiqué selon un des formats suivant : 31-01-2000, 31/01/2000, 2000-01-31 ou 2000/01/31.");
+							"La date d'arrivï¿½e indiquï¿½e est incorrecte, une date doit ï¿½tre indiquï¿½ selon un des formats suivant : 31-01-2000, 31/01/2000, 2000-01-31 ou 2000/01/31.");
 				}
 			}
 			else {
@@ -224,21 +224,21 @@ public class Employee {
 		if (nom != null) {
 			this.nom = nom;
 		} else {
-			throw new Error("Le nom indiqué est vide.");
+			throw new Error("Le nom indiquï¿½ est vide.");
 		}
 
 		// prenom
 		if (prenom != null) {
 			this.prenom = prenom;
 		} else {
-			throw new Error("Le prénom indiqué est vide.");
+			throw new Error("Le prï¿½nom indiquï¿½ est vide.");
 		}
 
 		// numero matricule
 		if (numeroMatricule != null) {
 			this.numeroMatricule = numeroMatricule;
 		} else {
-			throw new Error("Le numéro de matricule indiqué est vide.");
+			throw new Error("Le numï¿½ro de matricule indiquï¿½ est vide.");
 		}
 		this.anciennetePC = 0;
 		
@@ -246,7 +246,7 @@ public class Employee {
 
 	// Liens avec la BDD-----------------------------------------------
 	/***
-	 * permet d'ajouter un employe dans la base de données
+	 * permet d'ajouter un employe dans la base de donnï¿½es
 	 * 
 	 * @return
 	 * @throws SQLException
@@ -272,8 +272,8 @@ public class Employee {
 	}
 
 	/***
-	 * Permet de modifier un employe dans la base de données, pour que la requete
-	 * fonctionne il faut que l'employe ai son champs employeId completé car
+	 * Permet de modifier un employe dans la base de donnï¿½es, pour que la requete
+	 * fonctionne il faut que l'employe ai son champs employeId completï¿½ car
 	 * l'update se fait a partir de l'id la requete modifiera tous les champs de
 	 * l'employe en les remplacant par la valeur actuelle associee a cet employe
 	 * pour chaque champs
@@ -320,7 +320,7 @@ public class Employee {
 
 
 	/***
-	 * requete la base de données afin de recuperer tous les elements de la table
+	 * requete la base de donnï¿½es afin de recuperer tous les elements de la table
 	 * employe
 	 * 
 	 * @return
@@ -336,7 +336,7 @@ public class Employee {
 	}
 
 	/**
-	 * Retourne le nombre d'employé dans la base de données
+	 * Retourne le nombre d'employï¿½ dans la base de donnï¿½es
 	 * 
 	 * @return
 	 * @throws SQLException
@@ -358,7 +358,7 @@ public class Employee {
 	/***
 	 * 
 	 * @param employeId
-	 * @return l'employe correspondant à l'id indique en argument
+	 * @return l'employe correspondant ï¿½ l'id indique en argument
 	 * @throws SQLException
 	 */
 	public static Employee getEmployeById(int employeId) throws SQLException {
@@ -413,15 +413,15 @@ public class Employee {
 			employeId = result.getInt("EmployeId");
 
 		} else {
-			throw new Error("Erreur de matricule, aucun employé ne correspond.");
+			throw new Error("Erreur de matricule, aucun employï¿½ ne correspond.");
 		}
 		
 		try {
 			Employee e = getEmployeById(employeId);
-			 e.setStatus("Publié");
+			 e.setStatus("PubliÃ©");
 			 e.updateDatabase();
 		}catch (Exception e) {
-			throw new Error("Erreur de matricule, aucun employé ne correspond.");
+			throw new Error("Erreur de matricule, aucun employï¿½ ne correspond.");
 		}
 	}
 	
@@ -440,12 +440,12 @@ public class Employee {
 			employeId = result.getInt("EmployeId");
 
 		} else {
-			throw new SQLException("Aucun employé ne correspond.");
+			throw new SQLException("Aucun employï¿½ ne correspond.");
 		}
 		
 		try {
 			Employee e = getEmployeById(employeId);
-			 e.setStatus("Publié");
+			 e.setStatus("PubliÃ©");
 			 e.updateDatabase();
 		}catch (Exception e) {
 			throw e;
@@ -540,17 +540,17 @@ public class Employee {
 
 	public void setStatus(String status) {
 		if (status != null) {
-			if (status == "Publié" || status == "publié") {
-				this.status = "Publié";
-			} else if (status == "Archivé" || status == "archivé") {
-				this.status = "Archivé";
+			if (status == "PubliÃ©" || status == "PubliÃ©") {
+				this.status = "PubliÃ©";
+			} else if (status == "ArchivÃ©" || status == "ArchivÃ©") {
+				this.status = "ArchivÃ©";
 			} else if (status == "Draft" || status == "draft") {
 				this.status = "Draft";
 			} else {
-				throw new Error("Le status indiqué est incorrect, le status doit être publié, archivé ou draft.");
+				throw new Error("Le status indiquï¿½ est incorrect, le status doit ï¿½tre PubliÃ©, ArchivÃ© ou draft.");
 			}
 		} else {
-			throw new Error("Le status indiqué est vide.");
+			throw new Error("Le status indiquï¿½ est vide.");
 		}
 	}
 
@@ -720,10 +720,10 @@ public class Employee {
 				} 
 			} catch (Exception e) {
 				throw new Error(
-						"La date d'arrivée indiquée est incorrecte, une date doit être indiqué selon un des formats suivant : 31-01-2000, 31/01/2000, 2000-01-31 ou 2000/01/31.\n"+e.getMessage());
+						"La date d'arrivï¿½e indiquï¿½e est incorrecte, une date doit ï¿½tre indiquï¿½ selon un des formats suivant : 31-01-2000, 31/01/2000, 2000-01-31 ou 2000/01/31.\n"+e.getMessage());
 			}
 		} else {
-			throw new Error("La date d'arrivée indiquée est vide.");
+			throw new Error("La date d'arrivï¿½e indiquï¿½e est vide.");
 		}
 		this.dateArrivee = dateArrivee;
 

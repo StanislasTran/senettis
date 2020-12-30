@@ -1,6 +1,7 @@
 package testGUI;
 
 import java.io.IOException;
+import java.sql.DriverManager;
 import java.sql.SQLException;
 
 import org.eclipse.swt.SWT;
@@ -9,14 +10,17 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 
 import GUI.Home;
-import classes.Product;
+
 
 public class testHome {
 
 	
 	public static void main(String[] args) {
+		
 		try {
+			DriverManager.registerDriver(new com.microsoft.sqlserver.jdbc.SQLServerDriver());
 			Home home=new Home();
+			
 		} catch (SQLException | IOException e) {
 			System.out.println("erreur au lancement de l'application");
 			e.printStackTrace();

@@ -157,7 +157,7 @@ public class ViewProduct {
 
 		}
 		
-		addHeader("création d'un produit");
+		addHeader("crÃ©ation d'un produit");
 		mainView = new Composite(this.productView, SWT.CENTER);
 		FillLayout fillLayout = new FillLayout(SWT.VERTICAL|SWT.CENTER);
 		fillLayout.marginWidth = 130;
@@ -250,8 +250,8 @@ public class ViewProduct {
 				} catch (IllegalArgumentException argException) {
 					
 					MessageBox dialog = new MessageBox(productView.getShell(), SWT.ICON_ERROR | SWT.OK);
-					dialog.setText("Erreur Création :");
-					dialog.setMessage("Une erreur est survenue lors de la création du produit. " + '\n'
+					dialog.setText("Erreur CrÃ©ation :");
+					dialog.setMessage("Une erreur est survenue lors de la crÃ©ation du produit. " + '\n'
 							+ argException.getMessage());
 					dialog.open();
 				}
@@ -265,13 +265,13 @@ public class ViewProduct {
 
 						if (produit.insertDatabase() < 1)
 							throw new SQLException(
-									"Erreur lors de l'insertion dans la base de donnée, 0 lignes retournées");
+									"Erreur lors de l'insertion dans la base de donnÃ©e, 0 lignes retournÃ©es");
 
 						// validationMessageBox
 
 						MessageBox dialog = new MessageBox(productView.getShell(), SWT.ICON_WORKING | SWT.OK);
 						dialog.setText("Succes");
-						dialog.setMessage("Le produit " + name + " a bien été enregistré");
+						dialog.setMessage("Le produit " + name + " a bien Ã©tÃ© enregistrÃ©");
 						dialog.open();
 
 						// view change
@@ -290,9 +290,9 @@ public class ViewProduct {
 
 					} catch (SQLException sqlException) {
 						MessageBox dialog = new MessageBox(productView.getShell(), SWT.ICON_ERROR | SWT.OK);
-						dialog.setText("Erreur Création :");
+						dialog.setText("Erreur CrÃ©ation :");
 						dialog.setMessage(
-								"Une erreur est survenue lors de l'insertion du produit dans la base de données. "
+								"Une erreur est survenue lors de l'insertion du produit dans la base de donnÃ©es. "
 										+ '\n' + sqlException.getMessage());
 						dialog.open();
 
@@ -461,14 +461,14 @@ public class ViewProduct {
 				} catch (IllegalArgumentException argException) {
 					System.out.println(argException.getMessage());
 					MessageBox dialog = new MessageBox(productView.getShell(), SWT.ICON_ERROR | SWT.OK);
-					dialog.setText("Erreur Création :");
-					dialog.setMessage("Une erreur est survenue lors de la mise à jour du produit. " + '\n'
+					dialog.setText("Erreur CrÃ©ation :");
+					dialog.setMessage("Une erreur est survenue lors de la mise Ã  jour du produit. " + '\n'
 							+ argException.getMessage());
 					dialog.open();
 				}
 
 				Product produit = new Product(productId, name, brand, Double.parseDouble(price), comment,
-						Status.getStatus("Publié"));
+						Status.getStatus("PubliÃ©"));
 
 				if (isChecked) {
 					try {
@@ -479,7 +479,7 @@ public class ViewProduct {
 
 						MessageBox dialog = new MessageBox(productView.getShell(), SWT.ICON_WORKING | SWT.OK);
 						dialog.setText("Succes");
-						dialog.setMessage("Le produit " + name + " a bien été enregistré");
+						dialog.setMessage("Le produit " + name + " a bien Ã©tÃ© enregistrÃ©");
 						dialog.open();
 						addHeader("Gestion des produits");
 						compositeSelection();
@@ -522,8 +522,8 @@ public class ViewProduct {
 					productViewDisplay();
 				} catch (SQLException sqlException) {
 					MessageBox dialog = new MessageBox(productView.getShell(), SWT.ICON_ERROR | SWT.OK);
-					dialog.setText("Erreur Création :");
-					dialog.setMessage("Une erreur est survenue lors de l'insertion du produit dans la base de données. "
+					dialog.setText("Erreur CrÃ©ation :");
+					dialog.setMessage("Une erreur est survenue lors de l'insertion du produit dans la base de donnÃ©es. "
 							+ '\n' + sqlException.getMessage());
 					dialog.open();
 				}
@@ -594,7 +594,7 @@ public class ViewProduct {
 	}
 
 	/**
-	 * Add the button "Créer" which enables to access the creation form
+	 * Add the button "CrÃ©er" which enables to access the creation form
 	 * 
 	 * @param composite
 	 */
@@ -606,7 +606,7 @@ public class ViewProduct {
 		}
 		this.boutonCreer = new Button(this.selection, SWT.CENTER);
 		this.selection.layout(true, true);
-		boutonCreer.setText("Créer");
+		boutonCreer.setText("CrÃ©er");
 
 		boutonCreer.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -758,20 +758,20 @@ public class ViewProduct {
 	public boolean checkProduct(String name, String price) {
 
 		if (Objects.isNull(name))
-			throw new IllegalArgumentException("L'attribut name ne peut pas être null");
+			throw new IllegalArgumentException("L'attribut name ne peut pas Ãªtre null");
 		else if (name.isBlank())
-			throw new IllegalArgumentException("Le champ nom ne peut pas être vide");
+			throw new IllegalArgumentException("Le champ nom ne peut pas Ãªtre vide");
 		if (Objects.isNull(price))
-			throw new IllegalArgumentException("L'attribut price ne peut pas être null");
+			throw new IllegalArgumentException("L'attribut price ne peut pas Ãªtre null");
 		else if (name.isBlank())
-			throw new IllegalArgumentException("L'attribut prix ne peut pas être null");
+			throw new IllegalArgumentException("L'attribut prix ne peut pas Ãªtre null");
 
 		try {
 			Double priceCheck = Double.parseDouble(price);
 			if (priceCheck <= 0)
-				throw new IllegalArgumentException("Le  prix doit être supérieur à 0");
+				throw new IllegalArgumentException("Le  prix doit Ãªtre supÃ©rieur Ã  0");
 		} catch (NumberFormatException parseDoubleException) {
-			throw new IllegalArgumentException("Le prix entré n'est pas valide, veuillez entrer une valeur numérique");
+			throw new IllegalArgumentException("Le prix entrÃ© n'est pas valide, veuillez entrer une valeur numÃ©rique");
 		}
 
 		return true;

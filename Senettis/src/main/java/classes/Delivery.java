@@ -37,14 +37,14 @@ public class Delivery {
 		this(idChantier, prixTotal, date);
 		if (status != null) {
 			if (!status.isEmpty()) {
-				if (status.equals("Publié") || status.equals("publié")) {
-					this.status = "Publié";
-				} else if (status.equals("Archivé") || status.equals("archivé"))  {
-					this.status = "Archivé";
+				if (status.equals("PubliÃ©") || status.equals("PubliÃ©")) {
+					this.status = "PubliÃ©";
+				} else if (status.equals("ArchivÃ©") || status.equals("ArchivÃ©"))  {
+					this.status = "ArchivÃ©";
 				} else if (status.equals("Draft") || status.equals("draft")) {
 					this.status = "Draft";
 				} else {
-					throw new Error("Le status indiqué est incorrect, le status doit être publié, archivé ou draft.");
+					throw new Error("Le status indiquÃ© est incorrect, le status doit Ãªtre publiÃ©, archivÃ© ou draft.");
 				}
 			} else {
 				this.status = null;
@@ -75,7 +75,7 @@ public class Delivery {
 					}
 				} catch (Throwable e) { 
 					e.printStackTrace(); 
-					throw new Error("La date indiquée est incorrecte, une date doit être indiqué selon un des formats suivant : 31-01-2000, 31/01/2000, 2000-01-31 ou 2000/01/31.");
+					throw new Error("La date indiquï¿½e est incorrecte, une date doit ï¿½tre indiquï¿½ selon un des formats suivant : 31-01-2000, 31/01/2000, 2000-01-31 ou 2000/01/31.");
 				}
 				//EN
 				try {
@@ -84,10 +84,10 @@ public class Delivery {
 					}
 				} catch (Throwable e) { 
 					e.printStackTrace(); 
-					throw new Error("La date indiquée est incorrecte, une date doit être indiqué selon un des formats suivant : 31-01-2000, 31/01/2000, 2000-01-31 ou 2000/01/31.");
+					throw new Error("La date indiquï¿½e est incorrecte, une date doit ï¿½tre indiquï¿½ selon un des formats suivant : 31-01-2000, 31/01/2000, 2000-01-31 ou 2000/01/31.");
 				}
 			} else {
-				throw new Error("La date indiquée est incorrecte, une date doit être indiqué selon un des formats suivant : 31-01-2000, 31/01/2000, 2000-01-31 ou 2000/01/31.");
+				throw new Error("La date indiquï¿½e est incorrecte, une date doit ï¿½tre indiquï¿½ selon un des formats suivant : 31-01-2000, 31/01/2000, 2000-01-31 ou 2000/01/31.");
 			}
 		}
 		this.date = date;		
@@ -100,7 +100,7 @@ public class Delivery {
 
 
 
-	//lien base de données ---------------------------------------------------------------
+	//lien base de donnï¿½es ---------------------------------------------------------------
 	public int insertDatabase() throws SQLException {
 		String reqSql = "INSERT INTO Livraison(chantier,date,prixTotal,status) VALUES (?,?,?,?)";
 		
@@ -276,15 +276,15 @@ public class Delivery {
 
 				} else {
 					throw new Error(
-							"La date indiquée est incorrecte, une date doit être indiqué selon un des formats suivant : 31-01-2000, 31/01/2000, 2000-01-31 ou 2000/01/31.");
+							"La date indiquï¿½e est incorrecte, une date doit ï¿½tre indiquï¿½ selon un des formats suivant : 31-01-2000, 31/01/2000, 2000-01-31 ou 2000/01/31.");
 				}
 
 			}catch (Exception e) {
 				throw new Error(
-						"La date indiquée est incorrecte, une date doit être indiqué selon un des formats suivant : 31-01-2000, 31/01/2000, 2000-01-31 ou 2000/01/31.");
+						"La date indiquï¿½e est incorrecte, une date doit ï¿½tre indiquï¿½ selon un des formats suivant : 31-01-2000, 31/01/2000, 2000-01-31 ou 2000/01/31.");
 			}
 		} else {
-			throw new Error("La date indiquée est vide.");
+			throw new Error("La date indiquï¿½e est vide.");
 		}
 		this.date = date;
 
@@ -298,17 +298,17 @@ public class Delivery {
 
 	public void setStatus(String status) {
 		if (status != null) {
-			if (status == "Publié" || status == "publié") {
-				this.status = "Publié";
-			} else if (status == "Archivé" || status == "archivé") {
-				this.status = "Archivé";
+			if (status == "PubliÃ©" || status == "PubliÃ©") {
+				this.status = "PubliÃ©";
+			} else if (status == "ArchivÃ©" || status == "ArchivÃ©") {
+				this.status = "ArchivÃ©";
 			} else if (status == "Draft" || status == "draft") {
 				this.status = "Draft";
 			} else {
-				throw new Error("Le status indiqué est incorrect, le status doit être publié, archivé ou draft.");
+				throw new Error("Le status indiquï¿½ est incorrect, le status doit ï¿½tre PubliÃ©, ArchivÃ© ou draft.");
 			}
 		} else {
-			throw new Error("Le status indiqué est vide.");
+			throw new Error("Le status indiquï¿½ est vide.");
 		}
 	}
 
@@ -354,7 +354,7 @@ public class Delivery {
 		}
 		
 		
-		String reqSql = "select chantier,Sum(PrixTotal) as SUM from Livraison WHERE status ='Publié' AND Date>=? AND Date<=? GROUP BY chantier;";
+		String reqSql = "select chantier,Sum(PrixTotal) as SUM from Livraison WHERE status ='PubliÃ©' AND Date>=? AND Date<=? GROUP BY chantier;";
 
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);

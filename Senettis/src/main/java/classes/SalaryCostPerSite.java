@@ -34,15 +34,17 @@ public class SalaryCostPerSite {
 		this.year = year;
 		this.siteId = siteId;
 		this.AffectationCost = computeAffectationCost(siteId, month, year, "normal");
+	
 		this.MABCost = computeAffectationCost(siteId, month, year, "MAB");
 		this.totalCost = AffectationCost + MABCost;
+		
 	}
 
 	private ResultSet getACjoinCE(int siteId, Month month, Year year) throws SQLException {
 		String selection = "Chantier,Employe,AC_nb_heures,MoisDebut,AnneeDebut,mois,annee,mutuelle,indemnite_panier,masse_salariale,cout_transport,cout_telephone,remboursement_prets,saisie_arret,CE_nb_heures";
 		String source = "ACjoinCE_View";
 
-		String condition = "ACStatus='Publié' AND CEStatus='Publié' AND Chantier=? AND Mois=? AND Annee=?";
+		String condition = "ACStatus='PubliÃ©' AND CEStatus='PubliÃ©' AND Chantier=? AND Mois=? AND Annee=?";
 		String reqSql = "Select " + selection + " FROM " + source + " WHERE " + condition + " ;";
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
@@ -58,7 +60,7 @@ public class SalaryCostPerSite {
 		String selection = "Chantier,Employe,AC_nb_heures,mois,annee,mutuelle,indemnite_panier,masse_salariale,cout_transport,cout_telephone,remboursement_prets,saisie_arret,CE_nb_heures";
 		String source = "ACjoinCEMAB_View";
 
-		String condition = "ACStatus='Publié' AND CEStatus='Publié' AND Chantier=? AND Mois=? AND Annee=?";
+		String condition = "ACStatus='PubliÃ©' AND CEStatus='PubliÃ©' AND Chantier=? AND Mois=? AND Annee=?";
 		String reqSql = "Select " + selection + " FROM " + source + " WHERE " + condition + " ;";
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
@@ -74,16 +76,19 @@ public class SalaryCostPerSite {
 			Double masseSalariale, Double coutTransport, Double coutTelephone, Double remboursementPrets,
 			Double saisieArret, Double CENbHeures) {
 
+	
 		Double salaryCostCE = mutuelle + indemnitePanier + masseSalariale + coutTransport + coutTelephone
 				+ remboursementPrets + saisieArret;
-
+		
 		Double coef = ACNbHeures / CENbHeures;
+		
+		
 
 		return salaryCostCE * coef;
 	}
 
 	private Double computeAffectationCost(int siteId, Month month, Year year, String type) throws SQLException {
-
+		
 		ResultSet result = null;
 		if (Objects.isNull(type))
 			throw new IllegalArgumentException("type can't be null must be equal to 'normal' Or 'MAB'");
@@ -127,10 +132,13 @@ public class SalaryCostPerSite {
 
 			if (!Objects.isNull(result.getDouble("CE_nb_heures")))
 				CENbHeures = result.getDouble("CE_nb_heures");
+			
+			
 			affectationCost += computeSalaryAffectationCost(ACNbHeures, mutuelle, indemnitePanier, masseSalariale,
 					coutTransport, coutTelephone, remboursementPrets, saisieArret, CENbHeures);
 
 		}
+		
 		return affectationCost;
 	}
 
@@ -139,7 +147,7 @@ public class SalaryCostPerSite {
 		String selection = "Employe ,sum(valeurParMois)  as sumV  ";
 		String source = "AmmortissementEmploye ";
 
-		String condition = "status='Publié'  AND Employe=? AND type='Saisie Arret' AND datefromparts(?,?,1) between datefromparts(AmmortissementEmploye.AnneeDepart,AmmortissementEmploye.MoisDepart,1) AND datefromparts(AmmortissementEmploye.AnneeFin,AmmortissementEmploye.MoisFin,1) ";
+		String condition = "status='PubliÃ©'  AND Employe=? AND type='Saisie Arret' AND datefromparts(?,?,1) between datefromparts(AmmortissementEmploye.AnneeDepart,AmmortissementEmploye.MoisDepart,1) AND datefromparts(AmmortissementEmploye.AnneeFin,AmmortissementEmploye.MoisFin,1) ";
 		String reqSql = "Select " + selection + " FROM " + source + " WHERE " + condition + "group by (Employe) ;";
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
@@ -169,7 +177,7 @@ public class SalaryCostPerSite {
 		String selection = "Employe ,sum(valeurParMois)  as sumV ";
 		String source = "AmmortissementEmploye";
 
-		String condition = "status='Publié'  AND Employe=? AND type='Saisie Arret' AND datefromparts(?,?,1) between datefromparts(AmmortissementEmploye.AnneeDepart,AmmortissementEmploye.MoisDepart,1) AND datefromparts(AmmortissementEmploye.AnneeFin,AmmortissementEmploye.MoisFin,1)";
+		String condition = "status='PubliÃ©'  AND Employe=? AND type='Saisie Arret' AND datefromparts(?,?,1) between datefromparts(AmmortissementEmploye.AnneeDepart,AmmortissementEmploye.MoisDepart,1) AND datefromparts(AmmortissementEmploye.AnneeFin,AmmortissementEmploye.MoisFin,1)";
 		String reqSql = "Select " + selection + " FROM " + source + " WHERE " + condition + "group by (Employe) ;";
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnection().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);

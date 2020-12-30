@@ -153,8 +153,8 @@ public class turnOverView {
 				}
 				if (!erreurs) { // on affiche le message de succes si on a eu aucune erreur
 					MessageBox dialog = new MessageBox(turnOverView.getShell(), SWT.ICON_WORKING | SWT.OK);
-					dialog.setText("Succès");
-					dialog.setMessage("Données enregistrée avec succès");
+					dialog.setText("SuccÃ¨s");
+					dialog.setMessage("DonnÃ©es enregistrï¿½e avec succÃ¨s");
 					dialog.open();
 				}
 			}
@@ -171,7 +171,7 @@ public class turnOverView {
 		}
 		this.lastButton = new Button(this.buttons, SWT.NONE);
 		this.buttons.layout(true, true);
-		this.lastButton.setText("récupérer données précédentes");
+		this.lastButton.setText("rÃ©cupÃ©rer donnï¿½es prÃ©cÃ¨dentes");
 
 		this.lastButton.pack();
 		this.lastButton.addSelectionListener(new SelectionAdapter() {
@@ -247,7 +247,7 @@ public class turnOverView {
 
 		List<TurnOver> turnOvers = TurnOver.getListCAForAllSite(month, year);
 
-		String[] titles = { "Nom de chantier", "Menage", "Vitrerie", "Fournitures Sainitaires", "Mise à Blanc",
+		String[] titles = { "Nom de chantier", "Menage", "Vitrerie", "Fournitures Sainitaires", "Mise Ã  Blanc",
 				"autres", "CA  " };
 		final Table table = new Table(this.compositeTable, SWT.FULL_SELECTION | SWT.HIDE_SELECTION | SWT.MULTI);
 		table.setLinesVisible(true);
@@ -401,8 +401,8 @@ public class turnOverView {
 			this.monthFilter = new Combo(monthComposite, SWT.NONE);
 			monthComposite.setBackground(Couleur.bleuClair);
 			monthLabel.setBackground(Couleur.bleuClair);
-			String[] frenchMonth = { "Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août",
-					"Septembre", "Octobre", "Novembre", "Décembre" };
+			String[] frenchMonth = { "Janvier", "FÃ©vrier", "Mars", "Avril", "Mai", "Juin", "Juillet", "AoÃ»t",
+					"Septembre", "Octobre", "Novembre", "DÃ©cembre" };
 
 			for (String m : frenchMonth)
 				this.monthFilter.add(m);
@@ -424,7 +424,7 @@ public class turnOverView {
 			Label yearLabel = new Label(yearComposite, SWT.NONE);
 			yearComposite.setBackground(Couleur.bleuClair);
 			yearLabel.setBackground(Couleur.bleuClair);
-			yearLabel.setText("Année");
+			yearLabel.setText("AnnÃ©e");
 			this.yearFilter = new Combo(yearComposite, SWT.NONE);
 
 			int currentYear = Year.now().getValue();
