@@ -484,3 +484,9 @@ On v1.chantier=ChantierId
 left join
 (select Chantier,employe,mois,annee,(mutuelle+indemnite_panier+masse_salariale+cout_transport+cout_telephone+remboursement_prets+saisie_arret)*(AC_nb_heures/CE_nb_heures) as CostMAB from ACjoinCEMAB_View )as v2
 on v1.Chantier=v2.Chantier AND v1.annee=v2.annee AND v1.mois=v2.mois AND v1.employe=v2.employe;
+
+
+Create view chantierLCaLEmpCost as
+
+select vue.chantierId,vue.mois,vue.annee,vue.CA,ISNULL(EmpCost.totalCost, 0 ) as SalaryCost from chantierLeftCA_VIEW as vue left join (select chantierId,mois,annee, Sum(totalCost) as totalCost 
+from ChantierSalaireCost_view group by ChantierId,mois,annee) as EmpCost ON vue.chantierId=EmpCost.ChantierId AND vue.mois=EmpCost.mois AND vue.Annee=EmpCost.annee
