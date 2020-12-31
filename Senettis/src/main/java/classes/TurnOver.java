@@ -2,7 +2,9 @@
 package classes;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import connexion.SQLDatabaseConnexion;
 import java.sql.Connection;
@@ -241,6 +243,44 @@ public class TurnOver {
 		} else {
 			throw new SQLException("Data not found");
 		}
+	}
+
+	/**
+	 * Return a TurnOver from a siteId ,month and year
+	 * 
+	 * 
+	 * @param <type>Month</type>month
+	 * @param <type>Year</type>       year
+	 * @return <type> TurnOver </type> the turnerOver searched
+	 * @throws SQLException - if a database access error occurs;this method is
+	 *                      called on a closed PreparedStatement or the SQLstatement
+	 *                      does not return a ResultSet objectSQLTimeoutException -
+	 *                      when the driver has determined that thetimeout value
+	 *                      that was specified by the setQueryTimeoutmethod has been
+	 *                      exceeded and has at least attempted to cancelthe
+	 *                      currently running Statement
+	 */
+	public static Map<Integer, Double> getTurnOverByDateAndSite(Month  month, Year year) throws SQLException {
+
+		Map<Integer, Double> turnOversMap = new HashMap<Integer, Double>();
+		String reqSql = "SELECT Mois, Annee,Chantier,Menage,Vitrerie,Mise_a_blanc,Fournitures_sanitaires,Autres,CA,Status FROM ChiffreAffaire WHERE   mois=? and annee=?";
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
+		PreparedStatement statement = connection.prepareStatement(reqSql);
+		statement.setObject(1, month.getValue(), Types.INTEGER);
+		statement.setObject(2, year.getValue(), Types.INTEGER);
+		statement.executeQuery();
+
+		ResultSet result = statement.getResultSet();
+
+		while (result.next()) {
+			Integer siteId = result.getInt("Chantier");
+
+			Double turnOver = result.getDouble("CA");
+
+			turnOversMap.put(siteId, turnOver);
+
+		}
+		return turnOversMap;
 	}
 
 	/**

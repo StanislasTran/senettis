@@ -451,11 +451,15 @@ public class Home {
 				}
 				try {
 					contenuColonneDroite = new RentabilityView(colonneDroite, display).getComposite();
+				}catch(Exception e){
+					e.printStackTrace();
+					/*
 				} catch (SQLException e) {
-					MessageBox msgBox = new MessageBox(currentVue.getShell(), SWT.ERROR);
+					MessageBox msgBox = new MessageBox(shell, SWT.ERROR);
 					msgBox.setMessage("Erreur Base de donnée");
 					msgBox.setText("erreur de liée à la base de données : \n" + e.getMessage());
 					msgBox.open();
+				}*/
 				}
 				contenuColonneDroite.pack();
 				colonneDroite.pack();

@@ -8,7 +8,7 @@ Create table Produit (
 	"Status" VARCHAR (50) NOT NULL,
 	"Date_de_creation" DateTime  NOT NUll Default (GETDATE()), 
 	"Date_de_modification" DateTime  NOT NUll Default (GETDATE()), 
-	CONSTRAINT check_status_produit CHECK (("Status") IN ('Publié','Brouillon','Archivé')),
+	CONSTRAINT check_status_produit CHECK (("Status") IN ('Publiï¿½','Brouillon','Archivï¿½')),
 	
 );
 
@@ -31,7 +31,7 @@ Create table Chantier (
 	"Status" VARCHAR (50) NOT NULL,
 	"Date_de_creation" DateTime  NOT NUll Default (GETDATE()), 
 	"Date_de_modification" DateTime  NOT NUll Default (GETDATE()),
-	CONSTRAINT check_status_chantier CHECK (("Status") IN ('Publié','Brouillon','Archivé')),
+	CONSTRAINT check_status_chantier CHECK (("Status") IN ('Publiï¿½','Brouillon','Archivï¿½')),
 	 CONSTRAINT UNIQUE_name UNIQUE(Nom)   
 	
 	 
@@ -67,7 +67,7 @@ Create table Employe (
 	"Status" VARCHAR (50) NOT NULL,
 	"Date_de_creation" DateTime  NOT NUll Default (GETDATE()), 
 	"Date_de_modification" DateTime  NOT NUll Default (GETDATE()), 
-	CONSTRAINT check_status_employe CHECK (("Status") IN ('Publié','Brouillon','Archivé')),
+	CONSTRAINT check_status_employe CHECK (("Status") IN ('Publiï¿½','Brouillon','Archivï¿½')),
     CONSTRAINT check_titre CHECK ((Titre) IN ('M','Mme')),
     constraint check_mail check (Mail like '%_@__%.__%'),
     CONSTRAINT matricule_unique UNIQUE (Numero_matricule),   
@@ -95,7 +95,7 @@ Create table Livraison (
 	"Status" VARCHAR (50) NOT NULL,
 	"Date_de_creation" DateTime  NOT NUll Default (GETDATE()), 
 	"Date_de_modification" DateTime  NOT NUll Default (GETDATE()), 
-	CONSTRAINT check_status_livraison CHECK (("Status") IN ('Publié','Brouillon','Archivé')),
+	CONSTRAINT check_status_livraison CHECK (("Status") IN ('Publiï¿½','Brouillon','Archivï¿½')),
 
 	 
 );
@@ -125,7 +125,7 @@ Create table AffectationChantier (
 	AnneeDebut int NOT NULL,
 	"Date_de_creation" DateTime  NOT NUll Default (GETDATE()), 
 	"Date_de_modification" DateTime  NOT NUll Default (GETDATE()), 
-	CONSTRAINT check_status_affectationChantier CHECK (("Status") IN ('Publié','Brouillon','Archivé')),
+	CONSTRAINT check_status_affectationChantier CHECK (("Status") IN ('Publiï¿½','Brouillon','Archivï¿½')),
 	
 	CONSTRAINT check_moonthAffectationChantier CHECK (("MoisDebut")>=0 and ("MoisDebut")<=12),
 	 
@@ -155,7 +155,7 @@ Create table AffectationMAB (
 	"Status" VARCHAR (50) NOT NULL,
 	"Date_de_creation" DateTime  NOT NUll Default (GETDATE()), 
 	"Date_de_modification" DateTime  NOT NUll Default (GETDATE()), 
-	CONSTRAINT check_status_affectationMAB CHECK (("Status") IN ('Publié','Brouillon','Archivé')),
+	CONSTRAINT check_status_affectationMAB CHECK (("Status") IN ('Publiï¿½','Brouillon','Archivï¿½')),
 	CONSTRAINT check_moonthMAB CHECK (("Mois")>=0 and ("Mois")<=12),
 	
 );
@@ -184,7 +184,7 @@ Create table ProduitParLivraison(
 	"Status" VARCHAR (50) NOT NULL,
 	"Date_de_creation" DateTime  NOT NUll Default (GETDATE()), 
 	"Date_de_modification" DateTime  NOT NUll Default (GETDATE()), 
-	CONSTRAINT check_status_produit_par_livraison CHECK (("Status") IN ('Publié','Brouillon','Archivé')),
+	CONSTRAINT check_status_produit_par_livraison CHECK (("Status") IN ('Publiï¿½','Brouillon','Archivï¿½')),
 	 
 );
 
@@ -217,7 +217,7 @@ Create table ChiffreAffaire (
 	"Status" VARCHAR (50) NOT NULL,
 	"Date_de_creation" DateTime  NOT NUll Default (GETDATE()), 
 	"Date_de_modification" DateTime  NOT NUll Default (GETDATE()), 
-	CONSTRAINT check_status_ChiffreAffaire CHECK (("Status") IN ('Publié','Brouillon','Archivé')),
+	CONSTRAINT check_status_ChiffreAffaire CHECK (("Status") IN ('Publiï¿½','Brouillon','Archivï¿½')),
 	Primary Key (mois,annee,chantier)
 	
 );
@@ -256,7 +256,7 @@ Create table CoutEmploye (
 	"Status" VARCHAR (50) NOT NULL,
 	"Date_de_creation" DateTime  NOT NUll Default (GETDATE()), 
 	"Date_de_modification" DateTime  NOT NUll Default (GETDATE()), 
-	CONSTRAINT check_status_coutEmploye CHECK (("Status") IN ('Publié','Brouillon','Archivé')),
+	CONSTRAINT check_status_coutEmploye CHECK (("Status") IN ('Publiï¿½','Brouillon','Archivï¿½')),
 	CONSTRAINT coutPeriode_unique UNIQUE (employe,mois,annee), 
 	
 );
@@ -289,7 +289,7 @@ SET Date_de_modification = GETDATE()
 	"Status" VARCHAR (50) NOT NULL,
 	"Date_de_creation" DateTime  NOT NUll Default (GETDATE()), 
 	"Date_de_modification" DateTime  NOT NUll Default (GETDATE()), 
-	CONSTRAINT check_status_ammortissementEmploye CHECK (("Status") IN ('Publié','Brouillon','Archivé'))
+	CONSTRAINT check_status_ammortissementEmploye CHECK (("Status") IN ('Publiï¿½','Brouillon','Archivï¿½'))
 );
 
 GO
@@ -321,7 +321,7 @@ SET Date_de_modification = GETDATE()
 	"Status" VARCHAR (50) NOT NULL,
 	"Date_de_creation" DateTime  NOT NUll Default (GETDATE()), 
 	"Date_de_modification" DateTime  NOT NUll Default (GETDATE()), 
-	CONSTRAINT check_status_ammortissementChantier CHECK (("Status") IN ('Publié','Brouillon','Archivé'))
+	CONSTRAINT check_status_ammortissementChantier CHECK (("Status") IN ('Publiï¿½','Brouillon','Archivï¿½'))
 );
 
 GO
@@ -349,7 +349,7 @@ SET Date_de_modification = GETDATE()
 	"Status" VARCHAR (50) NOT NULL,
 	"Date_de_creation" DateTime  NOT NUll Default (GETDATE()), 
 	"Date_de_modification" DateTime  NOT NUll Default (GETDATE()), 
-	CONSTRAINT check_status_fournitureSanitaire CHECK (("Status") IN ('Publié','Brouillon','Archivé'))
+	CONSTRAINT check_status_fournitureSanitaire CHECK (("Status") IN ('Publiï¿½','Brouillon','Archivï¿½'))
 );
 
 GO
@@ -386,35 +386,40 @@ AffectationChantier
 JOIN CoutEmploye
 ON
 AffectationChantier.Employe=CoutEmploye.Employe
-
+WHERE
+ CoutEmploye.status='PubliÃ©' AND AffectationChantier.status='PubliÃ©'
 
 
 
 GO
 
-Create view  
-ACjoinCEMAB_View 
-as 
-SELECT 
-AffectationMAB.Chantier,AffectationMAB.Employe,
-AffectationMAB.Nombre_heures as AC_nb_heures,
-AffectationMAB.status as ACStatus,
-CoutEmploye.mois,CoutEmploye.annee,
-CoutEmploye.mutuelle,CoutEmploye.indemnite_panier,
-CoutEmploye.masse_salariale,CoutEmploye.cout_transport,
-CoutEmploye.cout_telephone,CoutEmploye.remboursement_prets,
-CoutEmploye.saisie_arret,CoutEmploye.nb_heures as CE_nb_heures,
-CoutEmploye.status as CEStatus
-
-FROM 
-AffectationMAB 
-JOIN CoutEmploye
-ON
-AffectationMAB.Employe=CoutEmploye.Employe
-AND
-AffectationMAB.Mois=CoutEmploye.Mois
-AND
-AffectationMAB.Annee=CoutEmploye.Annee
+	Create view  
+	ACjoinCEMAB_View 
+	as 
+	SELECT 
+	AffectationMAB.Chantier,AffectationMAB.Employe,
+	AffectationMAB.Nombre_heures as AC_nb_heures,
+	AffectationMAB.status as ACStatus,
+	CoutEmploye.mois,CoutEmploye.annee,
+	CoutEmploye.mutuelle,CoutEmploye.indemnite_panier,
+	CoutEmploye.masse_salariale,CoutEmploye.cout_transport,
+	CoutEmploye.cout_telephone,CoutEmploye.remboursement_prets,
+	CoutEmploye.saisie_arret,CoutEmploye.nb_heures as CE_nb_heures,
+	CoutEmploye.status as CEStatus
+	
+	FROM 
+	AffectationMAB 
+	JOIN CoutEmploye
+	ON
+	AffectationMAB.Employe=CoutEmploye.Employe
+	AND
+	AffectationMAB.Mois=CoutEmploye.Mois
+	AND
+	AffectationMAB.Annee=CoutEmploye.Annee
+	
+	
+	WHERE
+	CoutEmploye.status='PubliÃ©' AND AffectationMAB.status='PubliÃ©'
 
 GO
 Create table Comission (
@@ -427,7 +432,7 @@ Chantier int NOT NULL,
 	AnneeDebut int NOT NULL,
 	"Date_de_creation" DateTime  NOT NUll Default (GETDATE()), 
 	"Date_de_modification" DateTime  NOT NUll Default (GETDATE()), 
-	CONSTRAINT check_status_Comission CHECK (("Status") IN ('Publié','Brouillon','Archivé')),
+	CONSTRAINT check_status_Comission CHECK (("Status") IN ('Publiï¿½','Brouillon','Archivï¿½')),
 	
 	CONSTRAINT check_moonth_Comission CHECK (("MoisDebut")>=0 and ("MoisDebut")<=12),
 	 
@@ -458,7 +463,7 @@ Create table Rentabilite (
 	"Date_de_creation" DateTime  NOT NUll Default (GETDATE()), 
 	"Date_de_modification" DateTime  NOT NUll Default (GETDATE()), 
 
-	CONSTRAINT check_status_Rentabilite CHECK (("Status") IN ('Publié','Brouillon','Archivé')),
+	CONSTRAINT check_status_Rentabilite CHECK (("Status") IN ('Publiï¿½','Brouillon','Archivï¿½')),
 	
 	CONSTRAINT check_moonth_Rentabilite CHECK (("Mois")>=0 and ("Mois")<=12))
 	 

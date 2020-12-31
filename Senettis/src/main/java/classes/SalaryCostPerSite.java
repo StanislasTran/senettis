@@ -8,7 +8,8 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.time.Month;
 import java.time.Year;
-
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 import connexion.SQLDatabaseConnexion;
@@ -81,6 +82,136 @@ public class SalaryCostPerSite {
 	}
 
 	/**
+	 * get the view ACjoinCe view filtered on
+	 * <param>SiteId</param>,<param>month</param> and <param>year</param> in a
+	 * <type>ResultSet</type>
+	 * 
+	 * @param <type>Month</type> month not null
+	 * @param <type>Year         </type> year
+	 * @return <type>ResultSet</type> result from the query
+	 * @throws SQLException
+	 */
+
+	private static ResultSet getACjoinCE(Month month, Year year) throws SQLException {
+		String selection = "Chantier,Employe,AC_nb_heures,MoisDebut,AnneeDebut,mois,annee,mutuelle,indemnite_panier,masse_salariale,cout_transport,cout_telephone,remboursement_prets,saisie_arret,CE_nb_heures";
+		String source = "ACjoinCE_View";
+		String condition = "ACStatus='Publié' AND CEStatus='Publié'  AND Mois=? AND Annee=?";
+		String reqSql = "Select " + selection + " FROM " + source + " WHERE " + condition + " ;";
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
+		PreparedStatement statement = connection.prepareStatement(reqSql);
+
+		statement.setObject(1, month.getValue(), Types.INTEGER);
+		statement.setObject(2, year.getValue(), Types.INTEGER);
+		statement.execute();
+		return statement.getResultSet();
+	}
+
+	public static Map<Integer, Double> computeTotalAffectationCost(Month month, Year year) throws SQLException {
+		Map<Integer, Double> affectationTotalCostMap = new HashMap<Integer, Double>();
+		Map<Integer, Double> AffectationMABMap = computeAffectationCost(month, year, "MAB");
+		Map<Integer, Double> AffectationNormalMap = computeAffectationCost(month, year, "normal");
+
+		for (Site site : Site.getAllSite()) {
+			Double cost = 0.00;
+
+			if (AffectationMABMap.containsKey(site.getSiteId()))
+				cost += AffectationMABMap.get(site.getSiteId());
+			if (AffectationNormalMap.containsKey(site.getSiteId()))
+				cost += AffectationNormalMap.get(site.getSiteId());
+			affectationTotalCostMap.put(site.getSiteId(), cost);
+
+		}
+
+		return affectationTotalCostMap;
+
+	}
+
+	private static Map<Integer, Double> computeAffectationCost(Month month, Year year, String type)
+			throws SQLException {
+		Map<Integer, Double> affectationCostMap = new HashMap<Integer, Double>();
+		ResultSet result = null;
+		if (Objects.isNull(type))
+			throw new IllegalArgumentException("type can't be null must be equal to 'normal' Or 'MAB'");
+		if (type.equals("normal")) {
+			result = getACjoinCE(month, year);
+		} else if (type.equals("MAB")) {
+			result = getACMABjoinCE(month, year);
+		} else
+			throw new IllegalArgumentException("unknown type, type are 'normal' or 'MAB'");
+
+		while (result.next()) {
+
+			Integer siteId = -1;
+			Double ACNbHeures = 0.00;
+			Double insurance = 0.00;
+			Double basketAllowance = 0.00;
+			Double salaryMass = 0.00;
+			Double transportationCost = 0.00;
+			Double phoneCost = 0.00;
+			Double loeanRefund = 0.00;
+			Double sickLeave = 0.00;
+			Double CEHours = 0.00;
+
+			if (!Objects.isNull(result.getInt("Chantier")))
+				siteId = result.getInt("Chantier");
+			if (!Objects.isNull(result.getDouble("AC_nb_heures")))
+				ACNbHeures = result.getDouble("AC_nb_heures");
+			if (!Objects.isNull(result.getDouble("mutuelle")))
+				insurance = result.getDouble("mutuelle");
+			if (!Objects.isNull(result.getDouble("indemnite_panier")))
+				basketAllowance = result.getDouble("indemnite_panier");
+			if (!Objects.isNull(result.getDouble("masse_salariale")))
+				salaryMass = result.getDouble("masse_salariale");
+			if (!Objects.isNull(result.getDouble("cout_transport")))
+				transportationCost = result.getDouble("cout_transport");
+			if (!Objects.isNull(result.getDouble("cout_telephone")))
+				phoneCost = result.getDouble("cout_telephone");
+
+			sickLeave = sickLeaveSum(result.getInt("Employe"), month, year);
+
+			loeanRefund = refundLoanSum(result.getInt("Employe"), month, year);
+
+			if (!Objects.isNull(result.getDouble("CE_nb_heures")))
+				CEHours = result.getDouble("CE_nb_heures");
+
+			Double newCost = computeSalaryAffectationCost(ACNbHeures, insurance, basketAllowance, salaryMass,
+					transportationCost, phoneCost, loeanRefund, sickLeave, CEHours);
+			if (affectationCostMap.containsKey(siteId))
+				affectationCostMap.put(siteId, affectationCostMap.get(siteId) + newCost);
+			else
+				affectationCostMap.put(siteId, newCost);
+
+		}
+
+		return affectationCostMap;
+	}
+
+	/**
+	 * get the view ACMABjoinCE view filtered on
+	 * <param>SiteId</param>,<param>month</param> and <param>year</param> in a
+	 * <type>ResultSet</type>
+	 * 
+	 * @param <type>Integer</type> siteId not null
+	 * @param <type>Month</type>   month not null
+	 * @param <type>Year           </type> year
+	 * @return <type>ResultSet</type> result from the query
+	 * @throws SQLException
+	 */
+	private static ResultSet getACMABjoinCE(Month month, Year year) throws SQLException {
+		String selection = "Chantier,Employe,AC_nb_heures,mois,annee,mutuelle,indemnite_panier,masse_salariale,cout_transport,cout_telephone,remboursement_prets,saisie_arret,CE_nb_heures";
+		String source = "ACjoinCEMAB_View";
+		String condition = "ACStatus='Publié' AND CEStatus='Publié'  AND Mois=? AND Annee=?";
+		String reqSql = "Select " + selection + " FROM " + source + " WHERE " + condition + " ;";
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
+		PreparedStatement statement = connection.prepareStatement(reqSql);
+
+		statement.setObject(1, month.getValue(), Types.INTEGER);
+		statement.setObject(2, year.getValue(), Types.INTEGER);
+		statement.execute();
+		return statement.getResultSet();
+	}
+
+	/**
 	 * get the view ACMABjoinCE view filtered on
 	 * <param>SiteId</param>,<param>month</param> and <param>year</param> in a
 	 * <type>ResultSet</type>
@@ -120,12 +251,12 @@ public class SalaryCostPerSite {
 	 * @return <type>Double</type> the SalaryAffectationCost
 	 */
 
-	private Double computeSalaryAffectationCost(Double ACNHours, Double insurance, Double basketAllowance,
-			Double salaryMass, Double transportationCost, Double phoneCost, Double loanRefund,
-			Double sickLeave, Double CEHours) {
+	private static Double computeSalaryAffectationCost(Double ACNHours, Double insurance, Double basketAllowance,
+			Double salaryMass, Double transportationCost, Double phoneCost, Double loanRefund, Double sickLeave,
+			Double CEHours) {
 
-		Double salaryCostCE = insurance + basketAllowance + salaryMass + transportationCost + phoneCost
-				+ loanRefund + sickLeave;
+		Double salaryCostCE = insurance + basketAllowance + salaryMass + transportationCost + phoneCost + loanRefund
+				+ sickLeave;
 
 		Double coef = ACNHours / CEHours;
 
@@ -200,12 +331,9 @@ public class SalaryCostPerSite {
 		return affectationCost;
 	}
 
-	
 	/**
-	
-	/**
-	 * Compute the employee sick leave of an employee on a given month and
-	 * year
+	 * 
+	 * /** Compute the employee sick leave of an employee on a given month and year
 	 * 
 	 * @param <type> Integer </type>employeId not null
 	 * @param <type> Month</type>month not null
@@ -213,7 +341,7 @@ public class SalaryCostPerSite {
 	 * @return <type> Double </type> sum fo the sick leave
 	 * @throws SQLException
 	 */
-	private Double sickLeaveSum(Integer employeId, Month month, Year year) throws SQLException {
+	private static Double sickLeaveSum(Integer employeId, Month month, Year year) throws SQLException {
 
 		String selection = "Employe ,sum(valeurParMois)  as sumV  ";
 		String source = "AmmortissementEmploye ";
@@ -253,7 +381,7 @@ public class SalaryCostPerSite {
 	 * @return <type> Double </type> sum of the loan
 	 * @throws SQLException
 	 */
-	private Double refundLoanSum(Integer employeId, Month month, Year year) throws SQLException {
+	private static Double refundLoanSum(Integer employeId, Month month, Year year) throws SQLException {
 
 		String selection = "Employe ,sum(valeurParMois)  as sumV ";
 		String source = "AmmortissementEmploye";

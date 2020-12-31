@@ -29,6 +29,7 @@ import java.time.Month;
 import java.time.Year;
 import java.time.YearMonth;
 import java.util.ArrayList;
+
 import java.util.Map;
 import java.util.Objects;
 
@@ -141,110 +142,78 @@ public class RentabilityView {
 			public void widgetSelected(SelectionEvent e) {
 				try {
 					ArrayList<Site> allSite = (ArrayList<Site>) Site.getAllSite();
-					for (Site s : allSite) {
-						for (int i = 1; i <= 12; i++) {
-							for (int j = Year.now().getValue() - 1; j < Year.now().getValue() + 1; j++) {
-								Double CA = 0.00;
-								Double CoutsEmploye = 0.00;
-								Double livraison = 0.00;
-								Double materiel = 0.00;
-								Double coutsFs = 0.00;
 
-								Double coutRevient = 0.00;
-								Double margeBrut = 0.00;
+					for (int yearI = Year.now().getValue() -1; yearI < Year.now().getValue() + 1; yearI++) {
 
-								Double pourcentage = 0.00;
+						for (int monthI = 1; monthI <= 12; monthI++) {
 
-								// Gerer
-								try {
-									TurnOver TO = TurnOver.getTurnOverByDateAndSite(s.getSiteId(), i, j);
-									CA = TO.getTurnOver();
-								} catch (SQLException sqlException) {
+							for (Site s : allSite) {
+								Map<Integer, Double> comissions = Comission.getAllComissionsAfterMap(Month.of(monthI),
+										Year.of(yearI));
 
-								}
+								Map<Integer, Double> fsMap = FS.getAllFSterMap(Month.of(monthI), Year.of(yearI));
 
-								if (CA > 0) {
+								Map<Integer, Double> livraisonMap = Delivery
+										.getAllLivraisonFilteredMap(Month.of(monthI), Year.of(yearI));
 
-									try {
-										CoutsEmploye = new SalaryCostPerSite(s.getSiteId(), Month.of(i), Year.of(j))
-												.getTotalCost();
+								Map<Integer, Double> amortiMap = SiteAmortisation.getAllACFilteredMap(Month.of(monthI),
+										Year.of(yearI));
+								Map<Integer, Double> turnOverMap = TurnOver.getTurnOverByDateAndSite(Month.of(monthI),
+										Year.of(yearI));
 
-									} catch (SQLException sqlException) {
+								Map<Integer, Double> salaryCostMap = SalaryCostPerSite
+										.computeTotalAffectationCost(Month.of(monthI), Year.of(yearI));
 
-									}
+								Double turnOver = 0.00;
+								Double totalEmployeCost = 0.00;
+								Double total_delivery = 0.00;
+								Double total_material = 0.00;
+								Double total_fs = 0.00;
 
-									YearMonth date1 = YearMonth.of(j, i);
+								Double priceCost = 0.00;
+								Double grossMargin = 0.00;
 
-									// livraison
+								Double percent = 0.00;
 
-									for (Delivery l : Delivery.getAllLivraison()) {
-										if (l.getDate() != null) {
-											String[] d1 = l.getDate().split("/");
-											YearMonth date2 = YearMonth.of(Integer.parseInt(d1[2]),
-													Integer.parseInt(d1[1]));
+								// TurnOver
 
-											if (l.getStatus().equals("Publié")) {
-												if (l.getIdChantier() == s.getSiteId() && date1.equals(date2)) {
-													livraison += l.getPrixTotal();
-												}
-											}
+								if (turnOverMap.containsKey(s.getSiteId()))
+									turnOver = turnOverMap.get(s.getSiteId());
 
-										}
-									}
 
-									for (FS fs : FS.getAllFS()) {
-										if (fs.getStartYear() != null && fs.getStartMonth() != null) {// si on a une
-																										// date de
-											// debut
-											// on regarde
-											// sinon l'ajoute direct
-											// parce que qu'on
-											// considere que c'est
-											// tout
-											// le temps
-											YearMonth debut = YearMonth.of(fs.getStartYear(), fs.getStartMonth());
-											if (fs.getStatus().equals("Publié")) {
-												if (fs.getSiteId() == s.getSiteId()) {
-													if (debut.equals(date1) || (debut.isBefore(date1))) {
-														coutsFs += fs.getAmountByMonth();
-													}
-												}
-											}
-										} else {
-											coutsFs += fs.getAmountByMonth();
+								//EmployeeCost
+								if (salaryCostMap.containsKey(s.getSiteId()))
+									totalEmployeCost = salaryCostMap.get(s.getSiteId());
 
-										}
-									}
+								// Delivery
 
-									for (SiteAmortisation ac : SiteAmortisation.getAllAmmortissementChantier()) {
-										YearMonth debut = YearMonth.of(ac.getAnneeD(), ac.getMoisD());
-										YearMonth fin = YearMonth.of(ac.getAnneeF(), ac.getMoisF());
-										if (ac.getStatus().equals("Publié")) {
-											if (ac.getSiteId() == s.getSiteId()) {
-												if (debut.equals(date1) || fin.equals(date1)
-														|| (debut.isBefore(date1) && fin.isAfter(date1))) {
-													materiel += ac.getMontantParMois();
-												}
-											}
-										}
-									}
+								if (livraisonMap.containsKey(s.getSiteId()))
+									total_delivery = livraisonMap.get(s.getSiteId());
 
-									Double comission = Comission.getComissionSum(s.getSiteId(), date1.getMonth(),
-											Year.of(date1.getYear()));
+								if (fsMap.containsKey(s.getSiteId()))
+									total_fs = fsMap.get(s.getSiteId());
 
-									coutRevient = CoutsEmploye + materiel + coutsFs + ((CA * comission) / 100)
-											+ livraison;
-									margeBrut = CA - coutRevient;
-									pourcentage = (margeBrut * 100) / CA;
+								if (amortiMap.containsKey(s.getSiteId()))
+									total_material = amortiMap.get(s.getSiteId());
 
-									new Rentability(s.getSiteId(), Month.of(i), Year.of(j), CA, CoutsEmploye, livraison,
-											materiel, coutsFs, comission, coutRevient, margeBrut, pourcentage).update();
+								// Comission
 
-								}
+								Double comission = 0.00;
+								if (comissions.containsKey(s.getSiteId()))
+									comission = comissions.get(s.getSiteId());
+
+								priceCost = totalEmployeCost + total_material + total_fs + ((turnOver * comission) / 100)
+										+ total_delivery;
+								grossMargin = turnOver - priceCost;
+								percent = (grossMargin * 100) / turnOver;
+
+								new Rentability(s.getSiteId(), Month.of(monthI), Year.of(yearI), turnOver, totalEmployeCost,
+										total_delivery, total_material, total_fs, comission, priceCost, grossMargin,
+										percent).update();
 
 							}
-						}
 
+						}
 					}
 
 					MessageBox dialog = new MessageBox(rentabilityView.getShell(), SWT.ICON_INFORMATION | SWT.OK);
@@ -310,36 +279,38 @@ public class RentabilityView {
 
 		String[] d2 = periode.split(" ");
 		YearMonth date1 = YearMonth.of(Integer.parseInt(d2[1]), Month.valueOf(d2[0]).getValue());
+		Month monthFilter = date1.getMonth();
+		Year yearFilter = Year.of(date1.getYear());
 
-		Map<Integer, Double> comissions = Comission.getAllComissionsAfterMap(date1.getMonth(),
-				Year.of(date1.getYear()));
+		Map<Integer, Double> comissions = Comission.getAllComissionsAfterMap(monthFilter, yearFilter);
 
-		Map<Integer, Double> fsMap = FS.getAllFSterMap(date1.getMonth(), Year.of(date1.getYear()));
+		Map<Integer, Double> fsMap = FS.getAllFSterMap(monthFilter, yearFilter);
 
-		Map<Integer, Double> livraisonMap = Delivery.getAllLivraisonFilteredMap(date1.getMonth(),
-				Year.of(date1.getYear()));
+		Map<Integer, Double> livraisonMap = Delivery.getAllLivraisonFilteredMap(monthFilter, yearFilter);
 
-		Map<Integer, Double> amortiMap = SiteAmortisation.getAllACFilteredMap(date1.getMonth(),
-				Year.of(date1.getYear()));
+		Map<Integer, Double> amortiMap = SiteAmortisation.getAllACFilteredMap(monthFilter, yearFilter);
+		Map<Integer, Double> turnOverMap = TurnOver.getTurnOverByDateAndSite(monthFilter, yearFilter);
 
+		Map<Integer, Double> salaryCostMap = SalaryCostPerSite.computeTotalAffectationCost(monthFilter, yearFilter);
 		try {
 			for (Site c : Site.getAllSite()) {
-				Double margeBrut = 0.0;
-				Double CoutRevient = 0.0;
+				Double grossMargin = 0.0;
+				Double priceCost = 0.0;
 
 				TableItem item = new TableItem(rentabilityTable, SWT.NONE);
+
 				item.setText(0, c.getName());
 
-				double CA = 0.0;
+				double turnOver = 0.0;
 
-				/// CA///
+				/// turnOver///
 
 				try {
 
-					CA = TurnOver.getTurnOverByDateAndSite(c.getSiteId(), Month.valueOf(d2[0]).getValue(),
-							Integer.parseInt(d2[1])).getTurnOver();
+					if (turnOverMap.containsKey(c.getSiteId()))
+						turnOver = turnOverMap.get(c.getSiteId());
 
-					item.setText(1, Double.toString(CA));
+					item.setText(1, "" + turnOver);
 				} catch (Exception e) {
 
 					item.setText(1, "0.0");
@@ -347,37 +318,29 @@ public class RentabilityView {
 
 				Double totalEmployeCost = 0.0;
 
-				///// EMPLOYEECOST///
-
-				try {
-					totalEmployeCost = new SalaryCostPerSite(c.getSiteId(), Month.valueOf(d2[0]),
-							Year.of(Integer.parseInt(d2[1]))).getTotalCost();
-
-				} catch (SQLException sqlException) {
-
-				}
+				if (salaryCostMap.containsKey(c.getSiteId()))
+					totalEmployeCost = salaryCostMap.get(c.getSiteId());
 
 				DecimalFormat df = new DecimalFormat("0.00");
 
 				item.setText(2, df.format(totalEmployeCost));
 
-				// livraison//
+				// delivery//
 
-				double total_livraison = 0.0;
+				double total_delivery = 0.0;
 				if (livraisonMap.containsKey(c.getSiteId()))
-					total_livraison = livraisonMap.get(c.getSiteId());
+					total_delivery = livraisonMap.get(c.getSiteId());
 
-				item.setText(3, Double.toString(total_livraison));
+				item.setText(3, Double.toString(total_delivery));
 
 				// materiel
 
-				Double total_materiel = 0.0;
+				Double total_material = 0.0;
 				if (amortiMap.containsKey(c.getSiteId()))
-					total_materiel = amortiMap.get(c.getSiteId());
+					total_material = amortiMap.get(c.getSiteId());
 
-				item.setText(4, Double.toString(total_materiel));
+				item.setText(4, Double.toString(total_material));
 
-				// fs
 				double total_fs = 0.0;
 
 				if (fsMap.containsKey(c.getSiteId()))
@@ -393,15 +356,15 @@ public class RentabilityView {
 
 				item.setText(6, Double.toString(comission));
 
-				CoutRevient = totalEmployeCost + total_livraison + total_materiel + total_fs + (CA * comission) / 100;
+				priceCost = totalEmployeCost + total_delivery + total_material + total_fs
+						+ (turnOver * comission) / 100;
 
-				margeBrut = CA - CoutRevient;
-				item.setText(7, Double.toString(CoutRevient));
+				grossMargin = turnOver - priceCost;
+				item.setText(7, Double.toString(priceCost));
+				item.setText(8, Double.toString(grossMargin));
 
-				item.setText(8, Double.toString(margeBrut));
-
-				if (CA != 0.0) {
-					item.setText(9, df.format((margeBrut * 100) / CA) + "%");
+				if (turnOver != 0.0) {
+					item.setText(9, df.format((grossMargin * 100) / turnOver) + "%");
 				}
 
 			}
