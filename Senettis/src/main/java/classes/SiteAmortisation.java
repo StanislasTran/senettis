@@ -16,7 +16,7 @@ import java.sql.Statement;
 import java.sql.Types;
 import java.time.Month;
 import java.time.Year;
-
+//to do (comment and translate)
 public class SiteAmortisation {
 
 	private Integer ammortissementChantierId;

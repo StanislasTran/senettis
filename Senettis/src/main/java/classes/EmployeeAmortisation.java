@@ -12,6 +12,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
 
+
+//to do (comment and translate)
+
 public class EmployeeAmortisation {
 
 	private Integer ammortissementEmployeId;

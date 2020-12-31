@@ -16,6 +16,9 @@ import java.util.Map;
 import connexion.SQLDatabaseConnexion;
 
 
+
+//to do (translation and comment)
+
 public class Comission {
 	private Integer comissionId;
 	private Double comission;

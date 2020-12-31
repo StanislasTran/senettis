@@ -16,10 +16,14 @@ import java.sql.Statement;
 import java.sql.Types;
 import java.time.LocalDate;
 
+
+//to do (comment and translate)
 /**
  * Represent an Employee into the System
  *
  */
+
+
 
 public class Employee {
 

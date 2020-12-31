@@ -17,7 +17,7 @@ import java.util.Objects;
 
 import connexion.SQLDatabaseConnexion;
 
-
+//to do (comment and translate)
 public class MABAssignment {
 
 	private Integer affectationId;
