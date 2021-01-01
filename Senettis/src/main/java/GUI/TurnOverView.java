@@ -30,6 +30,11 @@ import org.eclipse.swt.widgets.Text;
 
 import classes.TurnOver;
 
+
+/**
+ * View used to manage turnOver into the system
+ *
+ */
 public class TurnOverView {
 	private Composite header;
 	private Composite turnOverView;
@@ -49,6 +54,12 @@ public class TurnOverView {
 	final int AUTRESCOLUMN = 5;
 	final int CACOLUMN = 6;
 
+	
+	/**
+	 * Constructor
+	 * @param <type>Composite</type>parent composite which will contains this view
+	 * @throws SQLException
+	 */
 	public TurnOverView(Composite parent) throws SQLException {
 		this.turnOverView = new Composite(parent, SWT.NONE);
 		this.turnOverView.setLayout(new RowLayout(SWT.VERTICAL));
@@ -101,6 +112,11 @@ public class TurnOverView {
 
 	}
 
+	/**
+	 * Add the button to save turnOvers data into the database
+	 * @param <type>Table</type>table the table which contains turnOvers data
+	 * @param <type>List<turnOvers></type>turnOvers list of  turnOvers Data before the update
+	 */
 	private void addSaveButton(Table table, List<TurnOver> turnOvers) {
 
 		if (!Objects.isNull(this.saveButton) && !this.saveButton.isDisposed()) {
@@ -156,6 +172,12 @@ public class TurnOverView {
 
 	}
 
+	
+	/**
+	 * Add a button to reuse data from previous month
+	 * @param <type>Table</type>table table which contains actual data
+	 * @param <type>list<turnOver></type>turnOvers list with forme data
+	 */
 	private void addLastButton(Table table, List<TurnOver> turnOvers) {
 
 		if (!Objects.isNull(this.lastButton) && !this.lastButton.isDisposed()) {
@@ -196,6 +218,10 @@ public class TurnOverView {
 
 	}
 
+	/**
+	 * Create the composite which contains the table with the list of turnOvers
+	 * @throws SQLException
+	 */
 	private void compositeTable() throws SQLException {
 		if (!Objects.isNull(this.compositeTable) && !this.compositeTable.isDisposed()) {
 			this.compositeTable.dispose();
@@ -207,13 +233,18 @@ public class TurnOverView {
 		Month month = Month.of(this.monthFilter.getSelectionIndex() + 1);
 		Year year = Year.of(Integer.parseInt(this.yearFilter.getText()));
 
-		createTableListCA(month, year);
+		createTableListTurnOver(month, year);
 		compositeTable.pack();
 		turnOverView.pack();
 		turnOverView.getParent().pack();
 
 	}
 
+	/**
+	 * update the table with the last month data
+	 * @return <type>Table</type> table with previous month data
+	 * @throws SQLException
+	 */
 	private Table compositeTableLast() throws SQLException {
 		if (!Objects.isNull(this.compositeTable) && !this.compositeTable.isDisposed()) {
 			this.compositeTable.dispose();
@@ -226,17 +257,22 @@ public class TurnOverView {
 		int year = Integer.parseInt(this.yearFilter.getText());
 		Table table = null;
 		if (month == 1) {
-			table = createTableListCA(Month.of(12), Year.of(year - 1));
+			table = createTableListTurnOver(Month.of(12), Year.of(year - 1));
 		} else
 
-			table = createTableListCA(Month.of(month - 1), Year.of(year));
+			table = createTableListTurnOver(Month.of(month - 1), Year.of(year));
 		compositeTable.pack();
 		turnOverView.pack();
 		turnOverView.getParent().pack();
 		return table;
 	}
 
-	private Table createTableListCA(Month month, Year year) throws SQLException {
+	/**
+	 * Create the table with the list of turnOvers
+	 * @throws SQLException
+	 */
+	
+	private Table createTableListTurnOver(Month month, Year year) throws SQLException {
 
 		List<TurnOver> turnOvers = TurnOver.getListCAForAllSite(month, year);
 
@@ -302,6 +338,14 @@ public class TurnOverView {
 
 	}
 
+	
+	/***
+	 * add textEditor to modify data into the table
+	 * @param <type>int</type> index the column index
+	 * @param <type>Table</type> table which contains turnOvers data
+	 * @param <type>Item</type> item which contain row data
+	 * @return <type>Text</type> newEditor, the text field to update a field
+	 */
 	public Text textForColumn(int index, Table table, TableItem item) {
 
 		final TableEditor editor = new TableEditor(table);
@@ -325,7 +369,7 @@ public class TurnOverView {
 				Text text = (Text) editor.getEditor();
 				editor.getItem().setText(index, text.getText());
 
-				editor.getItem().setText(CACOLUMN, computeCA(item));
+				editor.getItem().setText(CACOLUMN, computeTurnOver(item));
 
 			}
 
@@ -335,7 +379,13 @@ public class TurnOverView {
 
 	}
 
-	private String computeCA(TableItem item) {
+	
+	/**
+	 * Compute the TurnOver for a given row 
+	 * @param <type>Item</type>item which contains a row data
+	 * @return <type>String</type> The turnOver updated
+	 */
+	private String computeTurnOver(TableItem item) {
 
 		try {
 
