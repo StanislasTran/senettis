@@ -35,7 +35,7 @@ public class Home {
 	ScrolledComposite compositeMain;
 	Composite compositeMainContent;
 
-	Composite colonneGauche;
+	Composite leftColumn;
 	Composite logoSpace;
 	Composite menu;
 
@@ -161,6 +161,11 @@ public class Home {
 		titre.pack();
 	}
 
+	
+	/**
+	 * create presentation
+	 * @throws SQLException
+	 */
 	public void presentation() throws SQLException {
 
 		Composite presentation = new Composite(rightColumnContent, SWT.CENTER);
@@ -194,14 +199,18 @@ public class Home {
 	 * 
 	 ************************/
 
+	
+	/**
+	 * create leftColumn
+	 */
 	public void compositeLeftColumn() {
-		colonneGauche = new Composite(compositeMainContent, SWT.BACKGROUND);
-		colonneGauche.setLayout(fillLayoutV);
+		leftColumn = new Composite(compositeMainContent, SWT.BACKGROUND);
+		leftColumn.setLayout(fillLayoutV);
 
 		compositeLogo();
 		compositeMenu();
 
-		colonneGauche.pack();
+		leftColumn.pack();
 	}
 
 	/**
@@ -210,7 +219,7 @@ public class Home {
 	 */
 	public void compositeLogo() {
 
-		Label logo = new Label(colonneGauche, SWT.NONE);
+		Label logo = new Label(leftColumn, SWT.NONE);
 
 		InputStream moyenLogo = getClass().getClassLoader().getResourceAsStream("moyenLogo.jpg");
 		Image image = new Image(display, moyenLogo);
@@ -223,7 +232,7 @@ public class Home {
 	 */
 	public void compositeMenu() {
 
-		menu = new Composite(colonneGauche, SWT.NONE);
+		menu = new Composite(leftColumn, SWT.NONE);
 		menu.setLayout(fillLayoutV);
 
 		Button boutonEmploye = new Button(menu, SWT.NONE);
