@@ -6,25 +6,23 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.time.Year;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
-
-import javax.management.openmbean.CompositeType;
-
 import org.eclipse.swt.*;
-import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-
 import classes.Comission;
-
 import classes.Site;
 import classes.Status;
+import org.eclipse.swt.graphics.*;
 
-public class ViewComission {
+/**
+ * View to manage comission into the system
+ *
+ */
+public class ComissionView {
 	private Composite mainView;
 	private Composite selection;
 	private Composite comissionView;
@@ -32,16 +30,18 @@ public class ViewComission {
 	private Button buttonRemove;
 	private Composite header;
 
+	
+	
 	/**
 	 * Constructor
 	 * 
 	 * @param composite <type>Composite</type>
 	 * @throws SQLException
 	 */
-	public ViewComission(Composite composite) throws SQLException {
+	public ComissionView(Composite composite) throws SQLException {
 		this.comissionView = new Composite(composite, SWT.BORDER);
-		Couleur.setDisplay(composite.getDisplay());
-		comissionView.setBackground(Couleur.bleuClair);
+		MyColor.setDisplay(composite.getDisplay());
+		comissionView.setBackground(MyColor.bleuClair);
 
 		RowLayout rowLayoutV = new RowLayout(SWT.VERTICAL);
 		comissionView.setLayout(rowLayoutV);
@@ -59,7 +59,7 @@ public class ViewComission {
 			mainView.dispose();
 			this.comissionView.layout(true, true);
 		}
-		this.mainView = new Composite(this.comissionView, SWT.NONE);
+		this.mainView = new Composite(this.comissionView, SWT.BORDER);
 		this.comissionView.layout(true, true);
 		if (!Objects.isNull(selection) && !selection.isDisposed())
 			mainView.moveBelow(selection);
@@ -84,14 +84,17 @@ public class ViewComission {
 		this.mainView();
 		RowLayout rowLayoutV = new RowLayout();
 		rowLayoutV.type = SWT.VERTICAL;
+
 		final Table table = new Table(mainView, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.FULL_SELECTION);
+
 		this.mainView.setLayout(new RowLayout());
+		table.setSize(200, 50);
 		table.setLayoutData(new RowData(410, 300));
 
 		table.setLinesVisible(true);
 		table.setHeaderVisible(true);
 
-		List<Integer> idList = new ArrayList<Integer>();
+		java.util.List<Integer> idList = new ArrayList<Integer>();
 		table.addSelectionListener(new SelectionAdapter() {
 
 			public void widgetSelected(SelectionEvent e) {
@@ -107,7 +110,7 @@ public class ViewComission {
 
 		});
 
-		String[] titles = { "ChantierId", "Nom du chantier", "Date de DÈbut", "Comission" };
+		String[] titles = { "ChantierId", "Nom du chantier", "Date de D√©but", "Comission" };
 
 		for (String title : titles) {
 			TableColumn column = new TableColumn(table, SWT.NONE);
@@ -144,8 +147,9 @@ public class ViewComission {
 	 * add a <type>Composite </type> composite to create a Product in the database
 	 * 
 	 * @param composite
+	 * @throws SQLException
 	 */
-	public void createComission() {
+	public void createComission() throws SQLException {
 		addHeader("Creation Comission", 150);
 		this.comissionView.setLayout(new RowLayout(SWT.VERTICAL));
 
@@ -158,9 +162,10 @@ public class ViewComission {
 		comissionView.layout(true, true);
 
 		// mainRowLayout.marginWidth = 50;
-		mainView.setLayout(new RowLayout(SWT.VERTICAL));
-		mainView.setBackground(Couleur.bleuClair);
-		comissionView.setBackground(Couleur.bleuClair);
+		GridLayout mainLayout = new GridLayout();
+		mainView.setLayout(mainLayout);
+		mainView.setBackground(MyColor.bleuClair);
+		comissionView.setBackground(MyColor.bleuClair);
 
 		comissionView.layout(true, true);
 
@@ -168,14 +173,14 @@ public class ViewComission {
 
 		Composite monthComposite = new Composite(mainView, SWT.NONE);
 		monthComposite.setLayout(new RowLayout(SWT.HORIZONTAL));
-		monthComposite.setBackground(Couleur.bleuClair);
+		monthComposite.setBackground(MyColor.bleuClair);
 		Label monthLabel = new Label(monthComposite, SWT.NONE);
-		monthLabel.setText("Moi dÈbut");
-		monthLabel.setBackground(Couleur.bleuClair);
+		monthLabel.setText("Moi d√©but");
+		monthLabel.setBackground(MyColor.bleuClair);
 		Combo comboMonth = new Combo(monthComposite, SWT.NONE);
 
-		String[] frenchMonth = { "Janvier", "FÈvrier", "Mars", "Avril", "Mai", "Juin", "Juillet", "Ao˚t", "Septembre",
-				"Octobre", "Novembre", "DÈcembre" };
+		String[] frenchMonth = { "Janvier", "F√©vrier", "Mars", "Avril", "Mai", "Juin", "Juillet", "Ao√ªt", "Septembre",
+				"Octobre", "Novembre", "D√©cembre" };
 
 		for (String m : frenchMonth)
 			comboMonth.add(m);
@@ -185,11 +190,11 @@ public class ViewComission {
 
 		// Year part
 		Composite yearComposite = new Composite(mainView, SWT.NONE);
-		yearComposite.setBackground(Couleur.bleuClair);
+		yearComposite.setBackground(MyColor.bleuClair);
 		yearComposite.setLayout(new RowLayout(SWT.HORIZONTAL));
 		Label yearLabel = new Label(yearComposite, SWT.NONE);
-		yearLabel.setBackground(Couleur.bleuClair);
-		yearLabel.setText("AnnÈe dÈbut");
+		yearLabel.setBackground(MyColor.bleuClair);
+		yearLabel.setText("Ann√©e d√©but");
 		Combo comboYear = new Combo(yearComposite, SWT.NONE);
 
 		int currentYear = Year.now().getValue();
@@ -201,28 +206,42 @@ public class ViewComission {
 
 		Composite compositeComission = new Composite(mainView, SWT.BACKGROUND);
 		compositeComission.setLayout(new RowLayout());
-		compositeComission.setBackground(Couleur.bleuClair);
+		compositeComission.setBackground(MyColor.bleuClair);
 		Label labelComission = new Label(compositeComission, SWT.NONE);
-		labelComission.setBackground(Couleur.bleuClair);
+		labelComission.setBackground(MyColor.bleuClair);
 		labelComission.setText("Comission");
 		labelComission.setBounds(10, 10, 20, 25);
 		final Text textComission = new Text(compositeComission, SWT.BORDER);
 		textComission.setText("");
 		textComission.setBounds(10, 30, 30, 25);
 
-		
 		/// SITE PART
-		
-		Composite tableComposite = new Composite(mainView,SWT.NONE);
-	
-		tableComposite.setLayoutData(new RowData(400,400));
+		Label siteLabel = new Label(mainView, SWT.NONE);
+		siteLabel.setText("Selectionnez un chantier : ");
+		siteLabel.setBackground(MyColor.bleuClair);
+		List sites = new List(mainView, SWT.MULTI | SWT.BORDER | SWT.V_SCROLL);
 
-		Table table = VueChantier.getTableAllChantier(tableComposite, 400, 400);
+		ArrayList<Site> allSite = (ArrayList<Site>) Site.getAllSite();
+
+		for (Site s : allSite)
+			sites.add(s.getName());
+
+		GridData gridData = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_FILL);
+
+		gridData.verticalSpan = 4;
+
+		int listHeight = sites.getItemHeight() * 12;
+
+		Rectangle trim = sites.computeTrim(0, 0, 0, listHeight);
+
+		gridData.heightHint = trim.height;
+
+		sites.setLayoutData(gridData);
 
 		// Validation button
 
 		Composite compositeButtons = new Composite(mainView, SWT.NONE);
-		compositeButtons.setBackground(Couleur.bleuClair);
+		compositeButtons.setBackground(MyColor.bleuClair);
 		compositeButtons.setLayout(new RowLayout());
 		Button validationButton = new Button(compositeButtons, SWT.BACKGROUND);
 		validationButton.setText("Valider");
@@ -235,12 +254,13 @@ public class ViewComission {
 				String comission = textComission.getText().replace(",", ".");
 				String siteId = "";
 				try {
-					siteId = "" + Site.getSiteIdByName(table.getSelection()[0].getText(0));
+
+					siteId = "" + Site.getSiteIdByName(sites.getSelection()[0]);
 				} catch (SQLException e) {
 					MessageBox dialog = new MessageBox(comissionView.getShell(), SWT.ICON_ERROR | SWT.OK);
-					dialog.setText("Erreur CrÈation :");
-					dialog.setMessage("Une erreur est survenue lors de la crÈation de la comission. " + '\n'
-							+ e.getMessage() + "erreuto de base de donnÈe, contactez l'admin");
+					dialog.setText("Erreur Cr√©ation :");
+					dialog.setMessage("Une erreur est survenue lors de la cr√©ation de la comission. " + '\n'
+							+ e.getMessage() + "erreuto de base de donn√©e, contactez l'admin");
 					dialog.open();
 
 				} catch (ArrayIndexOutOfBoundsException exceptionArray) {
@@ -252,8 +272,8 @@ public class ViewComission {
 				} catch (IllegalArgumentException argException) {
 
 					MessageBox dialog = new MessageBox(comissionView.getShell(), SWT.ICON_ERROR | SWT.OK);
-					dialog.setText("Erreur CrÈation :");
-					dialog.setMessage("Une erreur est survenue lors de la crÈation de la comission. " + '\n'
+					dialog.setText("Erreur Cr√©ation :");
+					dialog.setMessage("Une erreur est survenue lors de la cr√©ation de la comission. " + '\n'
 							+ argException.getMessage());
 					dialog.open();
 				}
@@ -274,28 +294,28 @@ public class ViewComission {
 
 							MessageBox dialog = new MessageBox(comissionView.getShell(), SWT.ICON_WORKING | SWT.OK);
 							dialog.setText("Succes");
-							dialog.setMessage("La comission  a bien ÈtÈ enregistrÈ");
+							dialog.setMessage("La comission  a bien √©t√© enregistr√©e");
 							dialog.open();
 
 							// view change
 
+							addHeader("Gestion des comissions", 127);
 							compositeSelection();
 							addCreateButton();
 							comissionViewDisplay();
 
 						} catch (SQLException sqlException) {
 							MessageBox dialog = new MessageBox(comissionView.getShell(), SWT.ICON_ERROR | SWT.OK);
-							dialog.setText("Erreur CrÈation :");
+							dialog.setText("Erreur Cr√©ation :");
 							dialog.setMessage(
-									"Une erreur est survenue lors de l'insertion du produit dans la base de donnÈes. "
+									"Une erreur est survenue lors de l'insertion du produit dans la base de donn√©es. "
 											+ '\n' + sqlException.getMessage());
 							dialog.open();
 
 						}
 
 						compositeComission.dispose();
-						table.pack();
-						tableComposite.pack();
+
 						compositeButtons.dispose();
 						mainView.pack();
 						mainView.getParent().pack();
@@ -317,13 +337,15 @@ public class ViewComission {
 			public void widgetSelected(SelectionEvent arg0) {
 
 				try {
-
+					addHeader("Gestion des comissions", 127);
 					compositeSelection();
 					addCreateButton();
 					comissionViewDisplay();
 				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					MessageBox msgBox = new MessageBox(comissionView.getShell(), SWT.ERROR);
+					msgBox.setMessage("Erreur Base de donn√©e");
+					msgBox.setText("erreur de li√©e √† la base de donn√©es : \n" + e.getMessage());
+					msgBox.open();
 				}
 
 				compositeComission.dispose();
@@ -346,8 +368,7 @@ public class ViewComission {
 		mainView.pack();
 
 		// tableComposite.pack();
-		table.pack();
-		table.moveAbove(compositeButtons);
+
 		validationButton.pack();
 		buttonCancel.pack();
 		compositeButtons.pack();
@@ -387,7 +408,7 @@ public class ViewComission {
 		RowLayout rowLayout = new RowLayout();
 		rowLayout.marginWidth = 20;
 		this.selection.setLayout(rowLayout);
-		this.selection.setBackground(Couleur.bleuClair);
+		this.selection.setBackground(MyColor.bleuClair);
 
 		selection.pack();
 		comissionView.pack();
@@ -396,7 +417,7 @@ public class ViewComission {
 	}
 
 	/**
-	 * Add the button "CrÈer" which enables to access the creation form
+	 * Add the button "Cr√©er" which enables to access the creation form
 	 * 
 	 * @param composite
 	 */
@@ -408,7 +429,7 @@ public class ViewComission {
 		}
 		this.boutonCreer = new Button(this.selection, SWT.CENTER);
 		this.selection.layout(true, true);
-		boutonCreer.setText("CrÈer");
+		boutonCreer.setText("Cr√©er");
 
 		boutonCreer.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -418,7 +439,15 @@ public class ViewComission {
 				mainView.dispose();
 				comissionView.layout(true, true);
 
-				createComission();
+				try {
+					createComission();
+				} catch (SQLException e) {
+					MessageBox msgBox = new MessageBox(comissionView.getShell(), SWT.ERROR);
+					msgBox.setMessage("Erreur Base de donn√©e");
+					msgBox.setText("erreur de li√©e √† la base de donn√©es : \n" + e.getMessage());
+					msgBox.open();
+					e.printStackTrace();
+				}
 
 			}
 		});
@@ -439,7 +468,7 @@ public class ViewComission {
 		if (!Objects.isNull(this.header) && !this.header.isDisposed())
 			this.header.dispose();
 		this.header = new Composite(this.comissionView, SWT.CENTER | SWT.BORDER);
-		this.header.setBackground(Couleur.bleuFonce);
+		this.header.setBackground(MyColor.bleuFonce);
 		FillLayout layout = new FillLayout();
 		layout.marginWidth = size;
 		this.header.setLayout(layout);
@@ -448,9 +477,9 @@ public class ViewComission {
 
 		HeadLabel.setText("\n" + header + "\n\n");
 		Font fontTitle = new Font(HeadLabel.getDisplay(), "Arial", 12, SWT.BOLD);
-		HeadLabel.setForeground(Couleur.bleuClair);
+		HeadLabel.setForeground(MyColor.bleuClair);
 		HeadLabel.setFont(fontTitle);
-		HeadLabel.setBackground(Couleur.bleuFonce);
+		HeadLabel.setBackground(MyColor.bleuFonce);
 		this.header.pack();
 		HeadLabel.pack();
 
@@ -493,7 +522,11 @@ public class ViewComission {
 					comissionViewDisplay();
 
 				} catch (SQLException e) {
-					// TODO Auto-generated catch block
+					MessageBox msgBox = new MessageBox(comissionView.getShell(), SWT.ERROR);
+					msgBox.setMessage("Erreur Base de donn√©e");
+					msgBox.setText("erreur de li√©e √† la base de donn√©es : \n" + e.getMessage());
+					msgBox.open();
+					e.printStackTrace();
 					e.printStackTrace();
 				}
 
@@ -520,24 +553,24 @@ public class ViewComission {
 		try {
 			Double comissionCheck = Double.parseDouble(comission);
 			if (comissionCheck <= 0)
-				throw new IllegalArgumentException("Le  prix doit Ítre supÈrieur ‡ 0");
+				throw new IllegalArgumentException("Le  prix doit √™tre sup√©rieur √† 0");
 		} catch (NumberFormatException parseDoubleException) {
 			throw new IllegalArgumentException(
-					"La comission entrÈe n'est pas valide, veuillez entrer une valeur numÈrique");
+					"La comission entr√©e n'est pas valide, veuillez entrer une valeur num√©rique");
 		}
 
 		if (Objects.isNull(comission))
-			throw new IllegalArgumentException("L'attribut comission ne peut pas Ítre null");
+			throw new IllegalArgumentException("L'attribut comission ne peut pas √™tre null");
 		else if (comission.isBlank())
-			throw new IllegalArgumentException("L'attribut comission ne peut pas Ítre null");
+			throw new IllegalArgumentException("L'attribut comission ne peut pas √™tre null");
 
 		try {
 			Double comissionCheck = Double.parseDouble(comission);
 			if (comissionCheck <= 0 || comissionCheck > 100)
-				throw new IllegalArgumentException("Le  prix doit Ítre comprise entre  0 et 100");
+				throw new IllegalArgumentException("Le  prix doit √™tre comprise entre  0 et 100");
 		} catch (NumberFormatException parseDoubleException) {
 			throw new IllegalArgumentException(
-					"La comission entrÈe n'est pas valide, veuillez entrer une valeur numÈrique");
+					"La comission entr√©e n'est pas valide, veuillez entrer une valeur num√©rique");
 		}
 
 		return true;
