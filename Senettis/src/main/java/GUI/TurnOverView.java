@@ -30,7 +30,6 @@ import org.eclipse.swt.widgets.Text;
 
 import classes.TurnOver;
 
-
 /**
  * View used to manage turnOver into the system
  *
@@ -54,9 +53,9 @@ public class TurnOverView {
 	final int AUTRESCOLUMN = 5;
 	final int CACOLUMN = 6;
 
-	
 	/**
 	 * Constructor
+	 * 
 	 * @param <type>Composite</type>parent composite which will contains this view
 	 * @throws SQLException
 	 */
@@ -114,8 +113,11 @@ public class TurnOverView {
 
 	/**
 	 * Add the button to save turnOvers data into the database
-	 * @param <type>Table</type>table the table which contains turnOvers data
-	 * @param <type>List<turnOvers></type>turnOvers list of  turnOvers Data before the update
+	 * 
+	 * @param <type>Table</type>table               the table which contains
+	 *                                              turnOvers data
+	 * @param <type>List<turnOvers></type>turnOvers list of turnOvers Data before
+	 *                                              the update
 	 */
 	private void addSaveButton(Table table, List<TurnOver> turnOvers) {
 
@@ -172,10 +174,10 @@ public class TurnOverView {
 
 	}
 
-	
 	/**
 	 * Add a button to reuse data from previous month
-	 * @param <type>Table</type>table table which contains actual data
+	 * 
+	 * @param <type>Table</type>table              table which contains actual data
 	 * @param <type>list<turnOver></type>turnOvers list with forme data
 	 */
 	private void addLastButton(Table table, List<TurnOver> turnOvers) {
@@ -220,6 +222,7 @@ public class TurnOverView {
 
 	/**
 	 * Create the composite which contains the table with the list of turnOvers
+	 * 
 	 * @throws SQLException
 	 */
 	private void compositeTable() throws SQLException {
@@ -242,6 +245,7 @@ public class TurnOverView {
 
 	/**
 	 * update the table with the last month data
+	 * 
 	 * @return <type>Table</type> table with previous month data
 	 * @throws SQLException
 	 */
@@ -269,9 +273,10 @@ public class TurnOverView {
 
 	/**
 	 * Create the table with the list of turnOvers
+	 * 
 	 * @throws SQLException
 	 */
-	
+
 	private Table createTableListTurnOver(Month month, Year year) throws SQLException {
 
 		List<TurnOver> turnOvers = TurnOver.getListCAForAllSite(month, year);
@@ -338,12 +343,12 @@ public class TurnOverView {
 
 	}
 
-	
 	/***
 	 * add textEditor to modify data into the table
-	 * @param <type>int</type> index the column index
+	 * 
+	 * @param <type>int</type>   index the column index
 	 * @param <type>Table</type> table which contains turnOvers data
-	 * @param <type>Item</type> item which contain row data
+	 * @param <type>Item</type>  item which contain row data
 	 * @return <type>Text</type> newEditor, the text field to update a field
 	 */
 	public Text textForColumn(int index, Table table, TableItem item) {
@@ -379,9 +384,9 @@ public class TurnOverView {
 
 	}
 
-	
 	/**
-	 * Compute the TurnOver for a given row 
+	 * Compute the TurnOver for a given row
+	 * 
 	 * @param <type>Item</type>item which contains a row data
 	 * @return <type>String</type> The turnOver updated
 	 */
@@ -403,7 +408,14 @@ public class TurnOverView {
 		}
 	}
 
-	private Double checkStringDouble(String value) throws Exception {
+	/**
+	 * Check if the string value is valid
+	 * 
+	 * @param <type>String</type>value
+	 * @return <type>double</type>value
+	 * @throws Exception
+	 */
+	private double checkStringDouble(String value) throws Exception {
 		if (Objects.isNull(value))
 			return 0.0;
 		try {
@@ -414,6 +426,9 @@ public class TurnOverView {
 
 	}
 
+	/**
+	 * update the selection composite
+	 */
 	private void selection() {
 		if (!Objects.isNull(this.selection) && !this.selection.isDisposed()) {
 			this.selection.dispose();
@@ -481,6 +496,11 @@ public class TurnOverView {
 
 	}
 
+	/**
+	 * Getter for the attribute turnOverView
+	 * 
+	 * @return <type>Composite</type> turnOverview
+	 */
 	public Composite getRecurringCostView() {
 		return this.turnOverView;
 	}

@@ -22,6 +22,8 @@ import org.eclipse.swt.graphics.*;
  * View to manage comission into the system
  *
  */
+
+
 public class ComissionView {
 	private Composite mainView;
 	private Composite selection;
@@ -54,6 +56,10 @@ public class ComissionView {
 
 	}
 
+	
+	/**
+	 * create the mainView Composite
+	 */
 	private void mainView() {
 		if (!Objects.isNull(mainView) && !mainView.isDisposed()) {
 			mainView.dispose();
