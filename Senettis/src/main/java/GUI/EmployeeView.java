@@ -2130,7 +2130,7 @@ public class EmployeeView {
 			employe.setMail(textMail);
 		}
 		if (!(textTelephone.isEmpty())) {
-			employe.setTelephone(textTelephone);
+			employe.setPhone(textTelephone);
 		}
 		if (!(textPointure.isEmpty())) {
 			employe.setShoeSize(textPointure);
@@ -2309,7 +2309,7 @@ public class EmployeeView {
 						try {
 							int employeeId = selectedEmploye.getEmployeId();
 							int newAnciennetePC = Employee.getEmployeById(employeeId).getComputeSeniority();
-							Employee.updateAnciennete(Employee.getEmployeById(employeeId).getComputeSeniority(),
+							Employee.updateSeniority(Employee.getEmployeById(employeeId).getComputeSeniority(),
 									employeeId);
 							tableGlobaleEmploye.getSelection()[0].setForeground(9, MyColor.noir);
 							tableGlobaleEmploye.getSelection()[0].setForeground(11, MyColor.noir);

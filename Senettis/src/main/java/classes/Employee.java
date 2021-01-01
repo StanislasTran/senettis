@@ -17,14 +17,10 @@ import java.sql.Types;
 import java.time.LocalDate;
 
 
-//to do (comment and translate)
 /**
  * Represent an Employee into the System
  *
  */
-
-
-
 public class Employee {
 
 	private Integer employeId;
@@ -38,30 +34,26 @@ public class Employee {
 	private String size;
 	private String arrivalDate;
 	private String status;
-	private int seniority; // derniere annee prise en compte
+	private int seniority; // last year of seniority used
 
-	// Constructeurs-----------------------------------------------
+	// Constructors-----------------------------------------------
+	
 	/***
-	 * 
-	 * cree un employe a partir des champs employeId, title, surname, prenom,
-	 * numeroMatricule, status, dateArrivee, mail, telephone, pointure, taille,
-	 * nombreHeures, renboursementTransport, remboursementTelephone, salaire
+	 * Constructor
+	 * create an employee with the employeId, title, surname, firstName,
+	 * matricule, status, arrivalDate, mail, phone, shoeSize, size
 	 * 
 	 * @param employeId              : int
-	 * @param t                      : verification faite
+	 * @param t                      : title
 	 * @param surname
-	 * @param prenom
-	 * @param mail                   : verification faite
-	 * @param telephone
-	 * @param numeroMatricule        : int
-	 * @param pointure
-	 * @param taille
-	 * @param dateArrivee            : string, verification faite
-	 * @param nombreHeures           : double
-	 * @param remboursementTransport :double
-	 * @param remboursementTelephone : double
-	 * @param salaire                :double
-	 * @param status                 : verification faite
+	 * @param firstName
+	 * @param mail                   
+	 * @param phone
+	 * @param matricule		         : int
+	 * @param shoeSize
+	 * @param size
+	 * @param arrivalDate            : string
+	 * @param status                
 	 */
 	public Employee(int employeId, String t, String surname, String firstName, String mail, String phone,
 			String matricule, String shoeSize, String size, String arrivalDate, String status) {
@@ -75,6 +67,24 @@ public class Employee {
 		}
 	}
 
+	
+	/***
+	 * Constructor
+	 *  create an employee with the employeId, title, surname, firstName,
+	 * matricule, status, arrivalDate, mail, phone, shoeSize, size, seniority
+	 * @param employeId
+	 * @param t
+	 * @param surname
+	 * @param firstName
+	 * @param mail
+	 * @param phone
+	 * @param matricule
+	 * @param shoeSize
+	 * @param size
+	 * @param arrivalDate
+	 * @param seniority
+	 * @param status
+	 */
 	public Employee(int employeId, String t, String surname, String firstName, String mail, String phone,
 			String matricule, String shoeSize, String size, String arrivalDate, int seniority, String status) {
 		this(employeId, t, surname, firstName, mail, phone, matricule, shoeSize, size, arrivalDate, status);
@@ -88,26 +98,26 @@ public class Employee {
 	}
 
 	/***
-	 * cree un employe a partir des champs title, surname, prenom, numeroMatricule,
-	 * status, dateArrivee, mail, telephone, pointure, taille, nombreHeures,
-	 * renboursementTransport, remboursementTelephone, salaire
+	 * Constructor
+	 * create an employee with the title, surname, firstName,
+	 * matricule, status, arrivalDate, mail, phone, shoeSize, size
 	 * 
-	 * @param t               : verification faite
+	 * @param t            
 	 * @param surname
 	 * @param fristName
-	 * @param mail            : verification faite
+	 * @param mail        
 	 * @param phone
-	 * @param matricule : int
+	 * @param matricule 	  : int
 	 * @param shoeSize
 	 * @param size
-	 * @param arrivalDate     : string, verification faite
-	 * @param status          : verification faite
+	 * @param arrivalDate     : string
+	 * @param status        
 	 */
 	public Employee(String t, String surname, String firstName, String mail, String phone, String matricule,
 			String shoeSize, String size, String arrivalDate, String status) {
 		this(t, surname, firstName, matricule, arrivalDate, status);
 
-		// je verifie que l adresse mail est correcte
+		// check the mail
 		if (mail != null) {
 			if (mail.isEmpty()) {
 				mail = null;
@@ -122,30 +132,31 @@ public class Employee {
 		}
 		this.mail = mail;
 
-		// telephone
+		// phone
 		if (phone != null) {
 			phone = phone.replace(".", "");
 		}
 		this.phone = phone;
 
-		// pointure
+		// shoeSize
 		this.shoeSize = shoeSize;
 
-		// taille
+		// size
 		this.size = size;
 
 	}
 
 	/***
-	 * cree un employe a partir des champs title, surname, prenom, numeroMatricule,
-	 * status et dateArrivee
+	 * Constructor
+	 * create an employee with the title, surname, firstName,
+	 * matricule, status, arrivalDate
 	 * 
-	 * @param t               : verification faite
+	 * @param t             
 	 * @param surname
 	 * @param firstName
-	 * @param matricule : int
-	 * @param arrivalDate     : string, verification faite
-	 * @param status          : verification faite
+	 * @param matricule       : int
+	 * @param arrivalDate     : string
+	 * @param status      
 	 */
 	public Employee(String t, String surname, String firstName, String matricule, String arrivalDate, String status) {
 		this(t, surname, firstName, matricule);
@@ -167,7 +178,7 @@ public class Employee {
 			}
 		}
 
-		// date arrivee
+		// arrivalDate
 		if (arrivalDate != null) {
 			if (!(arrivalDate.isEmpty())) {
 				if (arrivalDate.charAt(2) == '/' || arrivalDate.charAt(2) == '-' || arrivalDate.charAt(2) == '_') {
@@ -191,9 +202,10 @@ public class Employee {
 	}
 
 	/***
-	 * cree un employe a partir des champs title, surname, prenom et numeroMatricule
+	 * Constructor
+	 * create an employee with the title, surname, firstName and matricule
 	 * 
-	 * @param t               : verification faite
+	 * @param t         : title
 	 * @param surname
 	 * @param firstName
 	 * @param matricule : int
@@ -201,7 +213,7 @@ public class Employee {
 	public Employee(String t, String surname, String firstName, String matricule) {
 		super();
 
-		// je verifie le title
+		// check the title
 		if (t != null) {
 			if ((t == "M") || (t == "M.")) {
 				this.title = Title.M;
@@ -223,14 +235,14 @@ public class Employee {
 			throw new Error("Le nom indiqué est vide.");
 		}
 
-		// prenom
+		// firstName
 		if (firstName != null) {
 			this.firstName = firstName;
 		} else {
 			throw new Error("Le prénom indiqué est vide.");
 		}
 
-		// numero matricule
+		// matricule
 		if (matricule != null) {
 			this.matricule = matricule;
 		} else {
@@ -240,10 +252,10 @@ public class Employee {
 
 	}
 
-	// Liens avec la BDD-----------------------------------------------
+	// DB -----------------------------------------------
+	
 	/***
-	 * permet d'ajouter un employe dans la base de donnï¿½es
-	 * 
+	 * allows to add an employee to the dateBase
 	 * @return
 	 * @throws SQLException
 	 */
@@ -268,11 +280,8 @@ public class Employee {
 	}
 
 	/***
-	 * Permet de modifier un employe dans la base de donnï¿½es, pour que la requete
-	 * fonctionne il faut que l'employe ai son champs employeId completï¿½ car
-	 * l'update se fait a partir de l'id la requete modifiera tous les champs de
-	 * l'employe en les remplacant par la valeur actuelle associee a cet employe
-	 * pour chaque champs
+	 * allows to modify an employee in the dataBase
+	 * the request can only work if the employeId is not null for this employee
 	 * 
 	 * @return
 	 * @throws SQLException
@@ -297,8 +306,16 @@ public class Employee {
 
 		return statement.executeUpdate();
 	}
-
-	public static int updateAnciennete(int seniority, int employeId) throws SQLException {
+	
+	
+	/***
+	 * update the seniority in the dataBase for the employee with this employeId
+	 * @param seniority
+	 * @param employeId
+	 * @return
+	 * @throws SQLException
+	 */
+	public static int updateSeniority(int seniority, int employeId) throws SQLException {
 		String reqSql = "UPDATE Employe SET anciennete=? WHERE EmployeId=?;";
 
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
@@ -310,9 +327,7 @@ public class Employee {
 	}
 
 	/***
-	 * requete la base de donnï¿½es afin de recuperer tous les elements de la table
-	 * employe
-	 * 
+	 * requests the dataBase to retrieve all the employees
 	 * @return
 	 * @throws SQLException
 	 */
@@ -326,8 +341,7 @@ public class Employee {
 	}
 
 	/**
-	 * Retourne le nombre d'employï¿½ dans la base de donnï¿½es
-	 * 
+	 * gets the number of employees in the dataBase
 	 * @return
 	 * @throws SQLException
 	 */
@@ -348,7 +362,7 @@ public class Employee {
 	/***
 	 * 
 	 * @param employeId
-	 * @return l'employe correspondant ï¿½ l'id indique en argument
+	 * @return the employee with the employeId in param of the function
 	 * @throws SQLException
 	 */
 	public static Employee getEmployeById(int employeId) throws SQLException {
@@ -382,6 +396,11 @@ public class Employee {
 		}
 	}
 
+	/***
+	 * retrieve an employee in the dataBase from its matricule
+	 * @param matricule
+	 * @throws SQLException
+	 */
 	public static void retrieveByMatricule(String matricule) throws SQLException {
 		String reqSql = "SELECT EmployeId FROM Employe WHERE Numero_matricule=?;";
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
@@ -407,6 +426,12 @@ public class Employee {
 		}
 	}
 
+	/***
+	 * retrieve an employee in the dataBase from its surname and firstName
+	 * @param surname
+	 * @param firstName
+	 * @throws SQLException
+	 */
 	public static void retrieveBySurnameFirstName(String surname, String firstName) throws SQLException {
 		String reqSql = "SELECT EmployeId FROM Employe WHERE Nom=? and Prenom=?;";
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
@@ -433,6 +458,12 @@ public class Employee {
 		}
 	}
 
+	/***
+	 * gets the employeId of an employee by its matricule
+	 * @param matricule
+	 * @return
+	 * @throws SQLException
+	 */
 	public static int getIdByMatricule(String matricule) throws SQLException {
 		String reqSql = "SELECT EmployeId FROM Employe WHERE numero_matricule=?;";
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
@@ -451,9 +482,10 @@ public class Employee {
 	}
 
 	// -----------------------------------------------
+	
 	/***
 	 * 
-	 * @return une liste contenant tous les employes renvoyes par selectAllEmploye()
+	 * @return a list of the employees returned by selectAllEmploye()
 	 * @throws SQLException
 	 */
 	public static List<Employee> getAllEmploye() throws SQLException {
@@ -489,7 +521,11 @@ public class Employee {
 
 		return allEmploye;
 	}
-
+	
+	/***
+	 * prints all employees in the dataBase
+	 * @throws SQLException
+	 */
 	public static void printAllEmploye() throws SQLException {
 
 		List<Employee> allEmploye = getAllEmploye();
@@ -498,6 +534,9 @@ public class Employee {
 			System.out.println(employe);
 	}
 
+	/***
+	 * returns a string with all the information of this employee
+	 */
 	@Override
 	public String toString() {
 
@@ -506,16 +545,30 @@ public class Employee {
 				+ this.arrivalDate + "|" + this.status;
 	}
 
+	/***
+	 * returns a string with the surname and the firstName of this employee
+	 */
 	public String getNameString() {
 
 		return "" + this.surname + " " + this.firstName;
 	}
 
 	// Getter and setter-----------------------------------------------
+	
+	/***
+	 * Getter for the attribute status
+	 * 
+	 * @return <type> String </type> status
+	 */
 	public String getStatus() {
 		return status;
 	}
 
+	/**
+	 * Setter for the attribute status
+	 * 
+	 * @param <type> String </type> status
+	 */
 	public void setStatus(String status) {
 		if (status != null) {
 			if (status == "Publié" || status == "Publié") {
@@ -532,6 +585,11 @@ public class Employee {
 		}
 	}
 
+	/**
+	 * Setter for the attribute title
+	 * 
+	 * @param <type> Title </type> title
+	 */
 	public void setTitle(Title title) {
 		if (title == null) {
 			throw new Error("setTitle : le titre indique est vide");
@@ -539,6 +597,11 @@ public class Employee {
 		this.title = title;
 	}
 
+	/***
+	 * Getter for the attribute title
+	 * 
+	 * @return <type> String </type> title
+	 */
 	public String getTitle() {
 		if (title == null) {
 			return "";
@@ -546,6 +609,11 @@ public class Employee {
 		return title.toString();
 	}
 
+	/**
+	 * Setter for the attribute title, transform it into a Title 
+	 * 
+	 * @param <type> String </type> title
+	 */
 	@SuppressWarnings("static-access")
 	public void setTitle(String t) {
 		if (title == null) {
@@ -564,6 +632,11 @@ public class Employee {
 		}
 	}
 
+	/***
+	 * Getter for the attribute surname
+	 * 
+	 * @return <type> String </type> surname
+	 */
 	public String getSurname() {
 		if (surname == null) {
 			return "";
@@ -571,6 +644,11 @@ public class Employee {
 		return surname;
 	}
 
+	/**
+	 * Setter for the attribute surname 
+	 * 
+	 * @param <type> String </type> surname
+	 */
 	public void setSurname(String surname) {
 		if (surname == null) {
 			throw new Error("setSurname : le nom indique est vide");
@@ -578,6 +656,11 @@ public class Employee {
 		this.surname = surname;
 	}
 
+	/***
+	 * Getter for the attribute firstName
+	 * 
+	 * @return <type> String </type> firstName
+	 */
 	public String getFirstName() {
 		if (firstName == null) {
 			return "";
@@ -585,13 +668,23 @@ public class Employee {
 		return firstName;
 	}
 
-	public void setFirstName(String prenom) {
-		if (prenom == null) {
+	/**
+	 * Setter for the attribute firstName 
+	 * 
+	 * @param <type> String </type> firstName
+	 */
+	public void setFirstName(String firstName) {
+		if (firstName == null) {
 			throw new Error("setPrenom : le prenom indique est vide");
 		}
-		this.firstName = prenom;
+		this.firstName = firstName;
 	}
 
+	/***
+	 * Getter for the attribute mail
+	 * 
+	 * @return <type> String </type> mail
+	 */
 	public String getMail() {
 		if (mail == null) {
 			return "";
@@ -599,6 +692,11 @@ public class Employee {
 		return mail;
 	}
 
+	/**
+	 * Setter for the attribute mail, checks if the mail fits the regex 
+	 * 
+	 * @param <type> String </type> mail
+	 */
 	public void setMail(String mail) {
 		if (mail == null) {
 			throw new Error("setMail : le mail indique est vide");
@@ -612,6 +710,11 @@ public class Employee {
 		this.mail = mail;
 	}
 
+	/***
+	 * Getter for the attribute phone
+	 * 
+	 * @return <type> String </type> phone
+	 */
 	public String getPhone() {
 		if (phone == null) {
 			return "";
@@ -619,14 +722,24 @@ public class Employee {
 		return phone;
 	}
 
-	public void setTelephone(String telephone) {
-		if (telephone == null) {
+	/**
+	 * Setter for the attribute phone
+	 * 
+	 * @param <type> String </type> phone
+	 */
+	public void setPhone(String phone) {
+		if (phone == null) {
 			throw new Error("setTelephone : le telephone indique est vide");
 		}
-		telephone = telephone.replace(".", "");
-		this.phone = telephone;
+		phone = phone.replace(".", "");
+		this.phone = phone;
 	}
 
+	/***
+	 * Getter for the attribute matricule
+	 * 
+	 * @return <type> String </type> matricule
+	 */
 	public String getMatricule() {
 		if (matricule == null) {
 			return "";
@@ -634,6 +747,11 @@ public class Employee {
 		return matricule;
 	}
 
+	/**
+	 * Setter for the attribute matricule
+	 * 
+	 * @param <type> String </type> matricule
+	 */
 	public void setMatricule(String matricule) {
 		if (matricule == null) {
 			throw new Error("setMatricule : le numeroMatricule indique est vide");
@@ -641,6 +759,11 @@ public class Employee {
 		this.matricule = matricule;
 	}
 
+	/***
+	 * Getter for the attribute shoeSize
+	 * 
+	 * @return <type> String </type> shoeSize
+	 */
 	public String getShoeSize() {
 		if (shoeSize == null) {
 			return "";
@@ -648,6 +771,11 @@ public class Employee {
 		return shoeSize;
 	}
 
+	/**
+	 * Setter for the attribute shoeSize
+	 * 
+	 * @param <type> String </type> shoeSize
+	 */
 	public void setShoeSize(String shoeSize) {
 		if (shoeSize == null) {
 			throw new Error("setShoeSize : la pointure indiquee est vide");
@@ -655,6 +783,11 @@ public class Employee {
 		this.shoeSize = shoeSize;
 	}
 
+	/***
+	 * Getter for the attribute size
+	 * 
+	 * @return <type> String </type> size
+	 */
 	public String getSize() {
 		if (size == null) {
 			return "";
@@ -662,6 +795,11 @@ public class Employee {
 		return size;
 	}
 
+	/**
+	 * Setter for the attribute size
+	 * 
+	 * @param <type> String </type> size
+	 */
 	public void setSize(String size) {
 		if (size == null) {
 			throw new Error("setSize : le taille indique est vide");
@@ -669,6 +807,11 @@ public class Employee {
 		this.size = size;
 	}
 
+	/***
+	 * Getter for the attribute arrivalDate
+	 * 
+	 * @return <type> String </type> arrivalDate
+	 */
 	public String getArrivalDate() {
 		if (arrivalDate == null) {
 			return "";
@@ -676,6 +819,11 @@ public class Employee {
 		return arrivalDate;
 	}
 
+	/**
+	 * Setter for the attribute arrivalDate
+	 * 
+	 * @param <type> String </type> arrivalDate
+	 */
 	public void setArrivalDate(String arrivalDate) {
 		// date arrivee
 		if (arrivalDate != null) {
@@ -708,10 +856,20 @@ public class Employee {
 
 	}
 
+	/***
+	 * Getter for the attribute employeId
+	 * 
+	 * @return <type> Integer </type> employeId
+	 */
 	public int getEmployeId() {
 		return employeId;
 	}
 
+	/**
+	 * Setter for the attribute employeId
+	 * 
+	 * @param <type> Integer </type> employeId
+	 */
 	public void setEmployeId(Integer employeId) {
 		if (employeId == null) {
 			throw new Error("setEmployeId : le employeId indique est vide");
@@ -719,14 +877,27 @@ public class Employee {
 		this.employeId = employeId;
 	}
 
+	/***
+	 * Getter for the attribute seniority
+	 * 
+	 * @return <type> int </type> seniority
+	 */
 	public int getSeniority() {
 		return seniority;
 	}
 
+	/**
+	 * Setter for the attribute seniority
+	 * 
+	 * @param <type> int </type> seniority
+	 */
 	public void setSeniority(int seniority) {
 		this.seniority = seniority;
 	}
 
+	/***
+	 * @return the seniority calculated with the arrivalDate
+	 */
 	public Integer getComputeSeniority() {
 		String date = this.getArrivalDate();
 
@@ -748,7 +919,6 @@ public class Employee {
 				seniority = a2 - a1 - 1;
 			else
 				seniority = a2 - a1;
-
 		}
 
 		return seniority;
