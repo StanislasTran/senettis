@@ -28,26 +28,20 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.time.Year;
 import java.time.YearMonth;
-import java.util.ArrayList;
-import java.util.Map;
 import java.util.Objects;
-
 import org.eclipse.swt.*;
-
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import classes.Site;
-import classes.TurnOver;
-import classes.SiteAmortisation;
-import classes.Comission;
-import classes.Delivery;
-import classes.FS;
 import classes.Rentability;
-import classes.SalaryCostPerSite;
+
+/**
+ * View to display the rentability of sites for given month and year
+ *
+ *
+ */
 
 public class RentabilityView {
 
@@ -57,17 +51,17 @@ public class RentabilityView {
 	private Table rentabilityTable;
 	private Composite header;
 
-	// Creation VueLivraison --------------------------------------------------
 	/***
-	 * Utilisé depuis Home pour créer une vueLivraison
 	 * 
-	 * @param composite : le composite vueLivraison
-	 * @param display
+	 * Constructor for the view Rentabolity
+	 * 
+	 * @param <type>Composite</type>composite not null, the parent composite
+	 * @param <type>Display</type>display     not null, the parent display
 	 * @throws SQLException
 	 */
 	public RentabilityView(Composite composite, Display display) throws SQLException {
 
-		MyColor.setDisplay(display); // pour utiliser les couleurs du fichier couleur
+		MyColor.setDisplay(display);
 
 		rentabilityView = new Composite(composite, SWT.NONE);
 		rentabilityView.setLayout(new RowLayout(SWT.VERTICAL));
@@ -83,6 +77,9 @@ public class RentabilityView {
 		rentabilityView.pack();
 	}
 
+	/**
+	 * Create the Selection composite
+	 */
 	public void getSelection() {
 		if (!Objects.isNull(selection) && !selection.isDisposed()) {
 			selection.dispose();
@@ -137,6 +134,13 @@ public class RentabilityView {
 
 	}
 
+	/**
+	 * Create the composite Which contains the display of all rentabilities data by
+	 * site
+	 * 
+	 * @param <type>String </type>periode format: "MONTH YEAR"
+	 * @throws SQLException
+	 */
 	public void getVue(String periode) throws SQLException {
 		if (!Objects.isNull(view) && !view.isDisposed()) {
 			view.dispose();
@@ -148,13 +152,13 @@ public class RentabilityView {
 		view.setLayout(rowLayoutV);
 		view.setBackground(MyColor.gris);
 
-		// creation de la table
+		// table cration
 		rentabilityTable = new Table(view, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.FULL_SELECTION);
 		rentabilityTable.setLayoutData(new RowData(888, 390));
 		rentabilityTable.setLinesVisible(true);
 		rentabilityTable.setHeaderVisible(true);
 
-		// on met les noms des colonnes
+		// Initialize the table headers
 		String[] titles = { "Chantier", "Chifffre d'affaire", "Total Couts Employés", "Livraisons", "Matériels",
 				"Fournitures Sanitaires", "Comissions", "Coût de revient", "Marge Brut", "Pourcentage" };
 		for (String title : titles) {
@@ -174,6 +178,12 @@ public class RentabilityView {
 		view.pack();
 	}
 
+	/**
+	 * update the display rentabilities table for a given periode
+	 * 
+	 * @param <type>String </type>periode format: "MONTH YEAR"
+	 * @throws SQLException
+	 */
 	public void updateTable(String periode) throws SQLException {
 		rentabilityTable.removeAll();
 
@@ -183,7 +193,7 @@ public class RentabilityView {
 		Year yearFilter = Year.of(date1.getYear());
 
 		java.util.List<Rentability> rentabilityList = Rentability.getRentabilityByDate(monthFilter, yearFilter);
-	
+
 		for (Rentability r : rentabilityList) {
 
 			TableItem item = new TableItem(rentabilityTable, SWT.NONE);
@@ -203,25 +213,23 @@ public class RentabilityView {
 			// delivery//
 
 			double total_delivery = r.getDelivery();
-			
 
 			item.setText(3, Double.toString(total_delivery));
 
 			// materiel
 
 			double total_material = r.getMaterial();
-			
+
 			item.setText(4, Double.toString(total_material));
 
 			double total_fs = r.getFSCost();
 
-		
 			item.setText(5, Double.toString(total_fs));
 
 			// Comission
 
 			double comission = r.getComission();
-			
+
 			item.setText(6, Double.toString(comission));
 
 			double priceCost = r.getCostPrice();
@@ -236,6 +244,11 @@ public class RentabilityView {
 		}
 	}
 
+	
+	/**
+	 * Getter for the global composite of this view
+	 * @return <type>Composite</type> rentabilityView
+	 */
 	public Composite getComposite() {
 		return this.rentabilityView;
 	}

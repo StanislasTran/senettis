@@ -3,6 +3,10 @@ package GUI;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Display;
 
+/**
+ * Color used into the GUI of Senettis application
+ *
+ */
 public class MyColor {
 
 	private static  Display displ;

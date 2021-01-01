@@ -18,10 +18,10 @@ import classes.Status;
 
 public class SiteView {
 
-	private Composite vueChantier;
+	private Composite siteView;
 	private Composite selection;
-	private Composite vue;
-	private Site selectedChantier;
+	private Composite view;
+	private Site selectedSite;
 	private Menu menu;
 
 	// Creation VueChantier --------------------------------------------------
@@ -35,17 +35,17 @@ public class SiteView {
 
 		MyColor.setDisplay(display); // pour utiliser les couleurs du fichier couleur
 
-		vueChantier = new Composite(composite, SWT.NONE);
+		siteView = new Composite(composite, SWT.NONE);
 		RowLayout rowLayout = new RowLayout();
 		rowLayout.type = SWT.VERTICAL;
-		vueChantier.setLayout(rowLayout);
-		vueChantier.setBackground(MyColor.bleuClair);
+		siteView.setLayout(rowLayout);
+		siteView.setBackground(MyColor.bleuClair);
 
 		compositeSelectionCreer();
 		vueChantierAfficher();
 
-		vueChantier.pack();
-		vueChantier.getParent().pack();
+		siteView.pack();
+		siteView.getParent().pack();
 	}
 
 	/***
@@ -57,8 +57,8 @@ public class SiteView {
 		compositeSelectionCreer();
 		vueChantierAfficher();
 
-		vueChantier.pack();
-		vueChantier.getParent().pack();
+		siteView.pack();
+		siteView.getParent().pack();
 	}
 
 	// Modification de la partie Selection
@@ -78,13 +78,13 @@ public class SiteView {
 		s = "Gestion des chantiers";
 		addSize = (474 - 20) / 2;
 
-		selection = new Composite(vueChantier, SWT.CENTER);
+		selection = new Composite(siteView, SWT.CENTER);
 
 		FillLayout fillLayout = new FillLayout();
 		fillLayout.type = SWT.VERTICAL;
 		selection.setLayout(fillLayout);
 		selection.setBackground(MyColor.bleuClair);
-		
+
 		Composite selection1 = new Composite(selection, SWT.BORDER);
 
 		FillLayout fillLayout2 = new FillLayout();
@@ -111,7 +111,6 @@ public class SiteView {
 		l2.setBackground(MyColor.bleuFonce);
 
 		selection1.pack();
-		
 
 		Composite selection2 = new Composite(selection, SWT.NONE);
 		RowLayout rowLayout = new RowLayout();
@@ -125,7 +124,7 @@ public class SiteView {
 		boutonCreer.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				vueChantierCreer();
+				createSiteView();
 			}
 		});
 		selection2.pack();
@@ -148,13 +147,13 @@ public class SiteView {
 		s = "Gestion des chantiers";
 		addSize = (474 - 20) / 2;
 
-		selection = new Composite(vueChantier, SWT.CENTER);
+		selection = new Composite(siteView, SWT.CENTER);
 
 		FillLayout fillLayout = new FillLayout();
 		fillLayout.type = SWT.VERTICAL;
 		selection.setLayout(fillLayout);
 		selection.setBackground(MyColor.bleuClair);
-		
+
 		Composite selection1 = new Composite(selection, SWT.BORDER);
 
 		FillLayout fillLayout2 = new FillLayout();
@@ -181,7 +180,6 @@ public class SiteView {
 		l2.setBackground(MyColor.bleuFonce);
 
 		selection1.pack();
-		
 
 		Composite selection2 = new Composite(selection, SWT.NONE);
 		RowLayout rowLayout = new RowLayout();
@@ -190,39 +188,38 @@ public class SiteView {
 		selection2.setLayout(rowLayout);
 		selection2.setBackground(MyColor.bleuClair);
 
-
-		// Bouton Creer
-		Button boutonCreer = new Button(selection2, SWT.CENTER);
-		boutonCreer.setText("Créer");
-		boutonCreer.addSelectionListener(new SelectionAdapter() {
+		// Bouton create
+		Button createButton = new Button(selection2, SWT.CENTER);
+		createButton.setText("Créer");
+		createButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				vueChantierCreer();
+				createSiteView();
 			}
 		});
 
-		// Bouton Modifier
-		Button boutonModifier = new Button(selection2, SWT.CENTER);
-		boutonModifier.setText("Modifier");
-		boutonModifier.addSelectionListener(new SelectionAdapter() {
+		// button modify
+		Button modifyButton = new Button(selection2, SWT.CENTER);
+		modifyButton.setText("Modifier");
+		modifyButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				vueChantierModifier();
+				modifySiteView();
 			}
 		});
 
-		// Bouton Supprimer
-		Button boutonSupprimer = new Button(selection2, SWT.CENTER);
-		boutonSupprimer.setText("Supprimer");
-		boutonSupprimer.addSelectionListener(new SelectionAdapter() {
+		// Button remove
+		Button removeButton = new Button(selection2, SWT.CENTER);
+		removeButton.setText("Supprimer");
+		removeButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				try {
-					if (selectedChantier == null) {
+					if (selectedSite == null) {
 						throw new Error("selectedChantier est vide");
 					}
-					Site c = Site.getSiteById(selectedChantier.getSiteId());
-					MessageBox dialog = new MessageBox(vueChantier.getShell(), SWT.ICON_QUESTION | SWT.YES | SWT.NO);
+					Site c = Site.getSiteById(selectedSite.getSiteId());
+					MessageBox dialog = new MessageBox(siteView.getShell(), SWT.ICON_QUESTION | SWT.YES | SWT.NO);
 					dialog.setText("Suppression Chantier");
 					dialog.setMessage("Voulez vous supprimer le chantier " + c.getName()
 							+ " ?\nToutes les affectations et livraisons liées à ce chantier seront supprimées.");
@@ -233,8 +230,8 @@ public class SiteView {
 					}
 
 				} catch (NumberFormatException | SQLException e) {
-					System.out.println("erreur dans la supression");
-					MessageBox dialog = new MessageBox(vueChantier.getShell(), SWT.ICON_ERROR | SWT.OK);
+
+					MessageBox dialog = new MessageBox(siteView.getShell(), SWT.ICON_ERROR | SWT.OK);
 					dialog.setText("Erreur Supression");
 					dialog.setMessage(
 							"Une erreur est survenue lors de la supression du chantier. " + '\n' + e.getMessage());
@@ -249,18 +246,17 @@ public class SiteView {
 	}
 
 	/***
-	 * va archiver le chantier selectionne et les affectations et livraisons qui lui
-	 * sont liées
+	 * Archive the selectionned site
 	 * 
-	 * @param table : table contenant les chantiers
+	 * @param </type>Tabletable</type> : table which containts sites
 	 * @throws SQLException
 	 */
 	public void suppChantier(Table table) throws SQLException {
-		if (selectedChantier == null) {
+		if (selectedSite == null) {
 			throw new Error("selectedChantier est vide");
 		}
 
-		Site c = Site.getSiteById(selectedChantier.getSiteId());
+		Site c = Site.getSiteById(selectedSite.getSiteId());
 		c.setStatus(Status.ARCHIVED);
 		c.updateDatabase();
 
@@ -278,50 +274,45 @@ public class SiteView {
 			}
 		}
 
-		selectedChantier = null;
+		selectedSite = null;
 
 		compositeSelectionCreer();
 
 		updateTable(table);
 	}
 
-	// Modification d'un chantier --------------------------------------------------
 	/***
-	 * Regroupe les fonctions a appeler pour faire une modification La fonction va
-	 * appeler les fonctions titreModification et formulaireModification
+	 * Create the view to modify a site
 	 */
-	public void vueChantierModifier() {
+	public void modifySiteView() {
 
-		formulaireModification();// on le fait une fois d'abord pour recuperer la taille du formulaire et pour
-									// creer le titre a la bonne taille
-		titreModification();
+		formulaireModification();
+		modifyTitle();
 		formulaireModification();
 
-		vueChantier.pack();
-		vueChantier.getParent().pack();
+		siteView.pack();
+		siteView.getParent().pack();
 
 	}
 
 	/***
-	 * va modifier la partie selection (partie superieure droite) en y mettant un
-	 * titre pour la modification
+	 * Modify the Modification part header
 	 */
-	public void titreModification() {
+	public void modifyTitle() {
 		if (!Objects.isNull(selection) && !selection.isDisposed()) {
 			selection.dispose();
 		}
-		selection = new Composite(vueChantier, SWT.CENTER);
+		selection = new Composite(siteView, SWT.CENTER);
 
 		FillLayout fillLayout = new FillLayout();
 		fillLayout.type = SWT.VERTICAL;
 
-		int addSize = vue.getSize().x;
-		addSize = (addSize - 200) / 2;// on recupere l'ecrat entre la taille du titre de base (200) et le formulaire
-										// de modif
+		int addSize = view.getSize().x;
+		addSize = (addSize - 200) / 2;// take the size difference between the title and the modify form
 		fillLayout.marginWidth = addSize;
 		selection.setLayout(fillLayout);
 
-		// juste pour creer un espace
+		// just for space
 		Label l1 = new Label(selection, SWT.NONE);
 		l1.setText("");
 		l1.setBackground(MyColor.bleuFonce);
@@ -334,7 +325,7 @@ public class SiteView {
 		HeadLabel.setFont(fontTitle);
 		HeadLabel.setBackground(MyColor.bleuFonce);
 
-		// juste pour creer un espace
+		// just for space
 		Label l2 = new Label(selection, SWT.NONE);
 		l2.setText("");
 		l2.setBackground(MyColor.bleuFonce);
@@ -343,84 +334,80 @@ public class SiteView {
 	}
 
 	/***
-	 * Va modifier la partie Vue (partie inferieure droite) et y ajoutant le
-	 * formulaire de modification d'un chantier
+	 * Create the modify form
 	 */
 	public void formulaireModification() {
-		if (!Objects.isNull(vue) && !vue.isDisposed()) {
-			vue.dispose();
+		if (!Objects.isNull(view) && !view.isDisposed()) {
+			view.dispose();
 		}
-		if (selectedChantier == null) {
+		if (selectedSite == null) {
 			throw new Error("selectedChantier est vide");
 		}
 
-		// creation de la vue
-		vue = new Composite(vueChantier, SWT.NONE);
+		// view creation
+		view = new Composite(siteView, SWT.NONE);
 		FillLayout fillLayoutH = new FillLayout();
 		fillLayoutH.type = SWT.HORIZONTAL;
-		vue.setLayout(fillLayoutH);
+		view.setLayout(fillLayoutH);
 
-		// creation de 3 colonnes afin de repartir les champs du formulaire en trois
+		// create 3 column to orginize filed
 		FillLayout fillLayoutV = new FillLayout();
 		fillLayoutV.type = SWT.VERTICAL;
 		fillLayoutV.marginWidth = 10;
-		Composite colonne1 = new Composite(vue, SWT.BORDER);
+		Composite colonne1 = new Composite(view, SWT.BORDER);
 		colonne1.setBackground(MyColor.bleuClair);
 		colonne1.setLayout(fillLayoutV);
 
-		// utiliser pour tous les composites des attributs du formulaire
 		FillLayout fillLayoutH5 = new FillLayout();
 		fillLayoutH5.marginHeight = 30;
 		fillLayoutH5.spacing = 5;
 		fillLayoutH5.type = SWT.HORIZONTAL;
 
-		// Nom
-		Composite compositeNom = new Composite(colonne1, SWT.NONE);
-		compositeNom.setBackground(MyColor.bleuClair);
-		compositeNom.setLayout(fillLayoutH5);
+		// name
+		Composite compositeName = new Composite(colonne1, SWT.NONE);
+		compositeName.setBackground(MyColor.bleuClair);
+		compositeName.setLayout(fillLayoutH5);
 
-		Label labelNom = new Label(compositeNom, SWT.NONE);
-		labelNom.setBackground(MyColor.bleuClair);
-		labelNom.setText("Nom* :                                                           ");// espaces pour agrandir
-																								// le champs texte
+		Label nameLabel = new Label(compositeName, SWT.NONE);
+		nameLabel.setBackground(MyColor.bleuClair);
+		nameLabel.setText("Nom* :                                                           ");// space to resize text
+																								// field
 
-		final Text textNom = new Text(compositeNom, SWT.BORDER);
-		textNom.setText(selectedChantier.getName());
+		final Text nameText = new Text(compositeName, SWT.BORDER);
+		nameText.setText(selectedSite.getName());
 
-		// Adresse
-		Composite compositeAdresse = new Composite(colonne1, SWT.NONE);
-		compositeAdresse.setBackground(MyColor.bleuClair);
-		compositeAdresse.setLayout(fillLayoutH5);
+		// Adress
+		Composite compositeAdress = new Composite(colonne1, SWT.NONE);
+		compositeAdress.setBackground(MyColor.bleuClair);
+		compositeAdress.setLayout(fillLayoutH5);
 
-		Label labelAdresse = new Label(compositeAdresse, SWT.NONE);
-		labelAdresse.setBackground(MyColor.bleuClair);
-		labelAdresse.setText("Adresse : ");
+		Label adressLabel = new Label(compositeAdress, SWT.NONE);
+		adressLabel.setBackground(MyColor.bleuClair);
+		adressLabel.setText("Adresse : ");
 
-		final Text textAdresse = new Text(compositeAdresse, SWT.BORDER);
-		textAdresse.setText(selectedChantier.getAdresse());
+		final Text adressText = new Text(compositeAdress, SWT.BORDER);
+		adressText.setText(selectedSite.getAdresse());
 
 		// Boutons
-		Composite compositeBoutons = new Composite(colonne1, SWT.CENTER);
-		compositeBoutons.setBackground(MyColor.bleuClair);
-		compositeBoutons.setLayout(fillLayoutH5);
+		Composite compositeButtons = new Composite(colonne1, SWT.CENTER);
+		compositeButtons.setBackground(MyColor.bleuClair);
+		compositeButtons.setLayout(fillLayoutH5);
 
-
-
-		Button buttonValidation = new Button(compositeBoutons, SWT.BACKGROUND);
-		buttonValidation.setText("Valider");
-		buttonValidation.addSelectionListener(new SelectionAdapter() {
+		Button validationButtons = new Button(compositeButtons, SWT.BACKGROUND);
+		validationButtons.setText("Valider");
+		validationButtons.addSelectionListener(new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 
 				try {
-					int id = selectedChantier.getSiteId();
-					selectedChantier = new Site(id, textNom.getText(), textAdresse.getText(), Status.PUBLISHED);
+					int id = selectedSite.getSiteId();
+					selectedSite = new Site(id, nameText.getText(), adressText.getText(), Status.PUBLISHED);
 					validerModification();
 				} catch (Throwable e) {
 					e.printStackTrace();
-					System.out.println("erreur dans la modif");
-					MessageBox dialog = new MessageBox(vueChantier.getShell(), SWT.ICON_ERROR | SWT.OK);
+
+					MessageBox dialog = new MessageBox(siteView.getShell(), SWT.ICON_ERROR | SWT.OK);
 					dialog.setText("Erreur Modification");
 					dialog.setMessage(
 							"Une erreur est survenue lors de la modification du chantier. " + '\n' + e.getMessage());
@@ -429,8 +416,8 @@ public class SiteView {
 
 			}
 		});
-		
-		Button buttonAnnulation = new Button(compositeBoutons, SWT.BACKGROUND);
+
+		Button buttonAnnulation = new Button(compositeButtons, SWT.BACKGROUND);
 		buttonAnnulation.setText("Annuler");
 		buttonAnnulation.addSelectionListener(new SelectionAdapter() {
 
@@ -439,31 +426,31 @@ public class SiteView {
 				newVueChantier();
 			}
 		});
-		
-		vue.pack();
+
+		view.pack();
 	}
 
 	/***
 	 * modifie le chantier selectionne dans la base de données
 	 */
 	public void validerModification() {
-		if (selectedChantier == null) {
+		if (selectedSite == null) {
 			throw new Error("selectedChantier est vide");
 		}
 
 		// on insert dans la base de données
 		try {
-			selectedChantier.updateDatabase();
-			System.out.println("on a modifie le chantier !!");
-			MessageBox dialog = new MessageBox(vueChantier.getShell(), SWT.ICON_INFORMATION | SWT.OK);
+			selectedSite.updateDatabase();
+
+			MessageBox dialog = new MessageBox(siteView.getShell(), SWT.ICON_INFORMATION | SWT.OK);
 			dialog.setText("Modification réussie");
 			dialog.setMessage("Le chantier a bien été modifié dans la base de données.");
 			dialog.open();
-			selectedChantier = null;
+			selectedSite = null;
 		} catch (SQLException e) {
 			e.printStackTrace();
-			System.out.println("erreur dans la modif");
-			MessageBox dialog = new MessageBox(vueChantier.getShell(), SWT.ICON_ERROR | SWT.OK);
+
+			MessageBox dialog = new MessageBox(siteView.getShell(), SWT.ICON_ERROR | SWT.OK);
 			dialog.setText("Erreur Modification");
 			dialog.setMessage("Une erreur est survenue lors de la modification du chantier. " + e.getMessage());
 			dialog.open();
@@ -472,38 +459,35 @@ public class SiteView {
 		newVueChantier();
 	}
 
-	// Création d'un chantier --------------------------------------------------
 	/***
-	 * va appeler les fonctions qui modifie la partie vue et la partie selection
-	 * afin d'afficher le formulaire de création appelle titreCreation et
-	 * formulaireCreation
+	 * create the view for create a new Site
 	 */
-	public void vueChantierCreer() {
-		titreCreation();
-		formulaireCreation();
+	public void createSiteView() {
+		creationTitle();
+		creationForm();
 
-		vueChantier.pack();
-		vueChantier.getParent().pack();
+		siteView.pack();
+		siteView.getParent().pack();
 
 	}
 
 	/***
-	 * modifie la partie selection (partie superieur droite) en ajoutant un titre de
-	 * creation
+	 * update the header for creation part
+	 * 
 	 */
-	public void titreCreation() {
+	public void creationTitle() {
 		if (!Objects.isNull(selection) && !selection.isDisposed()) {
 			selection.dispose();
 		}
 
-		selection = new Composite(vueChantier, SWT.CENTER);
+		selection = new Composite(siteView, SWT.CENTER);
 
 		FillLayout fillLayout = new FillLayout();
 		fillLayout.type = SWT.VERTICAL;
 		fillLayout.marginWidth = 163;
 		selection.setLayout(fillLayout);
 
-		// juste pour creer un espace
+		// just for create a space
 		Label l1 = new Label(selection, SWT.NONE);
 		l1.setText("");
 		l1.setBackground(MyColor.bleuFonce);
@@ -516,7 +500,7 @@ public class SiteView {
 		HeadLabel.setFont(fontTitle);
 		HeadLabel.setBackground(MyColor.bleuFonce);
 
-		// juste pour creer un espace
+		// juste for create a space
 		Label l2 = new Label(selection, SWT.NONE);
 		l2.setText("");
 		l2.setBackground(MyColor.bleuFonce);
@@ -525,79 +509,76 @@ public class SiteView {
 	}
 
 	/***
-	 * cree le formulaire de creation d'un chantier
+	 * create the site creation form
 	 */
-	public void formulaireCreation() {
-		if (!Objects.isNull(vue) && !vue.isDisposed()) {
-			vue.dispose();
+	public void creationForm() {
+		if (!Objects.isNull(view) && !view.isDisposed()) {
+			view.dispose();
 		}
-		vue = new Composite(vueChantier, SWT.NONE);
+		view = new Composite(siteView, SWT.NONE);
 		FillLayout fillLayoutH = new FillLayout();
 		fillLayoutH.type = SWT.HORIZONTAL;
-		vue.setLayout(fillLayoutH);
+		view.setLayout(fillLayoutH);
 
-		// creation de 3 colonnes afin de repartir les champs du formulaire en trois
+		// Create 3 column to organize fields
 		FillLayout fillLayoutV = new FillLayout();
 		fillLayoutV.type = SWT.VERTICAL;
 		fillLayoutV.marginWidth = 10;
 
-		Composite colonne1 = new Composite(vue, SWT.BORDER);
+		Composite colonne1 = new Composite(view, SWT.BORDER);
 		colonne1.setBackground(MyColor.bleuClair);
 		colonne1.setLayout(fillLayoutV);
 
-		// utiliser pour tous les composites des attributs du formulaire
+		// Common for the differents fields of the form
 		FillLayout fillLayoutH5 = new FillLayout();
 		fillLayoutH5.marginHeight = 30;
 		fillLayoutH5.marginWidth = 20;
 		fillLayoutH5.spacing = 5;
 		fillLayoutH5.type = SWT.HORIZONTAL;
 
-		// Nom
-		Composite compositeNom = new Composite(colonne1, SWT.NONE);
-		compositeNom.setBackground(MyColor.bleuClair);
-		compositeNom.setLayout(fillLayoutH5);
+		// name
+		Composite compositeName = new Composite(colonne1, SWT.NONE);
+		compositeName.setBackground(MyColor.bleuClair);
+		compositeName.setLayout(fillLayoutH5);
 
-		Label labelNom = new Label(compositeNom, SWT.NONE);
-		labelNom.setBackground(MyColor.bleuClair);
-		labelNom.setText("Nom* :                                                           "); // j'ai mis des espaces
-																								// pour agrandir la
-																								// barre de texte
+		Label nameLabel = new Label(compositeName, SWT.NONE);
+		nameLabel.setBackground(MyColor.bleuClair);
+		nameLabel.setText("Nom* :                                                           "); // space to adapt the
+																								// composite size
 
-		final Text textNom = new Text(compositeNom, SWT.BORDER);
-		textNom.setText("");
+		final Text textName = new Text(compositeName, SWT.BORDER);
+		textName.setText("");
 
-		// Adresse
-		Composite compositeAdresse = new Composite(colonne1, SWT.NONE);
-		compositeAdresse.setBackground(MyColor.bleuClair);
-		compositeAdresse.setLayout(fillLayoutH5);
+		// Adress
+		Composite compositeAdress = new Composite(colonne1, SWT.NONE);
+		compositeAdress.setBackground(MyColor.bleuClair);
+		compositeAdress.setLayout(fillLayoutH5);
 
-		Label labelAdresse = new Label(compositeAdresse, SWT.NONE);
-		labelAdresse.setBackground(MyColor.bleuClair);
-		labelAdresse.setText("Adresse : ");
+		Label adressLabel = new Label(compositeAdress, SWT.NONE);
+		adressLabel.setBackground(MyColor.bleuClair);
+		adressLabel.setText("Adresse : ");
 
-		final Text textAdresse = new Text(compositeAdresse, SWT.BORDER);
-		textAdresse.setText("");
+		final Text adressText = new Text(compositeAdress, SWT.BORDER);
+		adressText.setText("");
 
-		// Boutons
-		Composite compositeBoutons = new Composite(colonne1, SWT.CENTER);
-		compositeBoutons.setBackground(MyColor.bleuClair);
-		compositeBoutons.setLayout(fillLayoutH5);
+		// buttons
+		Composite compositeButton = new Composite(colonne1, SWT.CENTER);
+		compositeButton.setBackground(MyColor.bleuClair);
+		compositeButton.setLayout(fillLayoutH5);
 
-
-
-		Button buttonValidation = new Button(compositeBoutons, SWT.BACKGROUND);
-		buttonValidation.setText("Valider");
-		buttonValidation.addSelectionListener(new SelectionAdapter() {
+		Button validationButton = new Button(compositeButton, SWT.BACKGROUND);
+		validationButton.setText("Valider");
+		validationButton.addSelectionListener(new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 
 				try {
-					validerCreation(textNom.getText(), textAdresse.getText());
+					validerCreation(textName.getText(), adressText.getText());
 				} catch (Throwable e) {
 					e.printStackTrace();
-					System.out.println("erreur dans la creation");
-					MessageBox dialog = new MessageBox(vueChantier.getShell(), SWT.ICON_ERROR | SWT.OK);
+
+					MessageBox dialog = new MessageBox(siteView.getShell(), SWT.ICON_ERROR | SWT.OK);
 					dialog.setText("Erreur Création");
 					dialog.setMessage(
 							"Une erreur est survenue lors de la création d'un chantier. " + '\n' + e.getMessage());
@@ -605,87 +586,83 @@ public class SiteView {
 				}
 			}
 		});
-		
-		Button buttonAnnulation = new Button(compositeBoutons, SWT.BACKGROUND);
-		buttonAnnulation.setText("Annuler");
-		buttonAnnulation.addSelectionListener(new SelectionAdapter() {
+
+		Button cancelButton = new Button(compositeButton, SWT.BACKGROUND);
+		cancelButton.setText("Annuler");
+		cancelButton.addSelectionListener(new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				newVueChantier();
 			}
 		});
-		vue.pack();
+		view.pack();
 	}
 
 	/***
-	 * cree un chantier a partir du formulaire et l'insere dans la base de donnees
+	 * Create a site into the database
 	 */
-	public void validerCreation(String textNom, String textAdresse) {
+	public void validerCreation(String nameText, String adressText) {
 
-		if (textNom.isEmpty()) {
+		if (nameText.isEmpty()) {
 			throw new Error("Merci d'indiquer au moins le nom du chantier.");
 		}
 
-		// champs obligatoires
-		Site chantier = new Site(textNom, Status.PUBLISHED);
+		// mandatory field
+		Site site = new Site(nameText, Status.PUBLISHED);
 
-		// champs optionels
-		if (!(textAdresse.isEmpty())) {
-			chantier.setAdress(textAdresse);
+		// optional field
+		if (!(adressText.isEmpty())) {
+			site.setAdress(adressText);
 		}
 
-		// on insert dans la base de données
+		// insert into the database
 		try {
-			chantier.insertDatabase();
-			System.out.println("on a insere le chantier !!");
-			MessageBox dialog = new MessageBox(vueChantier.getShell(), SWT.ICON_INFORMATION | SWT.OK);
+			site.insertDatabase();
+
+			MessageBox dialog = new MessageBox(siteView.getShell(), SWT.ICON_INFORMATION | SWT.OK);
 			dialog.setText("Création réussie");
 			dialog.setMessage("Le chantier a bien été ajouté à la base de données.");
 			dialog.open();
 			newVueChantier();
-			vue.pack();
+			view.pack();
 			selection.pack();
-			vueChantier.pack();
+			siteView.pack();
 		} catch (SQLException e) {
-			System.out.println("erreur dans la création");
-			MessageBox dialog = new MessageBox(vueChantier.getShell(), SWT.ICON_ERROR | SWT.OK);
+
+			MessageBox dialog = new MessageBox(siteView.getShell(), SWT.ICON_ERROR | SWT.OK);
 			dialog.setText("Erreur Création");
 			dialog.setMessage("Une erreur est survenue lors de la création du chantier. " + '\n' + e.getMessage());
 			dialog.open();
 		}
 	}
 
-	// --------------------------------------------------------------------------
 	/***
-	 * affiche le tableau avec tous les chantiers dans la base de donnees dont le
-	 * status est publie
+	 * display the list of site
 	 */
 	public void vueChantierAfficher() {
-		if (!Objects.isNull(vue) && !vue.isDisposed()) {
-			vue.dispose();
+		if (!Objects.isNull(view) && !view.isDisposed()) {
+			view.dispose();
 		}
 
 		RowLayout rowLayoutV = new RowLayout();
 		rowLayoutV.type = SWT.VERTICAL;
 
-		vue = new Composite(vueChantier, SWT.NONE);
-		vue.setLayout(rowLayoutV);
-		vue.setBackground(MyColor.bleuClair);
+		view = new Composite(siteView, SWT.NONE);
+		view.setLayout(rowLayoutV);
+		view.setBackground(MyColor.bleuClair);
 
-		final Table table = new Table(vue, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.FULL_SELECTION);
+		final Table table = new Table(view, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.FULL_SELECTION);
 		table.setLayoutData(new RowData(600, 400));
 		table.setLinesVisible(true);
 		table.setHeaderVisible(true);
 
-		// on met les noms des colonnes
 		String[] titles = { "Nom", "Adresse" };
 		for (String title : titles) {
 			TableColumn column = new TableColumn(table, SWT.NONE);
 			column.setText(title);
 		}
 
-		
 		// on remplit la table
 		final TableColumn[] columns = table.getColumns();
 		ArrayList<Integer> listSiteId = new ArrayList<Integer>();
@@ -701,28 +678,25 @@ public class SiteView {
 				}
 			}
 		} catch (SQLException e) {
-			System.out.println("erreur dans la table des chantier");
-			MessageBox dialog = new MessageBox(vueChantier.getShell(), SWT.ICON_ERROR | SWT.OK);
+
+			MessageBox dialog = new MessageBox(siteView.getShell(), SWT.ICON_ERROR | SWT.OK);
 			dialog.setText("Erreur");
 			dialog.setMessage("Une erreur est survenue. " + '\n' + e.getMessage());
 			dialog.open();
 		}
 
-		// on pack les colonnes
 		for (TableColumn col : columns)
 			col.pack();
 
-		// on ajoute un listener pour modifier l'interface si l'utilisateur clique sur
-		// une ligne
 		table.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (table.getSelectionIndex() != -1) {
 
 					try {
-						selectedChantier = Site.getSiteById(listSiteId.get(table.getSelectionIndex()));
+						selectedSite = Site.getSiteById(listSiteId.get(table.getSelectionIndex()));
 					} catch (NumberFormatException | SQLException e1) {
-						System.out.println("erreur pour recuperer le chantier selectionne");
-						MessageBox dialog = new MessageBox(vueChantier.getShell(), SWT.ICON_ERROR | SWT.OK);
+
+						MessageBox dialog = new MessageBox(siteView.getShell(), SWT.ICON_ERROR | SWT.OK);
 						dialog.setText("Erreur");
 						dialog.setMessage("Une erreur est survenue. " + '\n' + e1.getMessage());
 						dialog.open();
@@ -734,10 +708,10 @@ public class SiteView {
 				} else { // si plus rien n'est selectionner on passe selectedChantier a null et on enleve
 							// le menu du clic droit et on enleve les boutons pour modifier et supprimer
 
-					selectedChantier = null;
+					selectedSite = null;
 
 					menu.dispose();
-					menu = new Menu(vueChantier.getShell(), SWT.POP_UP);
+					menu = new Menu(siteView.getShell(), SWT.POP_UP);
 					table.setMenu(menu);
 
 					compositeSelectionCreer();
@@ -745,18 +719,19 @@ public class SiteView {
 			}
 		});
 
-		vue.pack();
+		view.pack();
 
 	}
 
 	/**
-	 * Ajoute un table contenant la liste de tous les chantier au composite entré en
-	 * paramètre
-	 * @param j 
-	 * @param i 
+	 * Add the Table into the composite with all Sites
 	 * 
-	 * @param <type>composite</type> composite
-	 * @return <type> Table </type> table
+	 * @param <type>int</type>width
+	 * @param <type>int</type>height
+	 * 
+	 * @param <type>composite</type> composite, composite which will contain the
+	 *                               table
+	 * @return <type> Table </type> table which contains all sites
 	 */
 	public static Table getTableAllChantier(Composite composite, int width, int height) {
 		// creation de la table
@@ -766,14 +741,12 @@ public class SiteView {
 		table.setLinesVisible(true);
 		table.setHeaderVisible(true);
 
-		// on met les noms des colonnes
 		String[] titles = { "Nom", "Adresse" };
 		for (String title : titles) {
 			TableColumn column = new TableColumn(table, SWT.NONE);
 			column.setText(title);
 		}
 
-		// on remplit la table
 		final TableColumn[] columns = table.getColumns();
 		try {
 			for (Site c : Site.getAllSite()) {
@@ -786,14 +759,13 @@ public class SiteView {
 				}
 			}
 		} catch (SQLException e) {
-			System.out.println("erreur dans la table des chantier");
+
 			MessageBox dialog = new MessageBox(composite.getShell(), SWT.ICON_ERROR | SWT.OK);
 			dialog.setText("Erreur");
 			dialog.setMessage("Une erreur est survenue. " + '\n' + e.getMessage());
 			dialog.open();
 		}
 
-		// on pack les colonnes
 		for (TableColumn col : columns)
 			col.pack();
 		return table;
@@ -804,7 +776,7 @@ public class SiteView {
 
 		try {
 			for (Site c : Site.getAllSite()) {
-				// on verifie le status
+
 				if (c.getStatus().getValue().contentEquals("Publié")) {
 					TableItem item = new TableItem(table, SWT.NONE);
 					item.setText(0, c.getName());
@@ -813,8 +785,8 @@ public class SiteView {
 				}
 			}
 		} catch (SQLException e) {
-			System.out.println("erreur dans la table des chantier");
-			MessageBox dialog = new MessageBox(vueChantier.getShell(), SWT.ICON_ERROR | SWT.OK);
+
+			MessageBox dialog = new MessageBox(siteView.getShell(), SWT.ICON_ERROR | SWT.OK);
 			dialog.setText("Erreur");
 			dialog.setMessage("Une erreur est survenue. " + '\n' + e.getMessage());
 			dialog.open();
@@ -823,12 +795,12 @@ public class SiteView {
 	}
 
 	/***
-	 * cree un menu sur la selection de la table des chantiers lors d'un clic droit
+	 * create selection menu
 	 * 
-	 * @param table
+	 * @param <type>Table</type>table
 	 */
 	public void doMenu(Table table) {
-		menu = new Menu(vueChantier.getShell(), SWT.POP_UP);
+		menu = new Menu(siteView.getShell(), SWT.POP_UP);
 		table.setMenu(menu);
 
 		// pour modifier
@@ -838,20 +810,20 @@ public class SiteView {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				if (table.getSelection().length != 0) {
-					vueChantierModifier();
+					modifySiteView();
 				}
 			}
 		});
 
-		// pour supprimer
+		
 		MenuItem delete = new MenuItem(menu, SWT.PUSH);
 		delete.setText("Supprimer l'element");
 		delete.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				try {
-					Site c = Site.getSiteById(selectedChantier.getSiteId());
-					MessageBox dialog = new MessageBox(vueChantier.getShell(), SWT.ICON_QUESTION | SWT.YES | SWT.NO);
+					Site c = Site.getSiteById(selectedSite.getSiteId());
+					MessageBox dialog = new MessageBox(siteView.getShell(), SWT.ICON_QUESTION | SWT.YES | SWT.NO);
 					dialog.setText("Suppression Chantier");
 					dialog.setMessage("Voulez-vous supprimer le chantier " + c.getName()
 							+ " ?\nToutes les affectations et livraisons liées à ce chantier seront supprimées.");
@@ -862,8 +834,8 @@ public class SiteView {
 					}
 
 				} catch (NumberFormatException | SQLException e) {
-					System.out.println("erreur pour supprimer le chantier");
-					MessageBox dialog = new MessageBox(vueChantier.getShell(), SWT.ICON_ERROR | SWT.OK);
+
+					MessageBox dialog = new MessageBox(siteView.getShell(), SWT.ICON_ERROR | SWT.OK);
 					dialog.setText("Erreur");
 					dialog.setMessage("Une erreur est survenue. " + '\n' + e.getMessage());
 					dialog.open();
@@ -873,8 +845,12 @@ public class SiteView {
 
 	}
 
+	/**
+	 * Getter for the attribute siteView (main composite)
+	 * @return
+	 */
 	public Composite getComposite() {
-		return this.vueChantier;
+		return this.siteView;
 	}
 
 }

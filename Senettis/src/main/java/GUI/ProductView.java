@@ -16,6 +16,11 @@ import org.eclipse.swt.widgets.*;
 import classes.Product;
 import classes.Status;
 
+/**
+ * Create the view to manage product in the system
+ * 
+ *
+ */
 public class ProductView {
 	private Composite mainView;
 	private Composite selection;
