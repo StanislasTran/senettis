@@ -8,7 +8,10 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 
 import GUI.Home;
-
+/**
+ * main used to launch the app
+ *
+ */
 public class RunHomeGUI {
 
 	public static void main(String[] args) {

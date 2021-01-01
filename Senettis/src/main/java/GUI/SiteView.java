@@ -41,7 +41,7 @@ public class SiteView {
 		siteView.setLayout(rowLayout);
 		siteView.setBackground(MyColor.bleuClair);
 
-		compositeSelectionCreer();
+		compositeSelectionCreation();
 		vueChantierAfficher();
 
 		siteView.pack();
@@ -52,22 +52,18 @@ public class SiteView {
 	 * create siteView
 	 * 
 	 */
-	public void newVueChantier() {
-		compositeSelectionCreer();
+	public void newSiteView() {
+		compositeSelectionCreation();
 		vueChantierAfficher();
 
 		siteView.pack();
 		siteView.getParent().pack();
 	}
 
-	// Modification de la partie Selection
-	// --------------------------------------------------
-	/***
-	 * Creation de la partie Selection (la partie superieure droite) avec uniquement
-	 * le bouton Creer
-	 * 
+	/**
+	 * create the site creation composite
 	 */
-	public void compositeSelectionCreer() {
+	public void compositeSelectionCreation() {
 		if (!Objects.isNull(selection) && !selection.isDisposed()) {
 			selection.dispose();
 		}
@@ -131,12 +127,11 @@ public class SiteView {
 	}
 
 	/***
-	 * Creation de la partie Selection (la partie superieure droite) avec les
-	 * boutons Creer, Modifier et Supprimer
 	 * 
-	 * @param table : table contenant tous les chantiers
+	 * Create modification header
+	 * @param table : table which contains all sites
 	 */
-	public void compositeSelectionModifier(Table table) {
+	public void compositeHeaderForModification(Table table) {
 		if (!Objects.isNull(selection) && !selection.isDisposed()) {
 			selection.dispose();
 		}
@@ -160,7 +155,7 @@ public class SiteView {
 		fillLayout2.marginWidth = addSize;
 		selection1.setLayout(fillLayout2);
 
-		// juste pour creer un espace
+	
 		Label l1 = new Label(selection1, SWT.NONE);
 		l1.setText("");
 		l1.setBackground(MyColor.bleuFonce);
@@ -173,7 +168,7 @@ public class SiteView {
 		HeadLabel.setFont(fontTitle);
 		HeadLabel.setBackground(MyColor.bleuFonce);
 
-		// juste pour creer un espace
+		
 		Label l2 = new Label(selection1, SWT.NONE);
 		l2.setText("");
 		l2.setBackground(MyColor.bleuFonce);
@@ -187,7 +182,7 @@ public class SiteView {
 		selection2.setLayout(rowLayout);
 		selection2.setBackground(MyColor.bleuClair);
 
-		// Bouton create
+		
 		Button createButton = new Button(selection2, SWT.CENTER);
 		createButton.setText("Créer");
 		createButton.addSelectionListener(new SelectionAdapter() {
@@ -275,7 +270,7 @@ public class SiteView {
 
 		selectedSite = null;
 
-		compositeSelectionCreer();
+		compositeSelectionCreation();
 
 		updateTable(table);
 	}
@@ -422,7 +417,7 @@ public class SiteView {
 
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				newVueChantier();
+				newSiteView();
 			}
 		});
 
@@ -455,7 +450,7 @@ public class SiteView {
 			dialog.open();
 		}
 
-		newVueChantier();
+		newSiteView();
 	}
 
 	/***
@@ -592,7 +587,7 @@ public class SiteView {
 
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				newVueChantier();
+				newSiteView();
 			}
 		});
 		view.pack();
@@ -623,7 +618,7 @@ public class SiteView {
 			dialog.setText("Création réussie");
 			dialog.setMessage("Le chantier a bien été ajouté à la base de données.");
 			dialog.open();
-			newVueChantier();
+			newSiteView();
 			view.pack();
 			selection.pack();
 			siteView.pack();
@@ -700,7 +695,7 @@ public class SiteView {
 						dialog.setMessage("Une erreur est survenue. " + '\n' + e1.getMessage());
 						dialog.open();
 					}
-					compositeSelectionModifier(table);
+					compositeHeaderForModification(table);
 
 					// on ajoute un menu lorsque l'on fait clique droit sur une ligne
 					doMenu(table);
@@ -713,7 +708,7 @@ public class SiteView {
 					menu = new Menu(siteView.getShell(), SWT.POP_UP);
 					table.setMenu(menu);
 
-					compositeSelectionCreer();
+					compositeSelectionCreation();
 				}
 			}
 		});
