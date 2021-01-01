@@ -18,6 +18,10 @@ import org.eclipse.swt.widgets.*;
 import classes.Site;
 import classes.Employee;
 
+/**
+ * Home page of the app GUI
+ *
+ */
 public class Home {
 
 	private Display display;
@@ -29,22 +33,19 @@ public class Home {
 	FillLayout fillLayoutV;
 
 	ScrolledComposite compositeMain;
-	Composite contenuCompositeMain;
+	Composite compositeMainContent;
 
 	Composite colonneGauche;
-	Composite espaceLogo;
+	Composite logoSpace;
 	Composite menu;
 
-	Composite colonneDroite;
-	Composite contenuColonneDroite;
+	Composite rightColumn;
+	Composite rightColumnContent;
 	Composite currentSelection;
 	Composite currentVue;
 
-	/***
-	 * Affiche le menu situe en haut a gauche permettant d'obtenir la documentation
-	 */
 	public void menuBar() {
-		// creation du menu Aide
+
 		Menu menuBar = new Menu(shell, SWT.BAR);
 
 		// help
@@ -76,8 +77,7 @@ public class Home {
 	}
 
 	/***
-	 * Affiche le compositeMain à l'ouverture de l'app, c'est le composite principal
-	 * il regroupe la colonne gauche et la colonne droite
+	 * create and fill the mainComposite for Home
 	 * 
 	 * @throws SQLException
 	 */
@@ -89,61 +89,51 @@ public class Home {
 		compositeMain.setExpandVertical(true);
 		compositeMain.setAlwaysShowScrollBars(true);
 
-		contenuCompositeMain = new Composite(compositeMain, SWT.NONE);
-		/*
-		 * System.out.println(getClass().getClassLoader().getResource("test4.png").
-		 * getPath()); System.out.println(getClass().getResource("").getPath());
-		 * System.out.println(getClass().getClassLoader().getResource(""));
-		 */
-		// String backgroundLocation =
-		// getClass().getClassLoader().getResource("test4.png").getPath();
 		InputStream test4 = getClass().getClassLoader().getResourceAsStream("test4.png");
 		Image background = new Image(display, test4);
 
-		contenuCompositeMain.setBackgroundImage(background);
+		compositeMainContent.setBackgroundImage(background);
 		RowLayout rl = new RowLayout();
-		rl.spacing = 15; // mets un espace entre le menu et le titre
-		contenuCompositeMain.setLayout(rl);
+		rl.spacing = 15;
+		compositeMainContent.setLayout(rl);
 
-		compositeColonneGauche();
-		compositeColonneDroite();
+		compositeLeftColumn();
+		compositeRightColumn();
 
-		contenuCompositeMain.pack();
-		// contenuCompositeMain.setSize(50, 50);
-		// contenuCompositeMain.setSize(rect.width, rect.height);// permet au
-		// compositeMain d'avoir la taille de l'ecran
+		compositeMainContent.pack();
 
-		compositeMain.setContent(contenuCompositeMain);
-		// compositeMain.setMinSize(rect.width-25, rect.height-75);//aidez moi rien ne
-		// marche :(
+		compositeMain.setContent(compositeMainContent);
+
 		compositeMain.setMinSize(rect.width, rect.height);
-		// compositeMain.setLayout(new RowLayout());
-		// compositeMain.pack();
+
 		shell.setLayout(new RowLayout());
 	}
 
-	/************************
+	/****************************************
 	 * 
-	 * Gestion colonne Droite : composée du titre et d'une présentation de
-	 * l'application
-	 * 
-	 ************************/
+	 * Manager right column of the home page
+	 *
+	 ********************************************/
 
-	public void compositeColonneDroite() throws SQLException {
-		colonneDroite = new Composite(contenuCompositeMain, SWT.CENTER);
-		this.contenuColonneDroite = new Composite(colonneDroite, SWT.CENTER);
-		contenuColonneDroite.setLayout(rowLayoutV);
-		contenuColonneDroite.setBackground(MyColor.gris);
+	public void compositeRightColumn() throws SQLException {
+		rightColumn = new Composite(compositeMainContent, SWT.CENTER);
+		this.rightColumnContent = new Composite(rightColumn, SWT.CENTER);
+		rightColumnContent.setLayout(rowLayoutV);
+		rightColumnContent.setBackground(MyColor.gris);
 
-		titre();
+		title();
 		presentation();
 
-		contenuColonneDroite.pack();
-		colonneDroite.pack();
+		rightColumnContent.pack();
+		rightColumn.pack();
 	}
 
-	public void titre() {
-		Composite titre = new Composite(contenuColonneDroite, SWT.CENTER);
+	/**
+	 * Create the title
+	 */
+
+	public void title() {
+		Composite titre = new Composite(rightColumnContent, SWT.CENTER);
 
 		FillLayout fillLayout = new FillLayout();
 		fillLayout.type = SWT.VERTICAL;
@@ -173,7 +163,7 @@ public class Home {
 
 	public void presentation() throws SQLException {
 
-		Composite presentation = new Composite(contenuColonneDroite, SWT.CENTER);
+		Composite presentation = new Composite(rightColumnContent, SWT.CENTER);
 		RowLayout rowLayout = new RowLayout();
 		rowLayout.type = SWT.VERTICAL;
 		rowLayout.marginWidth = 230;
@@ -190,8 +180,7 @@ public class Home {
 				+ '\n' + "SenettisDB a été développée par Laetitia Courgey et Stanislas Tran." + '\n' + '\n' + '\n'
 				+ '\n';
 		presLabel.setText(pres);
-		// nbEmployeLabel.setText("Nombre d'mployé dans la base :
-		// "+Employe.getCountEmploye());
+
 		presLabel.setBackground(MyColor.gris);
 		presLabel.setFont(new Font(presLabel.getDisplay(), "Arial", 13, SWT.NONE));
 
@@ -200,13 +189,13 @@ public class Home {
 
 	/************************
 	 * 
-	 * Gestion colonne Gauche : composée du logo de l'entreprise et du menu
-	 * principal
+	 * Manage left column which contain the logo and button to access differents app
+	 * views
 	 * 
 	 ************************/
 
-	public void compositeColonneGauche() {
-		colonneGauche = new Composite(contenuCompositeMain, SWT.BACKGROUND);
+	public void compositeLeftColumn() {
+		colonneGauche = new Composite(compositeMainContent, SWT.BACKGROUND);
 		colonneGauche.setLayout(fillLayoutV);
 
 		compositeLogo();
@@ -215,6 +204,10 @@ public class Home {
 		colonneGauche.pack();
 	}
 
+	/**
+	 * create the compositeLogo
+	 * 
+	 */
 	public void compositeLogo() {
 
 		Label logo = new Label(colonneGauche, SWT.NONE);
@@ -225,48 +218,48 @@ public class Home {
 
 	}
 
+	/**
+	 * create the menu composite
+	 */
 	public void compositeMenu() {
 
-		// on ajoute les elements à la colonne menu
 		menu = new Composite(colonneGauche, SWT.NONE);
 		menu.setLayout(fillLayoutV);
 
 		Button boutonEmploye = new Button(menu, SWT.NONE);
 		boutonEmploye.setText("Employés");
 		boutonEmploye.setBackground(MyColor.blanc);
-		// Image image = new Image(display, "images\\boutonEmploye.png");
-		// boutonEmploye.setImage(image);
+
 		boutonEmploye.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				if (!contenuColonneDroite.isDisposed()) {
-					contenuColonneDroite.dispose();
+				if (!rightColumnContent.isDisposed()) {
+					rightColumnContent.dispose();
 				}
-				contenuColonneDroite = new EmployeeView(colonneDroite, display).getComposite();
-				contenuColonneDroite.pack();
-				colonneDroite.pack();
+				rightColumnContent = new EmployeeView(rightColumn, display).getComposite();
+				rightColumnContent.pack();
+				rightColumn.pack();
 
 			}
 		});
 
 		Button boutonAffectationMAB = new Button(menu, SWT.NONE);
 
-		// boutonAffectation.setImage();
 		boutonAffectationMAB.setText("Affectations mise à blanc");
 
 		boutonAffectationMAB.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				if (!contenuColonneDroite.isDisposed()) {
-					for (Control c : contenuColonneDroite.getChildren()) {
+				if (!rightColumnContent.isDisposed()) {
+					for (Control c : rightColumnContent.getChildren()) {
 						if (!c.isDisposed()) {
 							c.dispose();
 						}
 					}
-					contenuColonneDroite.dispose();
+					rightColumnContent.dispose();
 				}
 				try {
-					contenuColonneDroite = new MABAssignmentView(getColonneDroite()).getVueAffectation();
+					rightColumnContent = new MABAssignmentView(getColonneDroite()).getVueAffectation();
 				} catch (SQLException e) {
 					MessageBox msgBox = new MessageBox(currentVue.getShell(), SWT.ERROR);
 					msgBox.setMessage("Erreur Base de donnée");
@@ -275,31 +268,31 @@ public class Home {
 					e.printStackTrace();
 				}
 
-				contenuColonneDroite.pack();
-				colonneDroite.pack();
+				rightColumnContent.pack();
+				rightColumn.pack();
 				// System.out.println("done");
 			}
 
 		});
 
-		Button boutonAffectationSite = new Button(menu, SWT.NONE);
+		Button siteAssignementButton = new Button(menu, SWT.NONE);
 
 		// boutonAffectation.setImage();
-		boutonAffectationSite.setText("Affectations à un chantier");
+		siteAssignementButton.setText("Affectations à un chantier");
 
-		boutonAffectationSite.addSelectionListener(new SelectionAdapter() {
+		siteAssignementButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				if (!contenuColonneDroite.isDisposed()) {
-					for (Control c : contenuColonneDroite.getChildren()) {
+				if (!rightColumnContent.isDisposed()) {
+					for (Control c : rightColumnContent.getChildren()) {
 						if (!c.isDisposed()) {
 							c.dispose();
 						}
 					}
-					contenuColonneDroite.dispose();
+					rightColumnContent.dispose();
 				}
 				try {
-					contenuColonneDroite = new AssignmentSiteView(getColonneDroite()).getVueAffectation();
+					rightColumnContent = new AssignmentSiteView(getColonneDroite()).getVueAffectation();
 				} catch (SQLException e) {
 					MessageBox msgBox = new MessageBox(currentVue.getShell(), SWT.ERROR);
 					msgBox.setMessage("Erreur Base de donnée");
@@ -308,89 +301,89 @@ public class Home {
 					e.printStackTrace();
 				}
 
-				contenuColonneDroite.pack();
-				colonneDroite.pack();
+				rightColumnContent.pack();
+				rightColumn.pack();
+
+			}
+
+		});
+
+		Button siteButton = new Button(menu, SWT.NONE);
+		siteButton.setText("Chantiers");
+
+		siteButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				if (!rightColumnContent.isDisposed()) {
+					rightColumnContent.dispose();
+				}
+				rightColumnContent = new SiteView(rightColumn, display).getComposite();
+				rightColumnContent.pack();
+				rightColumn.pack();
+			}
+		});
+
+		Button deliveryButton = new Button(menu, SWT.NONE);
+		deliveryButton.setText("Livraison / Fourniture / Matériel");
+		deliveryButton.setBackground(MyColor.blanc);
+
+		deliveryButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				if (!rightColumnContent.isDisposed()) {
+					rightColumnContent.dispose();
+				}
+				rightColumnContent = new DeliveryView(rightColumn, display).getComposite();
+				rightColumnContent.pack();
+				rightColumn.pack();
+			}
+		});
+
+		Button productButton = new Button(menu, SWT.NONE);
+		productButton.setText("Produits");
+		productButton.setBackground(MyColor.blanc);
+		productButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				if (!rightColumnContent.isDisposed()) {
+					for (Control c : rightColumnContent.getChildren()) {
+						if (!c.isDisposed()) {
+							c.dispose();
+						}
+					}
+					rightColumnContent.dispose();
+				}
+				try {
+					rightColumnContent = new ProductView(getColonneDroite()).getVueProduit();
+				} catch (SQLException e) {
+					MessageBox msgBox = new MessageBox(currentVue.getShell(), SWT.ERROR);
+					msgBox.setMessage("Erreur Base de donnée");
+					msgBox.setText("erreur de liée à la base de données : \n" + e.getMessage());
+					msgBox.open();
+				}
+
+				rightColumnContent.pack();
+				rightColumn.pack();
 				// System.out.println("done");
 			}
-
 		});
 
-		Button boutonChantier = new Button(menu, SWT.NONE);
-		boutonChantier.setText("Chantiers");
-
-		boutonChantier.addSelectionListener(new SelectionAdapter() {
+		Button comissionButton = new Button(menu, SWT.NONE);
+		comissionButton.setText("Comissions");
+		comissionButton.setBackground(MyColor.blanc);
+		comissionButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				if (!contenuColonneDroite.isDisposed()) {
-					contenuColonneDroite.dispose();
-				}
-				contenuColonneDroite = new SiteView(colonneDroite, display).getComposite();
-				contenuColonneDroite.pack();
-				colonneDroite.pack();
-			}
-		});
-
-		Button boutonLivraison = new Button(menu, SWT.NONE);
-		boutonLivraison.setText("Livraison / Fourniture / Matériel");
-		boutonLivraison.setBackground(MyColor.blanc);
-
-		boutonLivraison.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent arg0) {
-				if (!contenuColonneDroite.isDisposed()) {
-					contenuColonneDroite.dispose();
-				}
-				contenuColonneDroite = new DeliveryView(colonneDroite, display).getComposite();
-				contenuColonneDroite.pack();
-				colonneDroite.pack();
-			}
-		});
-
-		Button boutonProduit = new Button(menu, SWT.NONE);
-		boutonProduit.setText("Produits");
-		boutonProduit.setBackground(MyColor.blanc);
-		boutonProduit.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent arg0) {
-				if (!contenuColonneDroite.isDisposed()) {
-					for (Control c : contenuColonneDroite.getChildren()) {
+				if (!rightColumnContent.isDisposed()) {
+					for (Control c : rightColumnContent.getChildren()) {
 						if (!c.isDisposed()) {
 							c.dispose();
 						}
 					}
-					contenuColonneDroite.dispose();
+					rightColumnContent.dispose();
 				}
 				try {
-					contenuColonneDroite = new ProductView(getColonneDroite()).getVueProduit();
-				} catch (SQLException e) {
-					MessageBox msgBox = new MessageBox(currentVue.getShell(), SWT.ERROR);
-					msgBox.setMessage("Erreur Base de donnée");
-					msgBox.setText("erreur de liée à la base de données : \n" + e.getMessage());
-					msgBox.open();
-				}
-
-				contenuColonneDroite.pack();
-				colonneDroite.pack();
-				// System.out.println("done");
-			}
-		});
-
-		Button boutonComission = new Button(menu, SWT.NONE);
-		boutonComission.setText("Comissions");
-		boutonComission.setBackground(MyColor.blanc);
-		boutonComission.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent arg0) {
-				if (!contenuColonneDroite.isDisposed()) {
-					for (Control c : contenuColonneDroite.getChildren()) {
-						if (!c.isDisposed()) {
-							c.dispose();
-						}
-					}
-					contenuColonneDroite.dispose();
-				}
-				try {
-					contenuColonneDroite = new ComissionView(getColonneDroite()).getVueProduit();
+					rightColumnContent = new ComissionView(getColonneDroite()).getVueProduit();
 				} catch (SQLException e) {
 					MessageBox msgBox = new MessageBox(currentVue.getShell(), SWT.ERROR);
 					msgBox.setMessage("Erreur Base de donnée");
@@ -399,28 +392,28 @@ public class Home {
 					e.printStackTrace();
 				}
 
-				contenuColonneDroite.pack();
-				colonneDroite.pack();
+				rightColumnContent.pack();
+				rightColumn.pack();
 
 			}
 		});
 
-		Button buttonCA = new Button(menu, SWT.NONE);
-		buttonCA.setText("Chiffre d'Affaire");
-		buttonCA.setBackground(MyColor.blanc);
-		buttonCA.addSelectionListener(new SelectionAdapter() {
+		Button turnOverButton = new Button(menu, SWT.NONE);
+		turnOverButton.setText("Chiffre d'Affaire");
+		turnOverButton.setBackground(MyColor.blanc);
+		turnOverButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				if (!contenuColonneDroite.isDisposed()) {
-					for (Control c : contenuColonneDroite.getChildren()) {
+				if (!rightColumnContent.isDisposed()) {
+					for (Control c : rightColumnContent.getChildren()) {
 						if (!c.isDisposed()) {
 							c.dispose();
 						}
 					}
-					contenuColonneDroite.dispose();
+					rightColumnContent.dispose();
 				}
 				try {
-					contenuColonneDroite = new TurnOverView(getColonneDroite()).getRecurringCostView();
+					rightColumnContent = new TurnOverView(getColonneDroite()).getRecurringCostView();
 				} catch (SQLException e) {
 					MessageBox msgBox = new MessageBox(currentVue.getShell(), SWT.ERROR);
 					msgBox.setMessage("Erreur Base de donnée");
@@ -429,8 +422,8 @@ public class Home {
 					e.printStackTrace();
 				}
 
-				contenuColonneDroite.pack();
-				colonneDroite.pack();
+				rightColumnContent.pack();
+				rightColumn.pack();
 
 			}
 		});
@@ -441,28 +434,22 @@ public class Home {
 		buttonRent.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				if (!contenuColonneDroite.isDisposed()) {
-					for (Control c : contenuColonneDroite.getChildren()) {
+				if (!rightColumnContent.isDisposed()) {
+					for (Control c : rightColumnContent.getChildren()) {
 						if (!c.isDisposed()) {
 							c.dispose();
 						}
 					}
-					contenuColonneDroite.dispose();
+					rightColumnContent.dispose();
 				}
 				try {
-					contenuColonneDroite = new RentabilityView(colonneDroite, display).getComposite();
-				}catch(Exception e){
+					rightColumnContent = new RentabilityView(rightColumn, display).getComposite();
+				} catch (Exception e) {
 					e.printStackTrace();
-					/*
-				} catch (SQLException e) {
-					MessageBox msgBox = new MessageBox(shell, SWT.ERROR);
-					msgBox.setMessage("Erreur Base de donnée");
-					msgBox.setText("erreur de liée à la base de données : \n" + e.getMessage());
-					msgBox.open();
-				}*/
+
 				}
-				contenuColonneDroite.pack();
-				colonneDroite.pack();
+				rightColumnContent.pack();
+				rightColumn.pack();
 			}
 		});
 
@@ -470,7 +457,7 @@ public class Home {
 	}
 
 	private Composite getColonneDroite() {
-		return this.colonneDroite;
+		return this.rightColumn;
 	}
 
 	public Home() throws SQLException, IOException {
@@ -488,23 +475,21 @@ public class Home {
 		fillLayoutV = new FillLayout();
 		fillLayoutV.type = SWT.VERTICAL;
 
-		//
 		Monitor monitor = display.getPrimaryMonitor();
 
-		// rect permet de recuperer la taille de l'ecran
 		if (monitor != null) {
 			rect = monitor.getClientArea();
 		} else {
 			rect = display.getBounds();
 		}
 
-		menuBar(); // ajoute le menu Aide en haut
-		compositeMain(); // creer le composite principal
+		menuBar();
+		compositeMain();
 
-		
 	}
+
 	public void runHome() {
-		shell.setMaximized(true);// permet de lancer la fenetre en plein ecran
+		shell.setMaximized(true);
 
 		this.shell.open();
 		while (!shell.isDisposed()) {
