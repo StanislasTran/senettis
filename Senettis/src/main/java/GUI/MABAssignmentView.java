@@ -35,6 +35,10 @@ import classes.Employee;
 import classes.Site;
 import classes.Status;
 
+/*
+ * 
+ *View used to manbage Assignement MAB
+ */
 public class MABAssignmentView {
 
 	private Composite affectationView;
