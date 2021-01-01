@@ -993,7 +993,7 @@ public class AssignmentSiteView {
 		// Employe name part
 
 		Label labelName = new Label(ajoutComposite, SWT.NONE);
-		labelName.setText(employee.getNom() + "  " + employee.getPrenom());
+		labelName.setText(employee.getSurname() + "  " + employee.getFirstName());
 		labelName.setBackground(MyColor.bleuClair);
 
 		// nbHeures part
@@ -1193,7 +1193,7 @@ public class AssignmentSiteView {
 		Employee employe = Employee.getEmployeById(affectation.getEmployee());
 
 		Label labelNom = new Label(modifComposite, SWT.NONE);
-		labelNom.setText("Employ� : " + employe.getNom() + " " + employe.getPrenom());
+		labelNom.setText("Employ� : " + employe.getSurname() + " " + employe.getFirstName());
 		labelNom.setBackground(MyColor.bleuClair);
 
 		Label labelSite = new Label(modifComposite, SWT.NONE);
@@ -1334,7 +1334,7 @@ public class AssignmentSiteView {
 		labelNom.setBackground(MyColor.bleuClair);
 
 		Label labelSite = new Label(modifComposite, SWT.NONE);
-		labelSite.setText("Employ� : " + Employee.getEmployeById(affectation.getEmployee()).getNom());
+		labelSite.setText("Employ� : " + Employee.getEmployeById(affectation.getEmployee()).getSurname());
 		labelSite.setBackground(MyColor.bleuClair);
 
 		Composite nbHeureComposite = new Composite(modifComposite, SWT.NONE);

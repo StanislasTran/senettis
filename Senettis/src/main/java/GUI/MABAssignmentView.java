@@ -1121,7 +1121,7 @@ public class MABAssignmentView {
 		// Employe name part
 
 		Label labelName = new Label(ajoutComposite, SWT.NONE);
-		labelName.setText("Employé : " + employee.getNom() + "  " + employee.getPrenom());
+		labelName.setText("Employé : " + employee.getSurname() + "  " + employee.getFirstName());
 		labelName.setBackground(MyColor.bleuClair);
 		// nbHeures part
 
@@ -1326,7 +1326,7 @@ public class MABAssignmentView {
 		Employee employe = Employee.getEmployeById(affectation.getIdEmploye());
 
 		Label labelNom = new Label(modifComposite, SWT.NONE);
-		labelNom.setText("Employé : " + employe.getNom() + " " + employe.getPrenom());
+		labelNom.setText("Employé : " + employe.getSurname() + " " + employe.getFirstName());
 		labelNom.setBackground(MyColor.bleuClair);
 
 		Label labelSite = new Label(modifComposite, SWT.NONE);
@@ -1468,7 +1468,7 @@ public class MABAssignmentView {
 		labelNom.setBackground(MyColor.bleuClair);
 
 		Label labelEmploye = new Label(modifComposite, SWT.NONE);
-		labelEmploye.setText("Employé : " + Employee.getEmployeById(affectation.getIdEmploye()).getNom());
+		labelEmploye.setText("Employé : " + Employee.getEmployeById(affectation.getIdEmploye()).getSurname());
 		labelEmploye.setBackground(MyColor.bleuClair);
 
 		Composite nbHeureComposite = new Composite(modifComposite, SWT.NONE);

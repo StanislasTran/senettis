@@ -63,9 +63,9 @@ public class Employee {
 	 * @param salaire                :double
 	 * @param status                 : verification faite
 	 */
-	public Employee(int employeId, String t, String surname, String prenom, String mail, String telephone,
-			String numeroMatricule, String pointure, String taille, String dateArrivee, String status) {
-		this(t, surname, prenom, mail, telephone, numeroMatricule, pointure, taille, dateArrivee, status);
+	public Employee(int employeId, String t, String surname, String firstName, String mail, String phone,
+			String matricule, String shoeSize, String size, String arrivalDate, String status) {
+		this(t, surname, firstName, mail, phone, matricule, shoeSize, size, arrivalDate, status);
 
 		// id
 		if ((Integer) employeId != null) {
@@ -75,13 +75,13 @@ public class Employee {
 		}
 	}
 
-	public Employee(int employeId, String t, String surname, String prenom, String mail, String telephone,
-			String numeroMatricule, String pointure, String taille, String dateArrivee, int anciennete, String status) {
-		this(employeId, t, surname, prenom, mail, telephone, numeroMatricule, pointure, taille, dateArrivee, status);
+	public Employee(int employeId, String t, String surname, String firstName, String mail, String phone,
+			String matricule, String shoeSize, String size, String arrivalDate, int seniority, String status) {
+		this(employeId, t, surname, firstName, mail, phone, matricule, shoeSize, size, arrivalDate, status);
 
 		// id
-		if ((Integer) anciennete != null) {
-			this.anciennetePC = anciennete;
+		if ((Integer) seniority != null) {
+			this.seniority = seniority;
 		} else {
 			throw new Error("L'anciennete est vide, merci de spécifier un id ou d'utiliser un autre constructeur.");
 		}
@@ -94,18 +94,18 @@ public class Employee {
 	 * 
 	 * @param t               : verification faite
 	 * @param surname
-	 * @param prenom
+	 * @param fristName
 	 * @param mail            : verification faite
-	 * @param telephone
-	 * @param numeroMatricule : int
-	 * @param pointure
-	 * @param taille
-	 * @param dateArrivee     : string, verification faite
+	 * @param phone
+	 * @param matricule : int
+	 * @param shoeSize
+	 * @param size
+	 * @param arrivalDate     : string, verification faite
 	 * @param status          : verification faite
 	 */
-	public Employee(String t, String surname, String prenom, String mail, String telephone, String numeroMatricule,
-			String pointure, String taille, String dateArrivee, String status) {
-		this(t, surname, prenom, numeroMatricule, dateArrivee, status);
+	public Employee(String t, String surname, String firstName, String mail, String phone, String matricule,
+			String shoeSize, String size, String arrivalDate, String status) {
+		this(t, surname, firstName, matricule, arrivalDate, status);
 
 		// je verifie que l adresse mail est correcte
 		if (mail != null) {
@@ -123,16 +123,16 @@ public class Employee {
 		this.mail = mail;
 
 		// telephone
-		if (telephone != null) {
-			telephone = telephone.replace(".", "");
+		if (phone != null) {
+			phone = phone.replace(".", "");
 		}
-		this.telephone = telephone;
+		this.phone = phone;
 
 		// pointure
-		this.pointure = pointure;
+		this.shoeSize = shoeSize;
 
 		// taille
-		this.taille = taille;
+		this.size = size;
 
 	}
 
@@ -142,21 +142,21 @@ public class Employee {
 	 * 
 	 * @param t               : verification faite
 	 * @param surname
-	 * @param prenom
-	 * @param numeroMatricule : int
-	 * @param dateArrivee     : string, verification faite
+	 * @param firstName
+	 * @param matricule : int
+	 * @param arrivalDate     : string, verification faite
 	 * @param status          : verification faite
 	 */
-	public Employee(String t, String surname, String prenom, String numeroMatricule, String dateArrivee, String status) {
-		this(t, surname, prenom, numeroMatricule);
+	public Employee(String t, String surname, String firstName, String matricule, String arrivalDate, String status) {
+		this(t, surname, firstName, matricule);
 
 		// status
 		if (status != null) {
 			if (!status.isEmpty()) {
-				if (status.equals("PubliÃ©") || status.equals("PubliÃ©")) {
-					this.status = "PubliÃ©";
-				} else if (status.equals("ArchivÃ©") || status.equals("ArchivÃ©")) {
-					this.status = "ArchivÃ©";
+				if (status.equals("Publié") || status.equals("Publié")) {
+					this.status = "Publié";
+				} else if (status.equals("Archivé") || status.equals("Archivé")) {
+					this.status = "Archivé";
 				} else if (status.equals("Draft") || status.equals("draft")) {
 					this.status = "Draft";
 				} else {
@@ -168,26 +168,26 @@ public class Employee {
 		}
 
 		// date arrivee
-		if (dateArrivee != null) {
-			if (!(dateArrivee.isEmpty())) {
-				if (dateArrivee.charAt(2) == '/' || dateArrivee.charAt(2) == '-' || dateArrivee.charAt(2) == '_') {
+		if (arrivalDate != null) {
+			if (!(arrivalDate.isEmpty())) {
+				if (arrivalDate.charAt(2) == '/' || arrivalDate.charAt(2) == '-' || arrivalDate.charAt(2) == '_') {
 
-					dateArrivee = dateArrivee.substring(0, 2) + "/" + dateArrivee.substring(3, 5) + "/"
-							+ dateArrivee.substring(6, 10);
-				} else if (dateArrivee.charAt(7) == '/' || dateArrivee.charAt(7) == '-'
-						|| dateArrivee.charAt(7) == '_') {
+					arrivalDate = arrivalDate.substring(0, 2) + "/" + arrivalDate.substring(3, 5) + "/"
+							+ arrivalDate.substring(6, 10);
+				} else if (arrivalDate.charAt(7) == '/' || arrivalDate.charAt(7) == '-'
+						|| arrivalDate.charAt(7) == '_') {
 
-					dateArrivee = dateArrivee.substring(8, 10) + "/" + dateArrivee.substring(5, 7) + "/"
-							+ dateArrivee.substring(0, 4);
+					arrivalDate = arrivalDate.substring(8, 10) + "/" + arrivalDate.substring(5, 7) + "/"
+							+ arrivalDate.substring(0, 4);
 				} else {
 					throw new Error(
 							"La date d'arrivée indiquée est incorrecte, une date doit être indiquïé selon un des formats suivant : 31-01-2000, 31/01/2000, 2000-01-31 ou 2000/01/31.");
 				}
 			} else {
-				dateArrivee = null;
+				arrivalDate = null;
 			}
 		}
-		this.dateArrivee = dateArrivee;
+		this.arrivalDate = arrivalDate;
 	}
 
 	/***
@@ -195,10 +195,10 @@ public class Employee {
 	 * 
 	 * @param t               : verification faite
 	 * @param surname
-	 * @param prenom
-	 * @param numeroMatricule : int
+	 * @param firstName
+	 * @param matricule : int
 	 */
-	public Employee(String t, String surname, String prenom, String numeroMatricule) {
+	public Employee(String t, String surname, String firstName, String matricule) {
 		super();
 
 		// je verifie le title
@@ -224,19 +224,19 @@ public class Employee {
 		}
 
 		// prenom
-		if (prenom != null) {
-			this.prenom = prenom;
+		if (firstName != null) {
+			this.firstName = firstName;
 		} else {
 			throw new Error("Le prénom indiqué est vide.");
 		}
 
 		// numero matricule
-		if (numeroMatricule != null) {
-			this.numeroMatricule = numeroMatricule;
+		if (matricule != null) {
+			this.matricule = matricule;
 		} else {
 			throw new Error("Le numéro de matricule indiqué est vide.");
 		}
-		this.anciennetePC = 0;
+		this.seniority = 0;
 
 	}
 
@@ -254,14 +254,14 @@ public class Employee {
 		PreparedStatement statement = connection.prepareStatement(reqSql);
 		statement.setObject(1, this.title.toString(), Types.VARCHAR);
 		statement.setObject(2, this.surname, Types.VARCHAR);
-		statement.setObject(3, this.prenom, Types.VARCHAR);
+		statement.setObject(3, this.firstName, Types.VARCHAR);
 		statement.setObject(4, this.mail, Types.VARCHAR);
-		statement.setObject(5, this.telephone, Types.VARCHAR);
-		statement.setObject(6, this.numeroMatricule, Types.VARCHAR);
-		statement.setObject(7, this.pointure, Types.VARCHAR);
-		statement.setObject(8, this.taille, Types.VARCHAR);
-		statement.setObject(9, this.dateArrivee, Types.DATE);
-		statement.setObject(10, this.anciennetePC, Types.INTEGER);
+		statement.setObject(5, this.phone, Types.VARCHAR);
+		statement.setObject(6, this.matricule, Types.VARCHAR);
+		statement.setObject(7, this.shoeSize, Types.VARCHAR);
+		statement.setObject(8, this.size, Types.VARCHAR);
+		statement.setObject(9, this.arrivalDate, Types.DATE);
+		statement.setObject(10, this.seniority, Types.INTEGER);
 		statement.setObject(11, this.status, Types.VARCHAR);
 
 		return statement.executeUpdate();
@@ -284,26 +284,26 @@ public class Employee {
 		PreparedStatement statement = connection.prepareStatement(reqSql);
 		statement.setObject(1, this.title.toString(), Types.VARCHAR);
 		statement.setObject(2, this.surname, Types.VARCHAR);
-		statement.setObject(3, this.prenom, Types.VARCHAR);
+		statement.setObject(3, this.firstName, Types.VARCHAR);
 		statement.setObject(4, this.mail, Types.VARCHAR);
-		statement.setObject(5, this.telephone, Types.VARCHAR);
-		statement.setObject(6, this.numeroMatricule, Types.VARCHAR);
-		statement.setObject(7, this.pointure, Types.VARCHAR);
-		statement.setObject(8, this.taille, Types.VARCHAR);
-		statement.setObject(9, this.dateArrivee, Types.DATE);
+		statement.setObject(5, this.phone, Types.VARCHAR);
+		statement.setObject(6, this.matricule, Types.VARCHAR);
+		statement.setObject(7, this.shoeSize, Types.VARCHAR);
+		statement.setObject(8, this.size, Types.VARCHAR);
+		statement.setObject(9, this.arrivalDate, Types.DATE);
 		statement.setObject(10, this.status, Types.VARCHAR);
-		statement.setObject(11, this.anciennetePC, Types.VARCHAR);
+		statement.setObject(11, this.seniority, Types.VARCHAR);
 		statement.setObject(12, this.employeId, Types.INTEGER);
 
 		return statement.executeUpdate();
 	}
 
-	public static int updateAnciennete(int anciennetePC, int employeId) throws SQLException {
+	public static int updateAnciennete(int seniority, int employeId) throws SQLException {
 		String reqSql = "UPDATE Employe SET anciennete=? WHERE EmployeId=?;";
 
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
-		statement.setObject(1, anciennetePC, Types.INTEGER);
+		statement.setObject(1, seniority, Types.INTEGER);
 		statement.setObject(2, employeId, Types.INTEGER);
 
 		return statement.executeUpdate();
@@ -364,18 +364,18 @@ public class Employee {
 			employeId = result.getInt("EmployeId");
 			String title = result.getString("Titre");
 			String surname = result.getString("Nom");
-			String prenom = result.getString("Prenom");
+			String firstName = result.getString("Prenom");
 			String mail = result.getString("mail");
-			String telephone = result.getString("Telephone");
-			String numeroMatricule = result.getString("Numero_matricule");
-			String pointure = result.getString("Pointure");
-			String taille = result.getString("Taille");
-			String dateArrivee = result.getString("Date_arrivee");
-			int anciennete = result.getInt("anciennete");
+			String phone = result.getString("Telephone");
+			String matricule = result.getString("Numero_matricule");
+			String shoeSize = result.getString("Pointure");
+			String size = result.getString("Taille");
+			String arrivalDate = result.getString("Date_arrivee");
+			int seniority = result.getInt("anciennete");
 			String status = result.getString("status");
 
-			return new Employee(employeId, title, surname, prenom, mail, telephone, numeroMatricule, pointure, taille,
-					dateArrivee, anciennete, status);
+			return new Employee(employeId, title, surname, firstName, mail, phone, matricule, shoeSize, size,
+					arrivalDate, seniority, status);
 
 		} else {
 			throw new SQLException("Data not found");
@@ -400,19 +400,19 @@ public class Employee {
 
 		try {
 			Employee e = getEmployeById(employeId);
-			e.setStatus("PubliÃ©");
+			e.setStatus("Publié");
 			e.updateDatabase();
 		} catch (Exception e) {
 			throw new Error("Erreur de matricule, aucun employé ne correspond.");
 		}
 	}
 
-	public static void retrieveBysurnamePrenom(String surname, String prenom) throws SQLException {
+	public static void retrieveBySurnameFirstName(String surname, String firstName) throws SQLException {
 		String reqSql = "SELECT EmployeId FROM Employe WHERE Nom=? and Prenom=?;";
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
 		statement.setObject(1, surname, Types.VARCHAR);
-		statement.setObject(2, prenom, Types.VARCHAR);
+		statement.setObject(2, firstName, Types.VARCHAR);
 		statement.executeQuery();
 
 		ResultSet result = statement.getResultSet();
@@ -421,12 +421,12 @@ public class Employee {
 			employeId = result.getInt("EmployeId");
 
 		} else {
-			throw new SQLException("Aucun employï¿½ ne correspond.");
+			throw new SQLException("Aucun employé ne correspond.");
 		}
 
 		try {
 			Employee e = getEmployeById(employeId);
-			e.setStatus("PubliÃ©");
+			e.setStatus("Publié");
 			e.updateDatabase();
 		} catch (Exception e) {
 			throw e;
@@ -464,26 +464,26 @@ public class Employee {
 			int employeId = result.getInt("EmployeId");
 			String title = result.getString("Titre");
 			String surname = result.getString("Nom");
-			String prenom = result.getString("Prenom");
+			String firstName = result.getString("Prenom");
 			String mail = result.getString("Mail");
-			String telephone = result.getString("Telephone");
-			String numeroMatricule = result.getString("Numero_matricule");
-			String pointure = result.getString("Pointure");
-			String taille = result.getString("Taille");
-			int anciennete = result.getInt("anciennete");
-			String dateArrivee;
+			String phone = result.getString("Telephone");
+			String matricule = result.getString("Numero_matricule");
+			String shoeSize = result.getString("Pointure");
+			String size = result.getString("Taille");
+			int seniority = result.getInt("anciennete");
+			String arrivalDate;
 			if (result.getString("Date_arrivee") == null) {
-				dateArrivee = null;
+				arrivalDate = null;
 			} else {
 				String usDate = result.getString("Date_arrivee");
 				// on transforme en date au format francais
-				dateArrivee = usDate.substring(8, 10) + "/" + usDate.substring(5, 7) + "/" + usDate.substring(0, 4);
+				arrivalDate = usDate.substring(8, 10) + "/" + usDate.substring(5, 7) + "/" + usDate.substring(0, 4);
 			}
 
 			String status = result.getString("Status");
 
-			allEmploye.add(new Employee(employeId, title, surname, prenom, mail, telephone, numeroMatricule, pointure,
-					taille, dateArrivee, anciennete, status));
+			allEmploye.add(new Employee(employeId, title, surname, firstName, mail, phone, matricule, shoeSize,
+					size, arrivalDate, seniority, status));
 
 		}
 
@@ -501,14 +501,14 @@ public class Employee {
 	@Override
 	public String toString() {
 
-		return "" + this.employeId + "|" + this.title + "|" + this.surname + "|" + this.prenom + "|" + this.mail + "|"
-				+ this.telephone + "|" + this.numeroMatricule + "|" + this.pointure + "|" + this.taille + "|"
-				+ this.dateArrivee + "|" + this.status;
+		return "" + this.employeId + "|" + this.title + "|" + this.surname + "|" + this.firstName + "|" + this.mail + "|"
+				+ this.phone + "|" + this.matricule + "|" + this.shoeSize + "|" + this.size + "|"
+				+ this.arrivalDate + "|" + this.status;
 	}
 
 	public String getNameString() {
 
-		return "" + this.surname + " " + this.prenom;
+		return "" + this.surname + " " + this.firstName;
 	}
 
 	// Getter and setter-----------------------------------------------
@@ -518,10 +518,10 @@ public class Employee {
 
 	public void setStatus(String status) {
 		if (status != null) {
-			if (status == "PubliÃ©" || status == "PubliÃ©") {
-				this.status = "PubliÃ©";
-			} else if (status == "ArchivÃ©" || status == "ArchivÃ©") {
-				this.status = "ArchivÃ©";
+			if (status == "Publié" || status == "Publié") {
+				this.status = "Publié";
+			} else if (status == "Archivé" || status == "Archivé") {
+				this.status = "Archivé";
 			} else if (status == "Draft" || status == "draft") {
 				this.status = "Draft";
 			} else {
@@ -578,18 +578,18 @@ public class Employee {
 		this.surname = surname;
 	}
 
-	public String getPrenom() {
-		if (prenom == null) {
+	public String getFirstName() {
+		if (firstName == null) {
 			return "";
 		}
-		return prenom;
+		return firstName;
 	}
 
-	public void setPrenom(String prenom) {
+	public void setFirstName(String prenom) {
 		if (prenom == null) {
 			throw new Error("setPrenom : le prenom indique est vide");
 		}
-		this.prenom = prenom;
+		this.firstName = prenom;
 	}
 
 	public String getMail() {
@@ -612,11 +612,11 @@ public class Employee {
 		this.mail = mail;
 	}
 
-	public String getTelephone() {
-		if (telephone == null) {
+	public String getPhone() {
+		if (phone == null) {
 			return "";
 		}
-		return telephone;
+		return phone;
 	}
 
 	public void setTelephone(String telephone) {
@@ -624,77 +624,77 @@ public class Employee {
 			throw new Error("setTelephone : le telephone indique est vide");
 		}
 		telephone = telephone.replace(".", "");
-		this.telephone = telephone;
+		this.phone = telephone;
 	}
 
-	public String getNumeroMatricule() {
-		if (numeroMatricule == null) {
+	public String getMatricule() {
+		if (matricule == null) {
 			return "";
 		}
-		return numeroMatricule;
+		return matricule;
 	}
 
-	public void setNumeroMatricule(String numeroMatricule) {
-		if (numeroMatricule == null) {
-			throw new Error("setNumeroMatricule : le numeroMatricule indique est vide");
+	public void setMatricule(String matricule) {
+		if (matricule == null) {
+			throw new Error("setMatricule : le numeroMatricule indique est vide");
 		}
-		this.numeroMatricule = numeroMatricule;
+		this.matricule = matricule;
 	}
 
-	public String getPointure() {
-		if (pointure == null) {
+	public String getShoeSize() {
+		if (shoeSize == null) {
 			return "";
 		}
-		return pointure;
+		return shoeSize;
 	}
 
-	public void setPointure(String pointure) {
-		if (pointure == null) {
-			throw new Error("setPointure : le pointure indique est vide");
+	public void setShoeSize(String shoeSize) {
+		if (shoeSize == null) {
+			throw new Error("setShoeSize : la pointure indiquee est vide");
 		}
-		this.pointure = pointure;
+		this.shoeSize = shoeSize;
 	}
 
-	public String getTaille() {
-		if (taille == null) {
+	public String getSize() {
+		if (size == null) {
 			return "";
 		}
-		return taille;
+		return size;
 	}
 
-	public void setTaille(String taille) {
-		if (taille == null) {
-			throw new Error("setTaille : le taille indique est vide");
+	public void setSize(String size) {
+		if (size == null) {
+			throw new Error("setSize : le taille indique est vide");
 		}
-		this.taille = taille;
+		this.size = size;
 	}
 
-	public String getDateArrivee() {
-		if (dateArrivee == null) {
+	public String getArrivalDate() {
+		if (arrivalDate == null) {
 			return "";
 		}
-		return dateArrivee;
+		return arrivalDate;
 	}
 
-	public void setDateArrivee(String dateArrivee) {
+	public void setArrivalDate(String arrivalDate) {
 		// date arrivee
-		if (dateArrivee != null) {
+		if (arrivalDate != null) {
 			try {
-				if (StringUtils.isNumeric(dateArrivee.substring(0, 4))
-						&& StringUtils.isNumeric(dateArrivee.substring(8, 10))
-						&& StringUtils.isNumeric(dateArrivee.substring(5, 7))) {
+				if (StringUtils.isNumeric(arrivalDate.substring(0, 4))
+						&& StringUtils.isNumeric(arrivalDate.substring(8, 10))
+						&& StringUtils.isNumeric(arrivalDate.substring(5, 7))) {
 					// date anglaise
 					// on reecrit en format francais
-					dateArrivee = dateArrivee.substring(8, 10) + "/" + dateArrivee.substring(5, 7) + "/"
-							+ dateArrivee.substring(0, 4);
-				} else if (StringUtils.isNumeric(dateArrivee.substring(6, 10))
-						&& StringUtils.isNumeric(dateArrivee.substring(3, 5))
-						&& StringUtils.isNumeric(dateArrivee.substring(0, 2))) {
+					arrivalDate = arrivalDate.substring(8, 10) + "/" + arrivalDate.substring(5, 7) + "/"
+							+ arrivalDate.substring(0, 4);
+				} else if (StringUtils.isNumeric(arrivalDate.substring(6, 10))
+						&& StringUtils.isNumeric(arrivalDate.substring(3, 5))
+						&& StringUtils.isNumeric(arrivalDate.substring(0, 2))) {
 					// date francaise
 					// on reecrit en format francais juste pour s'assurer que toutes les dates
 					// seront ecrites avec le meme format jj/mm/aaaa
-					dateArrivee = dateArrivee.substring(0, 2) + "/" + dateArrivee.substring(3, 5) + "/"
-							+ dateArrivee.substring(6, 10);
+					arrivalDate = arrivalDate.substring(0, 2) + "/" + arrivalDate.substring(3, 5) + "/"
+							+ arrivalDate.substring(6, 10);
 				}
 			} catch (Exception e) {
 				throw new Error(
@@ -704,7 +704,7 @@ public class Employee {
 		} else {
 			throw new Error("La date d'arrivée indiquée est vide.");
 		}
-		this.dateArrivee = dateArrivee;
+		this.arrivalDate = arrivalDate;
 
 	}
 
@@ -719,16 +719,16 @@ public class Employee {
 		this.employeId = employeId;
 	}
 
-	public int getAnciennetePC() {
-		return anciennetePC;
+	public int getSeniority() {
+		return seniority;
 	}
 
-	public void setAnciennetePC(int anciennetePC) {
-		this.anciennetePC = anciennetePC;
+	public void setSeniority(int seniority) {
+		this.seniority = seniority;
 	}
 
-	public Integer getComputeAnciennete() {
-		String date = this.getDateArrivee();
+	public Integer getComputeSeniority() {
+		String date = this.getArrivalDate();
 
 		int m1 = Integer.parseInt(date.substring(3, 5));
 		int a1 = Integer.parseInt(date.substring(6, 10));
@@ -737,21 +737,21 @@ public class Employee {
 		int m2 = currentdate.getMonthValue();
 		int a2 = currentdate.getYear();
 
-		Integer anciennete = 0;
+		Integer seniority = 0;
 
 		if (a2 - a1 == 0) {
-			anciennete = 0;
+			seniority = 0;
 
 		} else if (a2 - a1 > 0) {
 
 			if (m1 > m2)
-				anciennete = a2 - a1 - 1;
+				seniority = a2 - a1 - 1;
 			else
-				anciennete = a2 - a1;
+				seniority = a2 - a1;
 
 		}
 
-		return anciennete;
+		return seniority;
 	}
 
 }

@@ -48,8 +48,8 @@ public class EmployeTest
     @Test
     public void test() 
     {
-        assertEquals(laetitia.getTitre(),alyssa.getTitre());
-        assertEquals(stan.getDateArrivee(),alyssa.getDateArrivee());
+        assertEquals(laetitia.getTitle(),alyssa.getTitle());
+        assertEquals(stan.getArrivalDate(),alyssa.getArrivalDate());
     }
     
 }

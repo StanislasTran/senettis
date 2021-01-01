@@ -178,8 +178,8 @@ public class EmployeeView {
 						MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_QUESTION | SWT.YES | SWT.NO);
 						dialog.setText("Suppression Amortissement Employe");
 						dialog.setMessage("Voulez vous supprimer le coût à amortir de l'employé "
-								+ Employee.getEmployeById(ae.getEmployeId()).getNom() + " "
-								+ Employee.getEmployeById(ae.getEmployeId()).getPrenom() + " ?");
+								+ Employee.getEmployeById(ae.getEmployeId()).getSurname() + " "
+								+ Employee.getEmployeById(ae.getEmployeId()).getFirstName() + " ?");
 						int buttonID = dialog.open();
 						switch (buttonID) {
 						case SWT.YES:
@@ -616,9 +616,9 @@ public class EmployeeView {
 				if (e.getStatus().equals("Publié")) {
 					TableItem item = new TableItem(tableEmp, SWT.NONE);
 					item.setText(0, ((Integer) e.getEmployeId()).toString());
-					item.setText(1, e.getNom());
-					item.setText(2, e.getPrenom());
-					item.setText(3, e.getNumeroMatricule());
+					item.setText(1, e.getSurname());
+					item.setText(2, e.getFirstName());
+					item.setText(3, e.getMatricule());
 				}
 			}
 		} catch (SQLException e1) {
@@ -1269,9 +1269,9 @@ public class EmployeeView {
 				if (e.getStatus().equals("Publié")) {
 					TableItem item = new TableItem(tableCouts, SWT.NONE);
 					item.setText(0, Integer.toString(e.getEmployeId()));
-					item.setText(1, e.getNom());
-					item.setText(2, e.getPrenom());
-					item.setText(3, e.getNumeroMatricule());
+					item.setText(1, e.getSurname());
+					item.setText(2, e.getFirstName());
+					item.setText(3, e.getMatricule());
 					item.setText(4, Integer.toString(moisInt.getValue()) + '/' + annee);
 
 					try {
@@ -1755,21 +1755,21 @@ public class EmployeeView {
 					if (!textMatricule.getText().isBlank()) {
 						Employee.retrieveByMatricule(textMatricule.getText());
 					} else if (!textNom.getText().isBlank() && !textPrenom.getText().isBlank()) {
-						Employee.retrieveByNomPrenom(textNom.getText(), textPrenom.getText());
+						Employee.retrieveBySurnameFirstName(textNom.getText(), textPrenom.getText());
 					} else {
-						throw new Error("Merci d'indiquer un nom et prénom ou un matricule.");
+						throw new Error("Merci d'indiquer un nom et pr�nom ou un matricule.");
 					}
 					System.out.println("on a recuperer employe !!");
 					MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_INFORMATION | SWT.OK);
 					dialog.setText("Récupération réussie");
-					dialog.setMessage("L'employé a été rajouté à la base de données.");
+					dialog.setMessage("L'employ� a �t� rajout� � la base de donn�es.");
 					dialog.open();
 					newVueEmploye();
 				} catch (Throwable e) {
 					e.printStackTrace();
 					System.out.println("erreur dans la recup");
 					MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_ERROR | SWT.OK);
-					dialog.setText("Erreur Récupération");
+					dialog.setText("Erreur R�cup�ration");
 					dialog.setMessage("Une erreur est survenue. " + '\n' + e.getMessage());
 					dialog.open();
 				}
@@ -1909,15 +1909,15 @@ public class EmployeeView {
 			taille = "";
 			dateArrivee = "";
 		} else {
-			titre = selectedEmploye.getTitre();
-			nom = selectedEmploye.getNom();
-			prenom = selectedEmploye.getPrenom();
+			titre = selectedEmploye.getTitle();
+			nom = selectedEmploye.getSurname();
+			prenom = selectedEmploye.getFirstName();
 			mail = selectedEmploye.getMail();
-			telephone = selectedEmploye.getTelephone();
-			numeroMatricule = selectedEmploye.getNumeroMatricule().toString();
-			pointure = selectedEmploye.getPointure();
-			taille = selectedEmploye.getTaille();
-			dateArrivee = selectedEmploye.getDateArrivee();
+			telephone = selectedEmploye.getPhone();
+			numeroMatricule = selectedEmploye.getMatricule().toString();
+			pointure = selectedEmploye.getShoeSize();
+			taille = selectedEmploye.getSize();
+			dateArrivee = selectedEmploye.getArrivalDate();
 		}
 
 		// on cree trois colonne pour repartir les champs
@@ -2133,15 +2133,15 @@ public class EmployeeView {
 			employe.setTelephone(textTelephone);
 		}
 		if (!(textPointure.isEmpty())) {
-			employe.setPointure(textPointure);
+			employe.setShoeSize(textPointure);
 		}
 		if (!(textTaille.isEmpty())) {
-			employe.setTaille(textTaille);
+			employe.setSize(textTaille);
 		}
 
 		// date
 		if (!(textDateArrivee.isEmpty())) {
-			employe.setDateArrivee(textDateArrivee);
+			employe.setArrivalDate(textDateArrivee);
 
 		}
 
@@ -2271,7 +2271,7 @@ public class EmployeeView {
 						// on demande validation
 						MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_QUESTION | SWT.YES | SWT.NO);
 						dialog.setText("Suppression Employe");
-						dialog.setMessage("Voulez vous supprimer l'employé " + e.getNom() + " " + e.getPrenom()
+						dialog.setMessage("Voulez vous supprimer l'employé " + e.getSurname() + " " + e.getFirstName()
 								+ " ?\nToutes les affectations et les couts liés à cet employé seront supprimés.");
 						int buttonID = dialog.open();
 
@@ -2308,8 +2308,8 @@ public class EmployeeView {
 						tableGlobaleEmploye.getSelection()[0].setForeground(9, MyColor.noir);
 						try {
 							int employeeId = selectedEmploye.getEmployeId();
-							int newAnciennetePC = Employee.getEmployeById(employeeId).getComputeAnciennete();
-							Employee.updateAnciennete(Employee.getEmployeById(employeeId).getComputeAnciennete(),
+							int newAnciennetePC = Employee.getEmployeById(employeeId).getComputeSeniority();
+							Employee.updateAnciennete(Employee.getEmployeById(employeeId).getComputeSeniority(),
 									employeeId);
 							tableGlobaleEmploye.getSelection()[0].setForeground(9, MyColor.noir);
 							tableGlobaleEmploye.getSelection()[0].setForeground(11, MyColor.noir);
@@ -2445,20 +2445,20 @@ public class EmployeeView {
 				// on verifie le status
 				if (e.getStatus().contentEquals("Publié")) {
 					TableItem item = new TableItem(tableGlobaleEmploye, SWT.NONE);
-					item.setText(0, e.getTitre());
-					item.setText(1, e.getNom());
-					item.setText(2, e.getPrenom());
+					item.setText(0, e.getTitle());
+					item.setText(1, e.getSurname());
+					item.setText(2, e.getFirstName());
 					item.setText(3, e.getMail());
-					item.setText(4, e.getTelephone());
-					item.setText(5, e.getNumeroMatricule());
-					item.setText(6, e.getPointure());
-					item.setText(7, e.getTaille());
+					item.setText(4, e.getPhone());
+					item.setText(5, e.getMatricule());
+					item.setText(6, e.getShoeSize());
+					item.setText(7, e.getSize());
 					item.setText(10, Integer.toString(e.getEmployeId()));
 					// date et anciennete
-					if (e.getDateArrivee() != null && !e.getDateArrivee().equals("")) {
-						item.setText(8, e.getDateArrivee());
+					if (e.getArrivalDate() != null && !e.getArrivalDate().equals("")) {
+						item.setText(8, e.getArrivalDate());
 
-						Integer anciennete = e.getComputeAnciennete();
+						Integer anciennete = e.getComputeSeniority();
 						if (anciennete == 0) {
 							item.setText(9, "moins d'un an");
 						}
@@ -2469,8 +2469,8 @@ public class EmployeeView {
 							item.setText(9, anciennete + " ans");
 						}
 
-						item.setText(11, "" + e.getAnciennetePC());
-						boolean mustBeRed = anciennete >= 3 && e.getAnciennetePC() < 3;
+						item.setText(11, "" + e.getSeniority());
+						boolean mustBeRed = anciennete >= 3 && e.getSeniority() < 3;
 
 						if (mustBeRed) {
 							item.setForeground(9, MyColor.rouge);
@@ -2575,8 +2575,8 @@ public class EmployeeView {
 						MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_QUESTION | SWT.YES | SWT.NO);
 						dialog.setText("Suppression Amortissement Employe");
 						dialog.setMessage("Voulez vous supprimer le coût à amortir de l'employé "
-								+ Employee.getEmployeById(ae.getEmployeId()).getNom() + " "
-								+ Employee.getEmployeById(ae.getEmployeId()).getPrenom() + " ?");
+								+ Employee.getEmployeById(ae.getEmployeId()).getSurname() + " "
+								+ Employee.getEmployeById(ae.getEmployeId()).getFirstName() + " ?");
 						int buttonID = dialog.open();
 						switch (buttonID) {
 						case SWT.YES:
@@ -2588,7 +2588,7 @@ public class EmployeeView {
 						Employee e = Employee.getEmployeById(selectedEmploye.getEmployeId());
 						MessageBox dialog = new MessageBox(vueEmploye.getShell(), SWT.ICON_QUESTION | SWT.YES | SWT.NO);
 						dialog.setText("Suppression Employe");
-						dialog.setMessage("Voulez vous supprimer l'employé " + e.getNom() + " " + e.getPrenom()
+						dialog.setMessage("Voulez vous supprimer l'employé " + e.getSurname() + " " + e.getFirstName()
 								+ " ?\nToutes les affectations et les couts liés à cet employé seront supprimés.");
 						int buttonID = dialog.open();
 						switch (buttonID) {
@@ -2667,9 +2667,9 @@ public class EmployeeView {
 				if (e.getStatus().contentEquals("Publié")) {
 					TableItem item = new TableItem(table, SWT.NONE);
 
-					item.setText(0, e.getNom());
-					item.setText(1, e.getPrenom());
-					item.setText(2, e.getNumeroMatricule());
+					item.setText(0, e.getSurname());
+					item.setText(1, e.getFirstName());
+					item.setText(2, e.getMatricule());
 					item.setText(3, "" + e.getEmployeId());
 
 				}
