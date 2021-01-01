@@ -24,16 +24,16 @@ public class SiteView {
 	private Site selectedSite;
 	private Menu menu;
 
-	// Creation VueChantier --------------------------------------------------
+	
 	/***
-	 * Utilisé depuis Home pour créer une vueChantier
+	 * Constructor
 	 * 
-	 * @param composite : le composite parent
+	 * @param composite 
 	 * @param display
 	 */
 	public SiteView(Composite composite, Display display) {
 
-		MyColor.setDisplay(display); // pour utiliser les couleurs du fichier couleur
+		MyColor.setDisplay(display); 
 
 		siteView = new Composite(composite, SWT.NONE);
 		RowLayout rowLayout = new RowLayout();
@@ -49,8 +49,7 @@ public class SiteView {
 	}
 
 	/***
-	 * Pour créer une vueChantier : Appelle les fonctions compositeSelectionCreer et
-	 * vueChantierAfficher
+	 * create siteView
 	 * 
 	 */
 	public void newVueChantier() {
