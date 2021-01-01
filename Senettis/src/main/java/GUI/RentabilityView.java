@@ -29,7 +29,6 @@ import java.time.Month;
 import java.time.Year;
 import java.time.YearMonth;
 import java.util.ArrayList;
-
 import java.util.Map;
 import java.util.Objects;
 
@@ -134,105 +133,6 @@ public class RentabilityView {
 			}
 		});
 
-		Button save = new Button(selection, SWT.NONE);
-		save.setText("Mettre à jour données pour powerBI (Sauvegarde toutes les données des années N-1 à N )");
-		save.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				try {
-					ArrayList<Site> allSite = (ArrayList<Site>) Site.getAllSite();
-
-					for (int yearI = Year.now().getValue() -1; yearI < Year.now().getValue() + 1; yearI++) {
-
-						for (int monthI = 1; monthI <= 12; monthI++) {
-
-							for (Site s : allSite) {
-								Map<Integer, Double> comissions = Comission.getAllComissionsAfterMap(Month.of(monthI),
-										Year.of(yearI));
-
-								Map<Integer, Double> fsMap = FS.getAllFSterMap(Month.of(monthI), Year.of(yearI));
-
-								Map<Integer, Double> livraisonMap = Delivery
-										.getAllLivraisonFilteredMap(Month.of(monthI), Year.of(yearI));
-
-								Map<Integer, Double> amortiMap = SiteAmortisation.getAllACFilteredMap(Month.of(monthI),
-										Year.of(yearI));
-								Map<Integer, Double> turnOverMap = TurnOver.getTurnOverByDateAndSite(Month.of(monthI),
-										Year.of(yearI));
-
-								Map<Integer, Double> salaryCostMap = SalaryCostPerSite
-										.computeTotalAffectationCost(Month.of(monthI), Year.of(yearI));
-
-								Double turnOver = 0.00;
-								Double totalEmployeCost = 0.00;
-								Double total_delivery = 0.00;
-								Double total_material = 0.00;
-								Double total_fs = 0.00;
-
-								Double priceCost = 0.00;
-								Double grossMargin = 0.00;
-
-								Double percent = 0.00;
-
-								// TurnOver
-
-								if (turnOverMap.containsKey(s.getSiteId()))
-									turnOver = turnOverMap.get(s.getSiteId());
-
-
-								//EmployeeCost
-								if (salaryCostMap.containsKey(s.getSiteId()))
-									totalEmployeCost = salaryCostMap.get(s.getSiteId());
-
-								// Delivery
-
-								if (livraisonMap.containsKey(s.getSiteId()))
-									total_delivery = livraisonMap.get(s.getSiteId());
-
-								if (fsMap.containsKey(s.getSiteId()))
-									total_fs = fsMap.get(s.getSiteId());
-
-								if (amortiMap.containsKey(s.getSiteId()))
-									total_material = amortiMap.get(s.getSiteId());
-
-								// Comission
-
-								Double comission = 0.00;
-								if (comissions.containsKey(s.getSiteId()))
-									comission = comissions.get(s.getSiteId());
-
-								priceCost = totalEmployeCost + total_material + total_fs + ((turnOver * comission) / 100)
-										+ total_delivery;
-								grossMargin = turnOver - priceCost;
-								percent = (grossMargin * 100) / turnOver;
-
-								new Rentability(s.getSiteId(), Month.of(monthI), Year.of(yearI), turnOver, totalEmployeCost,
-										total_delivery, total_material, total_fs, comission, priceCost, grossMargin,
-										percent).update();
-
-							}
-
-						}
-					}
-
-					MessageBox dialog = new MessageBox(rentabilityView.getShell(), SWT.ICON_INFORMATION | SWT.OK);
-					dialog.setText("Succes");
-					dialog.setMessage("La base de données a été mise à jour");
-					dialog.open();
-
-				} catch (SQLException e1) {
-
-					MessageBox dialog = new MessageBox(rentabilityView.getShell(), SWT.ICON_ERROR | SWT.OK);
-					dialog.setText("Erreur");
-					dialog.setMessage("Une erreur est survenue. " + '\n' + e1.getMessage());
-					dialog.open();
-					e1.printStackTrace();
-				}
-
-			}
-
-		});
 		selec2.pack();
 
 	}
@@ -282,101 +182,57 @@ public class RentabilityView {
 		Month monthFilter = date1.getMonth();
 		Year yearFilter = Year.of(date1.getYear());
 
-		Map<Integer, Double> comissions = Comission.getAllComissionsAfterMap(monthFilter, yearFilter);
+		java.util.List<Rentability> rentabilityList = Rentability.getRentabilityByDate(monthFilter, yearFilter);
+	
+		for (Rentability r : rentabilityList) {
 
-		Map<Integer, Double> fsMap = FS.getAllFSterMap(monthFilter, yearFilter);
+			TableItem item = new TableItem(rentabilityTable, SWT.NONE);
 
-		Map<Integer, Double> livraisonMap = Delivery.getAllLivraisonFilteredMap(monthFilter, yearFilter);
+			item.setText(0, r.getName());
 
-		Map<Integer, Double> amortiMap = SiteAmortisation.getAllACFilteredMap(monthFilter, yearFilter);
-		Map<Integer, Double> turnOverMap = TurnOver.getTurnOverByDateAndSite(monthFilter, yearFilter);
+			double turnOver = 0.0;
 
-		Map<Integer, Double> salaryCostMap = SalaryCostPerSite.computeTotalAffectationCost(monthFilter, yearFilter);
-		try {
-			for (Site c : Site.getAllSite()) {
-				Double grossMargin = 0.0;
-				Double priceCost = 0.0;
+			item.setText(1, "" + r.getTurnOver());
 
-				TableItem item = new TableItem(rentabilityTable, SWT.NONE);
+			double totalEmployeCost = r.getEmployeeCost();
 
-				item.setText(0, c.getName());
+			DecimalFormat df = new DecimalFormat("0.00");
 
-				double turnOver = 0.0;
+			item.setText(2, df.format(totalEmployeCost));
 
-				/// turnOver///
+			// delivery//
 
-				try {
+			double total_delivery = r.getDelivery();
+			
 
-					if (turnOverMap.containsKey(c.getSiteId()))
-						turnOver = turnOverMap.get(c.getSiteId());
+			item.setText(3, Double.toString(total_delivery));
 
-					item.setText(1, "" + turnOver);
-				} catch (Exception e) {
+			// materiel
 
-					item.setText(1, "0.0");
-				}
+			double total_material = r.getMaterial();
+			
+			item.setText(4, Double.toString(total_material));
 
-				Double totalEmployeCost = 0.0;
+			double total_fs = r.getFSCost();
 
-				if (salaryCostMap.containsKey(c.getSiteId()))
-					totalEmployeCost = salaryCostMap.get(c.getSiteId());
+		
+			item.setText(5, Double.toString(total_fs));
 
-				DecimalFormat df = new DecimalFormat("0.00");
+			// Comission
 
-				item.setText(2, df.format(totalEmployeCost));
+			double comission = r.getComission();
+			
+			item.setText(6, Double.toString(comission));
 
-				// delivery//
+			double priceCost = r.getCostPrice();
+			double grossMargin = r.getGrossMargin();
+			item.setText(7, Double.toString(priceCost));
+			item.setText(8, Double.toString(grossMargin));
 
-				double total_delivery = 0.0;
-				if (livraisonMap.containsKey(c.getSiteId()))
-					total_delivery = livraisonMap.get(c.getSiteId());
-
-				item.setText(3, Double.toString(total_delivery));
-
-				// materiel
-
-				Double total_material = 0.0;
-				if (amortiMap.containsKey(c.getSiteId()))
-					total_material = amortiMap.get(c.getSiteId());
-
-				item.setText(4, Double.toString(total_material));
-
-				double total_fs = 0.0;
-
-				if (fsMap.containsKey(c.getSiteId()))
-					total_fs = fsMap.get(c.getSiteId());
-
-				item.setText(5, Double.toString(total_fs));
-
-				// Comission
-
-				Double comission = 0.00;
-				if (comissions.containsKey(c.getSiteId()))
-					comission = comissions.get(c.getSiteId());
-
-				item.setText(6, Double.toString(comission));
-
-				priceCost = totalEmployeCost + total_delivery + total_material + total_fs
-						+ (turnOver * comission) / 100;
-
-				grossMargin = turnOver - priceCost;
-				item.setText(7, Double.toString(priceCost));
-				item.setText(8, Double.toString(grossMargin));
-
-				if (turnOver != 0.0) {
-					item.setText(9, df.format((grossMargin * 100) / turnOver) + "%");
-				}
-
+			if (turnOver != 0.0) {
+				item.setText(9, df.format(r.getPercent()) + "%");
 			}
 
-		} catch (
-
-		SQLException e) {
-
-			MessageBox dialog = new MessageBox(rentabilityView.getShell(), SWT.ICON_ERROR | SWT.OK);
-			dialog.setText("Erreur");
-			dialog.setMessage("Une erreur est survenue. " + '\n' + e.getMessage());
-			dialog.open();
 		}
 	}
 
