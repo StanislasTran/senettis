@@ -28,28 +28,28 @@ import java.time.LocalDate;
 public class Employee {
 
 	private Integer employeId;
-	private Title titre;
-	private String nom;
-	private String prenom;
+	private Title title;
+	private String surname;
+	private String firstName;
 	private String mail;
-	private String telephone;
-	private String numeroMatricule;
-	private String pointure;
-	private String taille;
-	private String dateArrivee;
+	private String phone;
+	private String matricule;
+	private String shoeSize;
+	private String size;
+	private String arrivalDate;
 	private String status;
-	private int anciennetePC; // derniere annee prise en compte
+	private int seniority; // derniere annee prise en compte
 
 	// Constructeurs-----------------------------------------------
 	/***
 	 * 
-	 * cree un employe a partir des champs employeId, titre, nom, prenom,
+	 * cree un employe a partir des champs employeId, title, surname, prenom,
 	 * numeroMatricule, status, dateArrivee, mail, telephone, pointure, taille,
 	 * nombreHeures, renboursementTransport, remboursementTelephone, salaire
 	 * 
 	 * @param employeId              : int
 	 * @param t                      : verification faite
-	 * @param nom
+	 * @param surname
 	 * @param prenom
 	 * @param mail                   : verification faite
 	 * @param telephone
@@ -63,37 +63,37 @@ public class Employee {
 	 * @param salaire                :double
 	 * @param status                 : verification faite
 	 */
-	public Employee(int employeId, String t, String nom, String prenom, String mail, String telephone,
+	public Employee(int employeId, String t, String surname, String prenom, String mail, String telephone,
 			String numeroMatricule, String pointure, String taille, String dateArrivee, String status) {
-		this(t, nom, prenom, mail, telephone, numeroMatricule, pointure, taille, dateArrivee, status);
+		this(t, surname, prenom, mail, telephone, numeroMatricule, pointure, taille, dateArrivee, status);
 
 		// id
 		if ((Integer) employeId != null) {
 			this.employeId = employeId;
 		} else {
-			throw new Error("L'employeId est vide, merci de spï¿½cifier un id ou d'utiliser un autre constructeur.");
+			throw new Error("L'employeId est vide, merci de spécifier un id ou d'utiliser un autre constructeur.");
 		}
 	}
 
-	public Employee(int employeId, String t, String nom, String prenom, String mail, String telephone,
+	public Employee(int employeId, String t, String surname, String prenom, String mail, String telephone,
 			String numeroMatricule, String pointure, String taille, String dateArrivee, int anciennete, String status) {
-		this(employeId, t, nom, prenom, mail, telephone, numeroMatricule, pointure, taille, dateArrivee, status);
+		this(employeId, t, surname, prenom, mail, telephone, numeroMatricule, pointure, taille, dateArrivee, status);
 
 		// id
 		if ((Integer) anciennete != null) {
 			this.anciennetePC = anciennete;
 		} else {
-			throw new Error("L'anciennete est vide, merci de spï¿½cifier un id ou d'utiliser un autre constructeur.");
+			throw new Error("L'anciennete est vide, merci de spécifier un id ou d'utiliser un autre constructeur.");
 		}
 	}
 
 	/***
-	 * cree un employe a partir des champs titre, nom, prenom, numeroMatricule,
+	 * cree un employe a partir des champs title, surname, prenom, numeroMatricule,
 	 * status, dateArrivee, mail, telephone, pointure, taille, nombreHeures,
 	 * renboursementTransport, remboursementTelephone, salaire
 	 * 
 	 * @param t               : verification faite
-	 * @param nom
+	 * @param surname
 	 * @param prenom
 	 * @param mail            : verification faite
 	 * @param telephone
@@ -103,9 +103,9 @@ public class Employee {
 	 * @param dateArrivee     : string, verification faite
 	 * @param status          : verification faite
 	 */
-	public Employee(String t, String nom, String prenom, String mail, String telephone, String numeroMatricule,
+	public Employee(String t, String surname, String prenom, String mail, String telephone, String numeroMatricule,
 			String pointure, String taille, String dateArrivee, String status) {
-		this(t, nom, prenom, numeroMatricule, dateArrivee, status);
+		this(t, surname, prenom, numeroMatricule, dateArrivee, status);
 
 		// je verifie que l adresse mail est correcte
 		if (mail != null) {
@@ -137,18 +137,18 @@ public class Employee {
 	}
 
 	/***
-	 * cree un employe a partir des champs titre, nom, prenom, numeroMatricule,
+	 * cree un employe a partir des champs title, surname, prenom, numeroMatricule,
 	 * status et dateArrivee
 	 * 
 	 * @param t               : verification faite
-	 * @param nom
+	 * @param surname
 	 * @param prenom
 	 * @param numeroMatricule : int
 	 * @param dateArrivee     : string, verification faite
 	 * @param status          : verification faite
 	 */
-	public Employee(String t, String nom, String prenom, String numeroMatricule, String dateArrivee, String status) {
-		this(t, nom, prenom, numeroMatricule);
+	public Employee(String t, String surname, String prenom, String numeroMatricule, String dateArrivee, String status) {
+		this(t, surname, prenom, numeroMatricule);
 
 		// status
 		if (status != null) {
@@ -160,7 +160,7 @@ public class Employee {
 				} else if (status.equals("Draft") || status.equals("draft")) {
 					this.status = "Draft";
 				} else {
-					throw new Error("Le status indiquï¿½ est incorrect, le status doit ï¿½tre PubliÃ©, ArchivÃ© ou draft.");
+					throw new Error("Le status indiqué est incorrect, le status doit être Publié, Archivé ou draft.");
 				}
 			} else {
 				this.status = null;
@@ -181,7 +181,7 @@ public class Employee {
 							+ dateArrivee.substring(0, 4);
 				} else {
 					throw new Error(
-							"La date d'arrivï¿½e indiquï¿½e est incorrecte, une date doit ï¿½tre indiquï¿½ selon un des formats suivant : 31-01-2000, 31/01/2000, 2000-01-31 ou 2000/01/31.");
+							"La date d'arrivée indiquée est incorrecte, une date doit être indiquïé selon un des formats suivant : 31-01-2000, 31/01/2000, 2000-01-31 ou 2000/01/31.");
 				}
 			} else {
 				dateArrivee = null;
@@ -191,50 +191,50 @@ public class Employee {
 	}
 
 	/***
-	 * cree un employe a partir des champs titre, nom, prenom et numeroMatricule
+	 * cree un employe a partir des champs title, surname, prenom et numeroMatricule
 	 * 
 	 * @param t               : verification faite
-	 * @param nom
+	 * @param surname
 	 * @param prenom
 	 * @param numeroMatricule : int
 	 */
-	public Employee(String t, String nom, String prenom, String numeroMatricule) {
+	public Employee(String t, String surname, String prenom, String numeroMatricule) {
 		super();
 
-		// je verifie le titre
+		// je verifie le title
 		if (t != null) {
 			if ((t == "M") || (t == "M.")) {
-				this.titre = Title.M;
+				this.title = Title.M;
 			} else if ((t == "Mme") || (t == "MME") || (t == "Mme.") || (t == "MME.")) {
-				this.titre = Title.Mme;
+				this.title = Title.Mme;
 			} else if (t.contains("me") || t.contains("ME")) {
-				this.titre = Title.Mme;
+				this.title = Title.Mme;
 			} else {
-				this.titre = Title.M;
+				this.title = Title.M;
 			}
 		} else {
-			this.titre = Title.M;
+			this.title = Title.M;
 		}
 
-		// nom
-		if (nom != null) {
-			this.nom = nom;
+		// surname
+		if (surname != null) {
+			this.surname = surname;
 		} else {
-			throw new Error("Le nom indiquï¿½ est vide.");
+			throw new Error("Le nom indiqué est vide.");
 		}
 
 		// prenom
 		if (prenom != null) {
 			this.prenom = prenom;
 		} else {
-			throw new Error("Le prï¿½nom indiquï¿½ est vide.");
+			throw new Error("Le prénom indiqué est vide.");
 		}
 
 		// numero matricule
 		if (numeroMatricule != null) {
 			this.numeroMatricule = numeroMatricule;
 		} else {
-			throw new Error("Le numï¿½ro de matricule indiquï¿½ est vide.");
+			throw new Error("Le numéro de matricule indiqué est vide.");
 		}
 		this.anciennetePC = 0;
 
@@ -252,8 +252,8 @@ public class Employee {
 
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
-		statement.setObject(1, this.titre.toString(), Types.VARCHAR);
-		statement.setObject(2, this.nom, Types.VARCHAR);
+		statement.setObject(1, this.title.toString(), Types.VARCHAR);
+		statement.setObject(2, this.surname, Types.VARCHAR);
 		statement.setObject(3, this.prenom, Types.VARCHAR);
 		statement.setObject(4, this.mail, Types.VARCHAR);
 		statement.setObject(5, this.telephone, Types.VARCHAR);
@@ -282,8 +282,8 @@ public class Employee {
 
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
-		statement.setObject(1, this.titre.toString(), Types.VARCHAR);
-		statement.setObject(2, this.nom, Types.VARCHAR);
+		statement.setObject(1, this.title.toString(), Types.VARCHAR);
+		statement.setObject(2, this.surname, Types.VARCHAR);
 		statement.setObject(3, this.prenom, Types.VARCHAR);
 		statement.setObject(4, this.mail, Types.VARCHAR);
 		statement.setObject(5, this.telephone, Types.VARCHAR);
@@ -362,8 +362,8 @@ public class Employee {
 
 		if (result.next()) {
 			employeId = result.getInt("EmployeId");
-			String titre = result.getString("Titre");
-			String nom = result.getString("Nom");
+			String title = result.getString("Titre");
+			String surname = result.getString("Nom");
 			String prenom = result.getString("Prenom");
 			String mail = result.getString("mail");
 			String telephone = result.getString("Telephone");
@@ -374,7 +374,7 @@ public class Employee {
 			int anciennete = result.getInt("anciennete");
 			String status = result.getString("status");
 
-			return new Employee(employeId, titre, nom, prenom, mail, telephone, numeroMatricule, pointure, taille,
+			return new Employee(employeId, title, surname, prenom, mail, telephone, numeroMatricule, pointure, taille,
 					dateArrivee, anciennete, status);
 
 		} else {
@@ -395,7 +395,7 @@ public class Employee {
 			employeId = result.getInt("EmployeId");
 
 		} else {
-			throw new Error("Erreur de matricule, aucun employï¿½ ne correspond.");
+			throw new Error("Erreur de matricule, aucun employé ne correspond.");
 		}
 
 		try {
@@ -403,15 +403,15 @@ public class Employee {
 			e.setStatus("PubliÃ©");
 			e.updateDatabase();
 		} catch (Exception e) {
-			throw new Error("Erreur de matricule, aucun employï¿½ ne correspond.");
+			throw new Error("Erreur de matricule, aucun employé ne correspond.");
 		}
 	}
 
-	public static void retrieveByNomPrenom(String nom, String prenom) throws SQLException {
+	public static void retrieveBysurnamePrenom(String surname, String prenom) throws SQLException {
 		String reqSql = "SELECT EmployeId FROM Employe WHERE Nom=? and Prenom=?;";
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
-		statement.setObject(1, nom, Types.VARCHAR);
+		statement.setObject(1, surname, Types.VARCHAR);
 		statement.setObject(2, prenom, Types.VARCHAR);
 		statement.executeQuery();
 
@@ -462,8 +462,8 @@ public class Employee {
 		List<Employee> allEmploye = new ArrayList<Employee>();
 		while (result.next()) {
 			int employeId = result.getInt("EmployeId");
-			String titre = result.getString("Titre");
-			String nom = result.getString("Nom");
+			String title = result.getString("Titre");
+			String surname = result.getString("Nom");
 			String prenom = result.getString("Prenom");
 			String mail = result.getString("Mail");
 			String telephone = result.getString("Telephone");
@@ -482,7 +482,7 @@ public class Employee {
 
 			String status = result.getString("Status");
 
-			allEmploye.add(new Employee(employeId, titre, nom, prenom, mail, telephone, numeroMatricule, pointure,
+			allEmploye.add(new Employee(employeId, title, surname, prenom, mail, telephone, numeroMatricule, pointure,
 					taille, dateArrivee, anciennete, status));
 
 		}
@@ -501,14 +501,14 @@ public class Employee {
 	@Override
 	public String toString() {
 
-		return "" + this.employeId + "|" + this.titre + "|" + this.nom + "|" + this.prenom + "|" + this.mail + "|"
+		return "" + this.employeId + "|" + this.title + "|" + this.surname + "|" + this.prenom + "|" + this.mail + "|"
 				+ this.telephone + "|" + this.numeroMatricule + "|" + this.pointure + "|" + this.taille + "|"
 				+ this.dateArrivee + "|" + this.status;
 	}
 
 	public String getNameString() {
 
-		return "" + this.nom + " " + this.prenom;
+		return "" + this.surname + " " + this.prenom;
 	}
 
 	// Getter and setter-----------------------------------------------
@@ -525,57 +525,57 @@ public class Employee {
 			} else if (status == "Draft" || status == "draft") {
 				this.status = "Draft";
 			} else {
-				throw new Error("Le status indiquï¿½ est incorrect, le status doit ï¿½tre PubliÃ©, ArchivÃ© ou draft.");
+				throw new Error("Le status indiqué est incorrect, le status doit être Publié, Archivé ou draft.");
 			}
 		} else {
-			throw new Error("Le status indiquï¿½ est vide.");
+			throw new Error("Le status indiqué est vide.");
 		}
 	}
 
-	public void setTitre(Title titre) {
-		if (titre == null) {
-			throw new Error("setTitre : le titre indique est vide");
+	public void setTitle(Title title) {
+		if (title == null) {
+			throw new Error("setTitle : le titre indique est vide");
 		}
-		this.titre = titre;
+		this.title = title;
 	}
 
-	public String getTitre() {
-		if (titre == null) {
+	public String getTitle() {
+		if (title == null) {
 			return "";
 		}
-		return titre.toString();
+		return title.toString();
 	}
 
 	@SuppressWarnings("static-access")
-	public void setTitre(String t) {
-		if (titre == null) {
-			throw new Error("setTitre : le titre indique est vide");
+	public void setTitle(String t) {
+		if (title == null) {
+			throw new Error("setTitle : le titre indique est vide");
 		}
 		if (t != null) {
 			if ((t == "M") || (t == "M.")) {
-				this.titre = titre.M;
+				this.title = title.M;
 			} else if ((t == "Mme") || (t == "MME") || (t == "Mme.") || (t == "MME.")) {
-				this.titre = titre.Mme;
+				this.title = title.Mme;
 			} else if (t.contains("me") || t.contains("ME")) {
-				this.titre = titre.Mme;
+				this.title = title.Mme;
 			} else {
-				this.titre = titre.M;
+				this.title = title.M;
 			}
 		}
 	}
 
-	public String getNom() {
-		if (nom == null) {
+	public String getSurname() {
+		if (surname == null) {
 			return "";
 		}
-		return nom;
+		return surname;
 	}
 
-	public void setNom(String nom) {
-		if (nom == null) {
-			throw new Error("setNom : le nom indique est vide");
+	public void setSurname(String surname) {
+		if (surname == null) {
+			throw new Error("setSurname : le nom indique est vide");
 		}
-		this.nom = nom;
+		this.surname = surname;
 	}
 
 	public String getPrenom() {
@@ -698,11 +698,11 @@ public class Employee {
 				}
 			} catch (Exception e) {
 				throw new Error(
-						"La date d'arrivï¿½e indiquï¿½e est incorrecte, une date doit ï¿½tre indiquï¿½ selon un des formats suivant : 31-01-2000, 31/01/2000, 2000-01-31 ou 2000/01/31.\n"
+						"La date d'arrivée indiquée est incorrecte, une date doit être indiqué selon un des formats suivant : 31-01-2000, 31/01/2000, 2000-01-31 ou 2000/01/31.\n"
 								+ e.getMessage());
 			}
 		} else {
-			throw new Error("La date d'arrivï¿½e indiquï¿½e est vide.");
+			throw new Error("La date d'arrivée indiquée est vide.");
 		}
 		this.dateArrivee = dateArrivee;
 
