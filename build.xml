@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- WARNING: Eclipse auto-generated file.
+              Any modifications will be overwritten.
+              To include a user specific buildfile here, simply create one in the same
+              directory with the processing instruction <?eclipse.ant.import?>
+              as the first entry and export the buildfile again. --><project basedir="." default="build" name="Senettis">
+    <property environment="env"/>
+    <property name="junit.output.dir" value="junit"/>
+    <property name="debuglevel" value="source,lines,vars"/>
+    <property name="target" value="1.8"/>
+    <property name="source" value="1.8"/>
+    <path id="Maven Dependencies.libraryclasspath">
+        <pathelement location="../../../.m2/repository/com/microsoft/sqlserver/mssql-jdbc/8.4.1.jre11/mssql-jdbc-8.4.1.jre11.jar"/>
+        <pathelement location="../../../.m2/repository/org/eclipse/swt/org/eclipse/swt/win32/win32/x86_64/4/3/swt/org.eclipse.swt.win32.win32.x86_64/4.3/org.eclipse.swt.win32.win32.x86_64-4.3.jar"/>
+        <pathelement location="../../../.m2/repository/org/apidesign/canvas/javafx-canvas/0.5.2/javafx-canvas-0.5.2.jar"/>
+        <pathelement location="../../../.m2/repository/org/apidesign/canvas/canvas-api/0.5.2/canvas-api-0.5.2.jar"/>
+        <pathelement location="../../../.m2/repository/junit/junit/4.13.1/junit-4.13.1.jar"/>
+        <pathelement location="../../../.m2/repository/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar"/>
+        <pathelement location="../../../.m2/repository/org/eclipse/swt/3.3.0-v3346/swt-3.3.0-v3346.jar"/>
+    </path>
+    <path id="Senettis.classpath">
+        <pathelement location="target/classes"/>
+        <pathelement location="target/test-classes"/>
+        <path refid="Maven Dependencies.libraryclasspath"/>
+    </path>
+    <path id="run.ChantierTest.classpath">
+        <path refid="Senettis.classpath"/>
+        <path refid="Maven Dependencies.libraryclasspath"/>
+    </path>
+    <path id="run.ImageButton.classpath">
+        <path refid="Senettis.classpath"/>
+        <path refid="Maven Dependencies.libraryclasspath"/>
+    </path>
+    <path id="run.Main.classpath">
+        <path refid="Senettis.classpath"/>
+        <path refid="Maven Dependencies.libraryclasspath"/>
+    </path>
+    <path id="run.RunHomeGUI.classpath">
+        <path refid="Senettis.classpath"/>
+        <path refid="Maven Dependencies.libraryclasspath"/>
+    </path>
+    <path id="run.SQLDatabaseConnection.classpath">
+        <path refid="Senettis.classpath"/>
+        <path refid="Maven Dependencies.libraryclasspath"/>
+    </path>
+    <path id="run.SQLDatabaseConnexion (1).classpath">
+        <path refid="Senettis.classpath"/>
+        <path refid="Maven Dependencies.libraryclasspath"/>
+    </path>
+    <path id="run.Test.classpath">
+        <path refid="Senettis.classpath"/>
+        <path refid="Maven Dependencies.libraryclasspath"/>
+    </path>
+    <path id="run.TestAffectation.classpath">
+        <path refid="Senettis.classpath"/>
+        <path refid="Maven Dependencies.libraryclasspath"/>
+    </path>
+    <path id="run.TestChantier.classpath">
+        <path refid="Senettis.classpath"/>
+        <path refid="Maven Dependencies.libraryclasspath"/>
+    </path>
+    <path id="run.TestEmploye (1).classpath">
+        <path refid="Senettis.classpath"/>
+        <path refid="Maven Dependencies.libraryclasspath"/>
+    </path>
+    <path id="run.TestEmploye.classpath">
+        <path refid="Senettis.classpath"/>
+        <path refid="Maven Dependencies.libraryclasspath"/>
+    </path>
+    <path id="run.TestLivraison.classpath">
+        <path refid="Senettis.classpath"/>
+        <path refid="Maven Dependencies.libraryclasspath"/>
+    </path>
+    <path id="run.TestProduit (1).classpath">
+        <path refid="Senettis.classpath"/>
+        <path refid="Maven Dependencies.libraryclasspath"/>
+    </path>
+    <path id="run.TestProduit.classpath">
+        <path refid="Senettis.classpath"/>
+        <path refid="Maven Dependencies.libraryclasspath"/>
+    </path>
+    <path id="run.TestProduitParLivraison.classpath">
+        <path refid="Senettis.classpath"/>
+        <path refid="Maven Dependencies.libraryclasspath"/>
+    </path>
+    <path id="run.TestVueProduit.classpath">
+        <path refid="Senettis.classpath"/>
+        <path refid="Maven Dependencies.libraryclasspath"/>
+    </path>
+    <target name="init">
+        <mkdir dir="target/classes"/>
+        <mkdir dir="target/test-classes"/>
+        <copy includeemptydirs="false" todir="target/classes">
+            <fileset dir="src/main/java">
+                <exclude name="**/*.launch"/>
+                <exclude name="**/*.java"/>
+            </fileset>
+        </copy>
+        <copy includeemptydirs="false" todir="target/classes">
+            <fileset dir="src/main/resources">
+                <exclude name="**/*.launch"/>
+                <exclude name="**/*.java"/>
+                <exclude name="**"/>
+            </fileset>
+        </copy>
+        <copy includeemptydirs="false" todir="target/test-classes">
+            <fileset dir="src/test/java">
+                <exclude name="**/*.launch"/>
+                <exclude name="**/*.java"/>
+            </fileset>
+        </copy>
+        <copy includeemptydirs="false" todir="target/test-classes">
+            <fileset dir="src/test/resources">
+                <exclude name="**/*.launch"/>
+                <exclude name="**/*.java"/>
+                <exclude name="**"/>
+            </fileset>
+        </copy>
+    </target>
+    <target name="clean">
+        <delete dir="target/classes"/>
+        <delete dir="target/test-classes"/>
+    </target>
+    <target depends="clean" name="cleanall"/>
+    <target depends="build-subprojects,build-project" name="build"/>
+    <target name="build-subprojects"/>
+    <target depends="init" name="build-project">
+        <echo message="${ant.project.name}: ${ant.file}"/>
+        <javac debug="true" debuglevel="${debuglevel}" destdir="target/classes" includeantruntime="false" source="${source}" target="${target}">
+            <src path="src/main/java"/>
+            <src path="src/main/resources"/>
+            <exclude name="**"/>
+            <classpath refid="Senettis.classpath"/>
+        </javac>
+        <javac debug="true" debuglevel="${debuglevel}" destdir="target/test-classes" includeantruntime="false" source="${source}" target="${target}">
+            <src path="src/test/java"/>
+            <src path="src/test/resources"/>
+            <exclude name="**"/>
+            <classpath refid="Senettis.classpath"/>
+        </javac>
+    </target>
+    <target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects"/>
+    <target description="copy Eclipse compiler jars to ant lib directory" name="init-eclipse-compiler">
+        <copy todir="${ant.library.dir}">
+            <fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
+        </copy>
+        <unzip dest="${ant.library.dir}">
+            <patternset includes="jdtCompilerAdapter.jar"/>
+            <fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
+        </unzip>
+    </target>
+    <target description="compile project with Eclipse compiler" name="build-eclipse-compiler">
+        <property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
+        <antcall target="build"/>
+    </target>
+    <target name="ChantierTest">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="testsJUnit.ChantierTest" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
+            <classpath refid="run.ChantierTest.classpath"/>
+        </junit>
+    </target>
+    <target name="ImageButton">
+        <java classname="GUI.ImageButton" failonerror="true" fork="yes">
+            <classpath refid="run.ImageButton.classpath"/>
+        </java>
+    </target>
+    <target name="Main">
+        <java classname="Senettis.Main" failonerror="true" fork="yes">
+            <classpath refid="run.Main.classpath"/>
+        </java>
+    </target>
+    <target name="RunHomeGUI">
+        <java classname="runGUI.RunHomeGUI" failonerror="true" fork="yes">
+            <classpath refid="run.RunHomeGUI.classpath"/>
+        </java>
+    </target>
+    <target name="SQLDatabaseConnection">
+        <java classname="Senettis.SQLDatabaseConnection" failonerror="true" fork="yes">
+            <classpath refid="run.SQLDatabaseConnection.classpath"/>
+        </java>
+    </target>
+    <target name="SQLDatabaseConnexion (1)">
+        <java classname="connexion.SQLDatabaseConnexion" failonerror="true" fork="yes">
+            <classpath refid="run.SQLDatabaseConnexion (1).classpath"/>
+        </java>
+    </target>
+    <target name="Test">
+        <java classname="connexion.Test" failonerror="true" fork="yes">
+            <classpath refid="run.Test.classpath"/>
+        </java>
+    </target>
+    <target name="TestAffectation">
+        <java classname="testsConnexion.TestAffectation" failonerror="true" fork="yes">
+            <classpath refid="run.TestAffectation.classpath"/>
+        </java>
+    </target>
+    <target name="TestChantier">
+        <java classname="testsConnexion.TestChantier" failonerror="true" fork="yes">
+            <classpath refid="run.TestChantier.classpath"/>
+        </java>
+    </target>
+    <target name="TestEmploye (1)">
+        <java classname="testsConnexion.TestEmploye" failonerror="true" fork="yes">
+            <classpath refid="run.TestEmploye (1).classpath"/>
+        </java>
+    </target>
+    <target name="TestEmploye">
+        <java classname="tests.TestEmploye" failonerror="true" fork="yes">
+            <classpath refid="run.TestEmploye.classpath"/>
+        </java>
+    </target>
+    <target name="TestLivraison">
+        <java classname="testsConnexion.TestLivraison" failonerror="true" fork="yes">
+            <classpath refid="run.TestLivraison.classpath"/>
+        </java>
+    </target>
+    <target name="TestProduit (1)">
+        <java classname="testsConnexion.TestProduit" failonerror="true" fork="yes">
+            <classpath refid="run.TestProduit (1).classpath"/>
+        </java>
+    </target>
+    <target name="TestProduit">
+        <java classname="tests.TestProduit" failonerror="true" fork="yes">
+            <classpath refid="run.TestProduit.classpath"/>
+        </java>
+    </target>
+    <target name="TestProduitParLivraison">
+        <java classname="testsConnexion.TestProduitParLivraison" failonerror="true" fork="yes">
+            <classpath refid="run.TestProduitParLivraison.classpath"/>
+        </java>
+    </target>
+    <target name="TestVueProduit">
+        <java classname="runGUI.TestVueProduit" failonerror="true" fork="yes">
+            <classpath refid="run.TestVueProduit.classpath"/>
+        </java>
+    </target>
+    <target name="junitreport">
+        <junitreport todir="${junit.output.dir}">
+            <fileset dir="${junit.output.dir}">
+                <include name="TEST-*.xml"/>
+            </fileset>
+            <report format="frames" todir="${junit.output.dir}"/>
+        </junitreport>
+    </target>
+</project>
