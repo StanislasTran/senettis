@@ -16,6 +16,11 @@ import classes.Delivery;
 import classes.Site;
 import classes.Status;
 
+/**
+ * View for Site management
+ * 
+ *
+ */
 public class SiteView {
 
 	private Composite siteView;
@@ -24,16 +29,15 @@ public class SiteView {
 	private Site selectedSite;
 	private Menu menu;
 
-	
 	/***
 	 * Constructor
 	 * 
-	 * @param composite 
+	 * @param composite
 	 * @param display
 	 */
 	public SiteView(Composite composite, Display display) {
 
-		MyColor.setDisplay(display); 
+		MyColor.setDisplay(display);
 
 		siteView = new Composite(composite, SWT.NONE);
 		RowLayout rowLayout = new RowLayout();
@@ -129,6 +133,7 @@ public class SiteView {
 	/***
 	 * 
 	 * Create modification header
+	 * 
 	 * @param table : table which contains all sites
 	 */
 	public void compositeHeaderForModification(Table table) {
@@ -155,7 +160,6 @@ public class SiteView {
 		fillLayout2.marginWidth = addSize;
 		selection1.setLayout(fillLayout2);
 
-	
 		Label l1 = new Label(selection1, SWT.NONE);
 		l1.setText("");
 		l1.setBackground(MyColor.bleuFonce);
@@ -168,7 +172,6 @@ public class SiteView {
 		HeadLabel.setFont(fontTitle);
 		HeadLabel.setBackground(MyColor.bleuFonce);
 
-		
 		Label l2 = new Label(selection1, SWT.NONE);
 		l2.setText("");
 		l2.setBackground(MyColor.bleuFonce);
@@ -182,7 +185,6 @@ public class SiteView {
 		selection2.setLayout(rowLayout);
 		selection2.setBackground(MyColor.bleuClair);
 
-		
 		Button createButton = new Button(selection2, SWT.CENTER);
 		createButton.setText("Créer");
 		createButton.addSelectionListener(new SelectionAdapter() {
@@ -254,7 +256,7 @@ public class SiteView {
 		c.setStatus(Status.ARCHIVED);
 		c.updateDatabase();
 
-		for (Delivery d : Delivery.getAllLivraison()) {
+		for (Delivery d : Delivery.getAllDelivery()) {
 			if (d.getIdChantier() == c.getSiteId()) {
 				d.setStatus("Archivé");
 				d.updateDatabase();
@@ -809,7 +811,6 @@ public class SiteView {
 			}
 		});
 
-		
 		MenuItem delete = new MenuItem(menu, SWT.PUSH);
 		delete.setText("Supprimer l'element");
 		delete.addSelectionListener(new SelectionAdapter() {
@@ -841,6 +842,7 @@ public class SiteView {
 
 	/**
 	 * Getter for the attribute siteView (main composite)
+	 * 
 	 * @return
 	 */
 	public Composite getComposite() {

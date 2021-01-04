@@ -18,7 +18,7 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
 import classes.MABAssignment;
-import classes.EmployeeAmortisation;
+import classes.EmployeeAmortization;
 import classes.EmployeeCost;
 import classes.Employee;
 
@@ -39,7 +39,7 @@ public class EmployeeView {
 	private static Menu menu;
 
 	private static Employee selectedEmployee;
-	private static EmployeeAmortisation selectedAmorti;
+	private static EmployeeAmortization selectedAmorti;
 
 	private static Table tableGlobaleEmployee;
 	private static Table tableCost;
@@ -170,8 +170,8 @@ public class EmployeeView {
 				@Override
 				public void widgetSelected(SelectionEvent arg0) {
 					try {
-						EmployeeAmortisation ae = EmployeeAmortisation
-								.getAmmortissementEmployeById(selectedAmorti.getAmmortissementEmployeId());
+						EmployeeAmortization ae = EmployeeAmortization
+								.getAmortizationById(selectedAmorti.getEmployeeAmortizationId());
 						MessageBox dialog = new MessageBox(employeeView.getShell(),
 								SWT.ICON_QUESTION | SWT.YES | SWT.NO);
 						dialog.setText("Suppression Amortissement Employe");
@@ -434,7 +434,7 @@ public class EmployeeView {
 		if (j == 0) {
 			periode.setText(month.toString() + " " + year);
 		} else {
-			periode.setText(Month.of(selectedAmorti.getMoisD()) + " " + selectedAmorti.getAnneeD().toString());
+			periode.setText(Month.of(selectedAmorti.getStartMonth()) + " " + selectedAmorti.getStartYear().toString());
 		}
 
 		for (int i = 2020; i <= year + 1; i++) {
@@ -453,7 +453,7 @@ public class EmployeeView {
 
 		final Text textDuree = new Text(compositeDuree, SWT.BORDER);
 		if (j == 1) {
-			textDuree.setText(selectedAmorti.getDuree().toString());
+			textDuree.setText(selectedAmorti.getDuration().toString());
 		} else {
 			textDuree.setText("");
 		}
@@ -476,7 +476,7 @@ public class EmployeeView {
 
 		final Text textValeur = new Text(compositeValeur, SWT.BORDER);
 		if (j == 1) {
-			textValeur.setText(selectedAmorti.getValeur().toString());
+			textValeur.setText(selectedAmorti.getValue().toString());
 		} else {
 			textValeur.setText("");
 		}
@@ -548,9 +548,9 @@ public class EmployeeView {
 
 					Double valeurTotale = Double.parseDouble(textValeur.getText());
 
-					EmployeeAmortisation ae;
+					EmployeeAmortization ae;
 					if (selectedAmorti != null) {
-						ae = new EmployeeAmortisation(selectedAmorti.getAmmortissementEmployeId(), employeId, moisD,
+						ae = new EmployeeAmortization(selectedAmorti.getEmployeeAmortizationId(), employeId, moisD,
 								anneeD, moisF, anneeF, textDesc.getText(), valeurTotale / duree, duree, valeurTotale,
 								type.getText(), "Publié");
 						ae.updateDatabase();
@@ -559,7 +559,7 @@ public class EmployeeView {
 						dialog.setMessage("Ce cout a bien été modifié dans la base de données.");
 						dialog.open();
 					} else {
-						ae = new EmployeeAmortisation(employeId, moisD, anneeD, moisF, anneeF, valeurTotale / duree,
+						ae = new EmployeeAmortization(employeId, moisD, anneeD, moisF, anneeF, valeurTotale / duree,
 								textDesc.getText(), duree, valeurTotale, type.getText(), "Publié");
 						ae.insertDatabase();
 						MessageBox dialog = new MessageBox(employeeView.getShell(), SWT.ICON_INFORMATION | SWT.OK);
@@ -672,15 +672,15 @@ public class EmployeeView {
 		final TableColumn[] columns = tableAmorti.getColumns();
 
 		try {
-			for (EmployeeAmortisation a : EmployeeAmortisation.getAllAmmortissementEmploye()) {
+			for (EmployeeAmortization a : EmployeeAmortization.getAllAmmortissementEmploye()) {
 
 				if (a.getStatus().equals("Publié") && selectedEmployee.getEmployeId() == a.getEmployeId()) {
 					TableItem item = new TableItem(tableAmorti, SWT.NONE);
-					item.setText(0, a.getAmmortissementEmployeId().toString());
-					item.setText(1, a.getMoisD().toString() + '/' + a.getAnneeD().toString());
-					item.setText(2, a.getMoisF().toString() + '/' + a.getAnneeF().toString());
-					item.setText(3, a.getMontantParMois().toString());
-					item.setText(4, a.getValeur().toString());
+					item.setText(0, a.getEmployeeAmortizationId().toString());
+					item.setText(1, a.getStartMonth().toString() + '/' + a.getStartYear().toString());
+					item.setText(2, a.getEndMonth().toString() + '/' + a.getEndYear().toString());
+					item.setText(3, a.getCostByMonth().toString());
+					item.setText(4, a.getValue().toString());
 					item.setText(5, a.getType());
 					item.setText(6, a.getDescription());
 				}
@@ -701,7 +701,7 @@ public class EmployeeView {
 				if (tableAmorti.getSelectionIndex() != -1) {
 
 					try {
-						selectedAmorti = EmployeeAmortisation.getAmmortissementEmployeById(
+						selectedAmorti = EmployeeAmortization.getAmortizationById(
 								Integer.parseInt(tableAmorti.getSelection()[0].getText(0)));
 					} catch (NumberFormatException | SQLException e1) {
 						System.out.println("erreur pour recuperer l'amorti selectionne");
@@ -1292,20 +1292,20 @@ public class EmployeeView {
 
 							Double pret = 0.0;
 							Double saisie = 0.0;
-							for (EmployeeAmortisation ae : EmployeeAmortisation
-									.getAmmortissementEmployeByEmployeId(e.getEmployeId())) {
+							for (EmployeeAmortization ae : EmployeeAmortization
+									.getAmortizationEmployee(e.getEmployeId())) {
 								System.out.println("dans la boucle");
 								if (ae.getStatus().equals("Publié")) {
 
-									YearMonth debut = YearMonth.of(ae.getAnneeD(), ae.getMoisD());
-									YearMonth fin = YearMonth.of(ae.getAnneeF(), ae.getMoisF());
+									YearMonth debut = YearMonth.of(ae.getStartYear(), ae.getStartMonth());
+									YearMonth fin = YearMonth.of(ae.getEndYear(), ae.getEndMonth());
 									YearMonth now = YearMonth.of(Integer.parseInt(year), monthInt.getValue());
 
 									if (debut.equals(now) || (debut.isBefore(now) && fin.isAfter(now))) {
 										if (ae.getType().equals("Prêt")) {
-											pret += ae.getMontantParMois();
+											pret += ae.getCostByMonth();
 										} else {
-											saisie += ae.getMontantParMois();
+											saisie += ae.getCostByMonth();
 										}
 									}
 								}
@@ -2504,8 +2504,8 @@ public class EmployeeView {
 			public void widgetSelected(SelectionEvent arg0) {
 				try {
 					if (selectedAmorti != null) {
-						EmployeeAmortisation ae = EmployeeAmortisation
-								.getAmmortissementEmployeById(selectedAmorti.getAmmortissementEmployeId());
+						EmployeeAmortization ae = EmployeeAmortization
+								.getAmortizationById(selectedAmorti.getEmployeeAmortizationId());
 						MessageBox dialog = new MessageBox(employeeView.getShell(),
 								SWT.ICON_QUESTION | SWT.YES | SWT.NO);
 						dialog.setText("Suppression Amortissement Employe");

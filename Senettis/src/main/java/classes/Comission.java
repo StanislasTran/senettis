@@ -28,9 +28,9 @@ public class Comission {
 	private Year startYear;
 	private Status status;
 
-	
 	/**
 	 * Constructor
+	 * 
 	 * @param comission
 	 * @param site
 	 * @param startMonth
@@ -45,8 +45,10 @@ public class Comission {
 		this.startYear = startYear;
 		this.status = status;
 	}
+
 	/**
 	 * constructor
+	 * 
 	 * @param comissionId
 	 * @param comission
 	 * @param site
@@ -85,14 +87,16 @@ public class Comission {
 
 	/**
 	 * getAllComissionActive
+	 * 
 	 * @param site
 	 * @param startMonth
 	 * @param startYear
 	 * @return <type>ResultSet</type>
-	 * @throws SQLException
+	 * @throws SQLException - if a database access error occurs or this method is
+	 *                      called on a closed Statement
 	 */
 
-	public static ResultSet getAllComissionsAfterResultSet(Month month, Year year) throws SQLException {
+	public static ResultSet getAllComissionsActive(Month month, Year year) throws SQLException {
 		String reqSql = "select chantier,Sum(comission) as SUM from Comission WHERE status ='Publié' AND AnneeDebut<? OR (AnneeDebut=? AND MoisDebut<=?) GROUP BY chantier;";
 
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
@@ -118,7 +122,7 @@ public class Comission {
 	 */
 
 	public static Map<Integer, Double> getAllComissionsAfterMap(Month month, Year year) throws SQLException {
-		ResultSet result = getAllComissionsAfterResultSet(month, year);
+		ResultSet result = getAllComissionsActive(month, year);
 		HashMap<Integer, Double> comissions = new HashMap<Integer, Double>();
 		while (result.next()) {
 
@@ -129,7 +133,19 @@ public class Comission {
 		return comissions;
 	}
 
-	public static List<Comission> getComissionsList(int site, Month startMonth, Year startYear) throws SQLException {
+	/**
+	 * Getter which return the list of active comissions after on a given date
+	 * 
+	 * @param <type>Integer</type>site
+	 * @param <type>Month</type>startMonth
+	 * @param <type>Year</type>startYear
+	 * @return <type>List<Comission></type> list of active comissions
+	 * @throws SQLException - if a database access error occurs or this method is
+	 *                      called on a closed result set
+	 */
+
+	public static List<Comission> getComissionsList(Integer site, Month startMonth, Year startYear)
+			throws SQLException {
 		ResultSet result = getComissionsResultSet(site, startMonth, startYear);
 		List<Comission> comissions = new ArrayList<Comission>();
 		while (result.next()) {
@@ -143,6 +159,14 @@ public class Comission {
 		return comissions;
 	}
 
+	/**
+	 * Getter which return all Comissions stored into the database
+	 * 
+	 * @return <type>ResultSet</type> all the comissions into the database into a
+	 *         ResultSet
+	 * @throws SQLException - if a database access error occursor this method is
+	 *                      called on a closed connection
+	 */
 	public static ResultSet getComissionsResultSet() throws SQLException {
 		String reqSql = "Select Comission.comissionId,Comission.comission,Comission.MoisDebut,Comission.AnneeDebut,Chantier.ChantierId,Chantier.Nom FROM Comission JOIN Chantier ON Chantier.ChantierId=Comission.Chantier Where Chantier.Status ='Publié' AND Comission.Status='Publié'";
 
@@ -154,6 +178,13 @@ public class Comission {
 
 	}
 
+	/**
+	 * Insert the current Comission into the database
+	 * 
+	 * @throws SQLException - if a database access error occurs;this method is
+	 *                      called on a closed PreparedStatementor the SQL statement
+	 *                      returns a ResultSet object
+	 */
 	public void insert() throws SQLException {
 		String reqSql = "INSERT INTO Comission(Comission,Chantier,MoisDebut,AnneeDebut,Status) values  (?,?,?,?,?);";
 
@@ -169,6 +200,17 @@ public class Comission {
 
 	}
 
+	/**
+	 * Getter of active comission for a given Site and date
+	 * 
+	 * @param <type>Integer</type>         siteId
+	 * @param <type>Month</type>startMonth
+	 * @param <type>Year</type>            startYear
+	 * @return <type>Double</type>
+	 * @throws SQLException - if a database access error occurs;this method is
+	 *                      called on a closed PreparedStatementor an argument is
+	 *                      supplied to this method
+	 */
 	public static Double getComissionSum(Integer siteId, Month startMonth, Year startYear) throws SQLException {
 		Double totalCommision = 0.00;
 
@@ -190,6 +232,13 @@ public class Comission {
 		return totalCommision;
 	}
 
+	/**
+	 * Change the status of the current Comission into the database to "Archivé"
+	 * 
+	 * @throws SQLException - if a database access error occurs;this method is
+	 *                      called on a closed PreparedStatementor the SQL statement
+	 *                      returns a ResultSet object
+	 */
 	public void Delete() throws SQLException {
 		String reqSql = "Update  Comission SET Status='Archivé' WHERE ComissionId= .;";
 
@@ -202,13 +251,25 @@ public class Comission {
 
 	}
 
-	public static void removeById(int productId) throws SQLException {
+	/**
+	 * Change a comission status from it's Id
+	 * 
+	 * @param <type> Integer</type>comissionId
+	 * @throws SQLException - if a database access error occurs;this method is
+	 *                      called on a closed PreparedStatementor the SQL statement
+	 *                      returns a ResultSet objectSQLTimeoutException - when the
+	 *                      driver has determined that thetimeout value that was
+	 *                      specified by the setQueryTimeoutmethod has been exceeded
+	 *                      and has at least attempted to cancelthe currently
+	 *                      running Statement
+	 */
+	public static void removeById(Integer comissionId) throws SQLException {
 		String reqSql = "Update  Comission SET Status='Archivé' WHERE ComissionId= ?;";
 
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
 
-		statement.setObject(1, productId, Types.INTEGER);
+		statement.setObject(1, comissionId, Types.INTEGER);
 
 		statement.executeUpdate();
 

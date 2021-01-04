@@ -16,8 +16,6 @@ import java.sql.Statement;
 import java.sql.Types;
 
 
-
-//to do (comment )
 /**
  * Represent an EmployeeCost for a given month and year
  *

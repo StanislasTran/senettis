@@ -1649,7 +1649,7 @@ public class DeliveryView {
 	public void suppLivraison(String periode) {
 		try {
 			// on recupere la livraison selectionnee
-			Delivery l = Delivery.getLivraisonById(selectedLivraison.getLivraisonId());
+			Delivery l = Delivery.getLivraisonById(selectedLivraison.getDeliveryId());
 
 			// on demande une confirmation
 			MessageBox dialog = new MessageBox(vueLivraison.getShell(), SWT.ICON_QUESTION | SWT.YES | SWT.NO);
@@ -1658,7 +1658,7 @@ public class DeliveryView {
 				dialog.setMessage("Voulez vous supprimer le livraison du " + l.getDate() + " sur le chantier "
 						+ Site.getSiteById(l.getIdChantier()).getName() + " ?");
 			} else {
-				dialog.setMessage("Voulez vous supprimer le livraison de " + l.getPrixTotal()
+				dialog.setMessage("Voulez vous supprimer le livraison de " + l.getTotalPrice()
 						+ " euros sur le chantier " + Site.getSiteById(l.getIdChantier()).getName() + " ?");
 			}
 			int buttonID = dialog.open();
@@ -1674,7 +1674,7 @@ public class DeliveryView {
 				// provoque une erreur
 				try {
 					for (ProductByDelivery p : ProductByDelivery
-							.getProductByLivraisonByLivraisonId(l.getLivraisonId())) {
+							.getProductByLivraisonByLivraisonId(l.getDeliveryId())) {
 						p.setStatus("archivé");
 						p.updateDatabase();
 					}
@@ -1899,7 +1899,7 @@ public class DeliveryView {
 
 		final Text prix = new Text(compositePrix, SWT.BORDER);
 		if (selectedLivraison != null && i ==1) {
-			prix.setText(selectedLivraison.getPrixTotal().toString());
+			prix.setText(selectedLivraison.getTotalPrice().toString());
 		} else {
 			prix.setText("");
 		}
@@ -1988,9 +1988,9 @@ public class DeliveryView {
 			// on modifie les quantites du tableau en y mettant celles des produits par
 			// livraison de la base de donnees
 			try {
-				if (selectedLivraison.getPrixTotal() > 0) {
+				if (selectedLivraison.getTotalPrice() > 0) {
 					for (ProductByDelivery p : ProductByDelivery
-							.getProductByLivraisonByLivraisonId(selectedLivraison.getLivraisonId())) {
+							.getProductByLivraisonByLivraisonId(selectedLivraison.getDeliveryId())) {
 						// on verifie le status
 						if (p.getStatus().contentEquals("Publié")) {
 
@@ -2148,7 +2148,7 @@ public class DeliveryView {
 						if (!(date.getText().isEmpty())) {
 							selectedLivraison.setDate(date.getText().trim());
 						}
-						selectedLivraison.setPrixTotal(Double.parseDouble(prix.getText()));
+						selectedLivraison.setTotalPrice(Double.parseDouble(prix.getText()));
 
 						validerModification(listProductId, quantites);
 						
@@ -2195,13 +2195,13 @@ public class DeliveryView {
 		for (int i = 0; i < produits.size(); i++) {
 			try {// si le produit est deja associe a la livraison, on le modifie
 				ProductByDelivery p = ProductByDelivery.getProductByLivraisonByLivraisonIdAndProductId(
-						selectedLivraison.getLivraisonId(), produits.get(i));
+						selectedLivraison.getDeliveryId(), produits.get(i));
 				p.setQuantite(quantites.get(i));
 				p.updateDatabase();
 			} catch (Exception e) {// si le produit n'est pas encore associe a la livraison on l'associe si la
 				// quantite n'est pas de 0
 				if (quantites.get(i) != 0) {
-					ProductByDelivery p = new ProductByDelivery(selectedLivraison.getLivraisonId(), produits.get(i),
+					ProductByDelivery p = new ProductByDelivery(selectedLivraison.getDeliveryId(), produits.get(i),
 							quantites.get(i), "Publié");
 					try {
 						p.insertDatabase();
@@ -2242,9 +2242,9 @@ public class DeliveryView {
 		// champs optionels
 		if (prix != null) {
 			if (prix != "" && prix.contains(".")) {
-				livraison.setPrixTotal(Double.parseDouble(prix));
+				livraison.setTotalPrice(Double.parseDouble(prix));
 			} else if (prix != "" && prix.matches(".*\\d.*")) {
-				livraison.setPrixTotal(Double.parseDouble(prix + ".0"));
+				livraison.setTotalPrice(Double.parseDouble(prix + ".0"));
 			}
 		}
 
@@ -2386,7 +2386,7 @@ public class DeliveryView {
 	public void updateTable(String periode) {
 		tableLivraison.removeAll();
 		try {
-			for (Delivery l : Delivery.getAllLivraison()) {
+			for (Delivery l : Delivery.getAllDelivery()) {
 				// on verifie le status
 				if (l.getStatus().contentEquals("Publié")) {
 					if (l.getDate() != null) {
@@ -2403,15 +2403,15 @@ public class DeliveryView {
 							TableItem item = new TableItem(tableLivraison, SWT.NONE);
 							item.setText(0, Site.getSiteById(l.getIdChantier()).getName());
 							item.setText(1, l.getDate());
-							item.setText(2, l.getPrixTotal().toString());
-							item.setText(3, Integer.toString(l.getLivraisonId()));
+							item.setText(2, l.getTotalPrice().toString());
+							item.setText(3, Integer.toString(l.getDeliveryId()));
 						}
 					} else {
 						TableItem item = new TableItem(tableLivraison, SWT.NONE);
 						item.setText(0, Site.getSiteById(l.getIdChantier()).getName());
 						item.setText(1, "");
-						item.setText(2, l.getPrixTotal().toString());
-						item.setText(3, Integer.toString(l.getLivraisonId()));
+						item.setText(2, l.getTotalPrice().toString());
+						item.setText(3, Integer.toString(l.getDeliveryId()));
 					}
 				}
 			}
