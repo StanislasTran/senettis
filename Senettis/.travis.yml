@@ -1,6 +1,0 @@
-language: java
-git:
-  depth: 1
-jdk:
-  - openjdk14
-dist: trusty
