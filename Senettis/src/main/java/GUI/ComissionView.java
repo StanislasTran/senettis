@@ -95,7 +95,7 @@ public class ComissionView {
 
 		this.mainView.setLayout(new RowLayout());
 		table.setSize(200, 50);
-		table.setLayoutData(new RowData(410, 300));
+		table.setLayoutData(new RowData(410, 500));
 
 		table.setLinesVisible(true);
 		table.setHeaderVisible(true);

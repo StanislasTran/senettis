@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
 
+
 import org.eclipse.swt.*;
 import org.eclipse.swt.custom.ScrolledComposite;
 
@@ -88,10 +89,11 @@ public class Home {
 		compositeMain.setExpandHorizontal(true);
 		compositeMain.setExpandVertical(true);
 		compositeMain.setAlwaysShowScrollBars(true);
-
+		compositeMainContent = new Composite(compositeMain, SWT.NONE);
 		InputStream test4 = getClass().getClassLoader().getResourceAsStream("test4.png");
+		
 		Image background = new Image(display, test4);
-
+		
 		compositeMainContent.setBackgroundImage(background);
 		RowLayout rl = new RowLayout();
 		rl.spacing = 15;
