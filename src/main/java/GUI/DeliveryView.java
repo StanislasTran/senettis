@@ -228,7 +228,7 @@ public class DeliveryView {
 		tables.setLayout(new RowLayout(SWT.HORIZONTAL));
 		tables.setBackground(MyColor.bleuClair);
 
-		// creation de la table des produits
+		
 		Composite compoChantier = new Composite(tables, SWT.NONE);
 		compoChantier.setLayout(new RowLayout(SWT.VERTICAL));
 		compoChantier.setBackground(MyColor.bleuClair);
@@ -1669,9 +1669,7 @@ public class DeliveryView {
 				l.setStatus("archivé");
 				l.updateDatabase();
 
-				// on archive les produits associes
-				// on doit mettre dans un try car s'il n'y a pas de produits associes cela
-				// provoque une erreur
+		
 				try {
 					for (ProductByDelivery p : ProductByDelivery
 							.getProductByLivraisonByLivraisonId(l.getDeliveryId())) {
@@ -1681,9 +1679,7 @@ public class DeliveryView {
 				} catch (Exception e) {
 				}
 
-				// on change d'affichage
-				// newVueLivraison(vueLivraison);
-
+			
 				selectedLivraison = null;
 
 				compositeSelection();
@@ -1938,32 +1934,32 @@ public class DeliveryView {
 		table.setLayout(rowLayoutV);
 		table.setBackground(MyColor.bleuClair);
 
-		// creation de la table des produits
+		
 		final Table tableProduit = new Table(table, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.FULL_SELECTION);
 		tableProduit.setLayoutData(new RowData(400, 230));
 		tableProduit.setLinesVisible(true);
 		tableProduit.setHeaderVisible(true);
 
-		// pour pouvoir modifier les quantites
+		
 		final TableEditor editor = new TableEditor(tableProduit);
 		editor.horizontalAlignment = SWT.LEFT;
 		editor.grabHorizontal = true;
 
-		// on met les noms des colonnes
+
 		String[] titles = { "Nom", "Prix", "Quantité", "Marque", "Commentaire" };
 		for (String title : titles) {
 			TableColumn column = new TableColumn(tableProduit, SWT.NONE);
 			column.setText(title);
 		}
 
-		// on remplit la table
+		
 		final TableColumn[] columns = tableProduit.getColumns();
 		ArrayList<Integer> listProductId = new ArrayList<Integer>();
 
-		// on remplit d'abord avec les quantites a 0 et on modifiera apres
+		
 		try {
 			for (Product p : Product.getAllProduct()) {
-				// on verifie le status
+				
 				if (p.getStatus().getValue().contentEquals("Publié")) {
 					TableItem item = new TableItem(tableProduit, SWT.NONE);
 
@@ -2180,11 +2176,11 @@ public class DeliveryView {
 		// on modifie la livraison dans la base de données
 		try {
 			selectedLivraison.updateDatabase();
-			System.out.println("on a modifie la livraison !!");
+			
 		} catch (SQLException e) {
 			toutVaBien = false;
 			e.printStackTrace();
-			System.out.println("erreur dans la modif");
+		
 			MessageBox dialog = new MessageBox(vueLivraison.getShell(), SWT.ICON_ERROR | SWT.OK);
 			dialog.setText("Erreur Modification");
 			dialog.setMessage("Une erreur est survenue lors de la modification de la livraison. " + e.getMessage());

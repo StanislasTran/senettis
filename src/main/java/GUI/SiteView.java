@@ -614,6 +614,7 @@ public class SiteView {
 
 		// insert into the database
 		try {
+	
 			site.insertDatabase();
 
 			MessageBox dialog = new MessageBox(siteView.getShell(), SWT.ICON_INFORMATION | SWT.OK);

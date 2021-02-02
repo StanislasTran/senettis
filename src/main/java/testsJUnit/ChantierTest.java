@@ -15,9 +15,9 @@ public class ChantierTest
     @Before
     public void setUp() 
     {
-        puteaux = new Site("Puteaux","à Puteaux",Status.PUBLISHED);
+        puteaux = new Site("Puteaux","Ã  Puteaux",Status.PUBLISHED);
         boulogne = new Site("Boulogne",Status.PUBLISHED);
-        boulogne.setAdress("à Boulogne");
+        boulogne.setAdress("Ã  Boulogne");
        ;
     }
     

@@ -107,7 +107,7 @@ public class Product {
 	 * @throws SQLException
 	 */
 	private static Statement selectAllProduct() throws SQLException {
-		String reqSql = "SELECT * FROM Produit";
+		String reqSql = "SELECT * FROM Produit ORDER BY nom";
 
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		Statement statement = connection.createStatement();

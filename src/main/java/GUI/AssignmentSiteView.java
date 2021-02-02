@@ -187,7 +187,7 @@ public class AssignmentSiteView {
 						msgBox.open();
 					}
 				} else {
-					System.out.println("erreur");
+				
 				}
 
 			}
@@ -202,8 +202,8 @@ public class AssignmentSiteView {
 	}
 
 	/**
-	 * Cr�er la table qui contient la liste des chantiers et les stats associ�es �
-	 * ces chantiers et l'ajoute � un TableItem
+	 * Créer la table qui contient la liste des chantiers et les stats associées à
+	 * ces chantiers et l'ajoute à un TableItem
 	 * 
 	 * @param <type> TableItem </type> onglet de type Table Item qui contient la
 	 *               liste des Chantiers
@@ -267,7 +267,7 @@ public class AssignmentSiteView {
 
 					}
 				} else {
-					System.out.println("erreur");
+					
 				}
 
 			}
@@ -657,7 +657,7 @@ public class AssignmentSiteView {
 		if (!Objects.isNull(this.modifyButton) && !this.modifyButton.isDisposed()) {
 			this.createButton.moveAbove(this.modifyButton);
 			buttons.layout(true, true);
-			System.out.println("oui");
+			
 		}
 
 		this.selection.moveAbove(this.mainComposite);
@@ -842,8 +842,8 @@ public class AssignmentSiteView {
 		monthLabel.setBackground(MyColor.bleuClair);
 		Combo comboMonth = new Combo(monthComposite, SWT.NONE);
 
-		String[] frenchMonth = { "Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Ao�t", "Septembre",
-				"Octobre", "Novembre", "D�cembre" };
+		String[] frenchMonth = { "Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre",
+				"Octobre", "Novembre", "Décembre" };
 
 		for (String m : frenchMonth)
 			comboMonth.add(m);
@@ -855,7 +855,7 @@ public class AssignmentSiteView {
 		yearComposite.setLayout(new RowLayout(SWT.HORIZONTAL));
 		yearComposite.setBackground(MyColor.bleuClair);
 		Label yearLabel = new Label(yearComposite, SWT.NONE);
-		yearLabel.setText("Ann�e");
+		yearLabel.setText("Année");
 
 		yearLabel.setBackground(MyColor.bleuClair);
 		Combo comboYear = new Combo(yearComposite, SWT.NONE);
@@ -893,12 +893,12 @@ public class AssignmentSiteView {
 					isChecked = checkAffectation("" + siteId, checkEmployeId, checkNbHours, checkMonth, checkYear);
 				} catch (IllegalArgumentException | ArrayIndexOutOfBoundsException argException) {
 					MessageBox dialog = new MessageBox(affectationView.getShell(), SWT.ICON_ERROR | SWT.OK);
-					dialog.setText("Erreur Cr�ation :");
+					dialog.setText("Erreur Création :");
 					if (argException.getClass() == IllegalArgumentException.class)
-						dialog.setMessage("Une erreur est survenue lors de la cr�ation de l'affectation. " + '\n'
+						dialog.setMessage("Une erreur est survenue lors de la création de l'affectation. " + '\n'
 								+ argException.getMessage());
 					if (argException.getClass() == ArrayIndexOutOfBoundsException.class)
-						dialog.setMessage("Veuillez s�lectionner un employ�");
+						dialog.setMessage("Veuillez selectionner un employé");
 					dialog.open();
 				}
 
@@ -922,12 +922,12 @@ public class AssignmentSiteView {
 
 							MessageBox dialog = new MessageBox(affectationView.getShell(), SWT.ICON_WORKING | SWT.OK);
 							dialog.setText("Succes");
-							dialog.setMessage("L'affectation a �t� cr�e a bien �t� enregistr�e");
+							dialog.setMessage("L'affectation a été crée a bien été enregistrée");
 							dialog.open();
 						} catch (SQLException sqlException) {
 							MessageBox dialog = new MessageBox(affectationView.getShell(), SWT.ICON_ERROR | SWT.OK);
-							dialog.setText("Erreur Cr�ation :");
-							dialog.setMessage("Une erreur est survenue lors de la cr�ation de l'affectation. " + '\n'
+							dialog.setText("Erreur Création :");
+							dialog.setMessage("Une erreur est survenue lors de la création de l'affectation. " + '\n'
 									+ sqlException.getMessage());
 							dialog.open();
 						}
@@ -1023,12 +1023,12 @@ public class AssignmentSiteView {
 		monthComposite.setBackground(MyColor.bleuClair);
 		monthComposite.setLayout(new RowLayout(SWT.HORIZONTAL));
 		Label monthLabel = new Label(monthComposite, SWT.NONE);
-		monthLabel.setText("Moi d�but");
+		monthLabel.setText("Mois début");
 		monthLabel.setBackground(MyColor.bleuClair);
 		Combo comboMonth = new Combo(monthComposite, SWT.NONE);
 
-		String[] frenchMonth = { "Janvier", "F�vrier", "Mars", "Avril", "Mai", "Juin", "Juillet", "Ao�t", "Septembre",
-				"Octobre", "Novembre", "D�cembre" };
+		String[] frenchMonth = { "Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre",
+				"Octobre", "Novembre", "Décembre" };
 
 		for (String m : frenchMonth)
 			comboMonth.add(m);
@@ -1041,7 +1041,7 @@ public class AssignmentSiteView {
 		yearComposite.setLayout(new RowLayout(SWT.HORIZONTAL));
 		yearComposite.setBackground(MyColor.bleuClair);
 		Label yearLabel = new Label(yearComposite, SWT.NONE);
-		yearLabel.setText("Ann�e d�but");
+		yearLabel.setText("Année début");
 		yearLabel.setBackground(MyColor.bleuClair);
 		Combo comboYear = new Combo(yearComposite, SWT.NONE);
 
@@ -1079,12 +1079,12 @@ public class AssignmentSiteView {
 					isChecked = checkAffectation(checkSiteId, "" + employeeId, checkNbHours, checkMonth, checkYear);
 				} catch (IllegalArgumentException | ArrayIndexOutOfBoundsException | SQLException argException) {
 					MessageBox dialog = new MessageBox(affectationView.getShell(), SWT.ICON_ERROR | SWT.OK);
-					dialog.setText("Erreur Cr�ation :");
+					dialog.setText("Erreur Création :");
 					if (argException.getClass() == IllegalArgumentException.class)
-						dialog.setMessage("Une erreur est survenue lors de la cr�ation de l'aff�ctation. " + '\n'
+						dialog.setMessage("Une erreur est survenue lors de la création de l'affectation. " + '\n'
 								+ argException.getMessage());
 					if (argException.getClass() == ArrayIndexOutOfBoundsException.class)
-						dialog.setMessage("Veuillez s�lectionner un chantier");
+						dialog.setMessage("Veuillez sélectionner un chantier");
 					dialog.open();
 				}
 
@@ -1108,12 +1108,12 @@ public class AssignmentSiteView {
 
 							MessageBox dialog = new MessageBox(affectationView.getShell(), SWT.ICON_WORKING | SWT.OK);
 							dialog.setText("Succes");
-							dialog.setMessage("L'affectation a �t� cr�e a bien �t� enregistr�e");
+							dialog.setMessage("L'affectation a été crée a bien été enregistrée");
 							dialog.open();
 						} catch (SQLException sqlException) {
 							MessageBox dialog = new MessageBox(affectationView.getShell(), SWT.ICON_ERROR | SWT.OK);
-							dialog.setText("Erreur Cr�ation :");
-							dialog.setMessage("Une erreur est survenue lors de la cr�ation de l'affectation. " + '\n'
+							dialog.setText("Erreur Création :");
+							dialog.setMessage("Une erreur est survenue lors de la création de l'affectation. " + '\n'
 									+ sqlException.getMessage());
 							dialog.open();
 						}
@@ -1193,7 +1193,7 @@ public class AssignmentSiteView {
 		Employee employe = Employee.getEmployeById(affectation.getEmployee());
 
 		Label labelNom = new Label(modifComposite, SWT.NONE);
-		labelNom.setText("Employ� : " + employe.getSurname() + " " + employe.getFirstName());
+		labelNom.setText("Employé : " + employe.getSurname() + " " + employe.getFirstName());
 		labelNom.setBackground(MyColor.bleuClair);
 
 		Label labelSite = new Label(modifComposite, SWT.NONE);
@@ -1237,12 +1237,12 @@ public class AssignmentSiteView {
 							affectation.getStartMonth().getValue(), "" + affectation.getStartYear().getValue());
 				} catch (IllegalArgumentException | ArrayIndexOutOfBoundsException argException) {
 					MessageBox dialog = new MessageBox(affectationView.getShell(), SWT.ICON_ERROR | SWT.OK);
-					dialog.setText("Erreur Cr�ation :");
+					dialog.setText("Erreur Création :");
 					if (argException.getClass() == IllegalArgumentException.class)
-						dialog.setMessage("Une erreur est survenue lors de la cr�ation de l'aff�ctation. " + '\n'
+						dialog.setMessage("Une erreur est survenue lors de la création de l'affectation. " + '\n'
 								+ argException.getMessage());
 					if (argException.getClass() == ArrayIndexOutOfBoundsException.class)
-						dialog.setMessage("Veuillez s�lectionner un chantier");
+						dialog.setMessage("Veuillez sélectionner un chantier");
 					dialog.open();
 				}
 
@@ -1261,12 +1261,12 @@ public class AssignmentSiteView {
 
 						MessageBox dialog = new MessageBox(affectationView.getShell(), SWT.ICON_WORKING | SWT.OK);
 						dialog.setText("Succes");
-						dialog.setMessage("L'affectation a �t� cr�e a bien �t� enregistr�e");
+						dialog.setMessage("L'affectation a été crée a bien été enregistrée");
 						dialog.open();
 					} catch (SQLException sqlException) {
 						MessageBox dialog = new MessageBox(affectationView.getShell(), SWT.ICON_ERROR | SWT.OK);
-						dialog.setText("Erreur Cr�ation :");
-						dialog.setMessage("Une erreur est survenue lors de la cr�ation de l'affectation. " + '\n'
+						dialog.setText("Erreur Création :");
+						dialog.setMessage("Une erreur est survenue lors de la création de l'affectation. " + '\n'
 								+ sqlException.getMessage());
 						dialog.open();
 					}
@@ -1334,7 +1334,7 @@ public class AssignmentSiteView {
 		labelNom.setBackground(MyColor.bleuClair);
 
 		Label labelSite = new Label(modifComposite, SWT.NONE);
-		labelSite.setText("Employ� : " + Employee.getEmployeById(affectation.getEmployee()).getSurname());
+		labelSite.setText("Employé : " + Employee.getEmployeById(affectation.getEmployee()).getSurname());
 		labelSite.setBackground(MyColor.bleuClair);
 
 		Composite nbHeureComposite = new Composite(modifComposite, SWT.NONE);
@@ -1372,12 +1372,12 @@ public class AssignmentSiteView {
 							affectation.getStartMonth().getValue(), "" + affectation.getStartYear().getValue());
 				} catch (IllegalArgumentException | ArrayIndexOutOfBoundsException argException) {
 					MessageBox dialog = new MessageBox(affectationView.getShell(), SWT.ICON_ERROR | SWT.OK);
-					dialog.setText("Erreur Cr�ation :");
+					dialog.setText("Erreur Création :");
 					if (argException.getClass() == IllegalArgumentException.class)
-						dialog.setMessage("Une erreur est survenue lors de la cr�ation de l'aff�ctation. " + '\n'
+						dialog.setMessage("Une erreur est survenue lors de la création de l'affectation. " + '\n'
 								+ argException.getMessage());
 					if (argException.getClass() == ArrayIndexOutOfBoundsException.class)
-						dialog.setMessage("Veuillez s�lectionner un employ�");
+						dialog.setMessage("Veuillez sélectionner un employé");
 					dialog.open();
 				}
 
@@ -1396,12 +1396,12 @@ public class AssignmentSiteView {
 
 						MessageBox dialog = new MessageBox(affectationView.getShell(), SWT.ICON_WORKING | SWT.OK);
 						dialog.setText("Succes");
-						dialog.setMessage("L'affectation a �t� cr�e a bien �t� enregistr�e");
+						dialog.setMessage("L'affectation a été crée a bien été enregistrée");
 						dialog.open();
 					} catch (SQLException sqlException) {
 						MessageBox dialog = new MessageBox(affectationView.getShell(), SWT.ICON_ERROR | SWT.OK);
-						dialog.setText("Erreur Cr�ation :");
-						dialog.setMessage("Une erreur est survenue lors de la cr�ation de l'affectation. " + '\n'
+						dialog.setText("Erreur Création :");
+						dialog.setMessage("Une erreur est survenue lors de la création de l'affectation. " + '\n'
 								+ sqlException.getMessage());
 						dialog.open();
 					}
@@ -1504,45 +1504,45 @@ public class AssignmentSiteView {
 		}
 
 		if (Objects.isNull(employeId))
-			throw new IllegalArgumentException("Veuillez selectionner un employ� valide");
+			throw new IllegalArgumentException("Veuillez selectionner un employé valide");
 		try {
 			Integer.parseInt(employeId);
 		} catch (NumberFormatException e) {
-			throw new IllegalArgumentException("Veuillez selectionner un employ� valide");
+			throw new IllegalArgumentException("Veuillez selectionner un employé valide");
 		}
 		if (Objects.isNull(nbHours))
-			throw new IllegalArgumentException("L'attribut nombre d'heure ne peut pas �tre null");
+			throw new IllegalArgumentException("L'attribut nombre d'heure ne peut pas être null");
 
 		try {
 			Double priceCheck = Double.parseDouble(nbHours);
 
 			if (priceCheck <= 0)
-				throw new IllegalArgumentException("Le  nombre d'heures doit �tre sup�rieur � 0");
+				throw new IllegalArgumentException("Le  nombre d'heures doit être supérieur à 0");
 		} catch (NumberFormatException parseDoubleException) {
 			throw new IllegalArgumentException(
-					"Le nombre d'heure entr� n'est pas valide, veuillez entrer une valeur num�rique");
+					"Le nombre d'heure entré n'est pas valide, veuillez entrer une valeur numérique");
 		}
 
 		if (Objects.isNull(month))
-			throw new IllegalArgumentException("le champ mois ne peut pas �tre null");
+			throw new IllegalArgumentException("le champ mois ne peut pas être null");
 		else {
 			try {
 
 				Month.of(month);
 			} catch (DateTimeException dateTimeException) {
-				throw new IllegalArgumentException("la valeur entr�e dans le champ mois est incorrecte");
+				throw new IllegalArgumentException("la valeur entrée dans le champ mois est incorrecte");
 			}
 		}
 
 		if (Objects.isNull(year))
-			throw new IllegalArgumentException("le champ mois ne peut pas �tre null");
+			throw new IllegalArgumentException("le champ mois ne peut pas être null");
 		else {
 			try {
 
 				Year.of(Integer.parseInt(year));
 			} catch (DateTimeException | NumberFormatException exceptionYear) {
 				throw new IllegalArgumentException(
-						"la valeur entr�e dans le champ Ann�e est incorrecte, Veuillez selectionner une Ann�e valide");
+						"la valeur entrée dans le champ Année est incorrecte, Veuillez selectionner une Année valide");
 			}
 		}
 

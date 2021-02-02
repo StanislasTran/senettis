@@ -536,6 +536,7 @@ public class MABAssignmentView {
 	 *                               dispose
 	 */
 	public void disposeAllChildren(Composite composite) {
+		if(!Objects.isNull(composite) &&!composite.isDisposed())
 		for (Control control : composite.getChildren()) {
 			control.dispose();
 		}

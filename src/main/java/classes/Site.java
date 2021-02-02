@@ -88,6 +88,7 @@ public class Site {
 		statement.setObject(1, this.name, Types.VARCHAR);
 		statement.setObject(2, this.adress, Types.VARCHAR);
 
+		
 		statement.setObject(3, this.status.getValue(), Types.VARCHAR);
 
 		return statement.executeUpdate();

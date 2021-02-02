@@ -165,7 +165,7 @@ public class TurnOverView {
 				if (!erreurs) { // on affiche le message de succes si on a eu aucune erreur
 					MessageBox dialog = new MessageBox(turnOverView.getShell(), SWT.ICON_WORKING | SWT.OK);
 					dialog.setText("Succès");
-					dialog.setMessage("Données enregistr�e avec succès");
+					dialog.setMessage("Données enregistrée avec succès");
 					dialog.open();
 				}
 			}

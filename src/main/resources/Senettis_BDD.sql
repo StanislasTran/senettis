@@ -15,7 +15,7 @@ Create table Produit (
 	"Status" VARCHAR (50) NOT NULL,
 	"Date_de_creation" DateTime  NOT NUll Default (GETDATE()), 
 	"Date_de_modification" DateTime  NOT NUll Default (GETDATE()), 
-	CONSTRAINT check_status_produit CHECK (("Status") IN ('Publi�','Brouillon','Archiv�')),
+	CONSTRAINT check_status_produit CHECK (("Status") IN ('Publié','Brouillon','Archivé')),
 	
 );
 
@@ -38,7 +38,7 @@ Create table Chantier (
 	"Status" VARCHAR (50) NOT NULL,
 	"Date_de_creation" DateTime  NOT NUll Default (GETDATE()), 
 	"Date_de_modification" DateTime  NOT NUll Default (GETDATE()),
-	CONSTRAINT check_status_chantier CHECK (("Status") IN ('Publi�','Brouillon','Archiv�')),
+	CONSTRAINT check_status_chantier CHECK (("Status") IN ('Publié','Brouillon','Archivé')),
 	 CONSTRAINT UNIQUE_name UNIQUE(Nom)   
 	
 	 
@@ -74,7 +74,7 @@ Create table Employe (
 	"Status" VARCHAR (50) NOT NULL,
 	"Date_de_creation" DateTime  NOT NUll Default (GETDATE()), 
 	"Date_de_modification" DateTime  NOT NUll Default (GETDATE()), 
-	CONSTRAINT check_status_employe CHECK (("Status") IN ('Publi�','Brouillon','Archiv�')),
+	CONSTRAINT check_status_employe CHECK (("Status") IN ('Publié','Brouillon','Archivé')),
     CONSTRAINT check_titre CHECK ((Titre) IN ('M','Mme')),
     constraint check_mail check (Mail like '%_@__%.__%'),
     CONSTRAINT matricule_unique UNIQUE (Numero_matricule),   
@@ -102,7 +102,7 @@ Create table Livraison (
 	"Status" VARCHAR (50) NOT NULL,
 	"Date_de_creation" DateTime  NOT NUll Default (GETDATE()), 
 	"Date_de_modification" DateTime  NOT NUll Default (GETDATE()), 
-	CONSTRAINT check_status_livraison CHECK (("Status") IN ('Publi�','Brouillon','Archiv�')),
+	CONSTRAINT check_status_livraison CHECK (("Status") IN ('Publié','Brouillon','Archivé')),
 
 	 
 );
@@ -132,7 +132,7 @@ Create table AffectationChantier (
 	AnneeDebut int NOT NULL,
 	"Date_de_creation" DateTime  NOT NUll Default (GETDATE()), 
 	"Date_de_modification" DateTime  NOT NUll Default (GETDATE()), 
-	CONSTRAINT check_status_affectationChantier CHECK (("Status") IN ('Publi�','Brouillon','Archiv�')),
+	CONSTRAINT check_status_affectationChantier CHECK (("Status") IN ('Publié','Brouillon','Archivé')),
 	
 	CONSTRAINT check_moonthAffectationChantier CHECK (("MoisDebut")>=0 and ("MoisDebut")<=12),
 	 
@@ -162,7 +162,7 @@ Create table AffectationMAB (
 	"Status" VARCHAR (50) NOT NULL,
 	"Date_de_creation" DateTime  NOT NUll Default (GETDATE()), 
 	"Date_de_modification" DateTime  NOT NUll Default (GETDATE()), 
-	CONSTRAINT check_status_affectationMAB CHECK (("Status") IN ('Publi�','Brouillon','Archiv�')),
+	CONSTRAINT check_status_affectationMAB CHECK (("Status") IN ('Publié','Brouillon','Archivé')),
 	CONSTRAINT check_moonthMAB CHECK (("Mois")>=0 and ("Mois")<=12),
 	
 );
@@ -191,7 +191,7 @@ Create table ProduitParLivraison(
 	"Status" VARCHAR (50) NOT NULL,
 	"Date_de_creation" DateTime  NOT NUll Default (GETDATE()), 
 	"Date_de_modification" DateTime  NOT NUll Default (GETDATE()), 
-	CONSTRAINT check_status_produit_par_livraison CHECK (("Status") IN ('Publi�','Brouillon','Archiv�')),
+	CONSTRAINT check_status_produit_par_livraison CHECK (("Status") IN ('Publié','Brouillon','Archivé')),
 	 
 );
 
@@ -224,7 +224,7 @@ Create table ChiffreAffaire (
 	"Status" VARCHAR (50) NOT NULL,
 	"Date_de_creation" DateTime  NOT NUll Default (GETDATE()), 
 	"Date_de_modification" DateTime  NOT NUll Default (GETDATE()), 
-	CONSTRAINT check_status_ChiffreAffaire CHECK (("Status") IN ('Publi�','Brouillon','Archiv�')),
+	CONSTRAINT check_status_ChiffreAffaire CHECK (("Status") IN ('Publié','Brouillon','Archivé')),
 	Primary Key (mois,annee,chantier)
 	
 );
@@ -263,7 +263,7 @@ Create table CoutEmploye (
 	"Status" VARCHAR (50) NOT NULL,
 	"Date_de_creation" DateTime  NOT NUll Default (GETDATE()), 
 	"Date_de_modification" DateTime  NOT NUll Default (GETDATE()), 
-	CONSTRAINT check_status_coutEmploye CHECK (("Status") IN ('Publi�','Brouillon','Archiv�')),
+	CONSTRAINT check_status_coutEmploye CHECK (("Status") IN ('Publié','Brouillon','Archivé')),
 	CONSTRAINT coutPeriode_unique UNIQUE (employe,mois,annee), 
 	
 );
@@ -296,7 +296,7 @@ SET Date_de_modification = GETDATE()
 	"Status" VARCHAR (50) NOT NULL,
 	"Date_de_creation" DateTime  NOT NUll Default (GETDATE()), 
 	"Date_de_modification" DateTime  NOT NUll Default (GETDATE()), 
-	CONSTRAINT check_status_ammortissementEmploye CHECK (("Status") IN ('Publi�','Brouillon','Archiv�'))
+	CONSTRAINT check_status_ammortissementEmploye CHECK (("Status") IN ('Publié','Brouillon','Archivé'))
 );
 
 GO
@@ -328,7 +328,7 @@ SET Date_de_modification = GETDATE()
 	"Status" VARCHAR (50) NOT NULL,
 	"Date_de_creation" DateTime  NOT NUll Default (GETDATE()), 
 	"Date_de_modification" DateTime  NOT NUll Default (GETDATE()), 
-	CONSTRAINT check_status_ammortissementChantier CHECK (("Status") IN ('Publi�','Brouillon','Archiv�'))
+	CONSTRAINT check_status_ammortissementChantier CHECK (("Status") IN ('Publié','Brouillon','Archivé'))
 );
 
 GO
@@ -356,7 +356,7 @@ SET Date_de_modification = GETDATE()
 	"Status" VARCHAR (50) NOT NULL,
 	"Date_de_creation" DateTime  NOT NUll Default (GETDATE()), 
 	"Date_de_modification" DateTime  NOT NUll Default (GETDATE()), 
-	CONSTRAINT check_status_fournitureSanitaire CHECK (("Status") IN ('Publi�','Brouillon','Archiv�'))
+	CONSTRAINT check_status_fournitureSanitaire CHECK (("Status") IN ('Publié','Brouillon','Archivé'))
 );
 
 GO
@@ -439,7 +439,7 @@ Chantier int NOT NULL,
 	AnneeDebut int NOT NULL,
 	"Date_de_creation" DateTime  NOT NUll Default (GETDATE()), 
 	"Date_de_modification" DateTime  NOT NUll Default (GETDATE()), 
-	CONSTRAINT check_status_Comission CHECK (("Status") IN ('Publi�','Brouillon','Archiv�')),
+	CONSTRAINT check_status_Comission CHECK (("Status") IN ('Publié','Brouillon','Archivé')),
 	
 	CONSTRAINT check_moonth_Comission CHECK (("MoisDebut")>=0 and ("MoisDebut")<=12),
 	 
@@ -470,7 +470,7 @@ Create table Rentabilite (
 	"Date_de_creation" DateTime  NOT NUll Default (GETDATE()), 
 	"Date_de_modification" DateTime  NOT NUll Default (GETDATE()), 
 
-	CONSTRAINT check_status_Rentabilite CHECK (("Status") IN ('Publi�','Brouillon','Archiv�')),
+	CONSTRAINT check_status_Rentabilite CHECK (("Status") IN ('Publié','Brouillon','Archivé')),
 	
 	CONSTRAINT check_moonth_Rentabilite CHECK (("Mois")>=0 and ("Mois")<=12))
 	 
@@ -481,16 +481,18 @@ GO
 
 
 Create view
-ChantierSalaireCost_view
+[dbo].[ChantierSalaireCost_view]
 as
 Select ChantierId,v1.employe,v1.mois,v1.annee,Cost,costMAB,(ISNULL(cost, 0 )+ISNULL(costMAB, 0 )) as totalCost from Chantier
 left join
-(select Chantier,employe,mois,annee,(mutuelle+indemnite_panier+masse_salariale+cout_transport+cout_telephone+remboursement_prets+saisie_arret)*(AC_nb_heures/CE_nb_heures) as Cost from ACjoinCE_View) as v1
+(select Chantier,employe,mois,annee,(mutuelle+indemnite_panier+masse_salariale+cout_transport+cout_telephone+remboursement_prets+saisie_arret)*(AC_nb_heures/CASE CE_nb_heures WHEN 0 THEN -1 ELSE CE_nb_heures END) as Cost from ACjoinCE_View) as v1
 On v1.chantier=ChantierId
 
 left join
-(select Chantier,employe,mois,annee,(mutuelle+indemnite_panier+masse_salariale+cout_transport+cout_telephone+remboursement_prets+saisie_arret)*(AC_nb_heures/CE_nb_heures) as CostMAB from ACjoinCEMAB_View )as v2
+(select Chantier,employe,mois,annee,(mutuelle+indemnite_panier+masse_salariale+cout_transport+cout_telephone+remboursement_prets+saisie_arret)*(AC_nb_heures/CASE CE_nb_heures WHEN 0 THEN -1 ELSE CE_nb_heures END) as CostMAB from ACjoinCEMAB_View )as v2
 on v1.Chantier=v2.Chantier AND v1.annee=v2.annee AND v1.mois=v2.mois AND v1.employe=v2.employe;
+
+
 
 GO
 
@@ -544,7 +546,7 @@ select chantierId,nom,mois,annee,CA,SalaryCost,LivraisonCost,Amortissement,isNul
   
 
   
-  
+  GO
 
 create view Chantier_Ca_EmpCost_Livraison_Amort_FS_Comi_View
 as
@@ -564,3 +566,4 @@ select chantierId,nom,mois,annee,round(CA,2) As CA,round(SalaryCost,2)
 as SalaryCost,round(LivraisonCost,2) as LivraisonCost ,round(Amortissement,2) as Amortissement ,round(FSCost,2) 
 as FSCost, round((comission*CA/100) ,2)as comissionValue,round(SalaryCost+LivraisonCost+Amortissement+FSCost+(comission*CA/100),2) as revient,(CA-round(SalaryCost+LivraisonCost+Amortissement+FSCost+(comission*CA/100),2)) as MargeBrut 
 from Chantier_Ca_EmpCost_Livraison_Amort_FS_Comi_View
+

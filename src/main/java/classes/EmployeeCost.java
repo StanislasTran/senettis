@@ -121,7 +121,7 @@ public class EmployeeCost {
 				} else if (status.equals("Draft") || status.equals("draft")) {
 					this.status = "Draft";
 				} else {
-					throw new Error("Le status indiqu� est incorrect, le status doit �tre Publié, Archivé ou draft.");
+					throw new Error("Le status indiqué est incorrect, le status doit �tre Publié, Archivé ou draft.");
 				}
 			} else {
 				this.status = null;
@@ -511,10 +511,10 @@ public class EmployeeCost {
 			} else if (status == "Draft" || status == "draft") {
 				this.status = "Draft";
 			} else {
-				throw new Error("Le status indiqu� est incorrect, le status doit �tre Publié, Archivé ou draft.");
+				throw new Error("Le status indiqué est incorrect, le status doit �tre Publié, Archivé ou draft.");
 			}
 		} else {
-			throw new Error("Le status indiqu� est vide.");
+			throw new Error("Le status indiqué est vide.");
 		}
 	}
 

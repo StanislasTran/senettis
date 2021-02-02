@@ -50,7 +50,7 @@ public class EmployeeAmortization {
 	public EmployeeAmortization(Integer EmployeeAmortizationId, Integer employeeId, Integer startMonth,
 			Integer startYear, Integer endMonth, Integer endYear, String description, Double costByMonth,
 			Integer duration, Double value, String type, String status) {
-		this(EmployeeAmortizationId, startMonth, startYear, endMonth, endYear, costByMonth, duration, value, type,
+		this(employeeId, startMonth, startYear, endMonth, endYear, costByMonth, duration, value, type,
 				status);
 		if (EmployeeAmortizationId != null) {
 			this.EmployeeAmortizationId = EmployeeAmortizationId;
@@ -107,7 +107,7 @@ public class EmployeeAmortization {
 		}
 
 		if (startYear != null) {
-			this.startMonth = startYear;
+			this.startMonth = startMonth;
 		} else {
 			throw new Error("Le mois de depart n'est pas spécifié.");
 		}
@@ -207,9 +207,7 @@ public class EmployeeAmortization {
 		statement.setObject(10, this.costByMonth, Types.DECIMAL);
 		statement.setObject(11, this.description, Types.VARCHAR);
 		statement.setObject(12, this.EmployeeAmortizationId, Types.INTEGER);
-		System.out.println(this.description);
-		System.out.println(this.type);
-		System.out.println(this.EmployeeAmortizationId);
+
 		return statement.executeUpdate();
 	}
 

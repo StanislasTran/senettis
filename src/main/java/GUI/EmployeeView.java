@@ -378,7 +378,7 @@ public class EmployeeView {
 		labelEmploye.setBackground(MyColor.bleuClair);
 		// Titre
 		Combo employes = new Combo(compositeEmploye, SWT.BORDER);
-		System.out.println("je suis dans le formulaire");
+		
 		if (j == 1) {
 			try {
 				if (selectedEmployee.getNameString().length() > 25) {
@@ -390,7 +390,7 @@ public class EmployeeView {
 				}
 			} catch (Exception e1) {
 				e1.printStackTrace();
-				System.out.println("erreur pour recuperer les employes");
+				
 				MessageBox dialog = new MessageBox(employeeView.getShell(), SWT.ICON_ERROR | SWT.OK);
 				dialog.setText("Erreur");
 				dialog.setMessage("Une erreur est survenue. " + '\n' + e1.getMessage());
@@ -412,7 +412,7 @@ public class EmployeeView {
 			}
 		} catch (SQLException e1) {
 			e1.printStackTrace();
-			System.out.println("erreur pour recuperer les employes");
+		
 			MessageBox dialog = new MessageBox(employeeView.getShell(), SWT.ICON_ERROR | SWT.OK);
 			dialog.setText("Erreur");
 			dialog.setMessage("Une erreur est survenue. " + '\n' + e1.getMessage());
@@ -531,9 +531,10 @@ public class EmployeeView {
 					Integer employeId = Integer.parseInt(id.substring(3, id.length()));
 
 					String[] debut = periode.getText().split(" ");
-					System.out.println(debut[0] + " " + debut[1]);
+				
 
 					int moisD = Month.valueOf(debut[0]).getValue();
+		
 					int anneeD = Integer.parseInt(debut[1]);
 
 					int duree = Integer.parseInt(textDuree.getText());
@@ -570,11 +571,11 @@ public class EmployeeView {
 					amortissmentView();
 				} catch (Throwable e) {
 					e.printStackTrace();
-					System.out.println("erreur dans la creation");
+				
 					MessageBox dialog = new MessageBox(employeeView.getShell(), SWT.ICON_ERROR | SWT.OK);
 					dialog.setText("Erreur Création");
 					dialog.setMessage(
-							"Une erreur est survenue lors de la création du cout à amortir. " + '\n' + e.getMessage());
+							"Une erreur est survenue lors de la création du cout à amortir. " + '\n' + " un champ n'est pas rempli");
 					dialog.open();
 				}
 			}
@@ -617,7 +618,7 @@ public class EmployeeView {
 				}
 			}
 		} catch (SQLException e1) {
-			System.out.println("erreur dans la table des couts employes");
+			
 			MessageBox dialog = new MessageBox(employeeView.getShell(), SWT.ICON_ERROR | SWT.OK);
 			dialog.setText("Erreur");
 			dialog.setMessage("Une erreur est survenue. " + '\n' + e1.getMessage());
@@ -635,7 +636,7 @@ public class EmployeeView {
 						selectedEmployee = Employee
 								.getEmployeById(Integer.parseInt(tableEmp.getSelection()[0].getText(0)));
 					} catch (NumberFormatException | SQLException e1) {
-						System.out.println("erreur pour recuperer l'employe selectionne");
+						
 						MessageBox dialog = new MessageBox(employeeView.getShell(), SWT.ICON_ERROR | SWT.OK);
 						dialog.setText("Erreur");
 						dialog.setMessage("Une erreur est survenue. " + '\n' + e1.getMessage());
@@ -668,13 +669,14 @@ public class EmployeeView {
 		if (selectedEmployee == null) {
 			return;
 		}
-
+		
 		final TableColumn[] columns = tableAmorti.getColumns();
 
 		try {
 			for (EmployeeAmortization a : EmployeeAmortization.getAllAmmortissementEmploye()) {
-
+				
 				if (a.getStatus().equals("Publié") && selectedEmployee.getEmployeId() == a.getEmployeId()) {
+					System.out.println("ii");
 					TableItem item = new TableItem(tableAmorti, SWT.NONE);
 					item.setText(0, a.getEmployeeAmortizationId().toString());
 					item.setText(1, a.getStartMonth().toString() + '/' + a.getStartYear().toString());
@@ -686,7 +688,7 @@ public class EmployeeView {
 				}
 			}
 		} catch (SQLException e1) {
-			System.out.println("erreur dans la table des couts amorti employes");
+		
 			MessageBox dialog = new MessageBox(employeeView.getShell(), SWT.ICON_ERROR | SWT.OK);
 			dialog.setText("Erreur");
 			dialog.setMessage("Une erreur est survenue. " + '\n' + e1.getMessage());
@@ -704,7 +706,7 @@ public class EmployeeView {
 						selectedAmorti = EmployeeAmortization.getAmortizationById(
 								Integer.parseInt(tableAmorti.getSelection()[0].getText(0)));
 					} catch (NumberFormatException | SQLException e1) {
-						System.out.println("erreur pour recuperer l'amorti selectionne");
+						
 						MessageBox dialog = new MessageBox(employeeView.getShell(), SWT.ICON_ERROR | SWT.OK);
 						dialog.setText("Erreur");
 						dialog.setMessage("Une erreur est survenue. " + '\n' + e1.getMessage());
@@ -919,86 +921,84 @@ public class EmployeeView {
 						int annee = Integer.parseInt(periode[1]);
 
 						EmployeeCost ce = new EmployeeCost(employeId, mois, annee, "Publié");
-						System.out.println("on a cree ");
+					
 
 						if (!tableCost.getItem(ligne).getText(5).isBlank()) {
-							ce.setSalaireNet(Double.parseDouble(tableCost.getItem(ligne).getText(5)));
+							ce.setSalaireNet(Double.parseDouble(tableCost.getItem(ligne).getText(5).replace(",",".")));
 							empty = false;
 						} else {
 							ce.setSalaireNet(0.0);
 						}
 
 						if (!tableCost.getItem(ligne).getText(6).isBlank()) {
-							ce.setSalaireBrut(Double.parseDouble(tableCost.getItem(ligne).getText(6)));
+							ce.setSalaireBrut(Double.parseDouble(tableCost.getItem(ligne).getText(6).replace(",",".")));
 							empty = false;
 						} else {
 							ce.setSalaireBrut(0.0);
 						}
 
 						if (!tableCost.getItem(ligne).getText(7).isBlank()) {
-							ce.setNombreHeures(Double.parseDouble(tableCost.getItem(ligne).getText(7)));
+							ce.setNombreHeures(Double.parseDouble(tableCost.getItem(ligne).getText(7).replace(",",".")));
 							empty = false;
 						} else {
 							ce.setNombreHeures(0.0);
 						}
 
 						if (!tableCost.getItem(ligne).getText(8).isBlank()) {
-							ce.setChargesP(Double.parseDouble(tableCost.getItem(ligne).getText(8)));
+							ce.setChargesP(Double.parseDouble(tableCost.getItem(ligne).getText(8).replace(",",".")));
 							empty = false;
 						} else {
 							ce.setChargesP(0.0);
 						}
 
 						if (!tableCost.getItem(ligne).getText(9).isBlank()) {
-							ce.setMasseS(Double.parseDouble(tableCost.getItem(ligne).getText(9)));
+							ce.setMasseS(Double.parseDouble(tableCost.getItem(ligne).getText(9).replace(",",".")));
 							empty = false;
 						} else {
 							ce.setMasseS(0.0);
 						}
 
 						if (!tableCost.getItem(ligne).getText(10).isBlank()) {
-							ce.setRemboursementTransport(Double.parseDouble(tableCost.getItem(ligne).getText(10)));
+							ce.setRemboursementTransport(Double.parseDouble(tableCost.getItem(ligne).getText(10).replace(",",".")));
 							empty = false;
 						} else {
 							ce.setRemboursementTransport(0.0);
 						}
 
 						if (!tableCost.getItem(ligne).getText(11).isBlank()) {
-							ce.setRemboursementTelephone(Double.parseDouble(tableCost.getItem(ligne).getText(11)));
+							ce.setRemboursementTelephone(Double.parseDouble(tableCost.getItem(ligne).getText(11).replace(",",".")));
 							empty = false;
 						} else {
 							ce.setRemboursementTelephone(0.0);
 						}
 
 						if (!tableCost.getItem(ligne).getText(12).isBlank()) {
-							ce.setMutuelle(Double.parseDouble(tableCost.getItem(ligne).getText(12)));
+							ce.setMutuelle(Double.parseDouble(tableCost.getItem(ligne).getText(12).replace(",",".")));
 							empty = false;
 						} else {
 							ce.setMutuelle(0.0);
 						}
 
 						if (!tableCost.getItem(ligne).getText(13).isBlank()) {
-							ce.setPaniers(Double.parseDouble(tableCost.getItem(ligne).getText(13)));
+							ce.setPaniers(Double.parseDouble(tableCost.getItem(ligne).getText(13).replace(",",".")));
 							empty = false;
 						} else {
 							ce.setPaniers(0.0);
 						}
 
 						if (!tableCost.getItem(ligne).getText(14).isBlank()) {
-							ce.setPrets(Double.parseDouble(tableCost.getItem(ligne).getText(14)));
+							ce.setPrets(Double.parseDouble(tableCost.getItem(ligne).getText(14).replace(",",".")));
 							empty = false;
 						} else {
 							ce.setPrets(0.0);
 						}
 
 						if (!tableCost.getItem(ligne).getText(15).isBlank()) {
-							ce.setSaisieArret(Double.parseDouble(tableCost.getItem(ligne).getText(15)));
+							ce.setSaisieArret(Double.parseDouble(tableCost.getItem(ligne).getText(15).replace(",",".")));
 							empty = false;
 						} else {
 							ce.setSaisieArret(0.0);
 						}
-
-						System.out.println("on a tout rempli");
 
 						if (!empty) {// si au moins un champs est renseigné
 							try {
@@ -1115,63 +1115,63 @@ public class EmployeeView {
 						EmployeeCost ce = new EmployeeCost(employeId, mois, annee, "Publié");
 
 						if (!tableCost.getItem(ligne).getText(5).isBlank()) {
-							ce.setSalaireNet(Double.parseDouble(tableCost.getItem(ligne).getText(5)));
+							ce.setSalaireNet(Double.parseDouble(tableCost.getItem(ligne).getText(5).replace(",",".")));
 							empty = false;
 						} else {
 							ce.setSalaireNet(0.0);
 						}
 
 						if (!tableCost.getItem(ligne).getText(6).isBlank()) {
-							ce.setSalaireBrut(Double.parseDouble(tableCost.getItem(ligne).getText(6)));
+							ce.setSalaireBrut(Double.parseDouble(tableCost.getItem(ligne).getText(6).replace(",",".")));
 							empty = false;
 						} else {
 							ce.setSalaireBrut(0.0);
 						}
 
 						if (!tableCost.getItem(ligne).getText(7).isBlank()) {
-							ce.setNombreHeures(Double.parseDouble(tableCost.getItem(ligne).getText(7)));
+							ce.setNombreHeures(Double.parseDouble(tableCost.getItem(ligne).getText(7).replace(",",".")));
 							empty = false;
 						} else {
 							ce.setNombreHeures(0.0);
 						}
 
 						if (!tableCost.getItem(ligne).getText(8).isBlank()) {
-							ce.setChargesP(Double.parseDouble(tableCost.getItem(ligne).getText(8)));
+							ce.setChargesP(Double.parseDouble(tableCost.getItem(ligne).getText(8).replace(",",".")));
 							empty = false;
 						} else {
 							ce.setChargesP(0.0);
 						}
 
 						if (!tableCost.getItem(ligne).getText(9).isBlank()) {
-							ce.setMasseS(Double.parseDouble(tableCost.getItem(ligne).getText(9)));
+							ce.setMasseS(Double.parseDouble(tableCost.getItem(ligne).getText(9).replace(",",".")));
 							empty = false;
 						} else {
 							ce.setMasseS(0.0);
 						}
 
 						if (!tableCost.getItem(ligne).getText(10).isBlank()) {
-							ce.setRemboursementTransport(Double.parseDouble(tableCost.getItem(ligne).getText(10)));
+							ce.setRemboursementTransport(Double.parseDouble(tableCost.getItem(ligne).getText(10).replace(",",".")));
 							empty = false;
 						} else {
 							ce.setRemboursementTransport(0.0);
 						}
 
 						if (!tableCost.getItem(ligne).getText(11).isBlank()) {
-							ce.setRemboursementTelephone(Double.parseDouble(tableCost.getItem(ligne).getText(11)));
+							ce.setRemboursementTelephone(Double.parseDouble(tableCost.getItem(ligne).getText(11).replace(",",".")));
 							empty = false;
 						} else {
 							ce.setRemboursementTelephone(0.0);
 						}
 
 						if (!tableCost.getItem(ligne).getText(12).isBlank()) {
-							ce.setMutuelle(Double.parseDouble(tableCost.getItem(ligne).getText(12)));
+							ce.setMutuelle(Double.parseDouble(tableCost.getItem(ligne).getText(12).replace(",",".")));
 							empty = false;
 						} else {
 							ce.setMutuelle(0.0);
 						}
 
 						if (!tableCost.getItem(ligne).getText(13).isBlank()) {
-							ce.setPaniers(Double.parseDouble(tableCost.getItem(ligne).getText(13)));
+							ce.setPaniers(Double.parseDouble(tableCost.getItem(ligne).getText(13).replace(",",".")));
 							empty = false;
 						} else {
 							ce.setPaniers(0.0);
@@ -1292,16 +1292,19 @@ public class EmployeeView {
 
 							Double pret = 0.0;
 							Double saisie = 0.0;
+							
+							
 							for (EmployeeAmortization ae : EmployeeAmortization
 									.getAmortizationEmployee(e.getEmployeId())) {
-								System.out.println("dans la boucle");
+							
 								if (ae.getStatus().equals("Publié")) {
 
 									YearMonth debut = YearMonth.of(ae.getStartYear(), ae.getStartMonth());
 									YearMonth fin = YearMonth.of(ae.getEndYear(), ae.getEndMonth());
 									YearMonth now = YearMonth.of(Integer.parseInt(year), monthInt.getValue());
-
+									
 									if (debut.equals(now) || (debut.isBefore(now) && fin.isAfter(now))) {
+										
 										if (ae.getType().equals("Prêt")) {
 											pret += ae.getCostByMonth();
 										} else {
@@ -1314,6 +1317,7 @@ public class EmployeeView {
 							item.setText(15, saisie.toString());
 						}
 					} catch (Exception e2) {
+						
 						item.setText(14, "" + 0);
 						item.setText(15, "" + 0);
 					}
@@ -1325,7 +1329,7 @@ public class EmployeeView {
 			view.layout(true, true);
 
 		} catch (SQLException e1) {
-			System.out.println("erreur dans la table des couts employes");
+			
 			MessageBox dialog = new MessageBox(employeeView.getShell(), SWT.ICON_ERROR | SWT.OK);
 			dialog.setText("Erreur");
 			dialog.setMessage("Une erreur est survenue. " + '\n' + e1.getMessage());
@@ -1429,9 +1433,9 @@ public class EmployeeView {
 						if (!(newEditorSN.getText().isEmpty())) {// pour ne pas tester quand l'utilisateur est en train
 																	// de modifier
 							try {
-								item.setText(5, newEditorSN.getText());
+								item.setText(5, newEditorSN.getText().replace(",","."));
 							} catch (Exception e) {
-								System.out.println("erreur dans la modif");
+								
 								MessageBox dialog = new MessageBox(employeeView.getShell(), SWT.ICON_ERROR | SWT.OK);
 								dialog.setText("Erreur Editor");
 								dialog.setMessage("Saisie invalide." + '\n' + e.getMessage());
@@ -1453,18 +1457,18 @@ public class EmployeeView {
 
 								Double cp;
 								if (!item.getText(8).isBlank()) {
-									cp = Double.parseDouble(item.getText(8));
+									cp = Double.parseDouble(item.getText(8).replace(",", "."));
 								} else {
 									cp = 0.0;
 								}
 
 								Double sb;
 								if (!newEditorSB.getText().isBlank()) {
-									sb = Double.parseDouble(newEditorSB.getText());
+									sb = Double.parseDouble(newEditorSB.getText().replace(",", "."));
 								} else {
 									sb = 0.0;
 								}
-
+								
 								item.setText(9, Double.toString(sb + cp));
 							} catch (Exception e) {
 
@@ -1506,25 +1510,26 @@ public class EmployeeView {
 																	// de modifier
 							try {
 								item.setText(8, newEditorCP.getText());
-
+								
 								Double sb;
 								if (!item.getText(6).isBlank()) {
 									sb = Double.parseDouble(item.getText(6));
 								} else {
 									sb = 0.0;
 								}
-
+								
 								Double cp;
 								if (!newEditorCP.getText().isBlank()) {
-									cp = Double.parseDouble(newEditorCP.getText());
+									cp = Double.parseDouble(newEditorCP.getText().replace(",", "."));
 								} else {
 									cp = 0.0;
 								}
-
+								
 								item.setText(9, Double.toString(sb + cp));
-
+								
 							} catch (Exception e) {
-								System.out.println("erreur dans la modif");
+								
+								
 								MessageBox dialog = new MessageBox(employeeView.getShell(), SWT.ICON_ERROR | SWT.OK);
 								dialog.setText("Erreur Editor");
 								dialog.setMessage("Saisie invalide." + '\n' + e.getMessage());
@@ -1536,15 +1541,16 @@ public class EmployeeView {
 				editorCP.setEditor(newEditorCP, item, 8);
 
 				Text newEditorTr = new Text(tableCost, SWT.NONE);
-				newEditorTr.setText(item.getText(10));
+				newEditorTr.setText(item.getText(10).replace(",","." ));
 				newEditorTr.addModifyListener(new ModifyListener() {
 					public void modifyText(ModifyEvent me) {
 						if (!(newEditorTr.getText().isEmpty())) {// pour ne pas tester quand l'utilisateur est en train
 																	// de modifier
 							try {
-								item.setText(10, newEditorTr.getText());
+								item.setText(10, newEditorTr.getText().replace(",","."));
 							} catch (Exception e) {
-								System.out.println("erreur dans la modif");
+								
+							
 								MessageBox dialog = new MessageBox(employeeView.getShell(), SWT.ICON_ERROR | SWT.OK);
 								dialog.setText("Erreur Editor");
 								dialog.setMessage("Saisie invalide." + '\n' + e.getMessage());
@@ -1556,15 +1562,16 @@ public class EmployeeView {
 				editorTr.setEditor(newEditorTr, item, 10);
 
 				Text newEditorTe = new Text(tableCost, SWT.NONE);
-				newEditorTe.setText(item.getText(11));
+				newEditorTe.setText(item.getText(11).replace(",", "."));
 				newEditorTe.addModifyListener(new ModifyListener() {
 					public void modifyText(ModifyEvent me) {
 						if (!(newEditorTe.getText().isEmpty())) {// pour ne pas tester quand l'utilisateur est en train
 																	// de modifier
 							try {
-								item.setText(11, newEditorTe.getText());
+								item.setText(11, newEditorTe.getText().replace(",", "."));
 							} catch (Exception e) {
-								System.out.println("erreur dans la modif");
+								
+								
 								MessageBox dialog = new MessageBox(employeeView.getShell(), SWT.ICON_ERROR | SWT.OK);
 								dialog.setText("Erreur Editor");
 								dialog.setMessage("Saisie invalide." + '\n' + e.getMessage());
@@ -1576,15 +1583,15 @@ public class EmployeeView {
 				editorTe.setEditor(newEditorTe, item, 11);
 
 				Text newEditorMu = new Text(tableCost, SWT.NONE);
-				newEditorMu.setText(item.getText(12));
+				newEditorMu.setText(item.getText(12).replace(",", "."));
 				newEditorMu.addModifyListener(new ModifyListener() {
 					public void modifyText(ModifyEvent me) {
 						if (!(newEditorMu.getText().isEmpty())) {// pour ne pas tester quand l'utilisateur est en train
 																	// de modifier
 							try {
-								item.setText(12, newEditorMu.getText());
+								item.setText(12, newEditorMu.getText().replace(",","."));
 							} catch (Exception e) {
-								System.out.println("erreur dans la modif");
+								
 								MessageBox dialog = new MessageBox(employeeView.getShell(), SWT.ICON_ERROR | SWT.OK);
 								dialog.setText("Erreur Editor");
 								dialog.setMessage("Saisie invalide." + '\n' + e.getMessage());
@@ -1596,7 +1603,7 @@ public class EmployeeView {
 				editorMu.setEditor(newEditorMu, item, 12);
 
 				Text newEditorPa = new Text(tableCost, SWT.NONE);
-				newEditorPa.setText(item.getText(13));
+				newEditorPa.setText(item.getText(13).replace(",","."));
 				newEditorPa.addModifyListener(new ModifyListener() {
 					public void modifyText(ModifyEvent me) {
 						if (!(newEditorPa.getText().isEmpty())) {// pour ne pas tester quand l'utilisateur est en train
@@ -1604,7 +1611,7 @@ public class EmployeeView {
 							try {
 								item.setText(13, newEditorPa.getText());
 							} catch (Exception e) {
-								System.out.println("erreur dans la modif");
+								
 								MessageBox dialog = new MessageBox(employeeView.getShell(), SWT.ICON_ERROR | SWT.OK);
 								dialog.setText("Erreur Editor");
 								dialog.setMessage("Saisie invalide." + '\n' + e.getMessage());
@@ -1632,7 +1639,7 @@ public class EmployeeView {
 	}
 
 	/**
-	 * Recover data from former who leave and come back into the companny
+	 * Recover data from former who leave and come back into the company
 	 */
 	public static void vueRecupEmploye() {
 		if (!Objects.isNull(selection) && !selection.isDisposed()) {
@@ -1744,7 +1751,7 @@ public class EmployeeView {
 					} else {
 						throw new Error("Merci d'indiquer un nom et pr�nom ou un matricule.");
 					}
-					System.out.println("on a recuperer employe !!");
+					
 					MessageBox dialog = new MessageBox(employeeView.getShell(), SWT.ICON_INFORMATION | SWT.OK);
 					dialog.setText("Récupération réussie");
 					dialog.setMessage("L'employé a été rajouté à la base de donn�es.");
@@ -1752,7 +1759,7 @@ public class EmployeeView {
 					newVueEmployee();
 				} catch (Throwable e) {
 					e.printStackTrace();
-					System.out.println("erreur dans la recup");
+					
 					MessageBox dialog = new MessageBox(employeeView.getShell(), SWT.ICON_ERROR | SWT.OK);
 					dialog.setText("Erreur R�cup�ration");
 					dialog.setMessage("Une erreur est survenue. " + '\n' + e.getMessage());
@@ -1858,7 +1865,7 @@ public class EmployeeView {
 	}
 
 	/***
-	 * display modification or creation form type donne en argument
+	 * display modification or creation form type for given argment
 	 * 
 	 * @param <type>int</type> i : 1 pour une creation, 2 pour une modification les
 	 *                         autres arguments correspondent aux valeurs a afficher

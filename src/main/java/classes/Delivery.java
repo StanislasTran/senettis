@@ -367,12 +367,12 @@ public class Delivery {
 
 				} else {
 					throw new Error(
-							"La date indiqu�e est incorrecte, une date doit �tre indiqu� selon un des formats suivant : 31-01-2000, 31/01/2000, 2000-01-31 ou 2000/01/31.");
+							"La date indiqu�e est incorrecte, une date doit être indiquée selon un des formats suivant : 01-01-2000, 01/01/2000, 2000-01-31 ou 2000/01/31.");
 				}
 
 			} catch (Exception e) {
 				throw new Error(
-						"La date indiqu�e est incorrecte, une date doit �tre indiqu� selon un des formats suivant : 31-01-2000, 31/01/2000, 2000-01-31 ou 2000/01/31.");
+						"La date indiquée est incorrecte, une date doit être indiqué selon un des formats suivant : 31-01-2000, 31/01/2000, 2000-01-31 ou 2000/01/31.");
 			}
 		} else {
 			throw new Error("La date indiqu�e est vide.");
