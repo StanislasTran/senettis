@@ -151,7 +151,7 @@ public class TurnOver {
 		String selection = " Chantier.nom,Chantier.chantierId, CA.Mois, CA.Annee,CA.Chantier,  CA.Menage,CA.Vitrerie,CA.Mise_a_blanc,CA.Fournitures_sanitaires,CA.Autres,CA.CA,CA.Status";
 		String sources = "Chantier Left join (Select * FROM ChiffreAffaire WHERE Mois=? AND Annee = ?) AS CA ON CA.Chantier=Chantier.ChantierId WHERE Chantier.Status='Publié'";
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
-		String reqSql = "Select " + selection + " FROM " + sources;
+		String reqSql = "Select " + selection + " FROM " + sources+" ORDER BY nom;";
 		PreparedStatement statement = connection.prepareStatement(reqSql);
 		statement.setObject(1, month.getValue(), Types.INTEGER);
 		statement.setObject(2, year.getValue(), Types.INTEGER);

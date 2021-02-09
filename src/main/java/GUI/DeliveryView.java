@@ -55,6 +55,7 @@ public class DeliveryView {
 	private Delivery selectedLivraison;
 	private Site selectedChantier;
 	private FS selectedFS;
+	private int FSid;
 	private SiteAmortisation selectedAmorti;
 	private TabFolder tabFolder;
 	private Menu menu;
@@ -385,7 +386,7 @@ public class DeliveryView {
 						int buttonID = dialog.open();
 						switch (buttonID) {
 						case SWT.YES:
-							fs.setStatus("archivé");
+							fs.setStatus("Archivé");
 							fs.updateDatabase();
 							updateTableFS();
 						}
@@ -499,6 +500,7 @@ public class DeliveryView {
 		// Titre
 		Combo chantiers = new Combo(compositeChantier, SWT.BORDER);
 
+		//modif
 		if (i == 1 && selectedChantier != null) {
 			try {
 				if (selectedChantier.getName().length() > 25) {
@@ -515,7 +517,7 @@ public class DeliveryView {
 				dialog.setMessage("Une erreur est survenue. " + '\n' + e1.getMessage());
 				dialog.open();
 			}
-		} else {
+		} else {//creation
 			chantiers.setText("Selectionner ...");
 		}
 
@@ -639,22 +641,29 @@ public class DeliveryView {
 				vueFS();
 			}
 		});
-
+		
+		
+		//quand on rentre dans la fonction selectedFS devient null alors je stocke l'id avant
+		try {
+			FSid = selectedFS.getFSId();
+		} catch (Exception e) {
+		}
+		
 		// creation
-
 		buttonValidation.addSelectionListener(new SelectionAdapter() {
-
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-
 				try {
 					Integer chantierId = null;
 					try {
 						chantierId = siteIdList.get(chantiers.getSelectionIndex());
 					} catch (Exception e) {
-						throw new Error("Merci d'indiquer un chantier.");
+						try {
+							chantierId = Site.getSiteIdByName(chantiers.getText());
+						} catch (Exception e1) {
+							throw new Error("Merci d'indiquer un chantier.");
+						}
 					}
-
 					String[] debut = periode.getText().split(" ");
 
 					int moisD = Month.valueOf(debut[0]).getValue();
@@ -666,10 +675,9 @@ public class DeliveryView {
 					} catch (Exception e) {
 						throw new Error("Merci d'indiquer le montant.");
 					}
-
-					if (selectedFS != null) {
-						FS fs = new FS(selectedFS.getFSId(),
-								chantierId, moisD, anneeD, textDesc.getText(), montantParMois, textST.getText().trim(),
+					
+					if (i == 1) {
+						FS fs = new FS(FSid,chantierId, moisD, anneeD, textDesc.getText(), montantParMois, textST.getText().trim(),
 								"Publié");
 						fs.updateDatabase();
 						MessageBox dialog = new MessageBox(vueFS.getShell(), SWT.ICON_INFORMATION | SWT.OK);

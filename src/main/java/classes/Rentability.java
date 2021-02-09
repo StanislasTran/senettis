@@ -211,7 +211,7 @@ public class Rentability {
 	 *                      running Statement
 	 */
 	public static ResultSet getRentabilityDB(Month month, Year year) throws SQLException {
-		String reqSql = "Select * from rentabilite_view where  (mois =? and annee=?) ";
+		String reqSql = "Select * from rentabilite_view where  (mois =? and annee=?) ORDER BY nom;";
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
 

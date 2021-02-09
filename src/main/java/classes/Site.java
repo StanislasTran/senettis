@@ -101,7 +101,7 @@ public class Site {
 	 * @throws SQLException
 	 */
 	private static Statement selectAllChantier() throws SQLException {
-		String reqSql = "SELECT * FROM Chantier Where Status='Publié'";
+		String reqSql = "SELECT * FROM Chantier Where Status='Publié' ORDER BY Nom;";
 
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		Statement statement = connection.createStatement();
