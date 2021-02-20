@@ -485,11 +485,11 @@ Create view
 as
 Select ChantierId,v1.employe,v1.mois,v1.annee,Cost,costMAB,(ISNULL(cost, 0 )+ISNULL(costMAB, 0 )) as totalCost from Chantier
 left join
-(select Chantier,employe,mois,annee,(mutuelle+indemnite_panier+masse_salariale+cout_transport+cout_telephone+remboursement_prets+saisie_arret)*(AC_nb_heures/CASE CE_nb_heures WHEN 0 THEN -1 ELSE CE_nb_heures END) as Cost from ACjoinCE_View) as v1
+(select Chantier,employe,mois,annee,(indemnite_panier+masse_salariale+cout_transport+cout_telephone+remboursement_prets+saisie_arret)*(AC_nb_heures/CASE CE_nb_heures WHEN 0 THEN -1 ELSE CE_nb_heures END) as Cost from ACjoinCE_View) as v1
 On v1.chantier=ChantierId
 
 left join
-(select Chantier,employe,mois,annee,(mutuelle+indemnite_panier+masse_salariale+cout_transport+cout_telephone+remboursement_prets+saisie_arret)*(AC_nb_heures/CASE CE_nb_heures WHEN 0 THEN -1 ELSE CE_nb_heures END) as CostMAB from ACjoinCEMAB_View )as v2
+(select Chantier,employe,mois,annee,(indemnite_panier+masse_salariale+cout_transport+cout_telephone+remboursement_prets+saisie_arret)*(AC_nb_heures/CASE CE_nb_heures WHEN 0 THEN -1 ELSE CE_nb_heures END) as CostMAB from ACjoinCEMAB_View )as v2
 on v1.Chantier=v2.Chantier AND v1.annee=v2.annee AND v1.mois=v2.mois AND v1.employe=v2.employe;
 
 

@@ -218,7 +218,7 @@ public class Delivery {
 	 *                      Statement
 	 */
 	private static Statement selectAllDelivery() throws SQLException {
-		String reqSql = "SELECT * FROM Livraison";
+		String reqSql = "SELECT LivraisonId, Chantier, PrixTotal, date, Livraison.Status FROM Livraison LEFT JOIN Chantier ON Chantier.ChantierId=Livraison.Chantier ORDER BY Chantier.Nom;";
 
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		Statement statement = connection.createStatement();

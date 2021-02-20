@@ -127,7 +127,7 @@ public class ProductView {
 				item.setText(2, "Inconnue");
 			else
 				item.setText(2, p.getBrand());
-			item.setText(3, "" + p.getPrice());
+			item.setText(3, String.format("%.2f",p.getPrice()));
 
 			item.setText(4, p.getComment());
 

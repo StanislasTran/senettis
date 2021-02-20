@@ -244,7 +244,7 @@ public class Site {
 	 * @throws SQLException
 	 */
 	public static Integer getSiteIdByName(String name) throws SQLException {
-		String reqSql = "SELECT ChantierId,nom,adresse,Status FROM Chantier WHERE Nom=?;";
+		String reqSql = "SELECT ChantierId,nom,adresse,Status FROM Chantier WHERE Nom=? AND Status='Publié';";
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
 		statement.setObject(1, name, Types.VARCHAR);

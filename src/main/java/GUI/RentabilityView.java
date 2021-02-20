@@ -179,47 +179,88 @@ public class RentabilityView {
 
 			item.setText(0, r.getName());
 
-			double turnOver = 0.0;
-
-			item.setText(1, "" + r.getTurnOver());
+			item.setText(1, String.format("%.2f", r.getTurnOver()));
 
 			double totalEmployeCost = r.getEmployeeCost();
-
 			DecimalFormat df = new DecimalFormat("0.00");
-
 			item.setText(2, df.format(totalEmployeCost));
 
 			// delivery//
 
 			double total_delivery = r.getDelivery();
 
-			item.setText(3, Double.toString(total_delivery));
+			item.setText(3, String.format("%.2f", total_delivery));
 
 			// materiel
 
 			double total_material = r.getMaterial();
 
-			item.setText(4, Double.toString(total_material));
+			item.setText(4, String.format("%.2f",total_material));
 
 			double total_fs = r.getFSCost();
 
-			item.setText(5, Double.toString(total_fs));
+			item.setText(5, String.format("%.2f",total_fs));
 
 			// Comission
 
 			double comission = r.getComission();
 
-			item.setText(6, Double.toString(comission));
+			item.setText(6, String.format("%.2f",comission));
 
 			double priceCost = r.getCostPrice();
 			double grossMargin = r.getGrossMargin();
-			item.setText(7, Double.toString(priceCost));
-			item.setText(8, Double.toString(grossMargin));
+			item.setText(7, String.format("%.2f",priceCost));
+			item.setText(8, String.format("%.2f",grossMargin));
 
-			if (turnOver != 0.0) {
+			if (totalEmployeCost != 0.0) {
+				System.out.println("hey ehy");
 				item.setText(9, df.format(r.getPercent()) + "%");
 			}
 
+		}
+		
+		
+		java.util.List<Rentability> totalList = Rentability.getTotalRentabilityByDate(monthFilter, yearFilter);
+		if (!totalList.isEmpty()) {
+			Rentability r = totalList.get(0);
+			
+			TableItem total = new TableItem(rentabilityTable, SWT.NONE);
+	
+			total.setText(0, "Total");
+			
+			total.setText(1, String.format("%.2f", r.getTurnOver()));
+	
+			double totalEmployeCost = r.getEmployeeCost();
+			DecimalFormat df = new DecimalFormat("0.00");
+			total.setText(2, df.format(totalEmployeCost));
+	
+			// delivery//
+	
+			double total_delivery = r.getDelivery();
+			total.setText(3, String.format("%.2f", total_delivery));
+	
+			// materiel
+	
+			double total_material = r.getMaterial();
+			total.setText(4, String.format("%.2f",total_material));
+	
+			double total_fs = r.getFSCost();
+			total.setText(5, String.format("%.2f",total_fs));
+	
+			// Comission
+	
+			double comission = r.getComission();
+			total.setText(6, String.format("%.2f",comission));
+	
+			double priceCost = r.getCostPrice();
+			total.setText(7, String.format("%.2f",priceCost));
+			
+			double grossMargin = r.getGrossMargin();
+			total.setText(8, String.format("%.2f",grossMargin));
+	
+			if (totalEmployeCost != 0.0) {
+				total.setText(9, df.format(r.getPercent()) + "%");
+			}
 		}
 	}
 

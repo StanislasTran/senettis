@@ -297,12 +297,12 @@ public class TurnOverView {
 
 			TableItem item = new TableItem(table, SWT.NONE);
 			item.setText(SITENAMECOLUMN, turnOver.getSiteName());
-			item.setText(MENAGECOLUMN, "" + turnOver.getCleaning());
-			item.setText(VITRERIECOLUMN, "" + turnOver.getGlazing());
-			item.setText(FOURNITURESCOLUMN, "" + turnOver.getFS());
-			item.setText(MISESBLANCCOLUMN, "" + turnOver.getMisesBlanc());
-			item.setText(AUTRESCOLUMN, "" + turnOver.getOthers());
-			item.setText(CACOLUMN, "" + turnOver.getTurnOver());
+			item.setText(MENAGECOLUMN, String.format("%.2f",turnOver.getCleaning()));
+			item.setText(VITRERIECOLUMN, String.format("%.2f",turnOver.getGlazing()));
+			item.setText(FOURNITURESCOLUMN, String.format("%.2f",turnOver.getFS()));
+			item.setText(MISESBLANCCOLUMN, String.format("%.2f",turnOver.getMisesBlanc()));
+			item.setText(AUTRESCOLUMN, String.format("%.2f", turnOver.getOthers()));
+			item.setText(CACOLUMN, String.format("%.2f",turnOver.getTurnOver()));
 
 		}
 

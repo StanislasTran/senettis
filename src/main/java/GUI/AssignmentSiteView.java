@@ -219,7 +219,7 @@ public class AssignmentSiteView {
 		table.setLinesVisible(true);
 		table.setHeaderVisible(true);
 
-		String[] titles = { "ChantierId", "Nom", "Nombre de chantiers différents", "Nombre d'heures total" };
+		String[] titles = { "ChantierId", "Nom", "Nombre d'employés différents", "Nombre d'heures total" };
 
 		for (String title : titles) {
 			TableColumn column = new TableColumn(table, SWT.NONE);
@@ -233,11 +233,11 @@ public class AssignmentSiteView {
 			item.setText(0, "" + result.getInt("ChantierId"));
 			item.setText(1, result.getString("Nom"));
 
-			item.setText(3, result.getString("nb_Employe"));
+			item.setText(2, result.getString("nb_Employe"));
 			if (Objects.isNull(result.getString("nb_heure")))
-				item.setText(4, "" + "Inconnu");
+				item.setText(3, "0");
 			else
-				item.setText(4, result.getString("nb_heure"));
+				item.setText(3, result.getString("nb_heure"));
 
 		}
 

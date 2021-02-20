@@ -196,10 +196,10 @@ public class SiteAssignment {
 	 */
 	public static ResultSet getEmployeStatsPublished() throws SQLException {
 		String selection = "emplData.EmployeId AS 'EmployeId',emplData.Nom,EmplData.prenom,count(DISTINCT AffectationChantier.chantier) as 'nb_chantier',SUM(AffectationChantier.Nombre_heures) as 'nb_heure'";
-		String source = "(Select * FROM AffectationChantier WHERE Status='Published' as AffectationChantier  RIGHT JOIN (Select distinct EmployeId,Nom,Prenom FROM Employe WHERE Status='Published') AS emplData ON emplData.EmployeId=AffectationChantier.Employe";
+		String source = "(Select * FROM AffectationChantier WHERE Status='Publié') as AffectationChantier  RIGHT JOIN (Select distinct EmployeId,Nom,Prenom FROM Employe WHERE Status='Publié') AS emplData ON emplData.EmployeId=AffectationChantier.Employe";
 		String group = "emplData.EmployeId,emplData.Nom,EmplData.prenom";
 
-		String reqSql = "SELECT " + selection + " FROM " + source + " GROUP BY " + group;
+		String reqSql = "SELECT " + selection + " FROM " + source + " GROUP BY " + group  + " ORDER BY emplData.Nom";
 
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		Statement statement = connection.createStatement();
@@ -220,11 +220,10 @@ public class SiteAssignment {
 	public static ResultSet getEmployeStats(Month startMonth, Year startYear) throws SQLException {
 		String selection = "emplData.EmployeId AS 'EmployeId',emplData.Nom,EmplData.prenom,count(DISTINCT AffectationChantier.chantier) as 'nb_chantier',SUM(AffectationChantier.Nombre_heures) as 'nb_heure'";
 		String source = "(select * FROM AffectationChantier WHERE MoisDebut='" + startMonth.getValue()
-				+ "' AND AnneeDebut='" + startYear.getValue()
-				+ "' ) AS AffectationChantier  RIGHT JOIN (Select distinct EmployeId,Nom,Prenom FROM Employe) AS emplData ON emplData.EmployeId=AffectationChantier.Employe";
+				+ "' AND AnneeDebut='" + startYear.getValue() + " AND Status='Publié' ) AS AffectationChantier RIGHT JOIN (Select distinct EmployeId,Nom,Prenom FROM Employe WHERE Status='Publié') AS emplData ON emplData.EmployeId=AffectationChantier.Employe";
 		String group = "emplData.EmployeId,emplData.Nom,EmplData.prenom";
 
-		String reqSql = "SELECT " + selection + " FROM " + source + " GROUP BY " + group;
+		String reqSql = "SELECT " + selection + " FROM " + source + " GROUP BY " + group  + " ORDER BY emplData.Nom";
 
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		Statement statement = connection.createStatement();
@@ -243,10 +242,10 @@ public class SiteAssignment {
 	 */
 	public static ResultSet getEmployeStats() throws SQLException {
 		String selection = "emplData.EmployeId AS 'EmployeId',emplData.Nom,EmplData.prenom,count(DISTINCT AffectationChantier.chantier) as 'nb_chantier',SUM(AffectationChantier.Nombre_heures) as 'nb_heure'";
-		String source = " AffectationChantier  RIGHT JOIN (Select distinct EmployeId,Nom,Prenom FROM Employe) AS emplData ON emplData.EmployeId=AffectationChantier.Employe";
+		String source = " (SELECT * FROM AffectationChantier WHERE Status='Publié') AS AffectationChantier RIGHT JOIN (Select distinct EmployeId,Nom,Prenom FROM Employe WHERE Status='Publié') AS emplData ON emplData.EmployeId=AffectationChantier.Employe";
 		String group = "emplData.EmployeId,emplData.Nom,EmplData.prenom";
 
-		String reqSql = "SELECT " + selection + " FROM " + source + " GROUP BY " + group;
+		String reqSql = "SELECT " + selection + " FROM " + source + " GROUP BY " + group + " ORDER BY emplData.Nom";
 
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		Statement statement = connection.createStatement();
@@ -265,10 +264,10 @@ public class SiteAssignment {
 	 */
 	public static ResultSet getChantierStats() throws SQLException {
 		String selection = "chantData.ChantierId AS 'ChantierId',ChantData.Nom,count(DISTINCT AffectationChantier.Employe) as 'nb_Employe',SUM(AffectationChantier.Nombre_heures) as 'nb_heure' ";
-		String source = "AffectationChantier RIGHT JOIN (Select DISTINCT ChantierId,Nom FROM Chantier) AS chantData ON chantData.ChantierId=AffectationChantier.Chantier";
+		String source = "(SELECT * FROM AffectationChantier WHERE Status='Publié') AS AffectationChantier RIGHT JOIN (Select DISTINCT ChantierId,Nom FROM Chantier WHERE Status='Publié') AS chantData ON chantData.ChantierId=AffectationChantier.Chantier";
 		String group = "chantData.ChantierId,chantData.Nom";
 
-		String reqSql = "SELECT " + selection + " FROM " + source + " GROUP BY " + group;
+		String reqSql = "SELECT " + selection + " FROM " + source + " GROUP BY " + group + " ORDER BY ChantData.Nom";
 
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		Statement statement = connection.createStatement();
@@ -289,10 +288,10 @@ public class SiteAssignment {
 	 */
 	public static ResultSet getChantierStats(Month startMonth, Year startYear) throws SQLException {
 		String selection = "chantData.ChantierId AS 'ChantierId',ChantData.Nom,count(DISTINCT AffectationChantier.Employe) as 'nb_Employe',SUM(AffectationChantier.Nombre_heures) as 'nb_heure' ";
-		String source = "( Select * FROM AffectationChantier WHERE MoisDebut=? AND AnneeDebut=?) AS AffectationChantier RIGHT JOIN (Select DISTINCT ChantierId,Nom FROM Chantier) AS chantData ON chantData.ChantierId=AffectationChantier.Chantier";
-		String group = "chantData.ChantierId,chantData.Nomd";
+		String source = "( Select * FROM AffectationChantier WHERE MoisDebut=? AND AnneeDebut=? AND Status='Publié') AS AffectationChantier RIGHT JOIN (Select DISTINCT ChantierId,Nom FROM Chantier WHERE Status='Publié') AS chantData ON chantData.ChantierId=AffectationChantier.Chantier";
+		String group = "chantData.ChantierId,chantData.Nom";
 
-		String reqSql = "SELECT " + selection + " FROM " + source + " GROUP BY " + group;
+		String reqSql = "SELECT " + selection + " FROM " + source + " GROUP BY " + group + " ORDER BY ChantData.Nom";
 
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);

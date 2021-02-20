@@ -332,7 +332,7 @@ public class Employee {
 	 * @throws SQLException
 	 */
 	private static Statement selectAllEmploye() throws SQLException {
-		String reqSql = "SELECT * FROM Employe ORDER BY Numero_matricule;";
+		String reqSql = "SELECT * FROM Employe ORDER BY Nom;";
 
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		Statement statement = connection.createStatement();

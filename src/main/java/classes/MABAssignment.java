@@ -143,7 +143,7 @@ public class MABAssignment {
 	 * @throws SQLException
 	 */
 	private static Statement selectAllAffectation() throws SQLException {
-		String reqSql = "SELECT * FROM AffectationMAB";
+		String reqSql = "SELECT AffectationMAB.Status, AffectationId, Chantier, Employe, Mois, Annee, Nombre_heures FROM AffectationMAB  LEFT JOIN Employe ON Employe.EmployeId=AffectationMAB.Employe ORDER BY Employe.Nom;";
 
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		Statement statement = connection.createStatement();
@@ -190,10 +190,10 @@ public class MABAssignment {
 	 */
 	public static ResultSet getEmployeStatsPublished() throws SQLException {
 		String selection = "emplData.EmployeId AS 'EmployeId',emplData.Nom,EmplData.prenom,count(DISTINCT AffectationMAB.chantier) as 'nb_chantier',SUM(AffectationMAB.Nombre_heures) as 'nb_heure'";
-		String source = "(Select * FROM AffectationMAB WHERE Status='Published' as AffectationMAB  RIGHT JOIN (Select distinct EmployeId,Nom,Prenom FROM Employe WHERE Status='Published') AS emplData ON emplData.EmployeId=AffectationMAB.Employe";
+		String source = "(Select * FROM AffectationMAB WHERE Status='Publié' as AffectationMAB  RIGHT JOIN (Select distinct EmployeId,Nom,Prenom FROM Employe WHERE Status='Publié') AS emplData ON emplData.EmployeId=AffectationMAB.Employe";
 		String group = "emplData.EmployeId,emplData.Nom,EmplData.prenom";
 
-		String reqSql = "SELECT " + selection + " FROM " + source + " GROUP BY " + group;
+		String reqSql = "SELECT " + selection + " FROM " + source + " GROUP BY " + group + " ORDER BY emplData.Nom";
 		
 
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
@@ -216,10 +216,10 @@ public class MABAssignment {
 		String selection = "emplData.EmployeId AS 'EmployeId',emplData.Nom,EmplData.prenom,count(DISTINCT AffectationMAB.chantier) as 'nb_chantier',SUM(AffectationMAB.Nombre_heures) as 'nb_heure'";
 		String source = "(select * FROM AffectationMAB WHERE Mois='" + month.getValue() + "' AND Annee='"
 				+ year.getValue()
-				+ "' ) AS AffectationMAB  RIGHT JOIN (Select distinct EmployeId,Nom,Prenom FROM Employe) AS emplData ON emplData.EmployeId=AffectationMAB.Employe";
+				+ "' AND Status='Publié') AS AffectationMAB  RIGHT JOIN (Select distinct EmployeId,Nom,Prenom FROM Employe WHERE Status='Publié') AS emplData ON emplData.EmployeId=AffectationMAB.Employe";
 		String group = "emplData.EmployeId,emplData.Nom,EmplData.prenom";
 
-		String reqSql = "SELECT " + selection + " FROM " + source + " GROUP BY " + group;
+		String reqSql = "SELECT " + selection + " FROM " + source + " GROUP BY " + group + " ORDER BY emplData.Nom";
 		
 
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
@@ -239,10 +239,10 @@ public class MABAssignment {
 	 */
 	public static ResultSet getChantierStats() throws SQLException {
 		String selection = "chantData.ChantierId AS 'ChantierId',ChantData.Nom,ChantData.CA,count(DISTINCT AffectationMAB.Employe) as 'nb_Employe',SUM(AffectationMAB.Nombre_heures) as 'nb_heure' ";
-		String source = "AffectationMAB RIGHT JOIN (Select DISTINCT ChantierId,Nom FROM Chantier) AS chantData ON chantData.ChantierId=AffectationMAB.Chantier";
+		String source = "5select * FROM AffectationMAB WHERE Status='Publié') RIGHT JOIN (Select DISTINCT ChantierId,Nom FROM Chantier WHERE Status='Publié') AS chantData ON chantData.ChantierId=AffectationMAB.Chantier";
 		String group = "chantData.ChantierId,chantData.Nom,chantData.CA";
 
-		String reqSql = "SELECT " + selection + " FROM " + source + " GROUP BY " + group;
+		String reqSql = "SELECT " + selection + " FROM " + source + " GROUP BY " + group+ " ORDER BY ChantData.Nom";
 
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		Statement statement = connection.createStatement();
@@ -263,10 +263,10 @@ public class MABAssignment {
 	 */
 	public static ResultSet getChantierStats(Month month, Year year) throws SQLException {
 		String selection = "chantData.ChantierId AS 'ChantierId',ChantData.Nom,count(DISTINCT AffectationMAB.Employe) as 'nb_Employe',SUM(AffectationMAB.Nombre_heures) as 'nb_heure' ";
-		String source = "( Select * FROM AffectationMAB WHERE Mois=? AND Annee=?) AS AffectationMAB RIGHT JOIN (Select DISTINCT ChantierId , Nom FROM Chantier) AS chantData ON chantData.ChantierId=AffectationMAB.Chantier";
+		String source = "( Select * FROM AffectationMAB WHERE Mois=? AND Annee=? AND Status='Publié') AS AffectationMAB RIGHT JOIN (Select DISTINCT ChantierId , Nom FROM Chantier WHERE Status='Publié') AS chantData ON chantData.ChantierId=AffectationMAB.Chantier";
 		String group = "chantData.ChantierId,chantData.Nom"; 
 
-		String reqSql = "SELECT " + selection + " FROM " + source + " GROUP BY " + group;
+		String reqSql = "SELECT " + selection + " FROM " + source + " GROUP BY " + group + " ORDER BY ChantData.Nom";
 
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);

@@ -122,7 +122,7 @@ public class Product {
 	 * @throws SQLException
 	 */
 	private static Statement selectAllPublished() throws SQLException {
-		String reqSql = "SELECT * FROM Produit WHERE Status='Publié'";
+		String reqSql = "SELECT * FROM Produit WHERE Status='Publié' ORDER BY Nom";
 
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		Statement statement = connection.createStatement();

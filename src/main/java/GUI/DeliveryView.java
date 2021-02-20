@@ -794,7 +794,7 @@ public class DeliveryView {
 					TableItem item = new TableItem(tableFS, SWT.NONE);
 					item.setText(0, fs.getFSId().toString());
 					item.setText(1, fs.getStartMonth().toString() + '/' + fs.getStartYear().toString());
-					item.setText(2, fs.getAmountByMonth().toString());
+					item.setText(2, String.format("%.2f", fs.getAmountByMonth()));
 					item.setText(3, fs.getSousTraitant());
 					item.setText(4, fs.getDescription());
 				}
@@ -1477,7 +1477,7 @@ public class DeliveryView {
 					item.setText(1, a.getMoisD().toString() + '/' + a.getAnneeD().toString());
 					item.setText(2, a.getMoisF().toString() + '/' + a.getAnneeF().toString());
 					item.setText(3, a.getMontantParMois().toString());
-					item.setText(4, a.getValeur().toString());
+					item.setText(4, String.format("%.2f",a.getValeur()));
 					item.setText(5, a.getType());
 					item.setText(6, a.getDescription());
 				}
@@ -2407,14 +2407,14 @@ public class DeliveryView {
 							TableItem item = new TableItem(tableLivraison, SWT.NONE);
 							item.setText(0, Site.getSiteById(l.getIdChantier()).getName());
 							item.setText(1, l.getDate());
-							item.setText(2, l.getTotalPrice().toString());
+							item.setText(2, String.format("%.2f", l.getTotalPrice()));
 							item.setText(3, Integer.toString(l.getDeliveryId()));
 						}
 					} else {
 						TableItem item = new TableItem(tableLivraison, SWT.NONE);
 						item.setText(0, Site.getSiteById(l.getIdChantier()).getName());
 						item.setText(1, "");
-						item.setText(2, l.getTotalPrice().toString());
+						item.setText(2, String.format("%.2f",l.getTotalPrice()));
 						item.setText(3, Integer.toString(l.getDeliveryId()));
 					}
 				}

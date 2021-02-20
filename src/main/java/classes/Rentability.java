@@ -221,6 +221,7 @@ public class Rentability {
 		ResultSet result = statement.getResultSet();
 		return result;
 	}
+	
 
 	/**
 	 * return the list of rentability for a given month and year
@@ -271,6 +272,61 @@ public class Rentability {
 			percent = (turnOver * 100) / grossMargin;
 
 			rentabilityList.add(new Rentability(site, name, month, year, turnOver, employeeCost, delivery, material,
+					FSCost, comission, costPrice, grossMargin, percent));
+		}
+		System.out.println(rentabilityList.size());
+		return rentabilityList;
+	}
+	
+	
+	public static ResultSet getTotalRentabilityDB(Month month, Year year) throws SQLException {
+		String reqSql = "Select  Sum(CA) as CA, Sum(salaryCost) as salaryCost, Sum(LivraisonCost) as LivraisonCost, "
+				+ "Sum(Amortissement) as Amortissement, Sum(comissionValue) as comissionValue, Sum(FSCost) as FSCost, "
+				+ "Sum(revient) as revient, Sum(MargeBrut) as MargeBrut from rentabilite_view  where  (mois =? and annee=?);";
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
+		PreparedStatement statement = connection.prepareStatement(reqSql);
+
+		statement.setObject(1, month.getValue(), Types.INTEGER);
+		statement.setObject(2, year.getValue(), Types.INTEGER);
+		statement.execute();
+		ResultSet result = statement.getResultSet();
+		return result;
+	}
+
+	public static List<Rentability> getTotalRentabilityByDate(Month month, Year year) throws SQLException {
+		List<Rentability> rentabilityList = new ArrayList<Rentability>();
+		ResultSet result = getTotalRentabilityDB(month, year);
+
+		while (result.next()) {
+			double turnOver = 0;
+			double employeeCost = 0;
+			double delivery = 0;
+			double material = 0;
+			double comission = 0;
+			double costPrice = 0;
+			double grossMargin = 0;
+			double FSCost = 0;
+			double percent = 0;
+
+			if (!Objects.isNull(result.getDouble("CA")))
+				turnOver = result.getDouble("CA");
+			if (!Objects.isNull(result.getDouble("salaryCost")))
+				employeeCost = result.getDouble("salaryCost");
+			if (!Objects.isNull(result.getDouble("LivraisonCost")))
+				delivery = result.getDouble("LivraisonCost");
+			if (!Objects.isNull(result.getDouble("Amortissement")))
+				material = result.getDouble("Amortissement");
+			if (!Objects.isNull(result.getDouble("comissionValue")))
+				comission = result.getDouble("comissionValue");
+			if (!Objects.isNull(result.getDouble("FSCost")))
+				FSCost = result.getDouble("FSCost");
+			if (!Objects.isNull(result.getDouble("revient")))
+				costPrice = result.getDouble("revient");
+			if (!Objects.isNull(result.getDouble("MargeBrut")))
+				grossMargin = result.getDouble("MargeBrut");
+			percent = (turnOver * 100) / grossMargin;
+
+			rentabilityList.add(new Rentability(-1, "", month, year, turnOver, employeeCost, delivery, material,
 					FSCost, comission, costPrice, grossMargin, percent));
 		}
 		System.out.println(rentabilityList.size());

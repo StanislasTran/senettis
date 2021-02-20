@@ -136,7 +136,7 @@ public class ComissionView {
 
 			item.setText(2, +result.getInt("MoisDebut") + " - " + result.getInt("AnneeDebut"));
 
-			item.setText(3, "" + result.getDouble("Comission"));
+			item.setText(3, String.format("%.2f",result.getDouble("Comission")));
 
 		}
 

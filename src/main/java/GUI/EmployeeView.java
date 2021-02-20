@@ -681,8 +681,8 @@ public class EmployeeView {
 					item.setText(0, a.getEmployeeAmortizationId().toString());
 					item.setText(1, a.getStartMonth().toString() + '/' + a.getStartYear().toString());
 					item.setText(2, a.getEndMonth().toString() + '/' + a.getEndYear().toString());
-					item.setText(3, a.getCostByMonth().toString());
-					item.setText(4, a.getValue().toString());
+					item.setText(3, String.format("%.2f",a.getCostByMonth()));
+					item.setText(4, String.format("%.2f",a.getValue()));
 					item.setText(5, a.getType());
 					item.setText(6, a.getDescription());
 				}
@@ -1280,15 +1280,15 @@ public class EmployeeView {
 						EmployeeCost ce = EmployeeCost.getCoutEmployeByEmployeId(e.getEmployeId(), monthInt.getValue(),
 								Integer.parseInt(year));
 						if (ce.getStatus().equals("Publié")) {
-							item.setText(5, ce.getSalaireNet().toString());
-							item.setText(6, ce.getSalaireBrut().toString());
-							item.setText(7, ce.getNombreHeures().toString());
-							item.setText(8, ce.getChargesP().toString());
-							item.setText(9, ce.getMasseS().toString());
-							item.setText(10, ce.getRemboursementTransport().toString());
-							item.setText(11, ce.getRemboursementTelephone().toString());
-							item.setText(12, ce.getMutuelle().toString());
-							item.setText(13, ce.getPaniers().toString());
+							item.setText(5, String.format("%.2f",ce.getSalaireNet()));
+							item.setText(6, String.format("%.2f",ce.getSalaireBrut()));
+							item.setText(7, String.format("%.2f",ce.getNombreHeures()));
+							item.setText(8, String.format("%.2f",ce.getChargesP()));
+							item.setText(9, String.format("%.2f",ce.getMasseS()));
+							item.setText(10, String.format("%.2f",ce.getRemboursementTransport()));
+							item.setText(11, String.format("%.2f",ce.getRemboursementTelephone()));
+							item.setText(12, String.format("%.2f",ce.getMutuelle()));
+							item.setText(13, String.format("%.2f",ce.getPaniers()));
 
 							Double pret = 0.0;
 							Double saisie = 0.0;

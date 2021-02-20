@@ -218,8 +218,8 @@ public class EmployeeAmortization {
 	 * @throws SQLException
 	 */
 	private static Statement selectAllAmmortissementEmploye() throws SQLException {
-		String reqSql = "SELECT * FROM AmmortissementEmploye";
-
+		//String reqSql = "SELECT AmmortissementEmploye.Status, AmmortissementEmployeId, moisDepart, anneeDepart, moisFin, anneeFin, Employe, duree, valeur, valeurParMois, type, description FROM AmmortissementEmploye  LEFT JOIN Employe ON Employe.EmployeId=AmmortissementEmploye.Employe ORDER BY Employe.Nom;";
+		String reqSql = "SELECT * FROM AmmortissementEmploye;";
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		Statement statement = connection.createStatement();
 		statement.executeQuery(reqSql);
