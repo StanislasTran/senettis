@@ -275,4 +275,13 @@ public class Comission {
 
 	}
 
+	
+	
+	public void setStatus(Status status) {
+		if (status == null) {
+			throw new Error("setStatus : le status indique est vide");
+		}
+		this.status = status;
+	}
+
 }

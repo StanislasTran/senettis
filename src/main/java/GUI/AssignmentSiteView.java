@@ -32,6 +32,7 @@ import org.eclipse.swt.widgets.Text;
 
 import classes.SiteAssignment;
 import classes.Employee;
+import classes.MABAssignment;
 import classes.Site;
 import classes.Status;
 
@@ -49,6 +50,8 @@ public class AssignmentSiteView {
 	private Composite buttons;
 	private Button removeButton;
 	private Composite header;
+	private Table leftEmpTable;
+	private Table leftChantTable;
 
 	/**
 	 * Constructor
@@ -131,23 +134,23 @@ public class AssignmentSiteView {
 	 */
 	private void createTableEmployeStats(TabItem tabEmploye) throws SQLException {
 
-		final Table table = new Table(tabEmploye.getParent(),
+		leftEmpTable = new Table(tabEmploye.getParent(),
 				SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.FULL_SELECTION);
-		table.setLayoutData(new RowData(900, 800));
+		leftEmpTable.setLayoutData(new RowData(900, 800));
 
-		table.setLinesVisible(true);
-		table.setHeaderVisible(true);
+		leftEmpTable.setLinesVisible(true);
+		leftEmpTable.setHeaderVisible(true);
 		String[] titles = { "EmployeId", "Nom", "Prenom", "Nombre de chantier différents", "Nombre d'heures total" };
 
 		for (String title : titles) {
-			TableColumn column = new TableColumn(table, SWT.NONE);
+			TableColumn column = new TableColumn(leftEmpTable, SWT.NONE);
 			column.setText(title);
 		}
 
 		ResultSet result = SiteAssignment.getEmployeStats();
-		final TableColumn[] columns = table.getColumns();
+		final TableColumn[] columns = leftEmpTable.getColumns();
 		while (result.next()) {
-			TableItem item = new TableItem(table, SWT.NONE);
+			TableItem item = new TableItem(leftEmpTable, SWT.NONE);
 			item.setText(0, Integer.toString(result.getInt("EmployeId")));
 			item.setText(1, result.getString("Nom"));
 			item.setText(2, result.getString("Prenom"));
@@ -164,18 +167,21 @@ public class AssignmentSiteView {
 
 		}
 
-		table.addSelectionListener(new SelectionAdapter() {
+		leftEmpTable.addSelectionListener(new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 
-				if (table.getSelectionIndex() != -1) {
+				if (leftEmpTable.getSelectionIndex() != -1) {
 
-					int employeId = Integer.parseInt(table.getSelection()[0].getText());
+					int employeId = Integer.parseInt(leftEmpTable.getSelection()[0].getText());
 
 					try {
 						if (!Objects.isNull(modifyButton) && !modifyButton.isDisposed()) {
 							modifyButton.dispose();
+						}
+						if (!Objects.isNull(removeButton) && !removeButton.isDisposed()) {
+							removeButton.dispose();
 						}
 						addAjouterForEmployee(employeId);
 						EmployeAffectationDisplay(employeId);
@@ -187,7 +193,7 @@ public class AssignmentSiteView {
 						msgBox.open();
 					}
 				} else {
-				
+					cleanButtons();
 				}
 
 			}
@@ -197,8 +203,36 @@ public class AssignmentSiteView {
 		for (TableColumn col : columns)
 			col.pack();
 
-		tabEmploye.setControl(table);
-		table.pack();
+		tabEmploye.setControl(leftEmpTable);
+		leftEmpTable.pack();
+	}
+	
+	private void updateLeftEmpTable() throws SQLException {
+		
+		if (!Objects.isNull(leftEmpTable)) {
+			leftEmpTable.removeAll();
+		}
+		
+		ResultSet result = SiteAssignment.getEmployeStats();
+		final TableColumn[] columns = leftEmpTable.getColumns();
+		while (result.next()) {
+			TableItem item = new TableItem(leftEmpTable, SWT.NONE);
+			item.setText(0, Integer.toString(result.getInt("EmployeId")));
+			item.setText(1, result.getString("Nom"));
+			item.setText(2, result.getString("Prenom"));
+
+			if (Objects.isNull(result.getString("nb_chantier")))
+				item.setText(3, result.getString("nb_heure"));
+			else
+				item.setText(3, result.getString("nb_chantier"));
+
+			if (Objects.isNull(result.getString("nb_heure")))
+				item.setText(4, "0");
+			else
+				item.setText(4, result.getString("nb_heure"));
+
+		}
+
 	}
 
 	/**
@@ -212,24 +246,24 @@ public class AssignmentSiteView {
 	 */
 	private void createTableChantierStats(TabItem tabChantier) throws SQLException {
 
-		final Table table = new Table(tabChantier.getParent(),
+		leftChantTable = new Table(tabChantier.getParent(),
 				SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.FULL_SELECTION);
-		table.setLayoutData(new RowData(900, 800));
+		leftChantTable.setLayoutData(new RowData(900, 800));
 
-		table.setLinesVisible(true);
-		table.setHeaderVisible(true);
+		leftChantTable.setLinesVisible(true);
+		leftChantTable.setHeaderVisible(true);
 
 		String[] titles = { "ChantierId", "Nom", "Nombre d'employés différents", "Nombre d'heures total" };
 
 		for (String title : titles) {
-			TableColumn column = new TableColumn(table, SWT.NONE);
+			TableColumn column = new TableColumn(leftChantTable, SWT.NONE);
 			column.setText(title);
 		}
 
 		ResultSet result = SiteAssignment.getChantierStats();
-		final TableColumn[] columns = table.getColumns();
+		final TableColumn[] columns = leftChantTable.getColumns();
 		while (result.next()) {
-			TableItem item = new TableItem(table, SWT.NONE);
+			TableItem item = new TableItem(leftChantTable, SWT.NONE);
 			item.setText(0, "" + result.getInt("ChantierId"));
 			item.setText(1, result.getString("Nom"));
 
@@ -244,16 +278,21 @@ public class AssignmentSiteView {
 		for (TableColumn col : columns)
 			col.pack();
 
-		tabChantier.setControl(table);
+		tabChantier.setControl(leftChantTable);
 
-		table.addSelectionListener(new SelectionAdapter() {
+		leftChantTable.addSelectionListener(new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 
-				if (table.getSelectionIndex() != -1) {
-
-					int siteId = Integer.parseInt(table.getSelection()[0].getText());
+				if (leftChantTable.getSelectionIndex() != -1) {
+					if (!Objects.isNull(modifyButton) && !modifyButton.isDisposed()) {
+						modifyButton.dispose();
+					}
+					if (!Objects.isNull(removeButton) && !removeButton.isDisposed()) {
+						removeButton.dispose();
+					}
+					int siteId = Integer.parseInt(leftChantTable.getSelection()[0].getText());
 
 					addButtonAjouterForSite(siteId);
 
@@ -267,13 +306,35 @@ public class AssignmentSiteView {
 
 					}
 				} else {
-					
+					cleanButtons();
 				}
 
 			}
 
 		});
-		table.pack();
+		leftChantTable.pack();
+
+	}
+	
+	private void updateLeftTableChant() throws SQLException {
+		if (!Objects.isNull(leftChantTable)) {
+			leftChantTable.removeAll();
+		}
+		
+		ResultSet result = SiteAssignment.getChantierStats();
+		final TableColumn[] columns = leftChantTable.getColumns();
+		while (result.next()) {
+			TableItem item = new TableItem(leftChantTable, SWT.NONE);
+			item.setText(0, "" + result.getInt("ChantierId"));
+			item.setText(1, result.getString("Nom"));
+
+			item.setText(2, result.getString("nb_Employe"));
+			if (Objects.isNull(result.getString("nb_heure")))
+				item.setText(3, "0");
+			else
+				item.setText(3, result.getString("nb_heure"));
+
+		}
 
 	}
 
@@ -333,10 +394,23 @@ public class AssignmentSiteView {
 		table.addSelectionListener(new SelectionAdapter() {
 
 			public void widgetSelected(SelectionEvent e) {
+				if (table.getSelectionIndex() != -1) {
+					addAjouterForEmployee(employeId);
+					AddModifButtonEmployee(affectationsId.get(table.getSelectionIndex()));
+					addRemoveForEmployee(affectationsId.get(table.getSelectionIndex()), employeId);
+				}
+				else {
+					if (!Objects.isNull(modifyButton) && !modifyButton.isDisposed()) {
+						modifyButton.dispose();
+						buttons.layout(true, true);
 
-				AddModifButtonEmployee(affectationsId.get(table.getSelectionIndex()));
-				addRemoveForEmployee(affectationsId.get(table.getSelectionIndex()), employeId);
-
+					}
+					
+					if (!Objects.isNull(removeButton) && !removeButton.isDisposed()) {
+						removeButton.dispose();
+						buttons.layout(true, true);
+					}
+				}
 			}
 
 			public void widgetDefaultSelected(SelectionEvent e) {
@@ -399,9 +473,23 @@ public class AssignmentSiteView {
 		table.addSelectionListener(new SelectionAdapter() {
 
 			public void widgetSelected(SelectionEvent e) {
+				if (table.getSelectionIndex() != -1) {
+					addButtonAjouterForSite(siteId);
+					AddModifButtonSite(affectationsId.get(table.getSelectionIndex()), siteId);
+					addRemoveForSite(affectationsId.get(table.getSelectionIndex()), siteId);
+				}
+				else {
+					if (!Objects.isNull(modifyButton) && !modifyButton.isDisposed()) {
+						modifyButton.dispose();
+						buttons.layout(true, true);
 
-				AddModifButtonSite(affectationsId.get(table.getSelectionIndex()), siteId);
-				addRemoveForSite(affectationsId.get(table.getSelectionIndex()), siteId);
+					}
+					
+					if (!Objects.isNull(removeButton) && !removeButton.isDisposed()) {
+						removeButton.dispose();
+						buttons.layout(true, true);
+					}
+				}
 
 			}
 
@@ -689,8 +777,22 @@ public class AssignmentSiteView {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				try {
-					remove(affectationId);
-					siteAffectationDisplay(siteId);
+					MessageBox dialog = new MessageBox(affectationView.getShell(), SWT.ICON_QUESTION | SWT.YES | SWT.NO);
+					dialog.setText("Suppression Affectation");
+					dialog.setMessage("Voulez vous supprimer cette affectation ?");
+					int buttonID = dialog.open();
+					switch (buttonID) {
+					case SWT.YES:
+						remove(affectationId);
+						siteAffectationDisplay(siteId);
+						updateLeftEmpTable();
+						updateLeftTableChant();
+						if (!Objects.isNull(removeButton) && !removeButton.isDisposed()) {
+							removeButton.dispose();
+							modifyButton.dispose();
+							buttons.layout(true, true);
+						}
+					}
 				} catch (SQLException e1) {
 					MessageBox msgBox = new MessageBox(affectationView.getShell(), SWT.ERROR);
 					msgBox.setMessage("Erreur Base de donnée");
@@ -746,8 +848,22 @@ public class AssignmentSiteView {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				try {
-					remove(affectationId);
-					EmployeAffectationDisplay(employeId);
+					MessageBox dialog = new MessageBox(affectationView.getShell(), SWT.ICON_QUESTION | SWT.YES | SWT.NO);
+					dialog.setText("Suppression Affectation");
+					dialog.setMessage("Voulez vous supprimer cette affectation ?");
+					int buttonID = dialog.open();
+					switch (buttonID) {
+					case SWT.YES:
+						remove(affectationId);
+						EmployeAffectationDisplay(employeId);
+						updateLeftEmpTable();
+						updateLeftTableChant();
+						if (!Objects.isNull(removeButton) && !removeButton.isDisposed()) {
+							removeButton.dispose();
+							modifyButton.dispose();
+							buttons.layout(true, true);
+						}
+					}
 				} catch (SQLException e1) {
 					MessageBox msgBox = new MessageBox(affectationView.getShell(), SWT.ERROR);
 					msgBox.setMessage("Erreur Base de donnée");
@@ -806,39 +922,57 @@ public class AssignmentSiteView {
 		this.mainComposite.dispose();
 		this.selection.dispose();
 		addHeader("Création d'une affectation");
-		Composite ajoutComposite = new Composite(this.affectationView, SWT.NONE);
 
-		ajoutComposite.setLayout(new RowLayout(SWT.VERTICAL));
+		Composite ajoutComposite = new Composite(this.affectationView, SWT.BORDER);
 		ajoutComposite.setBackground(MyColor.bleuClair);
+		ajoutComposite.setLayout(new RowLayout(SWT.VERTICAL));
 		Site site = Site.getSiteById(siteId);
+
+		FillLayout fillLayoutV = new FillLayout();
+		fillLayoutV.type = SWT.HORIZONTAL;
+		fillLayoutV.marginWidth = 10;
+		fillLayoutV.marginHeight = 5;
+		fillLayoutV.spacing = 20;
 
 		// Employe name part
 
-		Label labelTitle = new Label(ajoutComposite, SWT.NONE);
-		labelTitle.setText(site.getName() + " :  " + site.getAdresse());
+		Composite labelSite = new Composite(ajoutComposite, SWT.NONE);
+		labelSite.setBackground(MyColor.bleuClair);
+		labelSite.setLayout(fillLayoutV);
+		Label labelTitle = new Label(labelSite, SWT.NONE);
+		labelTitle.setText("Chantier : " + site.getName() + "  " + site.getAdresse());
 		labelTitle.setBackground(MyColor.bleuClair);
 		// nbHeures part
 
-		Composite nbHeureComposite = new Composite(ajoutComposite, SWT.NONE);
+		Composite nbHeures = new Composite(ajoutComposite, SWT.NONE);
+		nbHeures.setBackground(MyColor.bleuClair);
+		nbHeures.setLayout(fillLayoutV);
 
-		nbHeureComposite.setLayout(new RowLayout(SWT.VERTICAL));
-		nbHeureComposite.setBackground(MyColor.bleuClair);
-		Label nbHeureLabel = new Label(nbHeureComposite, SWT.NONE);
-		nbHeureLabel.setText("Nombre d'heures");
+		Label nbHeureLabel = new Label(nbHeures, SWT.NONE);
+		nbHeureLabel.setText("Nombre d'heures* :               ");
 		nbHeureLabel.setBackground(MyColor.bleuClair);
-		Text nbHeureTexte = new Text(nbHeureComposite, SWT.NONE);
+		Text nbHeureTexte = new Text(nbHeures, SWT.BORDER);
 
-		Table table = EmployeeView.getAllEmployerForAffectation(ajoutComposite);
 
-		table.setLayoutData(new RowData(400, 100));
+		Composite tableComp = new Composite(ajoutComposite, SWT.NONE);
+		tableComp.setBackground(MyColor.bleuClair);
+		tableComp.setLayout(new RowLayout(SWT.HORIZONTAL));
+
+		Label tableLabel = new Label(tableComp, SWT.NONE);
+		tableLabel.setText("  Selectionnez un employé*  :      ");
+		tableLabel.setBackground(MyColor.bleuClair);
+
+		Table table = EmployeeView.getAllEmployerForAffectation(tableComp);
+
+		table.setLayoutData(new RowData(405, 200));
 
 		// Month part
 
 		Composite monthComposite = new Composite(ajoutComposite, SWT.NONE);
 		monthComposite.setBackground(MyColor.bleuClair);
-		monthComposite.setLayout(new RowLayout(SWT.HORIZONTAL));
+		monthComposite.setLayout(fillLayoutV);
 		Label monthLabel = new Label(monthComposite, SWT.NONE);
-		monthLabel.setText("Mois");
+		monthLabel.setText("Mois :                                     ");
 		monthLabel.setBackground(MyColor.bleuClair);
 		Combo comboMonth = new Combo(monthComposite, SWT.NONE);
 
@@ -852,27 +986,31 @@ public class AssignmentSiteView {
 
 		// Year part
 		Composite yearComposite = new Composite(ajoutComposite, SWT.NONE);
-		yearComposite.setLayout(new RowLayout(SWT.HORIZONTAL));
+		yearComposite.setLayout(fillLayoutV);
 		yearComposite.setBackground(MyColor.bleuClair);
 		Label yearLabel = new Label(yearComposite, SWT.NONE);
-		yearLabel.setText("Année");
-
+		yearLabel.setText("Année :                                  ");
 		yearLabel.setBackground(MyColor.bleuClair);
 		Combo comboYear = new Combo(yearComposite, SWT.NONE);
 
 		int currentYear = Year.now().getValue();
-		for (int i = currentYear - 10; i < currentYear + 2; i++)
+		for (int i = currentYear - 2; i < currentYear + 3; i++)
 			comboYear.add("" + i);
-		comboYear.select(10);
+		comboYear.select(2);
+
+		FillLayout fillLayout2 = new FillLayout();
+		fillLayout2.type = SWT.HORIZONTAL;
+		fillLayout2.marginWidth = 175;
+		fillLayout2.marginHeight = 5;
+		fillLayout2.spacing = 50;
 
 		Composite buttonComposite = new Composite(ajoutComposite, SWT.NONE);
-		buttonComposite.setLayout(new RowLayout(SWT.HORIZONTAL));
+		buttonComposite.setLayout(fillLayout2);
 		buttonComposite.setBackground(MyColor.bleuClair);
-
 		// ValidationButton part
 
 		Button buttonValide = new Button(buttonComposite, SWT.CENTER);
-		buttonValide.setText("Valider");
+		buttonValide.setText("        Valider       ");
 		buttonValide.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -898,7 +1036,7 @@ public class AssignmentSiteView {
 						dialog.setMessage("Une erreur est survenue lors de la création de l'affectation. " + '\n'
 								+ argException.getMessage());
 					if (argException.getClass() == ArrayIndexOutOfBoundsException.class)
-						dialog.setMessage("Veuillez selectionner un employé");
+						dialog.setMessage("Veuillez sélectionner un employé");
 					dialog.open();
 				}
 
@@ -910,8 +1048,7 @@ public class AssignmentSiteView {
 					Year year = Year.of(Integer.parseInt(checkYear));
 					Status status = Status.PUBLISHED;
 					if (table.getSelection().length == 1) {
-						SiteAssignment affectation = new SiteAssignment(siteId, idEmploye, nbHeure, month, year,
-								status);
+						MABAssignment affectation = new MABAssignment(siteId, idEmploye, nbHeure, month, year, status);
 						try {
 							affectation.insertDatabase();
 							ajoutComposite.dispose();
@@ -922,7 +1059,7 @@ public class AssignmentSiteView {
 
 							MessageBox dialog = new MessageBox(affectationView.getShell(), SWT.ICON_WORKING | SWT.OK);
 							dialog.setText("Succes");
-							dialog.setMessage("L'affectation a été crée a bien été enregistrée");
+							dialog.setMessage("L'affectation crée a bien été enregistrée");
 							dialog.open();
 						} catch (SQLException sqlException) {
 							MessageBox dialog = new MessageBox(affectationView.getShell(), SWT.ICON_ERROR | SWT.OK);
@@ -943,7 +1080,7 @@ public class AssignmentSiteView {
 		});
 
 		Button buttonCancel = new Button(buttonComposite, SWT.CENTER);
-		buttonCancel.setText("Retour");
+		buttonCancel.setText("        Retour         ");
 		buttonCancel.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -983,47 +1120,56 @@ public class AssignmentSiteView {
 	public void ajouterAffectationEmploye(int employeeId) throws SQLException {
 		this.mainComposite.dispose();
 		this.selection.dispose();
-
-		addHeader("Creation d'une affectation");
-		Composite ajoutComposite = new Composite(this.affectationView, SWT.NONE);
+		addHeader("Création d'une affectation");
+		Composite ajoutComposite = new Composite(this.affectationView, SWT.BORDER);
 		ajoutComposite.setBackground(MyColor.bleuClair);
 		ajoutComposite.setLayout(new RowLayout(SWT.VERTICAL));
 		Employee employee = Employee.getEmployeById(employeeId);
 
+		FillLayout fillLayoutV = new FillLayout();
+		fillLayoutV.type = SWT.HORIZONTAL;
+		fillLayoutV.marginWidth = 10;
+		fillLayoutV.marginHeight = 5;
+		fillLayoutV.spacing = 20;
+
 		// Employe name part
 
-		Label labelName = new Label(ajoutComposite, SWT.NONE);
-		labelName.setText(employee.getSurname() + "  " + employee.getFirstName());
+		Composite labelEmp = new Composite(ajoutComposite, SWT.NONE);
+		labelEmp.setBackground(MyColor.bleuClair);
+		labelEmp.setLayout(fillLayoutV);
+		Label labelName = new Label(labelEmp, SWT.NONE);
+		labelName.setText("Employé : " + employee.getSurname() + "  " + employee.getFirstName());
 		labelName.setBackground(MyColor.bleuClair);
 
 		// nbHeures part
-
 		Composite nbHeureComposite = new Composite(ajoutComposite, SWT.NONE);
+		nbHeureComposite.setLayout(fillLayoutV);
 
-		nbHeureComposite.setLayout(new RowLayout(SWT.VERTICAL));
-		nbHeureComposite.setBackground(MyColor.bleuClair);
 		Label nbHeureLabel = new Label(nbHeureComposite, SWT.NONE);
-		nbHeureLabel.setText("Nombre d'heures");
 		nbHeureLabel.setBackground(MyColor.bleuClair);
-		Text nbHeureTexte = new Text(nbHeureComposite, SWT.NONE);
+		nbHeureComposite.setBackground(MyColor.bleuClair);
+		nbHeureLabel.setText("Nombre d'heures* :             ");
+		Text nbHeureTexte = new Text(nbHeureComposite, SWT.BORDER);
 
-		Label labelSite = new Label(ajoutComposite, SWT.NONE);
-		labelSite.setText("Selectionnez un chantier");
-		labelSite.setBackground(MyColor.bleuClair);
+		Composite tablecomp = new Composite(ajoutComposite, SWT.NONE);
+		tablecomp.setLayout(new RowLayout(SWT.HORIZONTAL));
+		tablecomp.setBackground(MyColor.bleuClair);
 
-		// Table pert
+		Label selectionner = new Label(tablecomp, SWT.NONE);
+		selectionner.setText("  Selectionnez un chantier :        ");
+		selectionner.setBackground(MyColor.bleuClair);
 
-		Table table = SiteView.getTableAllChantier(ajoutComposite, 400, 400);
+		Table table = SiteView.getTableAllChantier(tablecomp, 400, 400);
 
-		table.setLayoutData(new RowData(400, 100));
+		table.setLayoutData(new RowData(413, 200));
 
 		// Month part
 
 		Composite monthComposite = new Composite(ajoutComposite, SWT.NONE);
-		monthComposite.setBackground(MyColor.bleuClair);
-		monthComposite.setLayout(new RowLayout(SWT.HORIZONTAL));
+		monthComposite.setLayout(fillLayoutV);
 		Label monthLabel = new Label(monthComposite, SWT.NONE);
-		monthLabel.setText("Mois début");
+		monthLabel.setText("Mois :                                    ");
+		monthComposite.setBackground(MyColor.bleuClair);
 		monthLabel.setBackground(MyColor.bleuClair);
 		Combo comboMonth = new Combo(monthComposite, SWT.NONE);
 
@@ -1038,27 +1184,32 @@ public class AssignmentSiteView {
 
 		// Year part
 		Composite yearComposite = new Composite(ajoutComposite, SWT.NONE);
-		yearComposite.setLayout(new RowLayout(SWT.HORIZONTAL));
+		yearComposite.setLayout(fillLayoutV);
 		yearComposite.setBackground(MyColor.bleuClair);
+
 		Label yearLabel = new Label(yearComposite, SWT.NONE);
-		yearLabel.setText("Année début");
+		yearLabel.setText("Année :                                 ");
 		yearLabel.setBackground(MyColor.bleuClair);
 		Combo comboYear = new Combo(yearComposite, SWT.NONE);
 
 		int currentYear = Year.now().getValue();
-		for (int i = currentYear - 10; i < currentYear + 2; i++)
+		for (int i = currentYear - 2; i < currentYear + 3; i++)
 			comboYear.add("" + i);
-		comboYear.select(10);
+		comboYear.select(2);
+
+		FillLayout fillLayout2 = new FillLayout();
+		fillLayout2.type = SWT.HORIZONTAL;
+		fillLayout2.marginWidth = 175;
+		fillLayout2.marginHeight = 5;
+		fillLayout2.spacing = 50;
 
 		Composite buttonComposite = new Composite(ajoutComposite, SWT.NONE);
-
-		buttonComposite.setLayout(new RowLayout(SWT.HORIZONTAL));
-
 		buttonComposite.setBackground(MyColor.bleuClair);
+		buttonComposite.setLayout(fillLayout2);
 		// ValidationButton part
 
 		Button buttonValide = new Button(buttonComposite, SWT.CENTER);
-		buttonValide.setText("Valider");
+		buttonValide.setText("       Valider       ");
 		buttonValide.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -1076,12 +1227,13 @@ public class AssignmentSiteView {
 					checkNbHours = nbHeureTexte.getText().trim().replace(",", ".");
 					checkMonth = comboMonth.getSelectionIndex() + 1;
 					checkYear = comboYear.getText();
+
 					isChecked = checkAffectation(checkSiteId, "" + employeeId, checkNbHours, checkMonth, checkYear);
 				} catch (IllegalArgumentException | ArrayIndexOutOfBoundsException | SQLException argException) {
 					MessageBox dialog = new MessageBox(affectationView.getShell(), SWT.ICON_ERROR | SWT.OK);
 					dialog.setText("Erreur Création :");
 					if (argException.getClass() == IllegalArgumentException.class)
-						dialog.setMessage("Une erreur est survenue lors de la création de l'affectation. " + '\n'
+						dialog.setMessage("Une erreur est survenue lors de la création de l'afféctation. " + '\n'
 								+ argException.getMessage());
 					if (argException.getClass() == ArrayIndexOutOfBoundsException.class)
 						dialog.setMessage("Veuillez sélectionner un chantier");
@@ -1092,12 +1244,11 @@ public class AssignmentSiteView {
 
 					Integer siteId = Integer.parseInt(checkSiteId);
 					Double nbHeure = Double.parseDouble(checkNbHours);
-					Month startMonth = Month.of(checkMonth);
-					Year startYear = Year.of(Integer.parseInt(checkYear));
+					Month month = Month.of(checkMonth);
+					Year year = Year.of(Integer.parseInt(checkYear));
 					Status status = Status.PUBLISHED;
 					if (table.getSelection().length == 1) {
-						SiteAssignment affectation = new SiteAssignment(siteId, employeeId, nbHeure, startMonth,
-								startYear, status);
+						MABAssignment affectation = new MABAssignment(siteId, employeeId, nbHeure, month, year, status);
 						try {
 							affectation.insertDatabase();
 							ajoutComposite.dispose();
@@ -1113,8 +1264,16 @@ public class AssignmentSiteView {
 						} catch (SQLException sqlException) {
 							MessageBox dialog = new MessageBox(affectationView.getShell(), SWT.ICON_ERROR | SWT.OK);
 							dialog.setText("Erreur Création :");
-							dialog.setMessage("Une erreur est survenue lors de la création de l'affectation. " + '\n'
-									+ sqlException.getMessage());
+
+							if (sqlException.getMessage().contentEquals("PRIMARY")) {
+								dialog.setMessage("Une erreur est survenue lors de la création de l'affectation. "
+										+ '\n' + "Cette affectation existe déjà les doublons ne sont pas autorisés");
+							} else {
+
+								dialog.setMessage("Une erreur est survenue lors de la création de l'affectation. "
+										+ '\n' + sqlException.getMessage());
+							}
+
 							dialog.open();
 						}
 
@@ -1130,7 +1289,7 @@ public class AssignmentSiteView {
 		});
 
 		Button buttonCancel = new Button(buttonComposite, SWT.CENTER);
-		buttonCancel.setText("Retour");
+		buttonCancel.setText("        Retour        ");
 		buttonCancel.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -1181,43 +1340,59 @@ public class AssignmentSiteView {
 	 * @throws SQLException
 	 */
 	private void modifyEmployeeAffectation(int affectationId) throws SQLException {
-		addHeader("Modifier affectation");
-		SiteAssignment affectation = SiteAssignment.getAffectation(affectationId);
+		addHeader("Modification d'une affectation");
+		MABAssignment affectation = MABAssignment.getAffectation(affectationId);
 		this.mainComposite.dispose();
 		this.selection.dispose();
 
 		Composite modifComposite = new Composite(this.affectationView, SWT.NONE);
-
-		modifComposite.setLayout(new RowLayout(SWT.VERTICAL));
 		modifComposite.setBackground(MyColor.bleuClair);
-		Employee employe = Employee.getEmployeById(affectation.getEmployee());
+		modifComposite.setLayout(new RowLayout(SWT.VERTICAL));
+		Employee employe = Employee.getEmployeById(affectation.getIdEmploye());
 
-		Label labelNom = new Label(modifComposite, SWT.NONE);
+		FillLayout fillLayoutV = new FillLayout();
+		fillLayoutV.type = SWT.HORIZONTAL;
+		fillLayoutV.marginWidth = 10;
+		fillLayoutV.marginHeight = 5;
+		fillLayoutV.spacing = 20;
+
+		Composite labelComp1 = new Composite(modifComposite, SWT.NONE);
+		labelComp1.setBackground(MyColor.bleuClair);
+		labelComp1.setLayout(fillLayoutV);
+
+		Label labelNom = new Label(labelComp1, SWT.NONE);
 		labelNom.setText("Employé : " + employe.getSurname() + " " + employe.getFirstName());
 		labelNom.setBackground(MyColor.bleuClair);
 
-		Label labelSite = new Label(modifComposite, SWT.NONE);
-		labelSite.setText("Chantier : " + Site.getSiteById(affectation.getSite()).getName());
+		Composite labelComp2 = new Composite(modifComposite, SWT.NONE);
+		labelComp2.setBackground(MyColor.bleuClair);
+		labelComp2.setLayout(fillLayoutV);
+
+		Label labelSite = new Label(labelComp2, SWT.NONE);
+		labelSite.setText("Chantier : " + Site.getSiteById(affectation.getIdChantier()).getName());
 		labelSite.setBackground(MyColor.bleuClair);
 
 		Composite nbHeureComposite = new Composite(modifComposite, SWT.NONE);
 		nbHeureComposite.setBackground(MyColor.bleuClair);
-		nbHeureComposite.setLayout(new RowLayout(SWT.VERTICAL));
+		nbHeureComposite.setLayout(fillLayoutV);
 		Label nbHeureLabel = new Label(nbHeureComposite, SWT.NONE);
 		nbHeureLabel.setText("Nombre d'heures");
 		nbHeureLabel.setBackground(MyColor.bleuClair);
+		Text nbHeureTexte = new Text(nbHeureComposite, SWT.BORDER);
+		nbHeureTexte.setText(affectation.getNombreHeures() + "");
 
-		Text nbHeureTexte = new Text(nbHeureComposite, SWT.NONE);
-		nbHeureTexte.setText(affectation.getNbHours() + "");
-
-		nbHeureTexte.pack();
+		FillLayout fillLayout2 = new FillLayout();
+		fillLayout2.type = SWT.HORIZONTAL;
+		fillLayout2.marginWidth = 175;
+		fillLayout2.marginHeight = 5;
+		fillLayout2.spacing = 50;
 
 		Composite buttonComposite = new Composite(modifComposite, SWT.NONE);
 		buttonComposite.setBackground(MyColor.bleuClair);
-		buttonComposite.setLayout(new RowLayout(SWT.HORIZONTAL));
+		buttonComposite.setLayout(fillLayout2);
 
 		Button buttonValide = new Button(buttonComposite, SWT.CENTER);
-		buttonValide.setText("Valider");
+		buttonValide.setText("        Valider        ");
 
 		buttonValide.addSelectionListener(new SelectionAdapter() {
 
@@ -1231,15 +1406,17 @@ public class AssignmentSiteView {
 
 				try {
 
-					checkSiteId = "" + affectation.getSite();
+					checkSiteId = "" + affectation.getIdChantier();
+
 					checkNbHours = nbHeureTexte.getText().trim().replace(",", ".");
-					isChecked = checkAffectation(checkSiteId, "" + affectation.getEmployee(), checkNbHours,
-							affectation.getStartMonth().getValue(), "" + affectation.getStartYear().getValue());
+
+					isChecked = checkAffectation(checkSiteId, "" + affectation.getIdEmploye(), checkNbHours,
+							affectation.getMonth().getValue(), "" + affectation.getYear().getValue());
 				} catch (IllegalArgumentException | ArrayIndexOutOfBoundsException argException) {
 					MessageBox dialog = new MessageBox(affectationView.getShell(), SWT.ICON_ERROR | SWT.OK);
 					dialog.setText("Erreur Création :");
 					if (argException.getClass() == IllegalArgumentException.class)
-						dialog.setMessage("Une erreur est survenue lors de la création de l'affectation. " + '\n'
+						dialog.setMessage("Une erreur est survenue lors de la mise à jour de l'affectation. " + '\n'
 								+ argException.getMessage());
 					if (argException.getClass() == ArrayIndexOutOfBoundsException.class)
 						dialog.setMessage("Veuillez sélectionner un chantier");
@@ -1248,10 +1425,11 @@ public class AssignmentSiteView {
 
 				if (isChecked) {
 
-					affectation.setSite(Integer.parseInt(checkSiteId));
+					affectation.setIdChantier(Integer.parseInt(checkSiteId));
 					affectation.setNombreHeures(Double.parseDouble(checkNbHours));
 
 					try {
+
 						affectation.update();
 
 						modifComposite.dispose();
@@ -1266,7 +1444,7 @@ public class AssignmentSiteView {
 					} catch (SQLException sqlException) {
 						MessageBox dialog = new MessageBox(affectationView.getShell(), SWT.ICON_ERROR | SWT.OK);
 						dialog.setText("Erreur Création :");
-						dialog.setMessage("Une erreur est survenue lors de la création de l'affectation. " + '\n'
+						dialog.setMessage("Une erreur est survenue lors de mise à jour de l'affectation. " + '\n'
 								+ sqlException.getMessage());
 						dialog.open();
 					}
@@ -1278,7 +1456,7 @@ public class AssignmentSiteView {
 		});
 
 		Button buttonCancel = new Button(buttonComposite, SWT.CENTER);
-		buttonCancel.setText("Retour");
+		buttonCancel.setText("        Retour        ");
 
 		buttonCancel.addSelectionListener(new SelectionAdapter() {
 
@@ -1293,6 +1471,7 @@ public class AssignmentSiteView {
 					msgBox.setMessage("Erreur Base de donnée");
 					msgBox.setText("erreur de liée à la base de données : \n" + e1.getMessage());
 					msgBox.open();
+
 				}
 
 			}
@@ -1319,41 +1498,61 @@ public class AssignmentSiteView {
 	 * @throws SQLException
 	 */
 	private void modifySiteAffectation(int affectationId) throws SQLException {
-		addHeader("Modifier affectation");
-		SiteAssignment affectation = SiteAssignment.getAffectation(affectationId);
+		addHeader("Modification d'une affectation");
+		MABAssignment affectation = MABAssignment.getAffectation(affectationId);
 		this.mainComposite.dispose();
 		this.selection.dispose();
 
 		Composite modifComposite = new Composite(this.affectationView, SWT.NONE);
 		modifComposite.setBackground(MyColor.bleuClair);
 		modifComposite.setLayout(new RowLayout(SWT.VERTICAL));
-		Site site = Site.getSiteById(affectation.getEmployee());
+		Site site = Site.getSiteById(affectation.getIdChantier());
 
-		Label labelNom = new Label(modifComposite, SWT.NONE);
+		FillLayout fillLayoutV = new FillLayout();
+		fillLayoutV.type = SWT.HORIZONTAL;
+		fillLayoutV.marginWidth = 10;
+		fillLayoutV.marginHeight = 5;
+		fillLayoutV.spacing = 20;
+
+		Composite labelComp1 = new Composite(modifComposite, SWT.NONE);
+		labelComp1.setBackground(MyColor.bleuClair);
+		labelComp1.setLayout(fillLayoutV);
+
+		Label labelNom = new Label(labelComp1, SWT.NONE);
 		labelNom.setText("Chantier : " + site.getName() + " : " + site.getAdresse());
 		labelNom.setBackground(MyColor.bleuClair);
 
-		Label labelSite = new Label(modifComposite, SWT.NONE);
-		labelSite.setText("Employé : " + Employee.getEmployeById(affectation.getEmployee()).getSurname());
-		labelSite.setBackground(MyColor.bleuClair);
+		Composite labelComp2 = new Composite(modifComposite, SWT.NONE);
+		labelComp2.setBackground(MyColor.bleuClair);
+		labelComp2.setLayout(fillLayoutV);
+
+		Label labelEmploye = new Label(labelComp2, SWT.NONE);
+		labelEmploye.setText("Employé : " + Employee.getEmployeById(affectation.getIdEmploye()).getSurname()+ " "+ Employee.getEmployeById(affectation.getIdEmploye()).getFirstName());
+		labelEmploye.setBackground(MyColor.bleuClair);
 
 		Composite nbHeureComposite = new Composite(modifComposite, SWT.NONE);
-		nbHeureComposite.setBackground(MyColor.bleuClair);
-		nbHeureComposite.setLayout(new RowLayout(SWT.VERTICAL));
+
+		nbHeureComposite.setLayout(fillLayoutV);
 		Label nbHeureLabel = new Label(nbHeureComposite, SWT.NONE);
 		nbHeureLabel.setText("Nombre d'heures");
+		nbHeureComposite.setBackground(MyColor.bleuClair);
 		nbHeureLabel.setBackground(MyColor.bleuClair);
-		Text nbHeureTexte = new Text(nbHeureComposite, SWT.NONE);
-		nbHeureTexte.setText(affectation.getNbHours() + "");
+		Text nbHeureTexte = new Text(nbHeureComposite, SWT.BORDER);
+		nbHeureTexte.setText(affectation.getNombreHeures() + "");
 
 		nbHeureTexte.pack();
 
-		Composite buttonComposite = new Composite(modifComposite, SWT.NONE);
-		buttonComposite.setLayout(new RowLayout(SWT.HORIZONTAL));
-		buttonComposite.setBackground(MyColor.bleuClair);
+		FillLayout fillLayout2 = new FillLayout();
+		fillLayout2.type = SWT.HORIZONTAL;
+		fillLayout2.marginWidth = 175;
+		fillLayout2.marginHeight = 5;
+		fillLayout2.spacing = 50;
 
+		Composite buttonComposite = new Composite(modifComposite, SWT.NONE);
+		buttonComposite.setLayout(fillLayout2);
+		buttonComposite.setBackground(MyColor.bleuClair);
 		Button buttonValide = new Button(buttonComposite, SWT.CENTER);
-		buttonValide.setText("Valider");
+		buttonValide.setText("        Valider        ");
 		buttonValide.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -1366,15 +1565,15 @@ public class AssignmentSiteView {
 
 				try {
 
-					checkEmployeId = "" + affectation.getEmployee();
-					checkNbHours = nbHeureTexte.getText();
-					isChecked = checkAffectation(affectation.getSite() + "", checkEmployeId, checkNbHours,
-							affectation.getStartMonth().getValue(), "" + affectation.getStartYear().getValue());
+					checkEmployeId = "" + affectation.getIdChantier();
+					checkNbHours = nbHeureTexte.getText().trim().replace(",", ".");
+					isChecked = checkAffectation(affectation.getIdChantier() + "", checkEmployeId, checkNbHours,
+							affectation.getMonth().getValue(), "" + affectation.getYear().getValue());
 				} catch (IllegalArgumentException | ArrayIndexOutOfBoundsException argException) {
 					MessageBox dialog = new MessageBox(affectationView.getShell(), SWT.ICON_ERROR | SWT.OK);
 					dialog.setText("Erreur Création :");
 					if (argException.getClass() == IllegalArgumentException.class)
-						dialog.setMessage("Une erreur est survenue lors de la création de l'affectation. " + '\n'
+						dialog.setMessage("Une erreur est survenue lors de la création de l'afféctation. " + '\n'
 								+ argException.getMessage());
 					if (argException.getClass() == ArrayIndexOutOfBoundsException.class)
 						dialog.setMessage("Veuillez sélectionner un employé");
@@ -1383,7 +1582,7 @@ public class AssignmentSiteView {
 
 				if (isChecked) {
 
-					affectation.setSite(Integer.parseInt(checkEmployeId));
+					affectation.setIdChantier(Integer.parseInt(checkEmployeId));
 					affectation.setNombreHeures(Double.parseDouble(checkNbHours));
 
 					try {
@@ -1404,6 +1603,7 @@ public class AssignmentSiteView {
 						dialog.setMessage("Une erreur est survenue lors de la création de l'affectation. " + '\n'
 								+ sqlException.getMessage());
 						dialog.open();
+
 					}
 
 				}
@@ -1413,7 +1613,7 @@ public class AssignmentSiteView {
 		});
 
 		Button buttonCancel = new Button(buttonComposite, SWT.CENTER);
-		buttonCancel.setText("Retour");
+		buttonCancel.setText("         Retour         ");
 		buttonCancel.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -1426,7 +1626,6 @@ public class AssignmentSiteView {
 					msgBox.setMessage("Erreur Base de donnée");
 					msgBox.setText("erreur de liée à la base de données : \n" + e1.getMessage());
 					msgBox.open();
-					
 				}
 
 			}
@@ -1436,8 +1635,9 @@ public class AssignmentSiteView {
 		buttonValide.pack();
 		labelNom.pack();
 		nbHeureComposite.pack();
+
 		modifComposite.pack();
-		buttonComposite.pack();
+
 		this.affectationView.pack();
 		this.affectationView.getParent().pack();
 
@@ -1470,8 +1670,10 @@ public class AssignmentSiteView {
 
 		if (!Objects.isNull(modifyButton) && !modifyButton.isDisposed()) {
 			modifyButton.dispose();
-			buttons.layout(true, true);
-
+		}
+		
+		if (!Objects.isNull(removeButton) && !removeButton.isDisposed()) {
+			removeButton.dispose();
 		}
 
 		this.buttons.pack();

@@ -1615,7 +1615,7 @@ public class DeliveryView {
 		espace.setBackground(MyColor.bleuClair);
 		
 		Button boutonCreer = new Button(selection2, SWT.CENTER);
-		boutonCreer.setText("créer");
+		boutonCreer.setText("Créer");
 		boutonCreer.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {

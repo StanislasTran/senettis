@@ -197,6 +197,47 @@ public class TurnOver {
 
 		return allCA;
 	}
+	
+	
+	public static ResultSet getTotalCAForAllSite(Month month, Year year) throws SQLException {
+		String selection = " sum(CA.Menage) as Menage, sum(CA.Vitrerie) as Vitrerie,"
+				+ "sum(CA.Mise_a_blanc) as Mise_a_blanc, sum(CA.Fournitures_sanitaires) as Fournitures_sanitaires, sum(CA.Autres) as Autres, "
+				+ "sum(CA.CA) as CA";
+		String sources = "Chantier Left join (Select * FROM ChiffreAffaire WHERE Mois=? AND Annee = ?) AS CA ON CA.Chantier=Chantier.ChantierId WHERE Chantier.Status='Publié'";
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
+		String reqSql = "Select " + selection + " FROM " + sources;
+		PreparedStatement statement = connection.prepareStatement(reqSql);
+		statement.setObject(1, month.getValue(), Types.INTEGER);
+		statement.setObject(2, year.getValue(), Types.INTEGER);
+
+		statement.execute();
+
+		return statement.getResultSet();
+
+	}
+	
+	
+	public static List<TurnOver> getTotalListCAForAllSite(Month month, Year year) throws SQLException {
+		ResultSet result = getTotalCAForAllSite(month, year);
+		List<TurnOver> allCA = new ArrayList<TurnOver>();
+
+		while (result.next()) {
+			
+			Double cleaning = result.getDouble("Menage");
+			Double glazing = result.getDouble("Vitrerie");
+			Double FS = result.getDouble("Fournitures_sanitaires");
+			Double misesBlanc = result.getDouble("Mise_a_blanc");
+			Double others = result.getDouble("autres");
+
+			Double turnOver = result.getDouble("CA");
+
+			allCA.add(new TurnOver(-1, month, year, cleaning, glazing, FS, misesBlanc, others, turnOver, Status.PUBLISHED,
+					"Total"));
+
+		}
+
+		return allCA;
+	}
 
 	/**
 	 * Return a TurnOver from a siteId ,month and year

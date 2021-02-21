@@ -1,7 +1,11 @@
 package GUI;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.Month;
+import java.time.Year;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import org.eclipse.swt.*;
@@ -12,8 +16,11 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
 import classes.MABAssignment;
+import classes.Comission;
 import classes.Delivery;
+import classes.FS;
 import classes.Site;
+import classes.SiteAssignment;
 import classes.Status;
 
 /**
@@ -268,6 +275,26 @@ public class SiteView {
 				a.setStatus(Status.ARCHIVED);
 				a.updateDatabase();
 			}
+		}
+		
+		ResultSet result = SiteAssignment.getSiteAffectationPublished(c.getSiteId());
+		List<SiteAssignment> allAffectation = new ArrayList<SiteAssignment>();
+
+		while (result.next()) {
+			Integer affectationId = result.getInt("AffectationId");
+			Integer employeId = result.getInt("Employe");
+			Integer chantierId = result.getInt("Chantier");
+			Double nombreHeures = result.getDouble("Nombre_heures");
+			Month startMonth = Month.of(result.getInt("MoisDebut"));
+			Year startYear = Year.of(result.getInt("AnneeDebut"));
+			Status status = Status.getStatus(result.getString("Status"));
+			allAffectation.add(new SiteAssignment(affectationId, employeId, chantierId, nombreHeures, startMonth,
+					startYear, status));
+
+		}
+		for (SiteAssignment a : allAffectation) {
+			a.setStatus(Status.ARCHIVED);
+			a.updateDatabase();
 		}
 
 		selectedSite = null;

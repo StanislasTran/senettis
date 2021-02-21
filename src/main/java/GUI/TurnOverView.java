@@ -28,6 +28,7 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 
+import classes.Rentability;
 import classes.TurnOver;
 
 /**
@@ -306,6 +307,20 @@ public class TurnOverView {
 
 		}
 
+		//total
+		List<TurnOver> totalList = TurnOver.getTotalListCAForAllSite(month, year);
+		if (!totalList.isEmpty()) {
+			TurnOver turnOver = totalList.get(0);
+			TableItem item = new TableItem(table, SWT.NONE);
+			item.setText(SITENAMECOLUMN, turnOver.getSiteName());
+			item.setText(MENAGECOLUMN, String.format("%.2f",turnOver.getCleaning()));
+			item.setText(VITRERIECOLUMN, String.format("%.2f",turnOver.getGlazing()));
+			item.setText(FOURNITURESCOLUMN, String.format("%.2f",turnOver.getFS()));
+			item.setText(MISESBLANCCOLUMN, String.format("%.2f",turnOver.getMisesBlanc()));
+			item.setText(AUTRESCOLUMN, String.format("%.2f", turnOver.getOthers()));
+			item.setText(CACOLUMN, String.format("%.2f",turnOver.getTurnOver()));
+		}
+		
 		for (TableColumn column : table.getColumns()) {
 			column.pack();
 		}

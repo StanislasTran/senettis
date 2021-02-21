@@ -1,10 +1,13 @@
 package GUI;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.Month;
+import java.time.Year;
 import java.time.YearMonth;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import org.eclipse.swt.*;
@@ -18,6 +21,7 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
 import classes.MABAssignment;
+import classes.SiteAssignment;
 import classes.EmployeeAmortization;
 import classes.EmployeeCost;
 import classes.Employee;
@@ -378,7 +382,7 @@ public class EmployeeView {
 		labelEmploye.setBackground(MyColor.bleuClair);
 		// Titre
 		Combo employes = new Combo(compositeEmploye, SWT.BORDER);
-		
+
 		if (j == 1) {
 			try {
 				if (selectedEmployee.getNameString().length() > 25) {
@@ -390,7 +394,7 @@ public class EmployeeView {
 				}
 			} catch (Exception e1) {
 				e1.printStackTrace();
-				
+
 				MessageBox dialog = new MessageBox(employeeView.getShell(), SWT.ICON_ERROR | SWT.OK);
 				dialog.setText("Erreur");
 				dialog.setMessage("Une erreur est survenue. " + '\n' + e1.getMessage());
@@ -412,7 +416,7 @@ public class EmployeeView {
 			}
 		} catch (SQLException e1) {
 			e1.printStackTrace();
-		
+
 			MessageBox dialog = new MessageBox(employeeView.getShell(), SWT.ICON_ERROR | SWT.OK);
 			dialog.setText("Erreur");
 			dialog.setMessage("Une erreur est survenue. " + '\n' + e1.getMessage());
@@ -531,10 +535,10 @@ public class EmployeeView {
 					Integer employeId = Integer.parseInt(id.substring(3, id.length()));
 
 					String[] debut = periode.getText().split(" ");
-				
+
 
 					int moisD = Month.valueOf(debut[0]).getValue();
-		
+
 					int anneeD = Integer.parseInt(debut[1]);
 
 					int duree = Integer.parseInt(textDuree.getText());
@@ -571,7 +575,7 @@ public class EmployeeView {
 					amortissmentView();
 				} catch (Throwable e) {
 					e.printStackTrace();
-				
+
 					MessageBox dialog = new MessageBox(employeeView.getShell(), SWT.ICON_ERROR | SWT.OK);
 					dialog.setText("Erreur Création");
 					dialog.setMessage(
@@ -618,7 +622,7 @@ public class EmployeeView {
 				}
 			}
 		} catch (SQLException e1) {
-			
+
 			MessageBox dialog = new MessageBox(employeeView.getShell(), SWT.ICON_ERROR | SWT.OK);
 			dialog.setText("Erreur");
 			dialog.setMessage("Une erreur est survenue. " + '\n' + e1.getMessage());
@@ -636,7 +640,7 @@ public class EmployeeView {
 						selectedEmployee = Employee
 								.getEmployeById(Integer.parseInt(tableEmp.getSelection()[0].getText(0)));
 					} catch (NumberFormatException | SQLException e1) {
-						
+
 						MessageBox dialog = new MessageBox(employeeView.getShell(), SWT.ICON_ERROR | SWT.OK);
 						dialog.setText("Erreur");
 						dialog.setMessage("Une erreur est survenue. " + '\n' + e1.getMessage());
@@ -669,12 +673,12 @@ public class EmployeeView {
 		if (selectedEmployee == null) {
 			return;
 		}
-		
+
 		final TableColumn[] columns = tableAmorti.getColumns();
 
 		try {
 			for (EmployeeAmortization a : EmployeeAmortization.getAllAmmortissementEmploye()) {
-				
+
 				if (a.getStatus().equals("Publié") && selectedEmployee.getEmployeId() == a.getEmployeId()) {
 					System.out.println("ii");
 					TableItem item = new TableItem(tableAmorti, SWT.NONE);
@@ -688,7 +692,7 @@ public class EmployeeView {
 				}
 			}
 		} catch (SQLException e1) {
-		
+
 			MessageBox dialog = new MessageBox(employeeView.getShell(), SWT.ICON_ERROR | SWT.OK);
 			dialog.setText("Erreur");
 			dialog.setMessage("Une erreur est survenue. " + '\n' + e1.getMessage());
@@ -706,7 +710,7 @@ public class EmployeeView {
 						selectedAmorti = EmployeeAmortization.getAmortizationById(
 								Integer.parseInt(tableAmorti.getSelection()[0].getText(0)));
 					} catch (NumberFormatException | SQLException e1) {
-						
+
 						MessageBox dialog = new MessageBox(employeeView.getShell(), SWT.ICON_ERROR | SWT.OK);
 						dialog.setText("Erreur");
 						dialog.setMessage("Une erreur est survenue. " + '\n' + e1.getMessage());
@@ -921,7 +925,7 @@ public class EmployeeView {
 						int annee = Integer.parseInt(periode[1]);
 
 						EmployeeCost ce = new EmployeeCost(employeId, mois, annee, "Publié");
-					
+
 
 						if (!tableCost.getItem(ligne).getText(5).isBlank()) {
 							ce.setSalaireNet(Double.parseDouble(tableCost.getItem(ligne).getText(5).replace(",",".")));
@@ -1292,19 +1296,19 @@ public class EmployeeView {
 
 							Double pret = 0.0;
 							Double saisie = 0.0;
-							
-							
+
+
 							for (EmployeeAmortization ae : EmployeeAmortization
 									.getAmortizationEmployee(e.getEmployeId())) {
-							
+
 								if (ae.getStatus().equals("Publié")) {
 
 									YearMonth debut = YearMonth.of(ae.getStartYear(), ae.getStartMonth());
 									YearMonth fin = YearMonth.of(ae.getEndYear(), ae.getEndMonth());
 									YearMonth now = YearMonth.of(Integer.parseInt(year), monthInt.getValue());
-									
+
 									if (debut.equals(now) || (debut.isBefore(now) && fin.isAfter(now))) {
-										
+
 										if (ae.getType().equals("Prêt")) {
 											pret += ae.getCostByMonth();
 										} else {
@@ -1317,7 +1321,7 @@ public class EmployeeView {
 							item.setText(15, saisie.toString());
 						}
 					} catch (Exception e2) {
-						
+
 						item.setText(14, "" + 0);
 						item.setText(15, "" + 0);
 					}
@@ -1325,11 +1329,47 @@ public class EmployeeView {
 
 			}
 
+
+			TableItem item = new TableItem(tableCost, SWT.NONE);
+			item.setText(0, "");
+			item.setText(1, "Total");
+			item.setText(2, "");
+			item.setText(3, "");
+			item.setText(4, Integer.toString(monthInt.getValue()) + '/' + year);
+
+			EmployeeCost ce = EmployeeCost.getTotalCoutEmploye(monthInt.getValue(), Integer.parseInt(year));
+			if (ce.getStatus().equals("Publié")) {
+				item.setText(5, String.format("%.2f",ce.getSalaireNet()));
+				item.setText(6, String.format("%.2f",ce.getSalaireBrut()));
+				item.setText(7, String.format("%.2f",ce.getNombreHeures()));
+				item.setText(8, String.format("%.2f",ce.getChargesP()));
+				item.setText(9, String.format("%.2f",ce.getMasseS()));
+				item.setText(10, String.format("%.2f",ce.getRemboursementTransport()));
+				item.setText(11, String.format("%.2f",ce.getRemboursementTelephone()));
+				item.setText(12, String.format("%.2f",ce.getMutuelle()));
+				item.setText(13, String.format("%.2f",ce.getPaniers()));
+				item.setText(14, String.format("%.2f",ce.getPrets()));
+				item.setText(15, String.format("%.2f",ce.getSaisieArret()));
+
+				/*
+				 * EmployeeAmortization ae1 =
+				 * EmployeeAmortization.getTotalAmortizationEmployeePret(monthInt.getValue(),
+				 * Integer.parseInt(year)); item.setText(14,
+				 * String.format("%.2f",ae1.getCostByMonth()));
+				 * 
+				 * EmployeeAmortization ae2 =
+				 * EmployeeAmortization.getTotalAmortizationEmployeeSaisie(monthInt.getValue(),
+				 * Integer.parseInt(year)); item.setText(15,
+				 * String.format("%.2f",ae2.getCostByMonth()));
+				 */
+
+			}
+
 			tableCost.layout(true, true);
 			view.layout(true, true);
 
 		} catch (SQLException e1) {
-			
+
 			MessageBox dialog = new MessageBox(employeeView.getShell(), SWT.ICON_ERROR | SWT.OK);
 			dialog.setText("Erreur");
 			dialog.setMessage("Une erreur est survenue. " + '\n' + e1.getMessage());
@@ -1431,11 +1471,11 @@ public class EmployeeView {
 				newEditorSN.addModifyListener(new ModifyListener() {
 					public void modifyText(ModifyEvent me) {
 						if (!(newEditorSN.getText().isEmpty())) {// pour ne pas tester quand l'utilisateur est en train
-																	// de modifier
+							// de modifier
 							try {
 								item.setText(5, newEditorSN.getText().replace(",","."));
 							} catch (Exception e) {
-								
+
 								MessageBox dialog = new MessageBox(employeeView.getShell(), SWT.ICON_ERROR | SWT.OK);
 								dialog.setText("Erreur Editor");
 								dialog.setMessage("Saisie invalide." + '\n' + e.getMessage());
@@ -1451,7 +1491,7 @@ public class EmployeeView {
 				newEditorSB.addModifyListener(new ModifyListener() {
 					public void modifyText(ModifyEvent me) {
 						if (!(newEditorSB.getText().isEmpty())) {// pour ne pas tester quand l'utilisateur est en train
-																	// de modifier
+							// de modifier
 							try {
 								item.setText(6, newEditorSB.getText());
 
@@ -1468,7 +1508,7 @@ public class EmployeeView {
 								} else {
 									sb = 0.0;
 								}
-								
+
 								item.setText(9, Double.toString(sb + cp));
 							} catch (Exception e) {
 
@@ -1507,29 +1547,29 @@ public class EmployeeView {
 				newEditorCP.addModifyListener(new ModifyListener() {
 					public void modifyText(ModifyEvent me) {
 						if (!(newEditorCP.getText().isEmpty())) {// pour ne pas tester quand l'utilisateur est en train
-																	// de modifier
+							// de modifier
 							try {
 								item.setText(8, newEditorCP.getText());
-								
+
 								Double sb;
 								if (!item.getText(6).isBlank()) {
 									sb = Double.parseDouble(item.getText(6));
 								} else {
 									sb = 0.0;
 								}
-								
+
 								Double cp;
 								if (!newEditorCP.getText().isBlank()) {
 									cp = Double.parseDouble(newEditorCP.getText().replace(",", "."));
 								} else {
 									cp = 0.0;
 								}
-								
+
 								item.setText(9, Double.toString(sb + cp));
-								
+
 							} catch (Exception e) {
-								
-								
+
+
 								MessageBox dialog = new MessageBox(employeeView.getShell(), SWT.ICON_ERROR | SWT.OK);
 								dialog.setText("Erreur Editor");
 								dialog.setMessage("Saisie invalide." + '\n' + e.getMessage());
@@ -1545,12 +1585,12 @@ public class EmployeeView {
 				newEditorTr.addModifyListener(new ModifyListener() {
 					public void modifyText(ModifyEvent me) {
 						if (!(newEditorTr.getText().isEmpty())) {// pour ne pas tester quand l'utilisateur est en train
-																	// de modifier
+							// de modifier
 							try {
 								item.setText(10, newEditorTr.getText().replace(",","."));
 							} catch (Exception e) {
-								
-							
+
+
 								MessageBox dialog = new MessageBox(employeeView.getShell(), SWT.ICON_ERROR | SWT.OK);
 								dialog.setText("Erreur Editor");
 								dialog.setMessage("Saisie invalide." + '\n' + e.getMessage());
@@ -1566,12 +1606,12 @@ public class EmployeeView {
 				newEditorTe.addModifyListener(new ModifyListener() {
 					public void modifyText(ModifyEvent me) {
 						if (!(newEditorTe.getText().isEmpty())) {// pour ne pas tester quand l'utilisateur est en train
-																	// de modifier
+							// de modifier
 							try {
 								item.setText(11, newEditorTe.getText().replace(",", "."));
 							} catch (Exception e) {
-								
-								
+
+
 								MessageBox dialog = new MessageBox(employeeView.getShell(), SWT.ICON_ERROR | SWT.OK);
 								dialog.setText("Erreur Editor");
 								dialog.setMessage("Saisie invalide." + '\n' + e.getMessage());
@@ -1587,11 +1627,11 @@ public class EmployeeView {
 				newEditorMu.addModifyListener(new ModifyListener() {
 					public void modifyText(ModifyEvent me) {
 						if (!(newEditorMu.getText().isEmpty())) {// pour ne pas tester quand l'utilisateur est en train
-																	// de modifier
+							// de modifier
 							try {
 								item.setText(12, newEditorMu.getText().replace(",","."));
 							} catch (Exception e) {
-								
+
 								MessageBox dialog = new MessageBox(employeeView.getShell(), SWT.ICON_ERROR | SWT.OK);
 								dialog.setText("Erreur Editor");
 								dialog.setMessage("Saisie invalide." + '\n' + e.getMessage());
@@ -1607,11 +1647,11 @@ public class EmployeeView {
 				newEditorPa.addModifyListener(new ModifyListener() {
 					public void modifyText(ModifyEvent me) {
 						if (!(newEditorPa.getText().isEmpty())) {// pour ne pas tester quand l'utilisateur est en train
-																	// de modifier
+							// de modifier
 							try {
 								item.setText(13, newEditorPa.getText());
 							} catch (Exception e) {
-								
+
 								MessageBox dialog = new MessageBox(employeeView.getShell(), SWT.ICON_ERROR | SWT.OK);
 								dialog.setText("Erreur Editor");
 								dialog.setMessage("Saisie invalide." + '\n' + e.getMessage());
@@ -1751,7 +1791,7 @@ public class EmployeeView {
 					} else {
 						throw new Error("Merci d'indiquer un nom et pr�nom ou un matricule.");
 					}
-					
+
 					MessageBox dialog = new MessageBox(employeeView.getShell(), SWT.ICON_INFORMATION | SWT.OK);
 					dialog.setText("Récupération réussie");
 					dialog.setMessage("L'employé a été rajouté à la base de donn�es.");
@@ -1759,7 +1799,7 @@ public class EmployeeView {
 					newVueEmployee();
 				} catch (Throwable e) {
 					e.printStackTrace();
-					
+
 					MessageBox dialog = new MessageBox(employeeView.getShell(), SWT.ICON_ERROR | SWT.OK);
 					dialog.setText("Erreur R�cup�ration");
 					dialog.setMessage("Une erreur est survenue. " + '\n' + e.getMessage());
@@ -2230,7 +2270,7 @@ public class EmployeeView {
 								SWT.ICON_QUESTION | SWT.YES | SWT.NO);
 						dialog.setText("Suppression Employe");
 						dialog.setMessage("Voulez vous supprimer l'employé " + e.getSurname() + " " + e.getFirstName()
-								+ " ?\nToutes les affectations et les couts liés à cet employé seront supprimés.");
+						+ " ?\nToutes les affectations et les couts liés à cet employé seront supprimés.");
 						int buttonID = dialog.open();
 
 						switch (buttonID) {
@@ -2331,7 +2371,7 @@ public class EmployeeView {
 
 		String[] titles = { "Titre  ", "Nom          ", "Prenom       ", "Email                                    ",
 				"Téléphone    ", "Matricule", "Pointure", "Taille", "Date d'ancienneté", "Ancienneté", "Id DB",
-				"Ancienneté prise en compte" };
+		"Ancienneté prise en compte" };
 		for (String title : titles) {
 			TableColumn column = new TableColumn(tableGlobaleEmployee, SWT.NONE);
 			column.setText(title);
@@ -2457,6 +2497,26 @@ public class EmployeeView {
 				a.updateDatabase();
 			}
 		}
+		
+		ResultSet result = SiteAssignment.getEmployeAffectationPublished(e.getEmployeId());
+		List<SiteAssignment> allAffectation = new ArrayList<SiteAssignment>();
+
+		while (result.next()) {
+			Integer affectationId = result.getInt("AffectationId");
+			Integer employeId = result.getInt("Employe");
+			Integer chantierId = result.getInt("Chantier");
+			Double nombreHeures = result.getDouble("Nombre_heures");
+			Month startMonth = Month.of(result.getInt("MoisDebut"));
+			Year startYear = Year.of(result.getInt("AnneeDebut"));
+			Status status = Status.getStatus(result.getString("Status"));
+			allAffectation.add(new SiteAssignment(affectationId, employeId, chantierId, nombreHeures, startMonth,
+					startYear, status));
+
+		}
+		for (SiteAssignment a : allAffectation) {
+			a.setStatus(Status.ARCHIVED);
+			a.updateDatabase();
+		}
 
 		for (EmployeeCost ce : EmployeeCost.getAllCoutEmploye()) {
 			if (ce.getEmployeId() == e.getEmployeId()) {
@@ -2465,7 +2525,12 @@ public class EmployeeView {
 			}
 		}
 
-		
+		for (EmployeeAmortization ce : EmployeeAmortization.getAllAmmortissementEmploye()) {
+			if (ce.getEmployeId() == e.getEmployeId()) {
+				ce.setStatus("Archivé");
+				ce.updateDatabase();
+			}
+		}
 
 		compositeSelectionBoutons();
 		updateTable();
@@ -2474,7 +2539,7 @@ public class EmployeeView {
 		compositeSelectionBoutons();
 	}
 
-	
+
 	/***
 	 *add the menu 
 	 * 
@@ -2503,7 +2568,7 @@ public class EmployeeView {
 			});
 		}
 
-		
+
 		MenuItem delete = new MenuItem(menu, SWT.PUSH);
 		delete.setText("Supprimer l'element");
 		delete.addSelectionListener(new SelectionAdapter() {
@@ -2532,7 +2597,7 @@ public class EmployeeView {
 								SWT.ICON_QUESTION | SWT.YES | SWT.NO);
 						dialog.setText("Suppression Employe");
 						dialog.setMessage("Voulez vous supprimer l'employé " + e.getSurname() + " " + e.getFirstName()
-								+ " ?\nToutes les affectations et les couts liés à cet employé seront supprimés.");
+						+ " ?\nToutes les affectations et les couts liés à cet employé seront supprimés.");
 						int buttonID = dialog.open();
 						switch (buttonID) {
 						case SWT.YES:
@@ -2598,7 +2663,7 @@ public class EmployeeView {
 			column.setText(title);
 		}
 
-		
+
 		final TableColumn[] columns = table.getColumns();
 		try {
 			for (Employee e : Employee.getAllEmploye()) {
@@ -2621,14 +2686,14 @@ public class EmployeeView {
 			dialog.open();
 		}
 
-		
+
 		for (TableColumn col : columns)
 			col.pack();
 
 		return table;
 	}
 
-	
+
 	public Composite getComposite() {
 		return EmployeeView.employeeView;
 
