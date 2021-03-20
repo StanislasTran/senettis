@@ -213,7 +213,7 @@ public class RentabilityView {
 			item.setText(8, String.format("%.2f",grossMargin));
 
 			if (totalEmployeCost != 0.0) {
-				System.out.println("hey ehy");
+				//System.out.println("hey ehy");
 				item.setText(9, df.format(r.getPercent()) + "%");
 			}
 

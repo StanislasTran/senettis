@@ -38,6 +38,7 @@ public class EmployeeCost {
 	private Double loan;
 	private Double sickLeave;
 	private Double nbHours;
+	private Double actPartielle;
 	private String status;
 
 	/**
@@ -59,6 +60,20 @@ public class EmployeeCost {
 	 * @param nombreHeures
 	 * @param status
 	 */
+	
+	public EmployeeCost(Integer coutEmployeId, Integer employeId, Integer month, Integer annee, Double remboursementTransport, Double remboursementTelephone, 
+			Double salaireNet, Double salaireBrut, Double chargesP, Double masseS, Double mutuelle, Double paniers,
+			Double prets, Double saisieArret, Double nombreHeures, Double actPartielle, String status) {
+		this(coutEmployeId, employeId,month, annee,remboursementTransport,remboursementTelephone, salaireNet,salaireBrut,chargesP,masseS,mutuelle,paniers, 
+				prets,saisieArret, nombreHeures, status);
+		if ((Integer) coutEmployeId != null) {
+			this.actPartielle = actPartielle;
+		} else {
+			this.actPartielle = 0.0;
+		}
+		
+	}
+	
 	public EmployeeCost(Integer coutEmployeId, Integer employeId, Integer month, Integer annee, Double remboursementTransport, Double remboursementTelephone, 
 			Double salaireNet, Double salaireBrut, Double chargesP, Double masseS, Double mutuelle, Double paniers,
 			Double prets, Double saisieArret, Double nombreHeures, String status) {
@@ -134,7 +149,7 @@ public class EmployeeCost {
 
 	// Liens avec la BDD-----------------------------------------------
 	public int insertDatabase() throws SQLException {
-		String reqSql = "INSERT INTO CoutEmploye(mois, annee,employe,mutuelle,indemnite_panier,salaire_brut,salaire_net,cout_transport,cout_telephone,charges_patronales,masse_salariale,remboursement_prets,saisie_arret,nb_heures,status) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+		String reqSql = "INSERT INTO CoutEmploye(mois, annee,employe,mutuelle,indemnite_panier,salaire_brut,salaire_net,cout_transport,cout_telephone,charges_patronales,masse_salariale,remboursement_prets,saisie_arret,nb_heures,ActivitePartielle,status) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
@@ -152,7 +167,8 @@ public class EmployeeCost {
 		statement.setObject(12, this.loan, Types.DECIMAL);
 		statement.setObject(13, this.sickLeave, Types.DECIMAL);
 		statement.setObject(14, this.nbHours, Types.DECIMAL);
-		statement.setObject(15, this.status, Types.VARCHAR);
+		statement.setObject(15, this.actPartielle, Types.DECIMAL);
+		statement.setObject(16, this.status, Types.VARCHAR);
 
 		
 		return statement.executeUpdate();
@@ -160,7 +176,7 @@ public class EmployeeCost {
 
 
 	public int updateDatabase() throws SQLException {
-		String reqSql = "UPDATE CoutEmploye SET mois=?, employe=?, mutuelle=?, indemnite_panier=?, salaire_brut=?, salaire_net=?, cout_transport=?, cout_telephone=?, charges_patronales=?, masse_salariale=?, remboursement_prets=?, saisie_arret=?, nb_heures=?, status=?, annee=? WHERE CoutEmployeId=?";
+		String reqSql = "UPDATE CoutEmploye SET mois=?, employe=?, mutuelle=?, indemnite_panier=?, salaire_brut=?, salaire_net=?, cout_transport=?, cout_telephone=?, charges_patronales=?, masse_salariale=?, remboursement_prets=?, saisie_arret=?, nb_heures=?, status=?, annee=?, ActivitePartielle=? WHERE CoutEmployeId=?";
 				
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
@@ -179,7 +195,8 @@ public class EmployeeCost {
 		statement.setObject(13, this.nbHours, Types.DECIMAL);
 		statement.setObject(14, this.status, Types.VARCHAR);
 		statement.setObject(15, this.year, Types.INTEGER);
-		statement.setObject(16, this.employeeCostId, Types.INTEGER);
+		statement.setObject(16, this.actPartielle, Types.DECIMAL);
+		statement.setObject(17, this.employeeCostId, Types.INTEGER);
 		
 	
 		return statement.executeUpdate();
@@ -187,7 +204,7 @@ public class EmployeeCost {
 	
 	
 	public int updateDatabaseFromEmployeId() throws SQLException {
-		String reqSql = "UPDATE CoutEmploye SET mutuelle=?, indemnite_panier=?, salaire_brut=?, salaire_net=?, cout_transport=?, cout_telephone=?, charges_patronales=?, masse_salariale=?, remboursement_prets=?, saisie_arret=?, nb_heures=?, status=? WHERE Employe=? AND mois=? AND annee=?";
+		String reqSql = "UPDATE CoutEmploye SET mutuelle=?, indemnite_panier=?, salaire_brut=?, salaire_net=?, cout_transport=?, cout_telephone=?, charges_patronales=?, masse_salariale=?, remboursement_prets=?, saisie_arret=?, nb_heures=?, status=?, ActivitePartielle=? WHERE Employe=? AND mois=? AND annee=?";
 				
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
@@ -203,9 +220,10 @@ public class EmployeeCost {
 		statement.setObject(10, this.sickLeave, Types.DECIMAL);
 		statement.setObject(11, this.nbHours, Types.DECIMAL);
 		statement.setObject(12, this.status, Types.VARCHAR);
-		statement.setObject(13, this.employeeId, Types.INTEGER);
-		statement.setObject(14, this.month, Types.INTEGER);
-		statement.setObject(15, this.year, Types.INTEGER);
+		statement.setObject(13, this.actPartielle, Types.DECIMAL);
+		statement.setObject(14, this.employeeId, Types.INTEGER);
+		statement.setObject(15, this.month, Types.INTEGER);
+		statement.setObject(16, this.year, Types.INTEGER);
 		
 		return statement.executeUpdate();
 	}
@@ -236,7 +254,7 @@ public class EmployeeCost {
 	}
 
 	public static EmployeeCost getCoutEmployeByEmployeId(int employeId, int month, int annee) throws SQLException {
-		String reqSql = "SELECT CoutEmployeId,employe,mois,annee,mutuelle,indemnite_panier,salaire_brut,salaire_net,cout_transport,cout_telephone,charges_patronales,masse_salariale,remboursement_prets,saisie_arret,nb_heures,status FROM CoutEmploye WHERE Employe=? AND mois=? AND annee=?";
+		String reqSql = "SELECT CoutEmployeId,employe,mois,annee,mutuelle,indemnite_panier,salaire_brut,salaire_net,cout_transport,cout_telephone,charges_patronales,masse_salariale,remboursement_prets,saisie_arret,nb_heures,status,ActivitePartielle FROM CoutEmploye WHERE Employe=? AND mois=? AND annee=?";
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
 		statement.setObject(1, employeId, Types.INTEGER);
@@ -312,8 +330,13 @@ public class EmployeeCost {
 
 			String status = result.getString("status");
 
+			Double actPartielle = 0.0;
+			if (result.getString("ActivitePartielle") != null) {
+				actPartielle = Double.parseDouble(result.getString("ActivitePartielle"));
+			}
+			
 			return new EmployeeCost(coutEmployeId, employeId,month, annee,remboursementTransport,remboursementTelephone, salaireNet,salaireBrut,chargesP,masseS,mutuelle,paniers, 
-					prets,saisieArret,nombreHeures, status);
+					prets,saisieArret,nombreHeures, actPartielle, status);
 
 		} else {
 			throw new SQLException("Data not found");
@@ -323,7 +346,7 @@ public class EmployeeCost {
 	public static EmployeeCost getTotalCoutEmploye(int month, int annee) throws SQLException {
 		String reqSql = "SELECT sum(mutuelle) as mutuelle, sum(indemnite_panier) as indemnite_panier, sum(salaire_brut) as salaire_brut, sum(salaire_net) as salaire_net, sum(cout_transport) as cout_transport,"
 				+ "sum(cout_telephone) as cout_telephone, sum(charges_patronales) as charges_patronales, sum(masse_salariale) as masse_salariale, sum(remboursement_prets) as remboursement_prets,"
-				+ "sum(saisie_arret) as saisie_arret, sum(nb_heures) as nb_heures FROM CoutEmploye WHERE Status='Publié' AND mois=? AND annee=?";
+				+ "sum(saisie_arret) as saisie_arret, sum(nb_heures) as nb_heures, sum(ActivitePartielle) as ActivitePartielle FROM CoutEmploye WHERE Status='Publié' AND mois=? AND annee=?";
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
 		statement.setObject(1, month, Types.INTEGER);
@@ -389,8 +412,13 @@ public class EmployeeCost {
 				nombreHeures = Double.parseDouble(result.getString("nb_heures"));
 			}
 			
+			Double actPartielle = 0.0;
+			if (result.getString("ActivitePartielle") != null) {
+				actPartielle = Double.parseDouble(result.getString("ActivitePartielle"));
+			}
+			
 			return new EmployeeCost(-1, -1,month, annee,remboursementTransport,remboursementTelephone, salaireNet,salaireBrut,chargesP,masseS,mutuelle,paniers, 
-					prets,saisieArret,nombreHeures, "Publié");
+					prets,saisieArret,nombreHeures, actPartielle, "Publié");
 
 		} else {
 			throw new SQLException("Data not found");
@@ -545,11 +573,16 @@ public class EmployeeCost {
 			if (result.getString("nb_heures") != null) {
 				nombreHeures = Double.parseDouble(result.getString("nb_heures"));
 			}
+			
+			Double actPartielle = 0.0;
+			if (result.getString("ActivitePartielle") != null) {
+				nombreHeures = Double.parseDouble(result.getString("ActivitePartielle"));
+			}
 
 			String status = result.getString("status");
 
 			allCoutEmploye.add(new EmployeeCost(coutEmployeId, employeId,month, annee,remboursementTransport,remboursementTelephone, salaireNet,salaireBrut,
-					chargesP,masseS,mutuelle,paniers, prets,saisieArret,nombreHeures, status));
+					chargesP,masseS,mutuelle,paniers, prets,saisieArret,nombreHeures, actPartielle, status));
 
 		}
 
@@ -743,6 +776,18 @@ public class EmployeeCost {
 
 	public void setSaisieArret(Double saisieArret) {
 		this.sickLeave = saisieArret;
+	}
+
+	
+	
+	public Double getActPartielle() {
+		// TODO Auto-generated method stub
+		return actPartielle;
+	}
+
+	public void setActPartielle(double actPartielle) {
+		this.actPartielle = actPartielle;
+		
 	}
 
 

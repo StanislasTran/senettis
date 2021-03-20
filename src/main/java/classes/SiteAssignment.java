@@ -335,7 +335,7 @@ public class SiteAssignment {
 	 * @throws SQLException
 	 */
 	public static ResultSet getSiteAffectationPublished(int site) throws SQLException {
-		String selection = "AffectationId,Nom,Prenom,AffectationChantier.Nombre_heures,AffectationChantier.AffectationId,Numero_matricule";
+		String selection = "AffectationId,Nom,Prenom,AffectationChantier.Nombre_heures,AffectationChantier.AffectationId,Numero_matricule,MoisDebut, AnneeDebut";
 		String source = "(Select * from Employe WHERE Employe.Status='Publié' ) as Employe INNER JOIN (Select * from AffectationChantier WHERE AffectationChantier.Status='Publié') as AffectationChantier ON Employe.EmployeId=AffectationChantier.Employe  ";
 		String condition = "AffectationChantier.Chantier=?";
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
@@ -378,7 +378,7 @@ public class SiteAssignment {
 	 * @throws SQLException
 	 */
 	public static ResultSet getEmployeAffectationPublished(int employeId) throws SQLException {
-		String selection = "ChantierId,nom,adresse,Nombre_heures,AffectationChantier.AffectationId";
+		String selection = "ChantierId,nom,MoisDebut,AnneeDebut,Nombre_heures,AffectationChantier.AffectationId";
 		String source = "chantier INNER JOIN AffectationChantier ON Chantier.ChantierId=AffectationChantier.Chantier ";
 		String condition = "AffectationChantier.Employe=?  AND AffectationChantier.Status='Publié' AND Chantier.Status='Publié'";
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
@@ -661,5 +661,21 @@ public class SiteAssignment {
 
 		return "" + this.assignementId + "|" + this.employee + "|" + this.site + "|" + this.nbHours + "|" + this.status;
 	}
+
+	public int getIdEmploye() {
+		// TODO Auto-generated method stub
+		return employee;
+	}
+
+	public int getIdChantier() {
+		// TODO Auto-generated method stub
+		return site;
+	}
+
+	public Double getNombreHeures() {
+		// TODO Auto-generated method stub
+		return nbHours;
+	}
+
 
 }

@@ -80,7 +80,7 @@ public class TurnOverView {
 				} catch (SQLException e1) {
 					MessageBox msgBox = new MessageBox(turnOverView.getShell(), SWT.ERROR);
 					msgBox.setMessage("Erreur Base de donnée");
-					msgBox.setText("erreur de liée à la base de données : \n" + e1.getMessage());
+					msgBox.setText("erreur liée à la base de données : \n" + e1.getMessage());
 					msgBox.open();
 
 				}
@@ -102,7 +102,7 @@ public class TurnOverView {
 				} catch (SQLException e1) {
 					MessageBox msgBox = new MessageBox(turnOverView.getShell(), SWT.ERROR);
 					msgBox.setMessage("Erreur Base de donnée");
-					msgBox.setText("erreur de liée à la base de données : \n" + e1.getMessage());
+					msgBox.setText("erreur liée à la base de données : \n" + e1.getMessage());
 					msgBox.open();
 				}
 				super.widgetSelected(e);
@@ -139,18 +139,18 @@ public class TurnOverView {
 
 				int i = 0;
 				for (TableItem item : table.getItems()) {
-
 					try {
+						if (i<table.getItemCount()-1) {
+							turnOvers.get(i).setGlazing(checkStringDouble(item.getText(VITRERIECOLUMN)));
+							turnOvers.get(i).setMisesBlanc(checkStringDouble(item.getText(MISESBLANCCOLUMN)));
+							turnOvers.get(i).setCleaning(checkStringDouble(item.getText(MENAGECOLUMN)));
+							turnOvers.get(i).setFS(checkStringDouble(item.getText(FOURNITURESCOLUMN)));
+							turnOvers.get(i).setAutres(checkStringDouble(item.getText(AUTRESCOLUMN)));
+							turnOvers.get(i).setTurnOver(checkStringDouble(item.getText(CACOLUMN)));
 
-						turnOvers.get(i).setGlazing(checkStringDouble(item.getText(VITRERIECOLUMN)));
-						turnOvers.get(i).setMisesBlanc(checkStringDouble(item.getText(MISESBLANCCOLUMN)));
-						turnOvers.get(i).setCleaning(checkStringDouble(item.getText(MENAGECOLUMN)));
-						turnOvers.get(i).setFS(checkStringDouble(item.getText(FOURNITURESCOLUMN)));
-						turnOvers.get(i).setAutres(checkStringDouble(item.getText(AUTRESCOLUMN)));
-						turnOvers.get(i).setTurnOver(checkStringDouble(item.getText(CACOLUMN)));
-
-						System.out.println(turnOvers.get(i).exist());
-						turnOvers.get(i).inserOrUpdateRow();
+							System.out.println(turnOvers.get(i).exist());
+							turnOvers.get(i).inserOrUpdateRow();
+						}
 
 					} catch (Exception e1) {
 						erreurs = true;
@@ -166,7 +166,7 @@ public class TurnOverView {
 				if (!erreurs) { // on affiche le message de succes si on a eu aucune erreur
 					MessageBox dialog = new MessageBox(turnOverView.getShell(), SWT.ICON_WORKING | SWT.OK);
 					dialog.setText("Succès");
-					dialog.setMessage("Données enregistrée avec succès");
+					dialog.setMessage("Données enregistrées avec succès");
 					dialog.open();
 				}
 			}
@@ -189,7 +189,7 @@ public class TurnOverView {
 		}
 		this.lastButton = new Button(this.buttons, SWT.NONE);
 		this.buttons.layout(true, true);
-		this.lastButton.setText("récupérer données précédentes");
+		this.lastButton.setText("Récupérer données précédentes");
 
 		this.lastButton.pack();
 		this.lastButton.addSelectionListener(new SelectionAdapter() {
@@ -231,14 +231,21 @@ public class TurnOverView {
 			this.compositeTable.dispose();
 			turnOverView.layout(true, true);
 		}
-		this.compositeTable = new Composite(turnOverView, SWT.NONE);
+
+		RowLayout rowLayoutV = new RowLayout();
+		rowLayoutV.type = SWT.VERTICAL;
+
+		compositeTable = new Composite(turnOverView, SWT.NONE);
+		compositeTable.setLayout(rowLayoutV);
+		compositeTable.setBackground(MyColor.bleuClair);
+		
 		turnOverView.layout(true, true);
 
 		Month month = Month.of(this.monthFilter.getSelectionIndex() + 1);
 		Year year = Year.of(Integer.parseInt(this.yearFilter.getText()));
 
 		createTableListTurnOver(month, year);
-		compositeTable.pack();
+		
 		turnOverView.pack();
 		turnOverView.getParent().pack();
 
@@ -255,21 +262,22 @@ public class TurnOverView {
 			this.compositeTable.dispose();
 			turnOverView.layout(true, true);
 		}
-		this.compositeTable = new Composite(turnOverView, SWT.NONE);
+		RowLayout rowLayoutV = new RowLayout();
+		rowLayoutV.type = SWT.VERTICAL;
+
+		compositeTable = new Composite(turnOverView, SWT.NONE);
+		compositeTable.setLayout(rowLayoutV);
+		compositeTable.setBackground(MyColor.bleuClair);
+		
 		turnOverView.layout(true, true);
 
 		int month = this.monthFilter.getSelectionIndex() + 1;
 		int year = Integer.parseInt(this.yearFilter.getText());
-		Table table = null;
 		if (month == 1) {
-			table = createTableListTurnOver(Month.of(12), Year.of(year - 1));
+			return createTableListTurnOver(Month.of(12), Year.of(year - 1));
 		} else
 
-			table = createTableListTurnOver(Month.of(month - 1), Year.of(year));
-		compositeTable.pack();
-		turnOverView.pack();
-		turnOverView.getParent().pack();
-		return table;
+			return createTableListTurnOver(Month.of(month - 1), Year.of(year));
 	}
 
 	/**
@@ -284,10 +292,10 @@ public class TurnOverView {
 
 		String[] titles = { "Nom de chantier", "Menage", "Vitrerie", "Fournitures Sainitaires", "Mise à Blanc",
 				"autres", "CA  " };
-		final Table table = new Table(this.compositeTable, SWT.FULL_SELECTION | SWT.HIDE_SELECTION | SWT.MULTI);
+		final Table table = new Table(this.compositeTable, SWT.BORDER | SWT.FULL_SELECTION | SWT.HIDE_SELECTION | SWT.MULTI | SWT.V_SCROLL);
 		table.setLinesVisible(true);
 		table.setHeaderVisible(true);
-		table.setLayoutData(new RowData(900, 800));
+		table.setLayoutData(new RowData(700, 500));
 
 		for (String title : titles) {
 			TableColumn column = new TableColumn(table, SWT.NONE);
@@ -320,7 +328,7 @@ public class TurnOverView {
 			item.setText(AUTRESCOLUMN, String.format("%.2f", turnOver.getOthers()));
 			item.setText(CACOLUMN, String.format("%.2f",turnOver.getTurnOver()));
 		}
-		
+
 		for (TableColumn column : table.getColumns()) {
 			column.pack();
 		}
@@ -342,16 +350,11 @@ public class TurnOverView {
 				textForColumn(MISESBLANCCOLUMN, table, item);
 				textForColumn(AUTRESCOLUMN, table, item);
 
-				table.pack();
-				turnOverView.pack();
-
 			}
 		});
 
-		this.turnOverView.pack();
 		table.pack();
-		this.compositeTable.pack();
-		this.turnOverView.getParent().pack();
+		compositeTable.pack();
 		addSaveButton(table, turnOvers);
 		addLastButton(table, turnOvers);
 		return table;
@@ -434,6 +437,7 @@ public class TurnOverView {
 		if (Objects.isNull(value))
 			return 0.0;
 		try {
+			value = value.replace(",",".");
 			return Double.parseDouble(value);
 		} catch (Exception exception) {
 			throw new Exception("Merci de saisir une valeur correcte.");
@@ -531,7 +535,7 @@ public class TurnOverView {
 		this.header = new Composite(this.turnOverView, SWT.CENTER | SWT.BORDER);
 		this.header.setBackground(MyColor.bleuFonce);
 		FillLayout layout = new FillLayout();
-		layout.marginWidth = 205;
+		layout.marginWidth = 258;
 		this.header.setLayout(layout);
 
 		Label HeadLabel = new Label(this.header, SWT.TITLE);

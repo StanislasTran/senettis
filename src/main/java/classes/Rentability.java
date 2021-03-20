@@ -269,7 +269,7 @@ public class Rentability {
 				costPrice = result.getDouble("revient");
 			if (!Objects.isNull(result.getDouble("MargeBrut")))
 				grossMargin = result.getDouble("MargeBrut");
-			percent = (turnOver * 100) / grossMargin;
+			percent = (grossMargin * 100) / turnOver ;
 
 			rentabilityList.add(new Rentability(site, name, month, year, turnOver, employeeCost, delivery, material,
 					FSCost, comission, costPrice, grossMargin, percent));
@@ -324,7 +324,8 @@ public class Rentability {
 				costPrice = result.getDouble("revient");
 			if (!Objects.isNull(result.getDouble("MargeBrut")))
 				grossMargin = result.getDouble("MargeBrut");
-			percent = (turnOver * 100) / grossMargin;
+			
+			percent = (grossMargin * 100) / turnOver ;
 
 			rentabilityList.add(new Rentability(-1, "", month, year, turnOver, employeeCost, delivery, material,
 					FSCost, comission, costPrice, grossMargin, percent));

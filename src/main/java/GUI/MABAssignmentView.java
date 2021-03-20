@@ -98,7 +98,6 @@ public class MABAssignmentView {
 		// TabFolder creation and fill
 
 		TabFolder tabFolder = new TabFolder(leftComposite, SWT.BORDER);
-		tabFolder.setBackground(MyColor.bleuClair);
 		mainComposite.setBackground(MyColor.bleuClair);
 
 		tabFolder.addSelectionListener(new SelectionAdapter() {
@@ -113,6 +112,10 @@ public class MABAssignmentView {
 		TabItem tabEmploye = new TabItem(tabFolder, SWT.NULL);
 
 		tabEmploye.setText("Affectation par Employé");
+
+		//Composite compEmp = new Composite(tabEmploye.getParent(), SWT.NONE);
+		//compEmp.setLayout(rowLayoutV);
+		//compEmp.setBackground(MyColor.bleuClair);
 
 		TabItem tabChantier = new TabItem(tabFolder, SWT.NULL);
 		tabChantier.setText("Affectation par Chantier");
@@ -172,13 +175,14 @@ public class MABAssignmentView {
 		createTableEmployeStats(tabEmploye, month, year);
 		createTableChantierStats(tabChantier, month, year);
 
-		mainComposite.pack();
+		tabEmploye.getParent().pack();
 		tabFolder.pack();
 		this.selection.pack();
 		leftComposite.pack();
 		// rightComposite.pack();
 		affectationView.pack();
 		this.rightColumn.pack();
+		mainComposite.pack();
 
 	}
 
@@ -197,7 +201,15 @@ public class MABAssignmentView {
 			this.mainComposite.layout(true, true);
 
 		}
+		
+		RowLayout rowLayoutV = new RowLayout();
+		rowLayoutV.type = SWT.VERTICAL;
+
 		this.rightComposite = new Composite(this.mainComposite, SWT.NONE);
+		
+		rightComposite.setLayout(rowLayoutV);
+		rightComposite.setBackground(MyColor.bleuClair);
+		
 		this.mainComposite.layout(true, true);
 		this.rightComposite.pack();
 
@@ -211,14 +223,21 @@ public class MABAssignmentView {
 	 * @throws SQLException
 	 */
 	private void createTableEmployeStats(TabItem tabEmploye, Month month, Year year) throws SQLException {
+		
+		RowLayout rowLayoutV = new RowLayout();
+		rowLayoutV.type = SWT.VERTICAL;
 
-		leftEmpTable = new Table(tabEmploye.getParent(),
+		Composite compEmp = new Composite(tabEmploye.getParent(), SWT.NONE);
+		compEmp.setLayout(rowLayoutV);
+		compEmp.setBackground(MyColor.bleuClair);
+
+		leftEmpTable = new Table(compEmp,
 				SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.FULL_SELECTION);
-		leftEmpTable.setLayoutData(new RowData(600, 800));
+		leftEmpTable.setLayoutData(new RowData(530, 500));
 
 		leftEmpTable.setLinesVisible(true);
 		leftEmpTable.setHeaderVisible(true);
-		String[] titles = { "EmployeId", "Nom", "Prenom", "Nombre de chantier différents", "Nombre d'heures total" };
+		String[] titles = { "EmployeId", "Nom", "Prenom", "Nb chantier différents", "Nb heures total" };
 
 		for (String title : titles) {
 			TableColumn column = new TableColumn(leftEmpTable, SWT.NONE);
@@ -287,8 +306,9 @@ public class MABAssignmentView {
 		for (TableColumn col : columns)
 			col.pack();
 
-		tabEmploye.setControl(leftEmpTable);
 		leftEmpTable.pack();
+		compEmp.pack();
+		tabEmploye.setControl(compEmp);
 	}
 
 	/**
@@ -301,15 +321,21 @@ public class MABAssignmentView {
 	 * @throws SQLException
 	 */
 	private void createTableChantierStats(TabItem tabChantier, Month month, Year year) throws SQLException {
+		RowLayout rowLayoutV = new RowLayout();
+		rowLayoutV.type = SWT.VERTICAL;
 
-		leftChantTable = new Table(tabChantier.getParent(),
+		Composite compChant = new Composite(tabChantier.getParent(), SWT.NONE);
+		compChant.setLayout(rowLayoutV);
+		compChant.setBackground(MyColor.bleuClair);
+
+		leftChantTable = new Table(compChant,
 				SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.FULL_SELECTION);
-		leftChantTable.setLayoutData(new RowData(900, 800));
+		leftChantTable.setLayoutData(new RowData(530, 500));
 
 		leftChantTable.setLinesVisible(true);
 		leftChantTable.setHeaderVisible(true);
 
-		String[] titles = { "ChantierId", "Nom", "Nombre d'employés différents", "Nombre d'heures total" };
+		String[] titles = { "ChantierId", "Nom", "Nb employés différents", "Nb heures total" };
 
 		for (String title : titles) {
 			TableColumn column = new TableColumn(leftChantTable, SWT.NONE);
@@ -334,7 +360,7 @@ public class MABAssignmentView {
 		for (TableColumn col : columns)
 			col.pack();
 
-		tabChantier.setControl(leftChantTable);
+		tabChantier.setControl(compChant);
 
 		leftChantTable.addSelectionListener(new SelectionAdapter() {
 
@@ -375,6 +401,8 @@ public class MABAssignmentView {
 
 		});
 		leftChantTable.pack();
+		compChant.pack();
+		
 
 	}
 
@@ -401,7 +429,7 @@ public class MABAssignmentView {
 		ResultSet result = MABAssignment.getEmployeAffectationPublished(employeId, month, year);
 		createRightComposite();
 		final Table table = new Table(this.rightComposite, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.FULL_SELECTION);
-		table.setLayoutData(new RowData(900, 800));
+		table.setLayoutData(new RowData(400, 200));
 
 		table.setLinesVisible(true);
 		table.setHeaderVisible(true);
@@ -420,7 +448,7 @@ public class MABAssignmentView {
 			item.setText(0, "" + result.getInt("ChantierId"));
 			item.setText(1, result.getString("Nom"));
 			if (Objects.isNull(result.getString("Adresse")))
-				item.setText(2, "inconnue");
+				item.setText(2, "Inconnue");
 			else
 				item.setText(2, result.getString("Adresse"));
 
@@ -428,6 +456,7 @@ public class MABAssignmentView {
 				item.setText(3, "Inconnu");
 			else
 				item.setText(3, result.getString("Nombre_heures"));
+			
 			affectationsId.add(result.getInt("AffectationId"));
 
 		}
@@ -484,7 +513,7 @@ public class MABAssignmentView {
 		disposeAllChildren(this.rightComposite);
 
 		final Table table = new Table(this.rightComposite, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.FULL_SELECTION);
-		table.setLayoutData(new RowData(900, 800));
+		table.setLayoutData(new RowData(400, 200));
 
 		table.setLinesVisible(true);
 		table.setHeaderVisible(true);
@@ -1527,9 +1556,11 @@ public class MABAssignmentView {
 		Composite nbHeureComposite = new Composite(modifComposite, SWT.NONE);
 		nbHeureComposite.setBackground(MyColor.bleuClair);
 		nbHeureComposite.setLayout(fillLayoutV);
+		
 		Label nbHeureLabel = new Label(nbHeureComposite, SWT.NONE);
 		nbHeureLabel.setText("Nombre d'heures");
 		nbHeureLabel.setBackground(MyColor.bleuClair);
+		
 		Text nbHeureTexte = new Text(nbHeureComposite, SWT.BORDER);
 		nbHeureTexte.setText(affectation.getNombreHeures() + "");
 

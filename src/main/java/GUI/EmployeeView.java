@@ -551,7 +551,7 @@ public class EmployeeView {
 						anneeF += 1;
 					}
 
-					Double valeurTotale = Double.parseDouble(textValeur.getText());
+					Double valeurTotale = Double.parseDouble(textValeur.getText().replace(",", "."));
 
 					EmployeeAmortization ae;
 					if (selectedAmorti != null) {
@@ -913,8 +913,7 @@ public class EmployeeView {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 
-				for (int ligne = 0; ligne < tableCost.getItems().length; ligne++) {
-
+				for (int ligne = 0; ligne < tableCost.getItems().length-1; ligne++) {
 					Integer employeId = Integer.parseInt(tableCost.getItem(ligne).getText(0));
 					Boolean empty = true;
 					try {
@@ -989,16 +988,23 @@ public class EmployeeView {
 						} else {
 							ce.setPaniers(0.0);
 						}
-
+						
 						if (!tableCost.getItem(ligne).getText(14).isBlank()) {
-							ce.setPrets(Double.parseDouble(tableCost.getItem(ligne).getText(14).replace(",",".")));
+							ce.setActPartielle(Double.parseDouble(tableCost.getItem(ligne).getText(14).replace(",",".")));
+							empty = false;
+						} else {
+							ce.setActPartielle(0.0);
+						}
+
+						if (!tableCost.getItem(ligne).getText(15).isBlank()) {
+							ce.setPrets(Double.parseDouble(tableCost.getItem(ligne).getText(15).replace(",",".")));
 							empty = false;
 						} else {
 							ce.setPrets(0.0);
 						}
 
-						if (!tableCost.getItem(ligne).getText(15).isBlank()) {
-							ce.setSaisieArret(Double.parseDouble(tableCost.getItem(ligne).getText(15).replace(",",".")));
+						if (!tableCost.getItem(ligne).getText(16).isBlank()) {
+							ce.setSaisieArret(Double.parseDouble(tableCost.getItem(ligne).getText(16).replace(",",".")));
 							empty = false;
 						} else {
 							ce.setSaisieArret(0.0);
@@ -1182,14 +1188,14 @@ public class EmployeeView {
 						}
 
 						if (!tableCost.getItem(ligne).getText(14).isBlank()) {
-							ce.setPrets(Double.parseDouble(tableCost.getItem(ligne).getText(14)));
+							ce.setPrets(Double.parseDouble(tableCost.getItem(ligne).getText(14).replace(",", ".")));
 							empty = false;
 						} else {
 							ce.setPrets(0.0);
 						}
 
 						if (!tableCost.getItem(ligne).getText(15).isBlank()) {
-							ce.setSaisieArret(Double.parseDouble(tableCost.getItem(ligne).getText(15)));
+							ce.setSaisieArret(Double.parseDouble(tableCost.getItem(ligne).getText(15).replace(",", ".")));
 							empty = false;
 						} else {
 							ce.setSaisieArret(0.0);
@@ -1256,7 +1262,7 @@ public class EmployeeView {
 
 		String[] titles = { "Id", "Nom", "Prenom", "Matricule", "Période", "salaire Net", "salaire Brut",
 				"nombreHeures", "charges patronales", "masse salariale", "Transport", "Telephone", "mutuelle",
-				"paniers", "prets", "saisie arret" };
+				"paniers", "Activité Partielle", "prets", "saisie arret" };
 		for (String title : titles) {
 			TableColumn column = new TableColumn(tableCost, SWT.NONE);
 			column.setText(title);
@@ -1293,6 +1299,7 @@ public class EmployeeView {
 							item.setText(11, String.format("%.2f",ce.getRemboursementTelephone()));
 							item.setText(12, String.format("%.2f",ce.getMutuelle()));
 							item.setText(13, String.format("%.2f",ce.getPaniers()));
+							item.setText(14, String.format("%.2f",ce.getActPartielle()));
 
 							Double pret = 0.0;
 							Double saisie = 0.0;
@@ -1317,13 +1324,16 @@ public class EmployeeView {
 									}
 								}
 							}
-							item.setText(14, pret.toString());
-							item.setText(15, saisie.toString());
+							
+							item.setText(15, pret.toString());
+							item.setText(16, saisie.toString());
+							
+							
 						}
 					} catch (Exception e2) {
 
-						item.setText(14, "" + 0);
 						item.setText(15, "" + 0);
+						item.setText(16, "" + 0);
 					}
 				}
 
@@ -1348,8 +1358,9 @@ public class EmployeeView {
 				item.setText(11, String.format("%.2f",ce.getRemboursementTelephone()));
 				item.setText(12, String.format("%.2f",ce.getMutuelle()));
 				item.setText(13, String.format("%.2f",ce.getPaniers()));
-				item.setText(14, String.format("%.2f",ce.getPrets()));
-				item.setText(15, String.format("%.2f",ce.getSaisieArret()));
+				item.setText(14, String.format("%.2f",ce.getActPartielle()));
+				item.setText(15, String.format("%.2f",ce.getPrets()));
+				item.setText(16, String.format("%.2f",ce.getSaisieArret()));
 
 				/*
 				 * EmployeeAmortization ae1 =
@@ -1432,6 +1443,11 @@ public class EmployeeView {
 		editorPa.horizontalAlignment = SWT.LEFT;
 		editorPa.grabHorizontal = true;
 		editors.add(editorPa);
+		
+		final TableEditor editorAP = new TableEditor(tableCost);
+		editorAP.horizontalAlignment = SWT.LEFT;
+		editorAP.grabHorizontal = true;
+		editors.add(editorAP);
 
 		SelectionAdapter listener = new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -1461,6 +1477,10 @@ public class EmployeeView {
 					editorPa.getEditor().dispose();
 				}
 
+				if (editorAP.getEditor() != null) {
+					editorAP.getEditor().dispose();
+				}
+				
 				TableItem item = (TableItem) e.item;
 				if (item == null) {
 					return;
@@ -1550,11 +1570,11 @@ public class EmployeeView {
 							// de modifier
 							try {
 								item.setText(8, newEditorCP.getText());
-
 								Double sb;
 								if (!item.getText(6).isBlank()) {
-									sb = Double.parseDouble(item.getText(6));
+									sb = Double.parseDouble(item.getText(6).replace(",", "."));
 								} else {
+									//System.out.println("ee4");
 									sb = 0.0;
 								}
 
@@ -1564,7 +1584,6 @@ public class EmployeeView {
 								} else {
 									cp = 0.0;
 								}
-
 								item.setText(9, Double.toString(sb + cp));
 
 							} catch (Exception e) {
@@ -1661,6 +1680,26 @@ public class EmployeeView {
 					}
 				});
 				editorPa.setEditor(newEditorPa, item, 13);
+				
+				Text newEditorAP = new Text(tableCost, SWT.NONE);
+				newEditorAP.setText(item.getText(14).replace(",","."));
+				newEditorAP.addModifyListener(new ModifyListener() {
+					public void modifyText(ModifyEvent me) {
+						if (!(newEditorAP.getText().isEmpty())) {// pour ne pas tester quand l'utilisateur est en train
+							// de modifier
+							try {
+								item.setText(14, newEditorAP.getText());
+							} catch (Exception e) {
+
+								MessageBox dialog = new MessageBox(employeeView.getShell(), SWT.ICON_ERROR | SWT.OK);
+								dialog.setText("Erreur Editor");
+								dialog.setMessage("Saisie invalide." + '\n' + e.getMessage());
+								dialog.open();
+							}
+						}
+					}
+				});
+				editorAP.setEditor(newEditorAP, item, 14);
 
 				if (tableCost.getSelectionIndex() != -1) {// on a cliquer sur une ligne non vide
 					doMenu(tableCost);
@@ -1905,7 +1944,7 @@ public class EmployeeView {
 	}
 
 	/***
-	 * display modification or creation form type for given argment
+	 * display modification or creation form type for given argument
 	 * 
 	 * @param <type>int</type> i : 1 pour une creation, 2 pour une modification les
 	 *                         autres arguments correspondent aux valeurs a afficher

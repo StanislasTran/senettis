@@ -676,10 +676,10 @@ public class SiteView {
 		view.setLayout(rowLayoutV);
 		view.setBackground(MyColor.bleuClair);
 
-		final Table table = new Table(view, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.FULL_SELECTION);
-		table.setLayoutData(new RowData(600, 400));
+		final Table table = new Table(this.view, SWT.BORDER | SWT.FULL_SELECTION | SWT.HIDE_SELECTION | SWT.MULTI | SWT.V_SCROLL);
 		table.setLinesVisible(true);
 		table.setHeaderVisible(true);
+		table.setLayoutData(new RowData(600, 400));
 
 		String[] titles = { "Nom", "Adresse" };
 		for (String title : titles) {
@@ -743,6 +743,7 @@ public class SiteView {
 			}
 		});
 
+		table.pack();
 		view.pack();
 
 	}
@@ -760,7 +761,7 @@ public class SiteView {
 	public static Table getTableAllChantier(Composite composite, int width, int height) {
 		// creation de la table
 		final Table table = new Table(composite, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.FULL_SELECTION);
-		table.setLayout(new RowLayout());
+		//table.setLayout(new RowLayout());
 		table.setLayoutData(new RowData(width, height));
 		table.setLinesVisible(true);
 		table.setHeaderVisible(true);
