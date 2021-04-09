@@ -1665,7 +1665,7 @@ public class EmployeeView {
 						if (!(newEditorTr.getText().isEmpty())) {// pour ne pas tester quand l'utilisateur est en train
 							// de modifier
 							try {
-								item.setText(10, newEditorTr.getText().replace(",","."));
+								item.setText(11, newEditorTr.getText().replace(",","."));
 							} catch (Exception e) {
 
 
@@ -1686,7 +1686,7 @@ public class EmployeeView {
 						if (!(newEditorTe.getText().isEmpty())) {// pour ne pas tester quand l'utilisateur est en train
 							// de modifier
 							try {
-								item.setText(11, newEditorTe.getText().replace(",", "."));
+								item.setText(12, newEditorTe.getText().replace(",", "."));
 							} catch (Exception e) {
 
 
@@ -1707,7 +1707,7 @@ public class EmployeeView {
 						if (!(newEditorMu.getText().isEmpty())) {// pour ne pas tester quand l'utilisateur est en train
 							// de modifier
 							try {
-								item.setText(12, newEditorMu.getText().replace(",","."));
+								item.setText(13, newEditorMu.getText().replace(",","."));
 							} catch (Exception e) {
 
 								MessageBox dialog = new MessageBox(employeeView.getShell(), SWT.ICON_ERROR | SWT.OK);
@@ -1727,7 +1727,7 @@ public class EmployeeView {
 						if (!(newEditorPa.getText().isEmpty())) {// pour ne pas tester quand l'utilisateur est en train
 							// de modifier
 							try {
-								item.setText(13, newEditorPa.getText());
+								item.setText(14, newEditorPa.getText());
 							} catch (Exception e) {
 
 								MessageBox dialog = new MessageBox(employeeView.getShell(), SWT.ICON_ERROR | SWT.OK);
