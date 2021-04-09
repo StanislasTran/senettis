@@ -30,11 +30,32 @@ public class FS {
 	private Integer siteId;
 	private Integer startMonth;
 	private Integer startYear;
+	private Integer endMonth;
+	private Integer endYear;
 	private String description;
 	private Double amountByMonth;
 	private String status;
 	private String subContractor;
 
+	
+	
+	public FS(Integer FSId, Integer siteId, Integer startMonth, Integer startYear, Integer endMonth, Integer endYear, String description,
+			Double amountByMonth, String subContractor, String status) {
+		this(siteId, startMonth, startYear, amountByMonth, description, subContractor, status);
+		if ((Integer) FSId != null) {
+			this.FSId = FSId;
+		} else {
+			throw new Error(
+					"Le fournitureSanitaireId est vide, merci de sp�cifier un id ou d'utiliser un autre constructeur.");
+		}
+		this.endMonth = endMonth;
+		this.endYear = endYear;
+	}
+	
+	
+	
+	
+	
 	/**
 	 * Constructor for FS
 	 * 
@@ -75,6 +96,16 @@ public class FS {
 
 		this.description = description;
 	}
+	
+	public FS(Integer siteId, int startMonth, int startYear, int endMonth, int endYear, Double amountByMonth, String description,
+			String subContractor, String status) {
+		this(siteId, startMonth, startYear, amountByMonth, subContractor, status);
+
+		this.description = description;
+		this.endMonth = endMonth;
+		this.endYear = endYear;
+	}
+
 
 	/**
 	 * Constructor for FS
@@ -128,6 +159,8 @@ public class FS {
 
 	}
 
+
+
 	/**
 	 * Insert the current FS into the database
 	 * 
@@ -144,7 +177,7 @@ public class FS {
 	 *                      running Statement
 	 */
 	public int insertDatabase() throws SQLException {
-		String reqSql = "INSERT INTO FournitureSanitaire(moisDepart,anneeDepart,chantier,sousTraitant,status,valeurParMois,description) VALUES (?,?,?,?,?,?,?)";
+		String reqSql = "INSERT INTO FournitureSanitaire(moisDepart,anneeDepart,chantier,sousTraitant,status,valeurParMois,description, anneeFin, moisFin) VALUES (?,?,?,?,?,?,?,?,?)";
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
 		statement.setObject(1, this.startMonth, Types.INTEGER);
@@ -154,6 +187,8 @@ public class FS {
 		statement.setObject(5, this.status, Types.VARCHAR);
 		statement.setObject(6, this.amountByMonth, Types.DECIMAL);
 		statement.setObject(7, this.description, Types.VARCHAR);
+		statement.setObject(8, this.endYear, Types.INTEGER);
+		statement.setObject(9, this.endMonth, Types.INTEGER);
 
 		return statement.executeUpdate();
 	}
@@ -174,7 +209,7 @@ public class FS {
 	 */
 
 	public int updateDatabase() throws SQLException {
-		String reqSql = "UPDATE FournitureSanitaire SET moisDepart=?, chantier=?,sousTraitant=?, status=?, anneeDepart=?,valeurParMois=?,description=? WHERE FournitureSanitaireId=?";
+		String reqSql = "UPDATE FournitureSanitaire SET moisDepart=?, chantier=?,sousTraitant=?, status=?, anneeDepart=?,valeurParMois=?,description=?, anneeFin=?,moisFin=? WHERE FournitureSanitaireId=?";
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
 		statement.setObject(1, this.startMonth, Types.INTEGER);
@@ -184,7 +219,9 @@ public class FS {
 		statement.setObject(5, this.startYear, Types.INTEGER);
 		statement.setObject(6, this.amountByMonth, Types.DECIMAL);
 		statement.setObject(7, this.description, Types.VARCHAR);
-		statement.setObject(8, this.FSId, Types.INTEGER);
+		statement.setObject(8, this.endYear, Types.INTEGER);
+		statement.setObject(9, this.endMonth, Types.INTEGER);
+		statement.setObject(10, this.FSId, Types.INTEGER);
 		return statement.executeUpdate();
 	}
 
@@ -212,7 +249,7 @@ public class FS {
 	 * @throws SQLException throw the exception if the DATA is not found
 	 */
 	public static FS getFSById(int FSId) throws SQLException {
-		String reqSql = "SELECT FournitureSanitaireId,moisDepart,anneeDepart,chantier,sousTraitant,status,valeurParMois,description FROM FournitureSanitaire WHERE FournitureSanitaireId=? AND Status='Publié'";
+		String reqSql = "SELECT FournitureSanitaireId,moisDepart,anneeDepart,chantier,sousTraitant,status,valeurParMois,description, moisFin, anneeFin FROM FournitureSanitaire WHERE FournitureSanitaireId=? AND Status='Publié'";
 		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
 		PreparedStatement statement = connection.prepareStatement(reqSql);
 		statement.setObject(1, FSId, Types.INTEGER);
@@ -234,8 +271,10 @@ public class FS {
 			String subContractor = result.getString("sousTraitant");
 			String status = result.getString("status");
 			String description = result.getString("description");
+			Integer moisF = result.getInt("moisFin");
+			Integer anneeF = result.getInt("anneeFin");
 
-			return new FS(FSId, chantierId, moisD, anneeD, description, montantParMois, subContractor, status);
+			return new FS(FSId, chantierId, moisD, anneeD, moisF, anneeF, description, montantParMois, subContractor, status);
 
 		} else {
 			throw new SQLException("Data not found");
@@ -256,6 +295,8 @@ public class FS {
 			int fournitureSanitaireId = result.getInt("FournitureSanitaireId");
 			Integer startMonth = result.getInt("moisDepart");
 			Integer startYear = result.getInt("anneeDepart");
+			Integer endMonth = result.getInt("moisFin");
+			Integer endYear = result.getInt("anneeFin");
 			int chantierId = result.getInt("Chantier");
 
 			Double amountByMonth = 0.0;
@@ -267,7 +308,7 @@ public class FS {
 			String status = result.getString("status");
 			String description = result.getString("description");
 
-			allSiteCost.add(new FS(fournitureSanitaireId, chantierId, startMonth, startYear, description, amountByMonth,
+			allSiteCost.add(new FS(fournitureSanitaireId, chantierId, startMonth, startYear, endMonth, endYear,description, amountByMonth,
 					subContractor, status));
 		}
 
@@ -498,6 +539,14 @@ public class FS {
 	 */
 	public void setSubContractor(String subContractor) {
 		this.subContractor = subContractor;
+	}
+
+	public Integer getEndMonth() {
+		return endMonth;
+	}
+	
+	public Integer getEndYear() {
+		return endYear;
 	}
 
 }

@@ -480,4 +480,55 @@ public class Delivery {
 		return statement.getResultSet();
 	}
 
+	public static Delivery getTotalDelivery(Integer month, Integer annee) throws SQLException {
+		String debut, fin;
+		if (month==1 || month == 3 || month == 5 || month == 7 || month == 8 ) {
+			debut = "01/0"+Integer.toString(month)+"/"+Integer.toString(annee);
+			fin = "31/0"+Integer.toString(month)+"/"+Integer.toString(annee);
+		}
+		else if (month == 10 || month == 12) {
+			debut = "01/"+Integer.toString(month)+"/"+Integer.toString(annee);
+			fin = "31/"+Integer.toString(month)+"/"+Integer.toString(annee);
+		}
+		else if (month == 4 || month == 6 || month == 9) {
+			debut = "01/0"+Integer.toString(month)+"/"+Integer.toString(annee);
+			fin = "30/0"+Integer.toString(month)+"/"+Integer.toString(annee);
+		}
+		else if (month == 11) {
+			debut = "01/"+Integer.toString(month)+"/"+Integer.toString(annee);
+			fin = "30/"+Integer.toString(month)+"/"+Integer.toString(annee);
+		}
+		else if (Year.isLeap(Integer.toUnsignedLong(annee))){
+			debut = "01/0"+Integer.toString(month)+"/"+Integer.toString(annee);
+			fin = "29/0"+Integer.toString(month)+"/"+Integer.toString(annee);
+		}
+		else {
+			debut = "01/0"+Integer.toString(month)+"/"+Integer.toString(annee);
+			fin = "28/0"+Integer.toString(month)+"/"+Integer.toString(annee);
+		}
+		
+		String reqSql = "SELECT sum(prixTotal) as prixTotal FROM Livraison WHERE Status='Publié' AND Date<? AND Date>?;";
+		
+		Connection connection = DriverManager.getConnection(new SQLDatabaseConnexion().getConnectionUrl());
+		PreparedStatement statement = connection.prepareStatement(reqSql);
+		System.out.println(debut+" "+fin);
+		statement.setObject(1, fin, Types.DATE);
+		statement.setObject(2, debut, Types.DATE);
+		statement.executeQuery();
+
+		ResultSet result = statement.getResultSet();
+
+		if (result.next()) {
+			Double price = 0.0;
+			if (result.getString("prixTotal") != null) {
+				price = Double.parseDouble(result.getString("prixTotal"));
+			}
+			
+			return new Delivery(-1,price,"01/01/2020", "Publié");
+
+		} else {
+			throw new SQLException("Data not found");
+		}
+	}
+
 }

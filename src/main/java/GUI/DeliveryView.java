@@ -28,6 +28,8 @@ import java.time.Month;
 import java.util.ArrayList;
 import java.util.Objects;
 
+import javax.annotation.processing.SupportedSourceVersion;
+
 import org.eclipse.swt.*;
 import org.eclipse.swt.custom.TableEditor;
 import org.eclipse.swt.events.ModifyEvent;
@@ -40,6 +42,7 @@ import org.eclipse.swt.widgets.*;
 import classes.Site;
 import classes.SiteAmortisation;
 import classes.Delivery;
+import classes.EmployeeCost;
 import classes.FS;
 import classes.Product;
 import classes.ProductByDelivery;
@@ -270,7 +273,7 @@ public class DeliveryView {
 		tableFS.layout(true, true);
 
 		// on met les noms des colonnes
-		String[] titles2 = { "Id", "Début", "Montant par mois", "Sous Traitant", "Description" };
+		String[] titles2 = { "Id", "Début", "Montant par mois", "Sous Traitant", "Description", "Fin" };
 		for (String title : titles2) {
 			TableColumn column = new TableColumn(tableFS, SWT.NONE);
 			column.setText(title);
@@ -566,6 +569,29 @@ public class DeliveryView {
 				periode.add(Month.of(j) + " " + j1);
 			}
 		}
+		
+		Composite compositePeriodeFin = new Composite(colonne1, SWT.NONE);
+		compositePeriodeFin.setBackground(MyColor.bleuClair);
+		compositePeriodeFin.setLayout(fillLayoutH5);
+
+		Label labelPeriodeFin = new Label(compositePeriodeFin, SWT.NONE);
+		labelPeriodeFin.setText("Fin : ");
+		labelPeriodeFin.setBackground(MyColor.bleuClair);
+
+		Combo periodeFin = new Combo(compositePeriodeFin, SWT.BORDER);
+		if (selectedFS != null && i ==1 ){
+			if (selectedFS.getEndYear()!=3000) {
+				periodeFin.setText(Month.of(selectedFS.getEndMonth()) + " " + selectedFS.getEndYear().toString());
+			}
+		} else {
+			periodeFin.setText("");
+		}
+
+		for (int j1 = 2020; j1 <= year + 1; j1++) {
+			for (int j = 1; j <= 12; j++) {
+				periodeFin.add(Month.of(j) + " " + j1);
+			}
+		}
 
 		// valeur
 		Composite compositeValeur = new Composite(colonne2, SWT.NONE);
@@ -669,6 +695,15 @@ public class DeliveryView {
 					int moisD = Month.valueOf(debut[0]).getValue();
 					int anneeD = Integer.parseInt(debut[1]);
 
+					String[] fin = periodeFin.getText().split(" ");
+
+					int moisF = 12, anneeF = 3000;
+
+					if (fin[0]!="") {
+						moisF = Month.valueOf(fin[0]).getValue();
+						anneeF = Integer.parseInt(fin[1]);
+					}
+					
 					Double montantParMois;
 					try {
 						montantParMois = Double.parseDouble(textValeur.getText());
@@ -677,7 +712,7 @@ public class DeliveryView {
 					}
 					
 					if (i == 1) {
-						FS fs = new FS(FSid,chantierId, moisD, anneeD, textDesc.getText(), montantParMois, textST.getText().trim(),
+						FS fs = new FS(FSid,chantierId, moisD, anneeD, moisF, anneeF, textDesc.getText(), montantParMois, textST.getText().trim(),
 								"Publié");
 						fs.updateDatabase();
 						MessageBox dialog = new MessageBox(vueFS.getShell(), SWT.ICON_INFORMATION | SWT.OK);
@@ -686,7 +721,7 @@ public class DeliveryView {
 								"Ce cout de fourniture sanitaire a bien été modifié dans la base de données.");
 						dialog.open();
 					} else {
-						FS fs = new FS(chantierId, moisD, anneeD, montantParMois,
+						FS fs = new FS(chantierId, moisD, anneeD, moisF, anneeF, montantParMois,
 								textDesc.getText(), textST.getText().trim(), "Publié");
 						fs.insertDatabase();
 						MessageBox dialog = new MessageBox(vueFS.getShell(), SWT.ICON_INFORMATION | SWT.OK);
@@ -797,6 +832,12 @@ public class DeliveryView {
 					item.setText(2, String.format("%.2f", fs.getAmountByMonth()));
 					item.setText(3, fs.getSousTraitant());
 					item.setText(4, fs.getDescription());
+					if(fs.getEndYear()!=3000) {
+						item.setText(5, fs.getEndMonth().toString() + '/' + fs.getEndYear().toString());
+					}
+					else {
+						item.setText(5,"");
+					}
 				}
 			}
 		} catch (SQLException e1) {
@@ -2390,6 +2431,10 @@ public class DeliveryView {
 	public void updateTable(String periode) {
 		tableLivraison.removeAll();
 		try {
+			String[] d2 = periode.split(" ");
+			Integer mois2 = Month.valueOf(d2[0]).getValue();
+			Integer annee2 = Integer.parseInt(d2[1]);
+			
 			for (Delivery l : Delivery.getAllDelivery()) {
 				// on verifie le status
 				if (l.getStatus().contentEquals("Publié")) {
@@ -2398,10 +2443,6 @@ public class DeliveryView {
 						String[] d1 = l.getDate().split("/");
 						Integer mois1 = Integer.parseInt(d1[1]);
 						Integer annee1 = Integer.parseInt(d1[2]);
-
-						String[] d2 = periode.split(" ");
-						Integer mois2 = Month.valueOf(d2[0]).getValue();
-						Integer annee2 = Integer.parseInt(d2[1]);
 
 						if (Integer.compare(mois1, mois2) == 0 && Integer.compare(annee1, annee2) == 0) {
 							TableItem item = new TableItem(tableLivraison, SWT.NONE);
@@ -2419,6 +2460,15 @@ public class DeliveryView {
 					}
 				}
 			}
+			
+			TableItem item = new TableItem(tableLivraison, SWT.NONE);
+			item.setText(0, "Total");
+			item.setText(1, Integer.toString(mois2)+ '/' +Integer.toString(annee2));
+			
+			Delivery livrTotal = Delivery.getTotalDelivery(mois2, annee2);
+			item.setText(2, String.format("%.2f",livrTotal.getTotalPrice()));
+			item.setText(3, "");
+			
 		} catch (SQLException e) {
 			System.out.println("erreur dans la table des livraisons");
 			MessageBox dialog = new MessageBox(vueLivraison.getShell(), SWT.ICON_ERROR | SWT.OK);
