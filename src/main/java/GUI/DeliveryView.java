@@ -66,6 +66,7 @@ public class DeliveryView {
 	private Table tableChantier;
 	private Table tableAmorti;
 	private Table tableFS;
+	private Table tableProduit;
 
 	//////////////////////////////////////////// Creation VueLivraison
 	//////////////////////////////////////////// ////////////////////////////////////////////
@@ -2350,21 +2351,28 @@ public class DeliveryView {
 		}
 		RowLayout rowLayoutV = new RowLayout();
 		rowLayoutV.type = SWT.VERTICAL;
+		
+		RowLayout rowLayoutH = new RowLayout();
+		rowLayoutH.type = SWT.HORIZONTAL;
 
 		vueLivraison.setBackground(MyColor.bleuClair);
 		
 		vue = new Composite(vueLivraison, SWT.NONE);
 		vue.setLayout(rowLayoutV);
 		vue.setBackground(MyColor.bleuClair);
+		
+		Composite tables = new Composite(vue, SWT.NONE);
+		tables.setLayout(rowLayoutH);
+		tables.setBackground(MyColor.bleuClair);
 
 		// creation de la table
-		tableLivraison = new Table(vue, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.FULL_SELECTION);
-		tableLivraison.setLayoutData(new RowData(450, 390));
+		tableLivraison = new Table(tables, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.FULL_SELECTION);
+		tableLivraison.setLayoutData(new RowData(300, 390));
 		tableLivraison.setLinesVisible(true);
 		tableLivraison.setHeaderVisible(true);
 
 		// on met les noms des colonnes
-		String[] titles = { "Chantier", "Date", "Prix Total" };
+		String[] titles = { "Chantier                          ", "Date           ", "Prix Total" };
 		for (String title : titles) {
 			TableColumn column = new TableColumn(tableLivraison, SWT.NONE);
 			column.setText(title);
@@ -2384,7 +2392,29 @@ public class DeliveryView {
 		// on pack les colonnes
 		for (TableColumn col : columns)
 			col.pack();
+		
+		
+		//Table Produit
+		tableProduit = new Table(tables, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.FULL_SELECTION);
+		tableProduit.setLayoutData(new RowData(270, 390));
+		tableProduit.setLinesVisible(true);
+		tableProduit.setHeaderVisible(true);
+		
+		String[] titles2 = { "Produit                                      ", "Qté", "Prix Unitaire" };
+		for (String title : titles2) {
+			TableColumn column2 = new TableColumn(tableProduit, SWT.NONE);
+			column2.setText(title);
+		}
 
+		// on remplit la table
+		final TableColumn[] columns2 = tableProduit.getColumns();
+		
+		// on pack les colonnes
+		for (TableColumn col : columns2)
+			col.pack();
+
+		
+		
 		// on ajoute un listener pour modifier l'interface si l'utilisateur clique sur
 		// une ligne
 		tableLivraison.addSelectionListener(new SelectionAdapter() {
@@ -2403,6 +2433,25 @@ public class DeliveryView {
 						dialog.open();
 					}
 					compositeSelection();
+					
+					//ON LISTE LES PRODUITS
+					tableProduit.removeAll();
+					try {
+						for (ProductByDelivery produit : ProductByDelivery.getProductByLivraisonByLivraisonId(selectedLivraison.getDeliveryId())) {
+							// on verifie le status
+							if (produit.getStatus().contentEquals("Publié")) {
+								TableItem item = new TableItem(tableProduit, SWT.NONE);
+								Product p = Product.getProductById(produit.getIdProduit());
+								item.setText(0, p.getName());
+								item.setText(1, produit.getQuantite().toString());
+								item.setText(2, p.getPrice().toString());
+							}
+						}
+					} catch (Exception e1) {
+					}
+					
+					tableProduit.pack();
+	
 
 					// on ajoute un menu lorsque l'on fait clique droit sur une ligne
 					doMenu(tableLivraison);
@@ -2413,6 +2462,7 @@ public class DeliveryView {
 					selectedLivraison = null;
 
 					menu.dispose();
+					tableProduit.dispose();
 					menu = new Menu(vueLivraison.getShell(), SWT.POP_UP);
 					tableLivraison.setMenu(menu);
 

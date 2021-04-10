@@ -259,6 +259,7 @@ Create table CoutEmploye (
 	masse_salariale decimal(10,2), 
 	remboursement_prets decimal(10,2),
 	saisie_arret decimal(10,2),
+	ActivitePartielle decimal (10,2),
 	nb_heures decimal(10,2),
 	"Status" VARCHAR (50) NOT NULL,
 	"Date_de_creation" DateTime  NOT NUll Default (GETDATE()), 
@@ -348,6 +349,8 @@ SET Date_de_modification = GETDATE()
     FournitureSanitaireId  INT PRIMARY KEY IDENTITY (1, 1),
 	moisDepart int,
 	anneeDepart int,
+	moisFin int Default 12,
+	anneeFin int Default 3000,
 	Chantier int NOT NULL,
     FOREIGN KEY (Chantier) REFERENCES Chantier(ChantierId), 
 	valeurParMois decimal (10,2) NOT NULL,
@@ -372,7 +375,7 @@ SET Date_de_modification = GETDATE()
  GO
 
 Create view  
-ACjoinCE_View 
+dbo.ACjoinCE_View 
 as 
 SELECT 
 AffectationChantier.Chantier,AffectationChantier.Employe,
@@ -401,7 +404,7 @@ WHERE
 GO
 
 	Create view  
-	ACjoinCEMAB_View 
+	dbo.ACjoinCEMAB_View 
 	as 
 	SELECT 
 	AffectationMAB.Chantier,AffectationMAB.Employe,
@@ -497,7 +500,7 @@ on v1.Chantier=v2.Chantier AND v1.annee=v2.annee AND v1.mois=v2.mois AND v1.empl
 GO
 
 
-Create view Chantier_CA_View
+Create view dbo.Chantier_CA_View
 as 
 select ChantierId,Nom,mois,annee,CA from (Select ChantierId,Nom from chantier where Status='Publié') as site left join (select mois,annee,CA,Chantier from ChiffreAffaire where Status='Publié') as turnOver ON site.ChantierId=turnOver.Chantier
 GO
@@ -513,7 +516,7 @@ from ChantierSalaireCost_view group by ChantierId,mois,annee) as EmpCost ON vue.
 
 GO
 
-Create view  Chantier_CA_EmpCost_Livraison_View
+Create view  dbo.dbo.Chantier_CA_EmpCost_Livraison_View
 
 as
 select vue.chantierId,vue.nom,vue.mois,vue.annee,vue.CA,vue.SalaryCost,isNull(LivraisonCost,0) as LivraisonCost from Chantier_CA_EmpCost_View  as vue Left Join 
@@ -525,7 +528,7 @@ GO
 
 
 
-Create view Chantier_Ca_EmpCost_Livraison_Amort_View
+Create view dbo.Chantier_Ca_EmpCost_Livraison_Amort_View
 
 as
 select chantierId,nom,mois,annee,CA,SalaryCost,LivraisonCost,isNull(Sum(valeurParMois),0) as Amortissement
@@ -539,18 +542,21 @@ GO
 
 
 
-   create view Chantier_Ca_EmpCost_Livraison_Amort_FS_View
-  as
-select chantierId,nom,mois,annee,CA,SalaryCost,LivraisonCost,Amortissement,isNull(sum(valeurParMois),0) as FSCost from Chantier_Ca_EmpCost_Livraison_Amort_View as vue left join (select * from FournitureSanitaire  where Status='Publié') as fs on
-  AnneeDepart<Annee or(AnneeDepart=Annee AND MoisDepart<=Mois) AND chantier=chantierId group by chantierId,mois,annee,CA,SalaryCost,LivraisonCost,Amortissement,nom
-  
+select chantierId,nom,mois,annee,CA,SalaryCost,LivraisonCost,Amortissement,
+isNull(sum(valeurParMois),0) as FSCost 
+from Chantier_Ca_EmpCost_Livraison_Amort_View as vue 
+left join 
+(select * from FournitureSanitaire  where Status='Publié') as fs 
+on chantier=chantierId 
+WHERE (AnneeFin>Annee or(AnneeFin=Annee AND MoisFin>=Mois)) 
+AND (AnneeDepart<Annee or(AnneeDepart=Annee AND MoisDepart<=Mois))
+group by chantierId,mois,annee,CA,SalaryCost,LivraisonCost,Amortissement,nom
+   GO
 
-  
-  GO
-
-create view Chantier_Ca_EmpCost_Livraison_Amort_FS_Comi_View
+create view dbo.Chantier_Ca_EmpCost_Livraison_Amort_FS_Comi_View
 as
-Select chantierId,nom,mois,annee,CA,SalaryCost,LivraisonCost,Amortissement,FSCost,isNull(comission,0) as comission from Chantier_Ca_EmpCost_Livraison_Amort_FS_View  left join 
+Select chantierId,nom,mois,annee,CA,SalaryCost,LivraisonCost,Amortissement,FSCost,isNull(comission,0) as comission 
+from Chantier_Ca_EmpCost_Livraison_Amort_FS_View  left join 
 
 (select  comission,chantier,MoisDebut,AnneeDebut 
 from comission Where Status='Publié') as com
@@ -560,10 +566,11 @@ on  Chantier=ChantierId AND (AnneeDebut<Annee OR (AnneeDebut=Annee and MoisDebut
  
  
 
-Create view rentabilite_view
+Create view dbo.rentabilite_view
 as
 select chantierId,nom,mois,annee,round(CA,2) As CA,round(SalaryCost,2) 
 as SalaryCost,round(LivraisonCost,2) as LivraisonCost ,round(Amortissement,2) as Amortissement ,round(FSCost,2) 
-as FSCost, round((comission*CA/100) ,2)as comissionValue,round(SalaryCost+LivraisonCost+Amortissement+FSCost+(comission*CA/100),2) as revient,(CA-round(SalaryCost+LivraisonCost+Amortissement+FSCost+(comission*CA/100),2)) as MargeBrut 
+as FSCost, round((comission*CA/100) ,2)as comissionValue,round(SalaryCost+LivraisonCost+Amortissement+FSCost+(comission*CA/100),2) 
+as revient,(CA-round(SalaryCost+LivraisonCost+Amortissement+FSCost+(comission*CA/100),2)) as MargeBrut 
 from Chantier_Ca_EmpCost_Livraison_Amort_FS_Comi_View
 
